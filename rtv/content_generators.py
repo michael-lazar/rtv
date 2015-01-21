@@ -69,16 +69,16 @@ class SubmissionGenerator(object):
 
 class SubredditGenerator(object):
     """
-    Grabs a subreddit from PRAW lazily and store in an internal list for repeat
-    access.
-
-    params:
-        session (praw.Reddit): Active reddit connection
-        subreddit (str): Subreddit to connect to, None defaults to front page.
+    Grabs a subreddit from PRAW and lazily stores submissions to an internal
+    list for repeat access.
     """
 
     def __init__(self, reddit_session, subreddit=None):
-
+        """
+        params:
+            session (praw.Reddit): Active reddit connection
+            subreddit (str): Subreddit to connect to, defaults to front page.
+        """
         self.r = reddit_session
         self.r.config.decode_html_entities = True
 
@@ -121,7 +121,7 @@ class SubredditGenerator(object):
             data = self._strip_praw_submission(self._submissions.next())
             self._submission_data.append(data)
 
-        # Modifies the original original dict, faster than copying
+        # Modifies the original dict, faster than copying
         data = self._submission_data[index]
         data['split_title'] = textwrap.wrap(data['title'], width=n_cols)
         data['n_rows'] = len(data['split_title']) + 3
