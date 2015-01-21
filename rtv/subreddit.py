@@ -6,8 +6,20 @@ from content_generators import SubredditGenerator
 
 class SubredditViewer(object):
 
-    def __init__(self, stdscr):
+    def __init__(self, stdscr, subreddit_generator):
+
         self.stdscr = stdscr
+        self.gen = subreddit_generator
+
+        self._cursor_index = 0
+        self._page_index = 0
+        self._rows = None
+        self._cols = None
+        self._title_window = None
+        self._content_window = None
+        self._sub_windows = []
+
+        self.draw()
 
     def loop(self):
 
@@ -32,7 +44,7 @@ class SubredditViewer(object):
 
             # Refresh page
             elif cmd in (curses.KEY_F5, ord('r')):
-                pass
+                self.draw()
 
             # Quit
             elif cmd == ord('q'):
@@ -41,76 +53,104 @@ class SubredditViewer(object):
             else:
                 curses.beep()
 
-def draw_submission(win, data, top_down=True):
-    "Draw a submission in the given window."
+    def draw(self):
 
-    win.erase()
-    n_rows, n_cols = win.getmaxyx()
-    n_cols -= 1  # Leave space for the cursor on the first line
+        # Refresh window bounds incase the screen has been resized
+        self._rows, self._cols = self.stdscr.getmaxyx()
+        self._title_window = self.stdscr.derwin(1, self._cols, 0, 0)
+        self._content_window = self.stdscr.derwin(1, 0)
 
-    # Handle the case where the window is not large enough to fit the data.
-    # Print as many rows as possible, either from the top down of the bottom up.
-    valid_rows = range(0, n_rows)
-    offset = 0 if top_down else -(data['n_rows'] - n_rows)
+        self.draw_header()
+        self.draw_content()
+        self.draw_cursor()
 
-    n_title = len(data['split_title'])
-    for row, text in enumerate(data['split_title'], start=offset):
+    def move_cursor(self, delta):
+
+        self.remove_cursor()
+        self._cursor_index += delta
+        self.draw_cursor()
+
+    def draw_cursor(self):
+
+        window = self._sub_windows[self._cursor_index]
+        rows, _ = window.getmaxyx()
+        for row in xrange(rows):
+            window.chgat(row, 0, 1, curses.A_REVERSE)
+        window.refresh()
+
+    def remove_cursor(self):
+
+        window = self._sub_windows[self._cursor_index]
+        rows, _ = window.getmaxyx()
+        for row in xrange(rows):
+            window.chgat(row, 0, 1, curses.A_NORMAL)
+        window.refresh()
+
+    def draw_content(self):
+        """
+        Loop through submissions and fill up the content page.
+        """
+
+        rows, cols = self._content_window.getmaxyx()
+        self._content_window.erase()
+        self._sub_windows = []
+
+        row = 0
+        for data in self.gen.iterate(self._page_index, cols-1):
+            n_rows = min(rows-row, data['n_rows'])
+            window = self._content_window.derwin(n_rows, cols, row, 0)
+            self.draw_submission(window, data)
+            self._sub_windows.append(window)
+            row += n_rows + 1
+            if row >= rows:
+                break
+
+        self._content_window.refresh()
+
+    def draw_header(self):
+
+        self._title_window.erase()
+        self._title_window.addnstr(0, 0, self.gen.display_name, self._cols)
+        self._title_window.refresh()
+
+    @staticmethod
+    def draw_submission(win, data, top_down=True):
+
+        n_rows, n_cols = win.getmaxyx()
+        n_cols -= 1  # Leave space for the cursor in the first column
+
+        # Handle the case where the window is not large enough to fit the data.
+        valid_rows = range(0, n_rows)
+        offset = 0 if top_down else -(data['n_rows'] - n_rows)
+
+        n_title = len(data['split_title'])
+        for row, text in enumerate(data['split_title'], start=offset):
+            if row in valid_rows:
+                win.addstr(row, 1, text)
+
+        row = n_title
         if row in valid_rows:
-            win.addstr(row, 1, text)
+            win.addnstr(row, 1, '{url}'.format(**data), n_cols)
 
-    row = n_title
-    if row in valid_rows:
-        win.addnstr(row, 1, '{url}'.format(**data), n_cols)
+        row = n_title + 1
+        if row in valid_rows:
+            win.addnstr(row, 1, '{created} {comments} {score}'.format(**data), n_cols)
 
-    row = n_title + 1
-    if row in valid_rows:
-        win.addnstr(row, 1, '{created} {comments} {score}'.format(**data), n_cols)
+        row = n_title + 2
+        if row in valid_rows:
+            win.addnstr(row, 1, '{author} {subreddit}'.format(**data), n_cols)
 
-    row = n_title + 2
-    if row in valid_rows:
-        win.addnstr(row, 1, '{author} {subreddit}'.format(**data), n_cols)
-
-
-def focus_submission(win):
-    "Add a vertical column of reversed background on left side of the window"
-
-    n_rows, n_cols = win.getmaxyx()
-    for row in xrange(n_rows):
-        win.chgat(row, 0, 1, curses.A_REVERSE)
+        # DEBUG
+        win.refresh()
 
 
-def unfocus_submission(win):
-    "Clear the vertical column"
-
-    n_rows, n_cols = win.getmaxyx()
-    for row in xrange(n_rows):
-        win.chgat(row, 0, 1, curses.A_NORMAL)
-
-
-def draw_subreddit(stdscr):
+def main(stdscr):
 
     r = praw.Reddit(user_agent='reddit terminal viewer (rtv) v0.0')
     generator = SubredditGenerator(r)
-
-    main_window = stdscr.derwin(1, 0)
-    main_window.erase()
-    max_rows, max_cols = main_window.getmaxyx()
-
-    submission_i, current_row = 0, 0
-    for data in generator.iterate(submission_i, max_cols-1):
-        n_rows = min(max_rows-current_row, data['n_rows'])
-        sub_window = main_window.derwin(n_rows, max_cols, current_row, 0)
-        draw_submission(sub_window, data)
-        focus_submission(sub_window)
-        sub_window.refresh()  # Debugging
-        current_row += n_rows + 1
-        if current_row >= max_rows:
-            break
-
-    main_window.refresh()
-    main_window.getch()
+    viewer = SubredditViewer(stdscr, generator)
+    viewer.loop()
 
 if __name__ == '__main__':
 
-    #draw_submissions(None)
-    curses.wrapper(draw_subreddit)
+    curses.wrapper(main)

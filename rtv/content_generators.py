@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-
+import textwrap
 
 def clean(unicode_string):
     """
@@ -84,8 +84,10 @@ class SubredditGenerator(object):
 
         if subreddit is None:
             self._submissions = self.r.get_front_page(limit=None)
+            self.display_name = 'Front Page'
         else:
             self._submissions = self.r.get_subreddit(subreddit, limit=None)
+            self.display_name = self._submissions.display_name
 
         self._submission_data = []
 
@@ -118,7 +120,7 @@ class SubredditGenerator(object):
         assert(index >= 0)
 
         while index >= len(self._submission_data):
-            data = self._strip_praw_submission(self._submissions.next())
+            data = self.strip_praw_submission(self._submissions.next())
             self._submission_data.append(data)
 
         # Modifies the original dict, faster than copying
