@@ -147,7 +147,8 @@ class SubmissionDisplay(object):
                   getattr(comment, 'author') else '[deleted]')
         date = utils.humanize_timestamp(comment.created_utc)
         score = submission.score
-        color_attr = curses.color_pair(curses.COLOR_BLUE)
+        color_attr = (curses.color_pair(curses.COLOR_GREEN) if comment.is_author
+                      else curses.color_pair(curses.COLOR_BLUE))
         win.addstr(0, 1, author, curses.A_UNDERLINE|color_attr)
         win.addstr(' {} points {}'.format(score, date), curses.A_BOLD)
 
@@ -174,7 +175,7 @@ class SubmissionDisplay(object):
 
         return True
 
-    def draw_page(self, submission, index=-1):
+    def draw_page(self, submission, comments, index=-1):
         """
         Draw the comments page starting at the given index.
         """
@@ -190,13 +191,14 @@ class SubmissionDisplay(object):
             self._draw_post(submission)
             index += 1
 
-        comments = utils.flatten_tree(submission.comments)
         for comment in comments[index:]:
             try:
                 if isinstance(comment, praw.objects.MoreComments):
                     self._draw_more_comments(comment)
                 else:
+                    comment.is_author = (comment.author == submission.author)
                     self._draw_comment(comment)
+
             except OOBError:
                 break
 
@@ -211,9 +213,9 @@ class SubmissionController(object):
         self._index = -1
         self._cursor = 0
 
-    def loop(self, submission):
+    def loop(self, submission, comments):
 
-        self.display.draw_page(submission, self._index)
+        self.display.draw_page(submission, comments, self._index)
 
         while True:
 
@@ -227,17 +229,20 @@ class SubmissionController(object):
             else:
                 continue
 
-            self.display.draw_page(submission, self._index)
+            self.display.draw_page(submission, comments, self._index)
 
 
 if __name__ == '__main__':
 
     r = praw.Reddit(user_agent='reddit terminal viewer (rtv) v0.0')
+    r.config.decode_html_entities = True
     submissions = r.get_subreddit('all').get_hot(limit=5)
     submission = submissions.next()
+    comments = utils.flatten_tree(submission.comments)
+
 
     with utils.curses_session() as stdscr:
 
         display = SubmissionDisplay(stdscr)
         controller = SubmissionController(display)
-        controller.loop(submission)
+        controller.loop(submission, comments)
