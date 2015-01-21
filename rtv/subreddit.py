@@ -2,22 +2,44 @@ import praw
 import textwrap
 import curses
 
-from utils import humanize_timestamp, flatten_tree, clean
+from content_generators import SubredditGenerator
 
-def strip_submission(sub):
-    "Grab info from a PRAW submission and prep for display."
+class SubredditViewer(object):
 
-    out = {}
-    out['title'] = clean(sub.title)
-    out['created'] = humanize_timestamp(sub.created_utc, long=False)
-    out['comments'] = '{} comments'.format(sub.num_comments)
-    out['score'] = '{} pts'.format(sub.score)
-    out['author'] = clean(sub.author.name)
-    out['subreddit'] = clean(sub.subreddit.url)
-    out['url'] = ('(selfpost)' if sub.url.startswith('http://www.reddit.com/r/')
-                  else clean(sub.url))
+    def __init__(self, stdscr):
+        self.stdscr = stdscr
 
-    return out
+    def loop(self):
+
+        while True:
+            cmd = self.stdscr.getch()
+
+            # Move cursor up one submission
+            if cmd == curses.KEY_UP:
+                self.move_cursor(-1)
+
+            # Move cursor down one submission
+            elif cmd == curses.KEY_DOWN:
+                self.move_cursor(1)
+
+            # View submission
+            elif cmd in (curses.KEY_RIGHT, ord(' ')):
+                pass
+
+            # Enter edit mode to change subreddit
+            elif cmd == ord('/'):
+                pass
+
+            # Refresh page
+            elif cmd in (curses.KEY_F5, ord('r')):
+                pass
+
+            # Quit
+            elif cmd == ord('q'):
+                pass
+
+            else:
+                curses.beep()
 
 def draw_submission(win, data, top_down=True):
     "Draw a submission in the given window."
@@ -49,46 +71,26 @@ def draw_submission(win, data, top_down=True):
         win.addnstr(row, 1, '{author} {subreddit}'.format(**data), n_cols)
 
 
-class SubmissionGenerator(object):
-    """
-    Grab submissions from PRAW lazily and store in an internal list for repeat
-    access.
-    """
+def focus_submission(win):
+    "Add a vertical column of reversed background on left side of the window"
 
-    def __init__(self):
+    n_rows, n_cols = win.getmaxyx()
+    for row in xrange(n_rows):
+        win.chgat(row, 0, 1, curses.A_REVERSE)
 
-        self.r = praw.Reddit(user_agent='reddit terminal viewer (rtv) v0.0')
-        self.r.config.decode_html_entities = True
 
-        self._submissions = self.r.get_front_page(limit=None)
-        self._submission_data = []
+def unfocus_submission(win):
+    "Clear the vertical column"
 
-    def get(self, index, n_cols):
-
-        assert(index >= 0)
-
-        while index >= len(self._submission_data):
-            data = strip_submission(self._submissions.next())
-            self._submission_data.append(data)
-
-        # Modifies the original original dict, faster than copying
-        out = self._submission_data[index]
-        out['split_title'] = textwrap.wrap(out['title'], width=n_cols)
-        out['n_rows'] = len(out['split_title']) + 3
-
-        return out
-
-    def iterate(self, index, n_cols):
-
-        while True:
-            yield self.get(index, n_cols)
-            index += 1
-
+    n_rows, n_cols = win.getmaxyx()
+    for row in xrange(n_rows):
+        win.chgat(row, 0, 1, curses.A_NORMAL)
 
 
 def draw_subreddit(stdscr):
 
-    generator = SubmissionGenerator()
+    r = praw.Reddit(user_agent='reddit terminal viewer (rtv) v0.0')
+    generator = SubredditGenerator(r)
 
     main_window = stdscr.derwin(1, 0)
     main_window.erase()
@@ -99,6 +101,7 @@ def draw_subreddit(stdscr):
         n_rows = min(max_rows-current_row, data['n_rows'])
         sub_window = main_window.derwin(n_rows, max_cols, current_row, 0)
         draw_submission(sub_window, data)
+        focus_submission(sub_window)
         sub_window.refresh()  # Debugging
         current_row += n_rows + 1
         if current_row >= max_rows:

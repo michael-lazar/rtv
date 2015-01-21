@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 import curses
 from contextlib import contextmanager
 
@@ -52,52 +51,3 @@ def curses_session():
             curses.nocbreak()
             curses.endwin()
 
-def humanize_timestamp(utc_timestamp, long=True):
-    """
-    Convert a utc timestamp into a human readable time relative to now.
-    """
-    timedelta = datetime.utcnow() - datetime.utcfromtimestamp(utc_timestamp)
-    seconds = int(timedelta.total_seconds())
-    if seconds < 60:
-        return 'moments ago' if long else '0min'
-    minutes = seconds / 60
-    if minutes < 60:
-        return '%d' % minutes + (' minutes ago' if long else 'min')
-    hours = minutes / 60
-    if hours < 24:
-        return '%d' % hours + (' hours ago' if long else 'hr')
-    days = hours / 24
-    if days < 30:
-        return '%d' % days + (' days ago' if long else 'day')
-    months = days / 30.4
-    if months < 12:
-        return '%d' % months + (' months ago' if long else 'month')
-    years = months / 12
-    return '%d' % years + (' years ago' if long else 'yr')
-
-
-def flatten_tree(tree):
-    """
-    Flatten a PRAW comment tree while preserving the nested level of each
-    comment via the `nested_level` attribute.
-    """
-
-    stack = tree[:]
-    for item in stack:
-        item.nested_level = 0
-
-    retval = []
-    while stack:
-        item = stack.pop(0)
-        nested = getattr(item, 'replies', None)
-        if nested:
-            for n in nested:
-                n.nested_level = item.nested_level + 1
-            stack[0:0] = nested
-        retval.append(item)
-    return retval
-
-
-def clean(unicode_string):
-    "Convert unicode string into ascii-safe characters."
-    return unicode_string.encode('ascii', 'replace').replace('\\', '')
