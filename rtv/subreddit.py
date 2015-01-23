@@ -3,6 +3,7 @@ import textwrap
 import curses
 
 from content_generators import SubredditGenerator
+from utils import curses_session
 
 class SubredditViewer(object):
 
@@ -65,6 +66,13 @@ class SubredditViewer(object):
         self.draw_cursor()
 
     def move_cursor(self, delta):
+
+        new_index = self._cursor_index + delta
+        if new_index < 0:
+            curses.flash()
+            return
+
+
 
         self.remove_cursor()
         self._cursor_index += delta
@@ -144,13 +152,14 @@ class SubredditViewer(object):
         win.refresh()
 
 
-def main(stdscr):
+def main():
 
-    r = praw.Reddit(user_agent='reddit terminal viewer (rtv) v0.0')
-    generator = SubredditGenerator(r)
-    viewer = SubredditViewer(stdscr, generator)
-    viewer.loop()
+    with curses_session() as stdscr:
+        r = praw.Reddit(user_agent='reddit terminal viewer (rtv) v0.0')
+        generator = SubredditGenerator(r)
+        viewer = SubredditViewer(stdscr, generator)
+        viewer.loop()
 
 if __name__ == '__main__':
 
-    curses.wrapper(main)
+    main()

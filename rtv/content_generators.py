@@ -1,6 +1,15 @@
 from datetime import datetime, timedelta
 import textwrap
 
+def strip_subreddit_url(permalink):
+    """
+    Grab the subreddit from the permalink because submission.subreddit.url
+    makes a seperate call to the API.
+    """
+
+    subreddit = clean(permalink).split('/')[4]
+    return '/r/{}'.format(subreddit)
+
 def clean(unicode_string):
     """
     Convert unicode string into ascii-safe characters.
@@ -106,7 +115,7 @@ class SubredditGenerator(object):
         data['comments'] = '{} comments'.format(sub.num_comments)
         data['score'] = '{} pts'.format(sub.score)
         data['author'] = clean(sub.author.name)
-        data['subreddit'] = clean(sub.subreddit.url)
+        data['subreddit'] = strip_subreddit_url(sub.permalink)
         data['url'] = ('(selfpost)' if is_selfpost(sub.url) else clean(sub.url))
 
         return data
