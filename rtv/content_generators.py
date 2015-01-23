@@ -1,6 +1,14 @@
 from datetime import datetime, timedelta
 import textwrap
 
+def clean(unicode_string):
+    """
+    Convert unicode string into ascii-safe characters.
+    """
+
+    return unicode_string.encode('ascii', 'replace').replace('\\', '')
+
+
 def strip_subreddit_url(permalink):
     """
     Grab the subreddit from the permalink because submission.subreddit.url
@@ -9,13 +17,6 @@ def strip_subreddit_url(permalink):
 
     subreddit = clean(permalink).split('/')[4]
     return '/r/{}'.format(subreddit)
-
-def clean(unicode_string):
-    """
-    Convert unicode string into ascii-safe characters.
-    """
-
-    return unicode_string.encode('ascii', 'replace').replace('\\', '')
 
 
 def humanize_timestamp(utc_timestamp, verbose=False):
@@ -139,8 +140,8 @@ class SubredditGenerator(object):
 
         return data
 
-    def iterate(self, index, n_cols):
+    def iterate(self, index, step, n_cols):
 
         while True:
             yield self.get(index, n_cols)
-            index += 1
+            index += step

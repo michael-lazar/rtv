@@ -19,6 +19,8 @@ class SubredditViewer(object):
         self._title_window = None
         self._content_window = None
         self._sub_windows = []
+        self._direction = True
+        self._window_is_partial = None
 
         self.draw()
 
@@ -29,11 +31,17 @@ class SubredditViewer(object):
 
             # Move cursor up one submission
             if cmd == curses.KEY_UP:
-                self.move_cursor(-1)
+                if self._direction:
+                    self.move_cursor_backward()
+                else:
+                    self.move_cursor_forward()
 
             # Move cursor down one submission
             elif cmd == curses.KEY_DOWN:
-                self.move_cursor(1)
+                if self._direction:
+                    self.move_cursor_forward()
+                else:
+                    self.move_cursor_backward()
 
             # View submission
             elif cmd in (curses.KEY_RIGHT, ord(' ')):
@@ -65,17 +73,44 @@ class SubredditViewer(object):
         self.draw_content()
         self.draw_cursor()
 
-    def move_cursor(self, delta):
-
-        new_index = self._cursor_index + delta
-        if new_index < 0:
-            curses.flash()
-            return
-
-
+    def move_cursor_forward(self):
 
         self.remove_cursor()
-        self._cursor_index += delta
+
+        last_index = len(self._sub_windows) - 1
+
+        self._cursor_index += 1
+        if self._cursor_index == last_index:
+
+            if self._direction:
+                self._page_index = self._page_index + self._cursor_index
+                self._cursor_index = 0
+                self._direction = False
+            else:
+                self._page_index = self._page_index - self._cursor_index
+                self._cursor_index = 0
+                self._direction = True
+            self.draw_content()
+
+        self.draw_cursor()
+
+    def move_cursor_backward(self):
+
+        self.remove_cursor()
+
+        last_index = len(self._sub_windows) - 1
+
+        self._cursor_index -= 1
+        if self._cursor_index < 0:
+
+            if self._direction:
+                self._page_index -= 1
+                self._cursor_index = 0
+            else:
+                self._page_index += 1
+                self._cursor_index = 0
+            self.draw_content()
+
         self.draw_cursor()
 
     def draw_cursor(self):
@@ -103,16 +138,30 @@ class SubredditViewer(object):
         self._content_window.erase()
         self._sub_windows = []
 
-        row = 0
-        for data in self.gen.iterate(self._page_index, cols-1):
-            n_rows = min(rows-row, data['n_rows'])
-            window = self._content_window.derwin(n_rows, cols, row, 0)
-            self.draw_submission(window, data)
-            self._sub_windows.append(window)
-            row += n_rows + 1
-            if row >= rows:
-                break
+        if self._direction:
+            row = 0
+            for data in self.gen.iterate(self._page_index, 1, cols-1):
+                available_rows = (rows - row)
+                n_rows = min(available_rows, data['n_rows'])
+                window = self._content_window.derwin(n_rows, cols, row, 0)
+                self.draw_submission(window, data, self._direction)
+                self._sub_windows.append(window)
+                row += (n_rows + 1)
+                if row >= rows:
+                    break
+        else:
+            row = rows
+            for data in self.gen.iterate(self._page_index, -1, cols-1):
+                available_rows = row
+                n_rows = min(available_rows, data['n_rows'])
+                window = self._content_window.derwin(n_rows, cols, row-n_rows, 0)
+                self.draw_submission(window, data, self._direction)
+                self._sub_windows.append(window)
+                row -= (n_rows + 1)
+                if row < 0:
+                    break
 
+        self._window_is_partial = (available_rows < data['n_rows'])
         self._content_window.refresh()
 
     def draw_header(self):
@@ -122,34 +171,31 @@ class SubredditViewer(object):
         self._title_window.refresh()
 
     @staticmethod
-    def draw_submission(win, data, top_down=True):
+    def draw_submission(win, data, direction):
 
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1  # Leave space for the cursor in the first column
 
         # Handle the case where the window is not large enough to fit the data.
         valid_rows = range(0, n_rows)
-        offset = 0 if top_down else -(data['n_rows'] - n_rows)
+        offset = 0 if direction else -(data['n_rows'] - n_rows)
 
         n_title = len(data['split_title'])
         for row, text in enumerate(data['split_title'], start=offset):
             if row in valid_rows:
                 win.addstr(row, 1, text)
 
-        row = n_title
+        row = n_title + offset
         if row in valid_rows:
-            win.addnstr(row, 1, '{url}'.format(**data), n_cols)
+            win.addnstr(row, 1, '{url}'.format(**data), n_cols-1)
 
-        row = n_title + 1
+        row = n_title + offset + 1
         if row in valid_rows:
-            win.addnstr(row, 1, '{created} {comments} {score}'.format(**data), n_cols)
+            win.addnstr(row, 1, '{created} {comments} {score}'.format(**data), n_cols-1)
 
-        row = n_title + 2
+        row = n_title + offset + 2
         if row in valid_rows:
-            win.addnstr(row, 1, '{author} {subreddit}'.format(**data), n_cols)
-
-        # DEBUG
-        win.refresh()
+            win.addnstr(row, 1, '{author} {subreddit}'.format(**data), n_cols-1)
 
 
 def main():
