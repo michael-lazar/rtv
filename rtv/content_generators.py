@@ -83,7 +83,7 @@ class SubredditGenerator(object):
     list for repeat access.
     """
 
-    def __init__(self, reddit_session, subreddit=None):
+    def __init__(self, reddit_session, subreddit='front'):
         """
         params:
             session (praw.Reddit): Active reddit connection
@@ -92,14 +92,12 @@ class SubredditGenerator(object):
         self.r = reddit_session
         self.r.config.decode_html_entities = True
 
-        if subreddit is None:
-            self._submissions = self.r.get_front_page(limit=None)
-            self.display_name = 'Front Page'
-        else:
-            self._submissions = self.r.get_subreddit(subreddit, limit=None)
-            self.display_name = self._submissions.display_name
+        self.subreddit = None
+        self.display_name = None
+        self._submissions = None
+        self._submission_data = None
 
-        self._submission_data = []
+        self.reset(subreddit=subreddit)
 
     @staticmethod
     def strip_praw_submission(sub):
@@ -152,3 +150,20 @@ class SubredditGenerator(object):
         while True:
             yield self.get(index, n_cols)
             index += step
+
+    def reset(self, subreddit=None):
+        """
+        Clear the internal list and fetch a new submission generator. Switch
+        to the specified subreddit if one is given.
+        """
+
+        # Fall back to the internal value if nothing is passed in.
+        self.subreddit = subreddit or self.subreddit
+        self._submission_data = []
+
+        if self.subreddit == 'front':
+            self._submissions = self.r.get_front_page(limit=None)
+            self.display_name = 'Front Page'
+        else:
+            self._submissions = self.r.get_subreddit(self.subreddit, limit=None)
+            self.display_name = self._submissions.display_name
