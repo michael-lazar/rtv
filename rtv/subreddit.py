@@ -16,14 +16,9 @@ class SubredditViewer(BaseViewer):
         self._n_cols = None
         self._title_window = None
         self._content_window = None
-        self._sub_windows = None
 
         super(SubredditViewer, self).__init__(subreddit_content)
         self.draw()
-
-    @property
-    def n_subwindows(self):
-        return len(self._sub_windows)
 
     def loop(self):
         while True:
@@ -72,7 +67,7 @@ class SubredditViewer(BaseViewer):
 
         n_rows, n_cols = self._content_window.getmaxyx()
         self._content_window.erase()
-        self._sub_windows = []
+        self._subwindows = []
 
         page_index, cursor_index, inverted = self.nav.position
         step = self.nav.step
@@ -87,7 +82,7 @@ class SubredditViewer(BaseViewer):
             start = current_row - window_rows if inverted else current_row
             window = self._content_window.derwin(window_rows, n_cols, start, 0)
             self.draw_submission(window, data, inverted)
-            self._sub_windows.append(window)
+            self._subwindows.append(window)
             available_rows -= (window_rows + 1)  # Add one for the blank line
             current_row += step * (window_rows + 1)
             if available_rows <= 0:

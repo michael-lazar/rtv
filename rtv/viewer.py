@@ -74,12 +74,9 @@ class BaseViewer(object):
 
         self.content = content
         self.nav = Navigator(self.content.get)
+        self._subwindows = None
 
     def draw_content(self):
-        raise NotImplementedError
-
-    @property
-    def n_subwindows(self):
         raise NotImplementedError
 
     def move_cursor_up(self):
@@ -89,16 +86,18 @@ class BaseViewer(object):
         self._move_cursor(1)
 
     def add_cursor(self):
+        curses.curs_set(2)
         self._edit_cursor(curses.A_REVERSE)
 
     def remove_cursor(self):
+        curses.curs_set(0)
         self._edit_cursor(curses.A_NORMAL)
 
     def _move_cursor(self, direction):
 
         self.remove_cursor()
 
-        valid, redraw = self.nav.move(direction, self.n_subwindows)
+        valid, redraw = self.nav.move(direction, len(self._subwindows))
         if not valid:
             curses.flash()
         if redraw:
@@ -108,8 +107,11 @@ class BaseViewer(object):
 
     def _edit_cursor(self, attribute):
 
-        window = self._sub_windows[self.nav.cursor_index]
+        window = self._subwindows[self.nav.cursor_index]
+
         n_rows, _ = window.getmaxyx()
         for row in xrange(n_rows):
             window.chgat(row, 0, 1, attribute)
+        window.move(0, 0)
+
         window.refresh()

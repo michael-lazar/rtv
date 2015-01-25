@@ -50,4 +50,3 @@ def curses_session():
             curses.echo()
             curses.nocbreak()
             curses.endwin()
-
