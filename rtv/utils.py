@@ -1,5 +1,50 @@
-import curses
+from datetime import datetime, timedelta
 from contextlib import contextmanager
+
+import curses
+
+def clean(unicode_string):
+    """
+    Convert unicode string into ascii-safe characters.
+    """
+
+    return unicode_string.encode('ascii', 'replace').replace('\\', '')
+
+
+def strip_subreddit_url(permalink):
+    """
+    Grab the subreddit from the permalink because submission.subreddit.url
+    makes a seperate call to the API.
+    """
+
+    subreddit = clean(permalink).split('/')[4]
+    return '/r/{}'.format(subreddit)
+
+
+def humanize_timestamp(utc_timestamp, verbose=False):
+    """
+    Convert a utc timestamp into a human readable relative-time.
+    """
+
+    timedelta = datetime.utcnow() - datetime.utcfromtimestamp(utc_timestamp)
+
+    seconds = int(timedelta.total_seconds())
+    if seconds < 60:
+        return 'moments ago' if verbose else '0min'
+    minutes = seconds / 60
+    if minutes < 60:
+        return ('%d minutes ago' % minutes) if verbose else ('%dmin' % minutes)
+    hours = minutes / 60
+    if hours < 24:
+        return ('%d hours ago' % hours) if verbose else ('%dhr' % hours)
+    days = hours / 24
+    if days < 30:
+        return ('%d days ago' % days) if verbose else ('%dday' % days)
+    months = days / 30.4
+    if months < 12:
+        return ('%d months ago' % months) if verbose else ('%dmonth' % months)
+    years = months / 12
+    return ('%d years ago' % years) if verbose else ('%dyr' % years)
 
 @contextmanager
 def curses_session():
@@ -31,7 +76,7 @@ def curses_session():
             pass
 
         # Hide blinking cursor
-        # curses.curs_set(0)
+        curses.curs_set(0)
 
         # Initialize color pairs - colored text on the default background
         curses.init_pair(1, curses.COLOR_RED, -1)

@@ -2,7 +2,7 @@ import curses
 
 class Navigator(object):
     """
-    Handles cursor movement and screen paging.
+    Handles math behind cursor movement and screen paging.
     """
 
     def __init__(
@@ -67,13 +67,14 @@ class Navigator(object):
 
 class BaseViewer(object):
     """
-    Base terminal viewer incorperating a cursor to navigate content
+    Base terminal viewer incorperates a cursor to navigate content
     """
 
     def __init__(self, content):
 
         self.content = content
         self.nav = Navigator(self.content.get)
+
         self._subwindows = None
 
     def draw_content(self):

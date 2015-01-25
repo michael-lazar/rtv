@@ -2,7 +2,7 @@ import praw
 import textwrap
 import curses
 
-from content_generators import SubredditGenerator
+from content_generators import SubredditContent
 from utils import curses_session
 from viewer import BaseViewer
 
@@ -11,16 +11,14 @@ class SubredditViewer(BaseViewer):
     def __init__(self, stdscr, subreddit_content):
 
         self.stdscr = stdscr
-
-        self._n_rows = None
-        self._n_cols = None
         self._title_window = None
         self._content_window = None
 
         super(SubredditViewer, self).__init__(subreddit_content)
-        self.draw()
 
     def loop(self):
+
+        self.draw()
         while True:
             cmd = self.stdscr.getch()
 
@@ -44,6 +42,9 @@ class SubredditViewer(BaseViewer):
                 self.stdscr.clear()
                 self.draw()
 
+            elif cmd == curses.KEY_RESIZE:
+                self.draw()
+
             # Quit
             elif cmd == ord('q'):
                 break
@@ -54,8 +55,8 @@ class SubredditViewer(BaseViewer):
     def draw(self):
 
         # Refresh window bounds incase the screen has been resized
-        self._n_rows, self._n_cols = self.stdscr.getmaxyx()
-        self._title_window = self.stdscr.derwin(1, self._n_cols, 0, 0)
+        n_rows, n_cols = self.stdscr.getmaxyx()
+        self._title_window = self.stdscr.derwin(1, n_cols, 0, 0)
         self._content_window = self.stdscr.derwin(1, 0)
 
         self.draw_header()
@@ -79,7 +80,7 @@ class SubredditViewer(BaseViewer):
         # and draw upwards.
         current_row = n_rows if inverted else 0
         available_rows = n_rows
-        for data in self.content.iterate(page_index, step, n_cols-1):
+        for data in self.content.iterate(page_index, step, n_cols-2):
             window_rows = min(available_rows, data['n_rows'])
             start = current_row - window_rows if inverted else current_row
             window = self._content_window.derwin(window_rows, n_cols, start, 0)
@@ -94,9 +95,11 @@ class SubredditViewer(BaseViewer):
 
     def draw_header(self):
 
+        n_rows, n_cols = self._title_window.getmaxyx()
         sub_name = self.content.display_name
+
         self._title_window.erase()
-        self._title_window.addnstr(0, 0, sub_name, self._n_cols)
+        self._title_window.addnstr(0, 0, sub_name, n_cols)
         self._title_window.refresh()
 
     @staticmethod
@@ -130,7 +133,7 @@ def main():
 
     with curses_session() as stdscr:
         r = praw.Reddit(user_agent='reddit terminal viewer (rtv) v0.0')
-        generator = SubredditGenerator(r)
+        generator = SubredditContent(r)
         viewer = SubredditViewer(stdscr, generator)
         viewer.loop()
 

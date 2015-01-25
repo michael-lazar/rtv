@@ -1,51 +1,8 @@
-from datetime import datetime, timedelta
 import textwrap
 
-def clean(unicode_string):
-    """
-    Convert unicode string into ascii-safe characters.
-    """
+from utils import clean, strip_subreddit_url, humanize_timestamp
 
-    return unicode_string.encode('ascii', 'replace').replace('\\', '')
-
-
-def strip_subreddit_url(permalink):
-    """
-    Grab the subreddit from the permalink because submission.subreddit.url
-    makes a seperate call to the API.
-    """
-
-    subreddit = clean(permalink).split('/')[4]
-    return '/r/{}'.format(subreddit)
-
-
-def humanize_timestamp(utc_timestamp, verbose=False):
-    """
-    Convert a utc timestamp into a human readable relative-time.
-    """
-
-    timedelta = datetime.utcnow() - datetime.utcfromtimestamp(utc_timestamp)
-
-    seconds = int(timedelta.total_seconds())
-    if seconds < 60:
-        return 'moments ago' if verbose else '0min'
-    minutes = seconds / 60
-    if minutes < 60:
-        return ('%d minutes ago' % minutes) if verbose else ('%dmin' % minutes)
-    hours = minutes / 60
-    if hours < 24:
-        return ('%d hours ago' % hours) if verbose else ('%dhr' % hours)
-    days = hours / 24
-    if days < 30:
-        return ('%d days ago' % days) if verbose else ('%dday' % days)
-    months = days / 30.4
-    if months < 12:
-        return ('%d months ago' % months) if verbose else ('%dmonth' % months)
-    years = months / 12
-    return ('%d years ago' % years) if verbose else ('%dyr' % years)
-
-
-class SubmissionGenerator(object):
+class SubmissionContent(object):
     """
     Facilitates navigating through the comments in a PRAW submission.
     """
@@ -53,6 +10,8 @@ class SubmissionGenerator(object):
     def __init__(self, submission):
 
         self.submission = submission
+        self._comments = []
+
 
     @staticmethod
     def flatten_comments(submission):
@@ -76,8 +35,24 @@ class SubmissionGenerator(object):
             retval.append(item)
         return retval
 
+    @staticmethod
+    def strip_praw_comment(comment):
+        """
+        Parse through a submission comment and return a dict with data ready to
+        be displayed through the terminal.
+        """
 
-class SubredditGenerator(object):
+        data = {}
+        data['body'] = clean(comment.body)
+        data['created'] = humanize_timestamp(comment.created_utc)
+        data['score'] = '{} pts'.format(comment.score)
+        data['author'] = (clean(comment.author.name) if
+                          getattr(comment, 'author') else '[deleted]')
+
+        return data
+
+
+class SubredditContent(object):
     """
     Grabs a subreddit from PRAW and lazily stores submissions to an internal
     list for repeat access.
@@ -110,10 +85,12 @@ class SubredditGenerator(object):
 
         data = {}
         data['title'] = clean(sub.title)
+        data['text'] = clean(sub.selftext)
         data['created'] = humanize_timestamp(sub.created_utc)
         data['comments'] = '{} comments'.format(sub.num_comments)
         data['score'] = '{} pts'.format(sub.score)
-        data['author'] = clean(sub.author.name)
+        data['author'] = (clean(sub.author.name) if getattr(sub, 'author')
+                          else '[deleted]')
         data['subreddit'] = strip_subreddit_url(sub.permalink)
         data['url'] = ('(selfpost)' if is_selfpost(sub.url) else clean(sub.url))
 
