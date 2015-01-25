@@ -44,7 +44,7 @@ class SubredditViewer(BaseViewer):
 
             # Quit
             elif cmd == ord('q'):
-                pass
+                break
 
             else:
                 curses.beep()

@@ -31,7 +31,7 @@ def curses_session():
             pass
 
         # Hide blinking cursor
-        curses.curs_set(0)
+        # curses.curs_set(0)
 
         # Initialize color pairs - colored text on the default background
         curses.init_pair(1, curses.COLOR_RED, -1)
