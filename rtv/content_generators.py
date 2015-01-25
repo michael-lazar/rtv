@@ -121,17 +121,24 @@ class SubredditGenerator(object):
 
         return data
 
-    def get(self, index, n_cols):
+    def get(self, index, n_cols=70):
         """
         Grab the `i`th submission, with the title field formatted to fit inside
         of a window of width `n`
         """
 
-        assert(index >= 0)
+        if index < 0:
+            raise IndexError
 
         while index >= len(self._submission_data):
-            data = self.strip_praw_submission(self._submissions.next())
-            self._submission_data.append(data)
+
+            try:
+                submission = self._submissions.next()
+            except StopIteration:
+                raise IndexError
+            else:
+                data = self.strip_praw_submission(submission)
+                self._submission_data.append(data)
 
         # Modifies the original dict, faster than copying
         data = self._submission_data[index]
