@@ -104,14 +104,30 @@ class SubmissionViewer(BaseViewer):
     def draw_submission(win, data):
 
         n_rows, n_cols = win.getmaxyx()
-        n_cols -= 1
-
-        # Don't print anything if there is not enough room
+        n_cols -= 3 # one for each side of the border + one for offset
+        # Don't print at all if there is not enough room to fit the whole sub
         if data['n_rows'] > n_rows:
             return
 
-        win.border()
+        for row, text in enumerate(data['split_title'], start=1):
+            win.addnstr(row, 1, text, n_cols)
 
+        text = '{} {} {}'.format(data['author'], data['created'], data['subreddit'])
+        row = len(data['split_title']) + 1
+        win.addnstr(row, 1, text, n_cols)
+
+        row = len(data['split_title']) + 2
+        win.addnstr(row, 1, data['url'], n_cols)
+
+        offset = len(data['split_title']) + 3
+        for row, text in enumerate(data['split_text'], start=offset):
+            win.addnstr(row, 1, text, n_cols)
+
+        text = '{} {}'.format(data['score'], data['comments'])
+        row = len(data['split_title']) + len(data['split_text']) + 3
+        win.addnstr(row, 1, text, n_cols)
+
+        win.border()
 
 def main():
 

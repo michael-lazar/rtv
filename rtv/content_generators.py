@@ -181,8 +181,9 @@ class SubmissionContent(BaseContent):
 
         elif index == -1:
             data = self._submission_data
-            data['split_title'] = textwrap.wrap(data['title'], width=n_cols)
-            data['n_rows'] = len(data['split_title']) + 3
+            data['split_title'] = textwrap.wrap(data['title'], width=n_cols-2)
+            data['split_text'] = textwrap.wrap(data['text'], width=n_cols-2)
+            data['n_rows'] = (len(data['split_title']) + len(data['split_text']) + 5)
             data['offset'] = 0
 
         else:
