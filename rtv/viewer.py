@@ -84,7 +84,7 @@ class BaseViewer(object):
 
         self._subwindows = None
 
-    def draw_content(self):
+    def draw(self):
         raise NotImplementedError
 
     def move_cursor_up(self):
@@ -105,6 +105,12 @@ class BaseViewer(object):
         while self.stdscr.getch() != -1:
             continue
         self.stdscr.nodelay(0)
+
+    def refresh_content(self):
+        self.add_loading()
+        self.content.reset()
+        self.stdscr.clear()
+        self.draw()
 
     def add_loading(self):
         "Draw a `loading` popup dialog in the center of the screen"

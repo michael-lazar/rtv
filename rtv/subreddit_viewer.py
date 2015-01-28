@@ -35,9 +35,7 @@ class SubredditViewer(BaseViewer):
 
             # Refresh page
             elif cmd in (curses.KEY_F5, ord('r')):
-                self.content.reset()
-                self.stdscr.clear()
-                self.draw()
+                self.refresh_content()
 
             elif cmd == curses.KEY_RESIZE:
                 self.draw()
