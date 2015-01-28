@@ -1,5 +1,6 @@
 import praw
 import curses
+import sys
 
 from content_generators import SubmissionContent, SubredditContent
 from utils import curses_session
@@ -37,9 +38,13 @@ class SubmissionViewer(BaseViewer):
             elif cmd == curses.KEY_RESIZE:
                 self.draw()
 
+            # Go back
+            elif cmd in (ord('b'), curses.KEY_LEFT):
+                break
+
             # Quit
             elif cmd == ord('q'):
-                break
+                sys.exit()
 
             else:
                 curses.beep()

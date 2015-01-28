@@ -106,6 +106,20 @@ class BaseViewer(object):
             continue
         self.stdscr.nodelay(0)
 
+    def add_loading(self):
+        "Draw a `loading` popup dialog in the center of the screen"
+
+        message = 'Loading...'
+
+        n_rows, n_cols = self.stdscr.getmaxyx()
+        win_rows, win_cols = 3, len(message)+2
+        start_row = (n_rows - win_rows) / 2
+        start_col = (n_cols - win_cols) / 2
+        window = self.stdscr.derwin(win_rows, win_cols, start_row, start_col)
+        window.border()
+        window.addstr(1, 1, message)
+        window.refresh()
+
     def draw_header(self):
 
         n_rows, n_cols = self._header_window.getmaxyx()

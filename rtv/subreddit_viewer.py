@@ -1,10 +1,12 @@
 import praw
 import textwrap
 import curses
+import sys
 
-from content_generators import SubredditContent
-from utils import curses_session
+from content_generators import SubredditContent, SubmissionContent
+from submission_viewer import SubmissionViewer
 from viewer import BaseViewer
+from utils import curses_session
 
 class SubredditViewer(BaseViewer):
 
@@ -24,7 +26,8 @@ class SubredditViewer(BaseViewer):
 
             # View submission
             elif cmd in (curses.KEY_RIGHT, ord(' ')):
-                pass
+                self.open_submission()
+                self.draw()
 
             # Enter edit mode to change subreddit
             elif cmd == ord('/'):
@@ -41,10 +44,20 @@ class SubredditViewer(BaseViewer):
 
             # Quit
             elif cmd == ord('q'):
-                break
+                sys.exit()
 
             else:
                 curses.beep()
+
+    def open_submission(self):
+        "Select the current submission to view posts"
+
+        self.add_loading()
+
+        submission = self.content.get(self.nav.absolute_index)['object']
+        content = SubmissionContent(submission)
+        viewer = SubmissionViewer(self.stdscr, content)
+        viewer.loop()
 
     def draw(self):
 
