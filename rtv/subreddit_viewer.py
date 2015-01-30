@@ -6,7 +6,7 @@ import sys
 from content_generators import SubredditContent, SubmissionContent
 from submission_viewer import SubmissionViewer
 from viewer import BaseViewer
-from utils import curses_session, text_input
+from utils import curses_session, text_input, LoadScreen
 
 class SubredditViewer(BaseViewer):
 
@@ -49,10 +49,10 @@ class SubredditViewer(BaseViewer):
 
     def refresh_content(self, subreddit=None):
 
-        self.add_loading()
         self.nav.page_index, self.nav.cursor_index = 0, 0
         self.nav.inverted = False
-        self.content.reset(subreddit=subreddit)
+        with LoadScreen(self.stdscr):
+            self.content.reset(subreddit=subreddit)
         self.stdscr.clear()
         self.draw()
 
@@ -73,10 +73,9 @@ class SubredditViewer(BaseViewer):
     def open_submission(self):
         "Select the current submission to view posts"
 
-        self.add_loading()
-
-        submission = self.content.get(self.nav.absolute_index)['object']
-        content = SubmissionContent(submission)
+        with LoadScreen(self.stdscr):
+            submission = self.content.get(self.nav.absolute_index)['object']
+            content = SubmissionContent(submission)
         viewer = SubmissionViewer(self.stdscr, content)
         viewer.loop()
 

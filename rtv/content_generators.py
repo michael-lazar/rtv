@@ -3,6 +3,7 @@ import praw
 
 from utils import clean, strip_subreddit_url, humanize_timestamp
 
+# TODO: rename, ... container?
 class BaseContent(object):
 
     @staticmethod

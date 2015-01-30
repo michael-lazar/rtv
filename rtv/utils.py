@@ -1,11 +1,74 @@
-from datetime import datetime, timedelta
-from contextlib import contextmanager
 import os
 import curses
+import time
+import threading
 from curses import textpad
+from datetime import datetime, timedelta
+from contextlib import contextmanager
 
 class EscapePressed(Exception):
     pass
+
+
+class LoadScreen(object):
+
+    def __init__(
+            self,
+            stdscr,
+            message='Downloading',
+            trail='...',
+            delay=0.5,
+            interval=0.4):
+
+        self._stdscr = stdscr
+        self.message = message
+        self.delay = delay
+        self.interval=interval
+        self.trail = trail
+
+        message_len = len(self.message) + len(self.trail)
+        n_rows, n_cols = stdscr.getmaxyx()
+        s_row = (n_rows - 2) / 2
+        s_col = (n_cols - message_len - 1) / 2
+        self.window = stdscr.derwin(3, message_len+2, s_row, s_col)
+
+        self._animator = threading.Thread(target=self.animate)
+        self._animator.daemon = True
+        self._is_running = None
+
+    def __enter__(self):
+
+        self._is_running = True
+        self._animator.start()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+
+        self._is_running = False
+        self._animator.join()
+
+        del self.window
+        self._stdscr.refresh()
+
+    def animate(self):
+
+        # Delay before popping up the animation to avoid flashing
+        # the screen if the load time is effectively zero
+        start = time.time()
+        while (time.time() - start) < self.delay:
+            if not self._is_running:
+                return
+
+        while True:
+            for i in xrange(len(self.trail)+1):
+
+                if not self._is_running:
+                    return
+
+                self.window.erase()
+                self.window.border()
+                self.window.addstr(1, 1, self.message + self.trail[:i])
+                self.window.refresh()
+                time.sleep(self.interval)
 
 
 def clean(unicode_string):

@@ -3,7 +3,7 @@ import curses
 import sys
 
 from content_generators import SubmissionContent, SubredditContent
-from utils import curses_session
+from utils import curses_session, LoadScreen
 from viewer import BaseViewer
 
 class SubmissionViewer(BaseViewer):
@@ -50,7 +50,8 @@ class SubmissionViewer(BaseViewer):
     def refresh_content(self):
 
         self.add_loading()
-        self.content.reset()
+        with LoadScreen(self.stdscr):
+            self.content.reset()
         self.stdscr.clear()
         self.draw()
 
@@ -138,17 +139,3 @@ class SubmissionViewer(BaseViewer):
         win.addnstr(row, 1, text, n_cols)
 
         win.border()
-
-def main():
-
-    with curses_session() as stdscr:
-        r = praw.Reddit(user_agent='reddit terminal viewer (rtv) v0.0')
-        submission = SubredditContent(r).get(0)['object']
-        generator = SubmissionContent(submission)
-
-        viewer = SubmissionViewer(stdscr, generator)
-        viewer.loop()
-
-if __name__ == '__main__':
-
-    main()
