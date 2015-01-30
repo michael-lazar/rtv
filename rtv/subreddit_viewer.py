@@ -3,7 +3,7 @@ import textwrap
 import curses
 import sys
 
-from content_generators import SubredditContent, SubmissionContent
+from content import SubredditContainer, SubmissionContainer
 from submission_viewer import SubmissionViewer
 from viewer import BaseViewer
 from utils import curses_session, text_input, LoadScreen
@@ -75,7 +75,7 @@ class SubredditViewer(BaseViewer):
 
         with LoadScreen(self.stdscr):
             submission = self.content.get(self.nav.absolute_index)['object']
-            content = SubmissionContent(submission)
+            content = SubmissionContainer(submission)
         viewer = SubmissionViewer(self.stdscr, content)
         viewer.loop()
 

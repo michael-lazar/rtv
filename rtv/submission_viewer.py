@@ -2,7 +2,7 @@ import praw
 import curses
 import sys
 
-from content_generators import SubmissionContent, SubredditContent
+from content import SubmissionContainer, SubredditContainer
 from utils import curses_session, LoadScreen
 from viewer import BaseViewer
 
@@ -33,6 +33,10 @@ class SubmissionViewer(BaseViewer):
             elif cmd in (curses.KEY_F5, ord('r')):
                 self.refresh_content()
 
+            # Show / hide a comment tree
+            elif cmd == ord(' '):
+                self.toggle_comment()
+
             elif cmd == curses.KEY_RESIZE:
                 self.draw()
 
@@ -46,6 +50,11 @@ class SubmissionViewer(BaseViewer):
 
             else:
                 curses.beep()
+
+    def toggle_comment(self):
+
+        self.content.toggle(self.nav.absolute_index)
+        self.draw()
 
     def refresh_content(self):
 
@@ -68,6 +77,9 @@ class SubmissionViewer(BaseViewer):
     def draw_item(self, win, data, inverted=False):
 
         if data['type'] == 'MoreComments':
+            self.draw_more_comments(win, data)
+
+        elif data['type'] == 'HiddenComment':
             self.draw_more_comments(win, data)
 
         elif data['type'] == 'Comment':

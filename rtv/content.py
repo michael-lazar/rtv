@@ -3,8 +3,7 @@ import praw
 
 from utils import clean, strip_subreddit_url, humanize_timestamp
 
-# TODO: rename, ... container?
-class BaseContent(object):
+class ContainerBase(object):
 
     @staticmethod
     def strip_praw_comment(comment):
@@ -19,6 +18,7 @@ class BaseContent(object):
 
         if isinstance(comment, praw.objects.MoreComments):
             data['type'] = 'MoreComments'
+            data['count'] = comment.count
             data['body'] = 'More comments [{}]'.format(comment.count)
         else:
             data['type'] = 'Comment'
@@ -55,30 +55,7 @@ class BaseContent(object):
 
         return data
 
-    @staticmethod
-    def flatten_comments(comments, initial_level=0):
-        """
-        Flatten a PRAW comment tree while preserving the nested level of each
-        comment via the `nested_level` attribute.
-        """
-
-        stack = comments[:]
-        for item in stack:
-            item.nested_level = initial_level
-
-        retval = []
-        while stack:
-            item = stack.pop(0)
-            nested = getattr(item, 'replies', None)
-            if nested:
-                for n in nested:
-                    n.nested_level = item.nested_level + 1
-                stack[0:0] = nested
-            retval.append(item)
-        return retval
-
-
-class SubredditContent(BaseContent):
+class SubredditContainer(ContainerBase):
     """
     Grabs a subreddit from PRAW and lazily stores submissions to an internal
     list for repeat access.
@@ -152,7 +129,7 @@ class SubredditContent(BaseContent):
             self.display_name = '/r/' + self.subreddit
 
 
-class SubmissionContent(BaseContent):
+class SubmissionContainer(ContainerBase):
     """
     Grabs a submission from PRAW and lazily store comments to an internal
     list for repeat access and to allow expanding and hiding comments.
@@ -166,7 +143,6 @@ class SubmissionContent(BaseContent):
 
         self.display_name = None
         self._submission_data = None
-        self._comments = None
         self._comment_data = None
 
         self.reset()
@@ -201,10 +177,52 @@ class SubmissionContent(BaseContent):
 
         return data
 
-    def iterate(self, index, step, n_cols):
+    def toggle(self, index):
+        """
+        Toggle the state of the object at the given index.
+
+        If it is a comment, pack it into a hidden comment.
+        If it is a hidden comment, unpack it.
+        If it is more comments, load the comments.
+        """
+        data = self.get(index)
+
+        if data['type'] == 'Comment':
+            cache = [data]
+            count = 1
+            for d in self.iterate(index+1, 1):
+                if d['level'] <= data['level']:
+                    break
+
+                count += d.get('count', 1)
+                cache.append(d)
+
+            comment = {}
+            comment['type'] = 'HiddenComment'
+            comment['cache'] = cache
+            comment['count'] = count
+            comment['level'] = data['level']
+            comment['body'] = 'Hidden [{}]'.format(count)
+            self._comment_data[index:index+len(cache)] = [comment]
+
+        elif data['type'] == 'HiddenComment':
+
+            self._comment_data[index:index+1] = data['cache']
+
+        elif data['type'] == 'MoreComments':
+
+            comments = data['object'].comments()
+            comments = self.flatten_comments(comments, root_level=data['level'])
+            comment_data = [self.strip_praw_comment(c) for c in comments]
+            self._comment_data[index:index+1] = comment_data
+
+        else:
+            raise ValueError('% type not recognized' % data['type'])
+
+    def iterate(self, index, step, n_cols=70):
 
         while True:
-            yield self.get(index, n_cols)
+            yield self.get(index, n_cols=n_cols)
             index += step
 
     def reset(self):
@@ -216,5 +234,27 @@ class SubmissionContent(BaseContent):
         self._submission_data = self.strip_praw_submission(self.submission)
 
         self.display_name = self._submission_data['permalink']
-        self._comments = self.flatten_comments(self.submission.comments)
-        self._comment_data = [self.strip_praw_comment(c) for c in self._comments]
+        comments = self.flatten_comments(self.submission.comments)
+        self._comment_data = [self.strip_praw_comment(c) for c in comments]
+
+    @staticmethod
+    def flatten_comments(comments, root_level=0):
+        """
+        Flatten a PRAW comment tree while preserving the nested level of each
+        comment via the `nested_level` attribute.
+        """
+
+        stack = comments[:]
+        for item in stack:
+            item.nested_level = root_level
+
+        retval = []
+        while stack:
+            item = stack.pop(0)
+            nested = getattr(item, 'replies', None)
+            if nested:
+                for n in nested:
+                    n.nested_level = item.nested_level + 1
+                stack[0:0] = nested
+            retval.append(item)
+        return retval
