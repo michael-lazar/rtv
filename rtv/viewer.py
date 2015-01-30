@@ -83,6 +83,7 @@ class BaseViewer(object):
         self.nav = Navigator(self.content.get, **kwargs)
 
         self._subwindows = None
+        self.add_loading()
 
     def draw(self):
         raise NotImplementedError
@@ -106,12 +107,6 @@ class BaseViewer(object):
             continue
         self.stdscr.nodelay(0)
 
-    def refresh_content(self):
-        self.add_loading()
-        self.content.reset()
-        self.stdscr.clear()
-        self.draw()
-
     def add_loading(self):
         "Draw a `loading` popup dialog in the center of the screen"
 
@@ -132,7 +127,6 @@ class BaseViewer(object):
 
         self._header_window.erase()
         self._header_window.addnstr(0, 0, self.content.display_name, n_cols-1)
-        self._header_window.refresh()
 
     def draw_content(self):
         """

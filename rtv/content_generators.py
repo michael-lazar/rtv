@@ -16,7 +16,6 @@ class BaseContent(object):
         data['object'] = comment
         data['level'] = comment.nested_level
 
-
         if isinstance(comment, praw.objects.MoreComments):
             data['type'] = 'MoreComments'
             data['body'] = 'More comments [{}]'.format(comment.count)
@@ -147,8 +146,9 @@ class SubredditContent(BaseContent):
             self._submissions = self.r.get_front_page(limit=None)
             self.display_name = 'Front Page'
         else:
-            self._submissions = self.r.get_subreddit(self.subreddit, limit=None)
-            self.display_name = self._submissions.display_name
+            sub = self.r.get_subreddit(self.subreddit)
+            self._submissions = sub.get_hot()
+            self.display_name = '/r/' + self.subreddit
 
 
 class SubmissionContent(BaseContent):

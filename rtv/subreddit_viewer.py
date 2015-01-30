@@ -6,7 +6,7 @@ import sys
 from content_generators import SubredditContent, SubmissionContent
 from submission_viewer import SubmissionViewer
 from viewer import BaseViewer
-from utils import curses_session
+from utils import curses_session, text_input
 
 class SubredditViewer(BaseViewer):
 
@@ -31,7 +31,7 @@ class SubredditViewer(BaseViewer):
 
             # Enter edit mode to change subreddit
             elif cmd == ord('/'):
-                pass
+                self.prompt_subreddit()
 
             # Refresh page
             elif cmd in (curses.KEY_F5, ord('r')):
@@ -46,6 +46,29 @@ class SubredditViewer(BaseViewer):
 
             else:
                 curses.beep()
+
+    def refresh_content(self, subreddit=None):
+
+        self.add_loading()
+        self.nav.page_index, self.nav.cursor_index = 0, 0
+        self.nav.inverted = False
+        self.content.reset(subreddit=subreddit)
+        self.stdscr.clear()
+        self.draw()
+
+    def prompt_subreddit(self):
+
+        prompt = 'Enter Subreddit: /r/'
+        n_rows, n_cols = self.stdscr.getmaxyx()
+        self.stdscr.addstr(n_rows-1, 0, prompt)
+        self.stdscr.refresh()
+        window = self.stdscr.derwin(n_rows-1, len(prompt))
+
+        out = text_input(window)
+        if out is None:
+            self.draw()
+        else:
+            self.refresh_content(subreddit=out)
 
     def open_submission(self):
         "Select the current submission to view posts"

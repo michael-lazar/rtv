@@ -37,7 +37,7 @@ class SubmissionViewer(BaseViewer):
                 self.draw()
 
             # Go back
-            elif cmd in (ord('b'), curses.KEY_LEFT):
+            elif cmd in (ord('b'), 27, curses.KEY_LEFT):
                 break
 
             # Quit
@@ -46,6 +46,13 @@ class SubmissionViewer(BaseViewer):
 
             else:
                 curses.beep()
+
+    def refresh_content(self):
+
+        self.add_loading()
+        self.content.reset()
+        self.stdscr.clear()
+        self.draw()
 
     def draw(self):
 

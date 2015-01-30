@@ -1,7 +1,12 @@
 from datetime import datetime, timedelta
 from contextlib import contextmanager
-
+import os
 import curses
+from curses import textpad
+
+class EscapePressed(Exception):
+    pass
+
 
 def clean(unicode_string):
     """
@@ -46,10 +51,51 @@ def humanize_timestamp(utc_timestamp, verbose=False):
     years = months / 12
     return ('%d years ago' % years) if verbose else ('%dyr' % years)
 
+
+def validate(ch):
+    "Filters characters for special key sequences"
+    if ch == 27:
+        raise EscapePressed
+    return ch
+
+def text_input(window):
+    """
+    Transform a window into a text box that will accept user input and loop
+    until an escape sequence is entered.
+
+    If enter is pressed, return the input text as a string.
+    If escape is pressed, return None.
+    """
+
+    window.clear()
+    curses.curs_set(2)
+    textbox = textpad.Textbox(window, insert_mode=True)
+
+    # Wrapping in an exception block so that we can distinguish when the user
+    # hits the return character from when the user tries to back out of the
+    # input.
+    try:
+        out = textbox.edit(validate=validate)
+        out = out.strip()
+    except EscapePressed:
+        out = None
+
+    curses.curs_set(0)
+    return out
+
 @contextmanager
 def curses_session():
 
     try:
+        # Curses must wait for some time after the Escape key is pressed to see
+        # check if it is the beginning of an escape sequence indicating a
+        # special key. The default wait time is 1 second, which means that
+        # getch() will not return the escape key (ord(27)), until a full second
+        # after it has been pressed. Turn this down to 25 ms, which is close to
+        # what VIM uses.
+        # http://stackoverflow.com/questions/27372068
+        os.environ['ESCDELAY'] = '25'
+
         # Initialize curses
         stdscr = curses.initscr()
 
