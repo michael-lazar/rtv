@@ -115,15 +115,3 @@ class SubredditViewer(BaseViewer):
         row = n_title + offset + 2
         if row in valid_rows:
             win.addnstr(row, 1, '{author} {subreddit}'.format(**data), n_cols)
-
-def main():
-
-    with curses_session() as stdscr:
-        r = praw.Reddit(user_agent='reddit terminal viewer (rtv) v0.0')
-        generator = SubredditContent(r)
-        viewer = SubredditViewer(stdscr, generator)
-        viewer.loop()
-
-if __name__ == '__main__':
-
-    main()
