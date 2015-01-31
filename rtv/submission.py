@@ -2,16 +2,15 @@ import praw
 import curses
 import sys
 
-from content import SubmissionContainer, SubredditContainer
-from utils import curses_session, LoadScreen
-from viewer import BaseViewer
+from page import BasePage
+from utils import curses_session
 
-class SubmissionViewer(BaseViewer):
+class SubmissionPage(BasePage):
 
     def __init__(self, stdscr, content):
 
         page_index, cursor_index = -1, 1
-        super(SubmissionViewer, self).__init__(
+        super(SubmissionPage, self).__init__(
             stdscr, content,
             page_index=page_index, cursor_index=cursor_index)
 
@@ -58,9 +57,7 @@ class SubmissionViewer(BaseViewer):
 
     def refresh_content(self):
 
-        self.add_loading()
-        with LoadScreen(self.stdscr):
-            self.content.reset()
+        self.content.reset()
         self.stdscr.clear()
         self.draw()
 

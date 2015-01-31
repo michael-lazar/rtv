@@ -3,11 +3,41 @@ import curses
 import time
 import threading
 from curses import textpad
-from datetime import datetime, timedelta
 from contextlib import contextmanager
 
 class EscapePressed(Exception):
     pass
+
+def text_input(window):
+    """
+    Transform a window into a text box that will accept user input and loop
+    until an escape sequence is entered.
+
+    If enter is pressed, return the input text as a string.
+    If escape is pressed, return None.
+    """
+
+    window.clear()
+    curses.curs_set(2)
+    textbox = textpad.Textbox(window, insert_mode=True)
+
+    def validate(ch):
+        "Filters characters for special key sequences"
+        if ch == 27:
+            raise EscapePressed
+        return ch
+
+    # Wrapping in an exception block so that we can distinguish when the user
+    # hits the return character from when the user tries to back out of the
+    # input.
+    try:
+        out = textbox.edit(validate=validate)
+        out = out.strip()
+    except EscapePressed:
+        out = None
+
+    curses.curs_set(0)
+    return out
 
 
 class LoadScreen(object):
@@ -26,17 +56,13 @@ class LoadScreen(object):
         self.interval=interval
         self.trail = trail
 
-        message_len = len(self.message) + len(self.trail)
-        n_rows, n_cols = stdscr.getmaxyx()
-        s_row = (n_rows - 2) / 2
-        s_col = (n_cols - message_len - 1) / 2
-        self.window = stdscr.derwin(3, message_len+2, s_row, s_col)
-
-        self._animator = threading.Thread(target=self.animate)
-        self._animator.daemon = True
+        self._animator = None
         self._is_running = None
 
     def __enter__(self):
+
+        self._animator = threading.Thread(target=self.animate)
+        self._animator.daemon = True
 
         self._is_running = True
         self._animator.start()
@@ -46,105 +72,36 @@ class LoadScreen(object):
         self._is_running = False
         self._animator.join()
 
-        del self.window
-        self._stdscr.refresh()
-
     def animate(self):
 
-        # Delay before popping up the animation to avoid flashing
-        # the screen if the load time is effectively zero
+        # Delay before starting animation to avoid wasting resources if the
+        # wait time is very short
         start = time.time()
         while (time.time() - start) < self.delay:
             if not self._is_running:
                 return
 
+        message_len = len(self.message) + len(self.trail)
+        n_rows, n_cols = self._stdscr.getmaxyx()
+        s_row = (n_rows - 2) / 2
+        s_col = (n_cols - message_len - 1) / 2
+        window = self._stdscr.derwin(3, message_len+2, s_row, s_col)
+
         while True:
             for i in xrange(len(self.trail)+1):
 
                 if not self._is_running:
+                    # TODO: figure out why this isn't removing the screen
+                    del window
+                    self._stdscr.refresh()
                     return
 
-                self.window.erase()
-                self.window.border()
-                self.window.addstr(1, 1, self.message + self.trail[:i])
-                self.window.refresh()
+                window.erase()
+                window.border()
+                window.addstr(1, 1, self.message + self.trail[:i])
+                window.refresh()
                 time.sleep(self.interval)
 
-
-def clean(unicode_string):
-    """
-    Convert unicode string into ascii-safe characters.
-    """
-
-    return unicode_string.encode('ascii', 'replace').replace('\\', '')
-
-
-def strip_subreddit_url(permalink):
-    """
-    Grab the subreddit from the permalink because submission.subreddit.url
-    makes a seperate call to the API.
-    """
-
-    subreddit = clean(permalink).split('/')[4]
-    return '/r/{}'.format(subreddit)
-
-
-def humanize_timestamp(utc_timestamp, verbose=False):
-    """
-    Convert a utc timestamp into a human readable relative-time.
-    """
-
-    timedelta = datetime.utcnow() - datetime.utcfromtimestamp(utc_timestamp)
-
-    seconds = int(timedelta.total_seconds())
-    if seconds < 60:
-        return 'moments ago' if verbose else '0min'
-    minutes = seconds / 60
-    if minutes < 60:
-        return ('%d minutes ago' % minutes) if verbose else ('%dmin' % minutes)
-    hours = minutes / 60
-    if hours < 24:
-        return ('%d hours ago' % hours) if verbose else ('%dhr' % hours)
-    days = hours / 24
-    if days < 30:
-        return ('%d days ago' % days) if verbose else ('%dday' % days)
-    months = days / 30.4
-    if months < 12:
-        return ('%d months ago' % months) if verbose else ('%dmonth' % months)
-    years = months / 12
-    return ('%d years ago' % years) if verbose else ('%dyr' % years)
-
-
-def validate(ch):
-    "Filters characters for special key sequences"
-    if ch == 27:
-        raise EscapePressed
-    return ch
-
-def text_input(window):
-    """
-    Transform a window into a text box that will accept user input and loop
-    until an escape sequence is entered.
-
-    If enter is pressed, return the input text as a string.
-    If escape is pressed, return None.
-    """
-
-    window.clear()
-    curses.curs_set(2)
-    textbox = textpad.Textbox(window, insert_mode=True)
-
-    # Wrapping in an exception block so that we can distinguish when the user
-    # hits the return character from when the user tries to back out of the
-    # input.
-    try:
-        out = textbox.edit(validate=validate)
-        out = out.strip()
-    except EscapePressed:
-        out = None
-
-    curses.curs_set(0)
-    return out
 
 @contextmanager
 def curses_session():

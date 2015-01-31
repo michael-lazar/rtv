@@ -70,7 +70,7 @@ class Navigator(object):
             return True
 
 
-class BaseViewer(object):
+class BasePage(object):
     """
     Base terminal viewer incorperates a cursor to navigate content
     """

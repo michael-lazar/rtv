@@ -1,9 +1,79 @@
 import textwrap
+from datetime import datetime
+from contextlib import contextmanager
+
 import praw
 
-from utils import clean, strip_subreddit_url, humanize_timestamp
+def clean(unicode_string):
+    """
+    Convert unicode string into ascii-safe characters.
+    """
 
-class ContainerBase(object):
+    return unicode_string.encode('ascii', 'replace').replace('\\', '')
+
+
+def strip_subreddit_url(permalink):
+    """
+    Grab the subreddit from the permalink because submission.subreddit.url
+    makes a seperate call to the API.
+    """
+
+    subreddit = clean(permalink).split('/')[4]
+    return '/r/{}'.format(subreddit)
+
+
+def humanize_timestamp(utc_timestamp, verbose=False):
+    """
+    Convert a utc timestamp into a human readable relative-time.
+    """
+
+    timedelta = datetime.utcnow() - datetime.utcfromtimestamp(utc_timestamp)
+
+    seconds = int(timedelta.total_seconds())
+    if seconds < 60:
+        return 'moments ago' if verbose else '0min'
+    minutes = seconds / 60
+    if minutes < 60:
+        return ('%d minutes ago' % minutes) if verbose else ('%dmin' % minutes)
+    hours = minutes / 60
+    if hours < 24:
+        return ('%d hours ago' % hours) if verbose else ('%dhr' % hours)
+    days = hours / 24
+    if days < 30:
+        return ('%d days ago' % days) if verbose else ('%dday' % days)
+    months = days / 30.4
+    if months < 12:
+        return ('%d months ago' % months) if verbose else ('%dmonth' % months)
+    years = months / 12
+    return ('%d years ago' % years) if verbose else ('%dyr' % years)
+
+@contextmanager
+def default_loader(self):
+    yield
+
+class BaseContent(object):
+
+    @staticmethod
+    def flatten_comments(comments, root_level=0):
+        """
+        Flatten a PRAW comment tree while preserving the nested level of each
+        comment via the `nested_level` attribute.
+        """
+
+        stack = comments[:]
+        for item in stack:
+            item.nested_level = root_level
+
+        retval = []
+        while stack:
+            item = stack.pop(0)
+            nested = getattr(item, 'replies', None)
+            if nested:
+                for n in nested:
+                    n.nested_level = item.nested_level + 1
+                stack[0:0] = nested
+            retval.append(item)
+        return retval
 
     @staticmethod
     def strip_praw_comment(comment):
@@ -55,97 +125,43 @@ class ContainerBase(object):
 
         return data
 
-class SubredditContainer(ContainerBase):
+
+class SubmissionContent(BaseContent):
     """
-    Grabs a subreddit from PRAW and lazily stores submissions to an internal
+    Grab a submission from PRAW and lazily store comments to an internal
     list for repeat access.
     """
 
-    def __init__(self, reddit_session, subreddit='front'):
-        """
-        params:
-            session (praw.Reddit): Active reddit connection
-            subreddit (str): Subreddit to connect to, defaults to front page.
-        """
-        self.r = reddit_session
-        self.r.config.decode_html_entities = True
+    def __init__(
+            self,
+            submission,
+            loader=default_loader(),
+            indent_size=2,
+            max_indent_level=4):
 
-        self.subreddit = None
-        self.display_name = None
-        self._submissions = None
-        self._submission_data = None
-
-        self.reset(subreddit=subreddit)
-
-    def get(self, index, n_cols=70):
-        """
-        Grab the `i`th submission, with the title field formatted to fit inside
-        of a window of width `n`
-        """
-
-        if index < 0:
-            raise IndexError
-
-        while index >= len(self._submission_data):
-
-            try:
-                submission = self._submissions.next()
-            except StopIteration:
-                raise IndexError
-            else:
-                data = self.strip_praw_submission(submission)
-                self._submission_data.append(data)
-
-        # Modifies the original dict, faster than copying
-        data = self._submission_data[index]
-        data['split_title'] = textwrap.wrap(data['title'], width=n_cols)
-        data['n_rows'] = len(data['split_title']) + 3
-        data['offset'] = 0
-
-        return data
-
-    def iterate(self, index, step, n_cols):
-
-        while True:
-            yield self.get(index, n_cols)
-            index += step
-
-    def reset(self, subreddit=None):
-        """
-        Clear the internal list and fetch a new submission generator. Switch
-        to the specified subreddit if one is given.
-        """
-
-        # Fall back to the internal value if nothing is passed in.
-        self.subreddit = subreddit or self.subreddit
-        self._submission_data = []
-
-        if self.subreddit == 'front':
-            self._submissions = self.r.get_front_page(limit=None)
-            self.display_name = 'Front Page'
-        else:
-            sub = self.r.get_subreddit(self.subreddit)
-            self._submissions = sub.get_hot()
-            self.display_name = '/r/' + self.subreddit
-
-
-class SubmissionContainer(ContainerBase):
-    """
-    Grabs a submission from PRAW and lazily store comments to an internal
-    list for repeat access and to allow expanding and hiding comments.
-    """
-
-    def __init__(self, submission, indent_size=2, max_indent_level=4):
-
-        self.submission = submission
         self.indent_size = indent_size
         self.max_indent_level = max_indent_level
+        self._loader = loader
 
-        self.display_name = None
-        self._submission_data = None
-        self._comment_data = None
+        self._submission_data = self.strip_praw_submission(submission)
+        self.name = self._submission_data['permalink']
+        with loader:
+            comments = self.flatten_comments(submission.comments)
+        self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
-        self.reset()
+    @classmethod
+    def from_url(
+            cls,
+            r,
+            url,
+            loader=default_loader(),
+            indent_size=2,
+            max_indent_level=4):
+
+        with loader:
+            submission = r.get_submission(url)
+
+        return cls(submission, loader, indent_size, max_indent_level)
 
     def get(self, index, n_cols=70):
         """
@@ -211,7 +227,8 @@ class SubmissionContainer(ContainerBase):
 
         elif data['type'] == 'MoreComments':
 
-            comments = data['object'].comments()
+            with self._loader:
+                comments = data['object'].comments()
             comments = self.flatten_comments(comments, root_level=data['level'])
             comment_data = [self.strip_praw_comment(c) for c in comments]
             self._comment_data[index:index+1] = comment_data
@@ -225,36 +242,63 @@ class SubmissionContainer(ContainerBase):
             yield self.get(index, n_cols=n_cols)
             index += step
 
-    def reset(self):
+
+class SubredditContent(BaseContent):
+    """
+    Grabs a subreddit from PRAW and lazily stores submissions to an internal
+    list for repeat access.
+    """
+
+    def __init__(self, name, submission_generator, loader=default_loader()):
+
+        self.name = name
+        self._loader = loader
+        self._submissions = submission_generator
+        self._submission_data = []
+
+    @classmethod
+    def from_name(cls, r, name, loader=default_loader()):
+
+        if name == 'front':
+            return cls('Front Page', r.get_front_page(limit=None), loader)
+
+        if name == 'all':
+            sub = r.get_subreddit(name)
+        else:
+            sub = r.get_subreddit(name, fetch=True)
+
+        return cls('/r/'+sub.display_name, sub.get_hot(limit=None), loader)
+
+    def get(self, index, n_cols=70):
         """
-        Fetch changes to the submission from PRAW and clear the internal list.
+        Grab the `i`th submission, with the title field formatted to fit inside
+        of a window of width `n`
         """
 
-        self.submission.refresh()
-        self._submission_data = self.strip_praw_submission(self.submission)
+        if index < 0:
+            raise IndexError
 
-        self.display_name = self._submission_data['permalink']
-        comments = self.flatten_comments(self.submission.comments)
-        self._comment_data = [self.strip_praw_comment(c) for c in comments]
+        while index >= len(self._submission_data):
 
-    @staticmethod
-    def flatten_comments(comments, root_level=0):
-        """
-        Flatten a PRAW comment tree while preserving the nested level of each
-        comment via the `nested_level` attribute.
-        """
+            try:
+                with self._loader:
+                    submission = self._submissions.next()
+            except StopIteration:
+                raise IndexError
+            else:
+                data = self.strip_praw_submission(submission)
+                self._submission_data.append(data)
 
-        stack = comments[:]
-        for item in stack:
-            item.nested_level = root_level
+        # Modifies the original dict, faster than copying
+        data = self._submission_data[index]
+        data['split_title'] = textwrap.wrap(data['title'], width=n_cols)
+        data['n_rows'] = len(data['split_title']) + 3
+        data['offset'] = 0
 
-        retval = []
-        while stack:
-            item = stack.pop(0)
-            nested = getattr(item, 'replies', None)
-            if nested:
-                for n in nested:
-                    n.nested_level = item.nested_level + 1
-                stack[0:0] = nested
-            retval.append(item)
-        return retval
+        return data
+
+    def iterate(self, index, step, n_cols):
+
+        while True:
+            yield self.get(index, n_cols)
+            index += step
