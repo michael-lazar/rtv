@@ -92,8 +92,8 @@ class LoadScreen(object):
             for i in xrange(len(trail)+1):
 
                 if not self._is_running:
-                    # TODO: figure out why this isn't removing the screen
-                    del window
+                    window.clear()
+                    window = None
                     self._stdscr.refresh()
                     return
 
