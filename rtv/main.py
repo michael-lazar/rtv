@@ -1,7 +1,7 @@
 import argparse
 import praw
-from utils import curses_session, LoadScreen
-from content import SubredditContent
+
+from utils import curses_session
 from subreddit import SubredditPage
 
 parser = argparse.ArgumentParser(description='Reddit Terminal Viewer')
@@ -13,17 +13,15 @@ group.add_argument('-p', dest='password', help='reddit password')
 
 def main(args):
 
-    r = praw.Reddit(user_agent='reddit terminal viewer v0.0')
-    r.config.decode_html_entities = True
+    reddit = praw.Reddit(user_agent='reddit terminal viewer v0.0')
+    reddit.config.decode_html_entities = True
 
     if args.username and args.password:
-        r.login(args.username, args.password)
+        reddit.login(args.username, args.password)
 
     with curses_session() as stdscr:
 
-        loader = LoadScreen(stdscr)
-        content = SubredditContent(r, subreddit=args.subreddit, loader=loader)
-        page = SubredditPage(stdscr, content)
+        page = SubredditPage(stdscr, reddit, args.subreddit)
         page.loop()
 
 if __name__ == '__main__':

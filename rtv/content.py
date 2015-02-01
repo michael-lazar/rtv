@@ -135,7 +135,7 @@ class SubmissionContent(BaseContent):
     def __init__(
             self,
             submission,
-            loader=default_loader(),
+            loader=default_loader,
             indent_size=2,
             max_indent_level=4):
 
@@ -143,25 +143,34 @@ class SubmissionContent(BaseContent):
         self.max_indent_level = max_indent_level
         self._loader = loader
 
+        self._submissin = submission
         self._submission_data = self.strip_praw_submission(submission)
         self.name = self._submission_data['permalink']
-        with loader:
+        with self._loader():
             comments = self.flatten_comments(submission.comments)
         self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
     @classmethod
     def from_url(
             cls,
-            r,
+            reddit,
             url,
-            loader=default_loader(),
+            loader=default_loader,
             indent_size=2,
             max_indent_level=4):
 
-        with loader:
-            submission = r.get_submission(url)
+        with loader():
+            submission = reddit.get_submission(url)
 
         return cls(submission, loader, indent_size, max_indent_level)
+
+    def reset(self):
+
+        self._submissin.refresh()
+        self._submission_data = self.strip_praw_submission(submission)
+        self.name = self._submission_data['permalink']
+        comments = self.flatten_comments(submission.comments)
+        self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
     def get(self, index, n_cols=70):
         """
@@ -227,7 +236,7 @@ class SubmissionContent(BaseContent):
 
         elif data['type'] == 'MoreComments':
 
-            with self._loader:
+            with self._loader():
                 comments = data['object'].comments()
             comments = self.flatten_comments(comments, root_level=data['level'])
             comment_data = [self.strip_praw_comment(c) for c in comments]
@@ -249,23 +258,24 @@ class SubredditContent(BaseContent):
     list for repeat access.
     """
 
-    def __init__(self, name, submission_generator, loader=default_loader()):
+    def __init__(self, name, submissions, loader=default_loader):
 
         self.name = name
         self._loader = loader
-        self._submissions = submission_generator
+        self._submissions = submissions
         self._submission_data = []
 
     @classmethod
-    def from_name(cls, r, name, loader=default_loader()):
+    def from_name(cls, reddit, name, loader=default_loader):
 
         if name == 'front':
-            return cls('Front Page', r.get_front_page(limit=None), loader)
+            return cls('Front Page', reddit.get_front_page(limit=None), loader)
 
         if name == 'all':
-            sub = r.get_subreddit(name)
+            sub = reddit.get_subreddit(name)
         else:
-            sub = r.get_subreddit(name, fetch=True)
+            with loader():
+                sub = reddit.get_subreddit(name, fetch=True)
 
         return cls('/r/'+sub.display_name, sub.get_hot(limit=None), loader)
 
@@ -281,7 +291,7 @@ class SubredditContent(BaseContent):
         while index >= len(self._submission_data):
 
             try:
-                with self._loader:
+                with self._loader():
                     submission = self._submissions.next()
             except StopIteration:
                 raise IndexError

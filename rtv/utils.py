@@ -42,26 +42,27 @@ def text_input(window):
 
 class LoadScreen(object):
 
-    def __init__(
-            self,
-            stdscr,
-            message='Downloading',
-            trail='...',
-            delay=0.5,
-            interval=0.4):
+    def __init__(self, stdscr):
 
         self._stdscr = stdscr
-        self.message = message
-        self.delay = delay
-        self.interval=interval
-        self.trail = trail
 
+        self._args = None
         self._animator = None
         self._is_running = None
 
+    def __call__(
+            self,
+            delay=0.5,
+            interval=0.4,
+            message='Downloading',
+            trail='...'):
+
+        self._args = (delay, interval, message, trail)
+        return self
+
     def __enter__(self):
 
-        self._animator = threading.Thread(target=self.animate)
+        self._animator = threading.Thread(target=self.animate, args=self._args)
         self._animator.daemon = True
 
         self._is_running = True
@@ -72,23 +73,23 @@ class LoadScreen(object):
         self._is_running = False
         self._animator.join()
 
-    def animate(self):
+    def animate(self, delay, interval, message, trail):
 
         # Delay before starting animation to avoid wasting resources if the
         # wait time is very short
         start = time.time()
-        while (time.time() - start) < self.delay:
+        while (time.time() - start) < delay:
             if not self._is_running:
                 return
 
-        message_len = len(self.message) + len(self.trail)
+        message_len = len(message) + len(trail)
         n_rows, n_cols = self._stdscr.getmaxyx()
         s_row = (n_rows - 2) / 2
         s_col = (n_cols - message_len - 1) / 2
         window = self._stdscr.derwin(3, message_len+2, s_row, s_col)
 
         while True:
-            for i in xrange(len(self.trail)+1):
+            for i in xrange(len(trail)+1):
 
                 if not self._is_running:
                     # TODO: figure out why this isn't removing the screen
@@ -98,9 +99,9 @@ class LoadScreen(object):
 
                 window.erase()
                 window.border()
-                window.addstr(1, 1, self.message + self.trail[:i])
+                window.addstr(1, 1, message + trail[:i])
                 window.refresh()
-                time.sleep(self.interval)
+                time.sleep(interval)
 
 
 @contextmanager

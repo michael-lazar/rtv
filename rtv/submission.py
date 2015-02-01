@@ -1,18 +1,25 @@
-import praw
 import curses
 import sys
 
+from content import SubmissionContent
 from page import BasePage
-from utils import curses_session
+from utils import LoadScreen
 
 class SubmissionPage(BasePage):
 
-    def __init__(self, stdscr, content):
+    def __init__(self, stdscr, reddit, url=None, submission=None):
 
-        page_index, cursor_index = -1, 1
+        self.loader = LoadScreen(stdscr)
+
+        if url is not None:
+            content = SubmissionContent.from_url(reddit, url, self.loader)
+        elif submission is not None:
+            content = SubmissionContent(submission, self.loader)
+        else:
+            raise ValueError('Must specify url or submission')
+
         super(SubmissionPage, self).__init__(
-            stdscr, content,
-            page_index=page_index, cursor_index=cursor_index)
+            stdscr, content, page_index=-1, cursor_index=1)
 
     def loop(self):
 
@@ -60,16 +67,6 @@ class SubmissionPage(BasePage):
         self.content.reset()
         self.stdscr.clear()
         self.draw()
-
-    def draw(self):
-
-        n_rows, n_cols = self.stdscr.getmaxyx()
-        self._header_window = self.stdscr.derwin(1, n_cols, 0, 0)
-        self._content_window = self.stdscr.derwin(1, 0)
-
-        self.draw_header()
-        self.draw_content()
-        self.add_cursor()
 
     def draw_item(self, win, data, inverted=False):
 

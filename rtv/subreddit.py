@@ -1,14 +1,21 @@
-import praw
-import textwrap
 import curses
 import sys
 
 from page import BasePage
 from submission import SubmissionPage
-from content import SubmissionContent
-from utils import curses_session, text_input
+from content import SubredditContent
+from utils import LoadScreen, text_input
 
 class SubredditPage(BasePage):
+
+    def __init__(self, stdscr, reddit, name):
+
+        self.reddit = reddit
+        self.name = name
+        self.loader = LoadScreen(stdscr)
+
+        content = SubredditContent.from_name(reddit, name, self.loader)
+        super(SubredditPage, self).__init__(stdscr, content)
 
     def loop(self):
 
@@ -47,11 +54,12 @@ class SubredditPage(BasePage):
             else:
                 curses.beep()
 
-    def refresh_content(self, subreddit=None):
+    def refresh_content(self, name=None):
 
         self.nav.page_index, self.nav.cursor_index = 0, 0
         self.nav.inverted = False
-        self.content.reset(subreddit=subreddit)
+        self.name = name if name else self.name
+        self.content = SubredditContent.from_name(self.reddit, self.name, self.loader)
         self.stdscr.clear()
         self.draw()
 
@@ -67,25 +75,14 @@ class SubredditPage(BasePage):
         if out is None:
             self.draw()
         else:
-            self.refresh_content(subreddit=out)
+            self.refresh_content(name=out)
 
     def open_submission(self):
         "Select the current submission to view posts"
 
         submission = self.content.get(self.nav.absolute_index)['object']
-        content = SubmissionContent(submission, loader=self.content.loader)
-        page = SubmissionPage(self.stdscr, content)
+        page = SubmissionPage(self.stdscr, self.reddit, submission=submission)
         page.loop()
-
-    def draw(self):
-
-        n_rows, n_cols = self.stdscr.getmaxyx()
-        self._header_window = self.stdscr.derwin(1, n_cols, 0, 0)
-        self._content_window = self.stdscr.derwin(1, 0)
-
-        self.draw_header()
-        self.draw_content()
-        self.add_cursor()
 
     @staticmethod
     def draw_item(win, data, inverted=False):

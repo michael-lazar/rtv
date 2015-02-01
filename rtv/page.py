@@ -79,13 +79,11 @@ class BasePage(object):
 
         self.stdscr = stdscr
         self.content = content
-
         self.nav = Navigator(self.content.get, **kwargs)
 
+        self._header_window = None
+        self._content_window = None
         self._subwindows = None
-
-    def draw(self):
-        raise NotImplementedError
 
     def move_cursor_up(self):
         self._move_cursor(-1)
@@ -106,12 +104,22 @@ class BasePage(object):
             continue
         self.stdscr.nodelay(0)
 
+    def draw(self):
+
+        n_rows, n_cols = self.stdscr.getmaxyx()
+        self._header_window = self.stdscr.derwin(1, n_cols, 0, 0)
+        self._content_window = self.stdscr.derwin(1, 0)
+
+        self.draw_header()
+        self.draw_content()
+        self.add_cursor()
+
     def draw_header(self):
 
         n_rows, n_cols = self._header_window.getmaxyx()
 
         self._header_window.erase()
-        self._header_window.addnstr(0, 0, self.content.display_name, n_cols-1)
+        self._header_window.addnstr(0, 0, self.content.name, n_cols-1)
 
     def draw_content(self):
         """
