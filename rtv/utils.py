@@ -5,8 +5,7 @@ import threading
 from curses import textpad
 from contextlib import contextmanager
 
-class EscapePressed(Exception):
-    pass
+from errors import EscapePressed
 
 def text_input(window):
     """
@@ -38,6 +37,27 @@ def text_input(window):
 
     curses.curs_set(0)
     return out
+
+
+def display_message(stdscr, message):
+    "Display a message box at the center of the screen and wait for a keypress"
+
+    message_len = len(message)
+    n_rows, n_cols = stdscr.getmaxyx()
+    s_row = (n_rows - 2) / 2
+    s_col = (n_cols - message_len - 1) / 2
+    window = stdscr.derwin(3, message_len+2, s_row, s_col)
+
+    window.erase()
+    window.border()
+    window.addstr(1, 1, message)
+    window.refresh()
+
+    stdscr.getch()
+
+    window.clear()
+    window = None
+    stdscr.refresh()
 
 
 class LoadScreen(object):

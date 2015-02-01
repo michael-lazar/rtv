@@ -1,10 +1,11 @@
 import curses
 import sys
 
+from errors import SubredditNameError
 from page import BasePage
 from submission import SubmissionPage
 from content import SubredditContent
-from utils import LoadScreen, text_input
+from utils import LoadScreen, text_input, display_message
 
 class SubredditPage(BasePage):
 
@@ -56,11 +57,21 @@ class SubredditPage(BasePage):
 
     def refresh_content(self, name=None):
 
-        self.nav.page_index, self.nav.cursor_index = 0, 0
-        self.nav.inverted = False
-        self.name = name if name else self.name
-        self.content = SubredditContent.from_name(self.reddit, self.name, self.loader)
-        self.stdscr.clear()
+        name = name or self.name
+
+        try:
+            self.content = SubredditContent.from_name(
+                self.reddit, name, self.loader)
+
+        except SubredditNameError:
+            display_message(self.stdscr, 'Invalid Subreddit')
+
+        else:
+            self.nav.page_index, self.nav.cursor_index = 0, 0
+            self.nav.inverted = False
+            self.name = name
+
+        #self.stdscr.clear()
         self.draw()
 
     def prompt_subreddit(self):

@@ -4,6 +4,8 @@ from contextlib import contextmanager
 
 import praw
 
+from errors import SubmissionURLError, SubredditNameError
+
 def clean(unicode_string):
     """
     Convert unicode string into ascii-safe characters.
@@ -159,8 +161,12 @@ class SubmissionContent(BaseContent):
             indent_size=2,
             max_indent_level=4):
 
-        with loader():
-            submission = reddit.get_submission(url)
+        try:
+            with loader():
+                submission = reddit.get_submission(url)
+
+        except praw.errors.APIException:
+            raise SubmissionURLError(url)
 
         return cls(submission, loader, indent_size, max_indent_level)
 
@@ -273,9 +279,13 @@ class SubredditContent(BaseContent):
 
         if name == 'all':
             sub = reddit.get_subreddit(name)
+
         else:
-            with loader():
-                sub = reddit.get_subreddit(name, fetch=True)
+            try:
+                with loader():
+                    sub = reddit.get_subreddit(name, fetch=True)
+            except praw.errors.ClientException:
+                raise SubredditNameError(name)
 
         return cls('/r/'+sub.display_name, sub.get_hot(limit=None), loader)
 

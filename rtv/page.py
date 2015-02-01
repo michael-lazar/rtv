@@ -75,6 +75,9 @@ class BasePage(object):
     Base terminal viewer incorperates a cursor to navigate content
     """
 
+    MIN_HEIGHT = 10
+    MIN_WIDTH = 20
+
     def __init__(self, stdscr, content, **kwargs):
 
         self.stdscr = stdscr
@@ -107,21 +110,27 @@ class BasePage(object):
     def draw(self):
 
         n_rows, n_cols = self.stdscr.getmaxyx()
+        if n_rows < self.MIN_HEIGHT or n_cols < self.MIN_WIDTH:
+            return
+
         self._header_window = self.stdscr.derwin(1, n_cols, 0, 0)
         self._content_window = self.stdscr.derwin(1, 0)
 
-        self.draw_header()
-        self.draw_content()
+        self._draw_header()
+        self._draw_content()
         self.add_cursor()
 
-    def draw_header(self):
+    def draw_item(self, window, data, inverted):
+        raise NotImplementedError
+
+    def _draw_header(self):
 
         n_rows, n_cols = self._header_window.getmaxyx()
 
         self._header_window.erase()
         self._header_window.addnstr(0, 0, self.content.name, n_cols-1)
 
-    def draw_content(self):
+    def _draw_content(self):
         """
         Loop through submissions and fill up the content page.
         """
@@ -153,9 +162,6 @@ class BasePage(object):
 
         self._content_window.refresh()
 
-    def draw_item(self, window, data, inverted):
-        raise NotImplementedError
-
     def _move_cursor(self, direction):
 
         self.remove_cursor()
@@ -167,7 +173,7 @@ class BasePage(object):
         # If we don't redraw, ACS_VLINE gets screwed up when changing the
         # attr back to normal. There may be a way around this.
         if True: #if redraw
-            self.draw_content()
+            self._draw_content()
 
         self.add_cursor()
 
