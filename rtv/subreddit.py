@@ -33,7 +33,7 @@ class SubredditPage(BasePage):
                 self.clear_input_queue()
 
             # View submission
-            elif cmd in (curses.KEY_RIGHT, ord(' ')):
+            elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER, ord(' '), 10):
                 self.open_submission()
                 self.draw()
 

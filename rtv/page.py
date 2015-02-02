@@ -40,17 +40,25 @@ class Navigator(object):
         forward = ((direction*self.step) > 0)
 
         if forward:
-            self.cursor_index += 1
-            if self.cursor_index >= n_windows - 1:
-                self.page_index += (self.step * self.cursor_index)
+            if self.page_index < 0:
+                # Special case - advance the page index if less than zero
+                self.page_index = 0
                 self.cursor_index = 0
-                self.inverted = not self.inverted
                 redraw = True
+            else:
+                self.cursor_index += 1
+                if self.cursor_index >= n_windows - 1:
+                    # We have reached the end of the page - flip the orientation
+                    self.page_index += (self.step * self.cursor_index)
+                    self.cursor_index = 0
+                    self.inverted = not self.inverted
+                    redraw = True
         else:
             if self.cursor_index > 0:
                 self.cursor_index -= 1
             else:
                 if self._is_valid(self.page_index - self.step):
+                    # We have reached the beginning of the page - move the index
                     self.page_index -= self.step
                     redraw = True
                 else:
@@ -179,11 +187,11 @@ class BasePage(object):
 
     def _edit_cursor(self, attribute):
 
-        # Don't alow the cursor to go below page index 0
-        if self.nav.absolute_index == -1:
-            window = self._subwindows[self.nav.cursor_index + 1]
-        else:
-            window = self._subwindows[self.nav.cursor_index]
+        # Don't allow the cursor to go below page index 0
+        if self.nav.absolute_index < 0:
+            return
+
+        window = self._subwindows[self.nav.cursor_index]
 
         n_rows, _ = window.getmaxyx()
         for row in xrange(n_rows):
