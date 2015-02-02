@@ -41,10 +41,13 @@ class Navigator(object):
 
         if forward:
             if self.page_index < 0:
-                # Special case - advance the page index if less than zero
-                self.page_index = 0
-                self.cursor_index = 0
-                redraw = True
+                if self._is_valid(0):
+                    # Special case - advance the page index if less than zero
+                    self.page_index = 0
+                    self.cursor_index = 0
+                    redraw = True
+                else:
+                    valid = False
             else:
                 self.cursor_index += 1
                 if self.cursor_index >= n_windows - 1:

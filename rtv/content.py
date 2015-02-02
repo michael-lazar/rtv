@@ -55,6 +55,18 @@ def default_loader(self):
 
 class BaseContent(object):
 
+    def get(self, index, n_cols):
+        raise NotImplementedError
+
+    def iterate(self, index, step, n_cols):
+
+        while True:
+            try:
+                yield self.get(index, n_cols)
+            except IndexError:
+                break
+            index += step
+
     @staticmethod
     def flatten_comments(comments, root_level=0):
         """
@@ -251,12 +263,6 @@ class SubmissionContent(BaseContent):
         else:
             raise ValueError('% type not recognized' % data['type'])
 
-    def iterate(self, index, step, n_cols=70):
-
-        while True:
-            yield self.get(index, n_cols=n_cols)
-            index += step
-
 
 class SubredditContent(BaseContent):
     """
@@ -316,9 +322,3 @@ class SubredditContent(BaseContent):
         data['offset'] = 0
 
         return data
-
-    def iterate(self, index, step, n_cols):
-
-        while True:
-            yield self.get(index, n_cols)
-            index += step
