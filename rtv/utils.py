@@ -7,6 +7,39 @@ from contextlib import contextmanager
 
 from errors import EscapePressed
 
+class Color(object):
+
+    COLORS = {
+        'RED': (curses.COLOR_RED, -1),
+        'GREEN': (curses.COLOR_GREEN, -1),
+        'YELLOW': (curses.COLOR_YELLOW, -1),
+        'BLUE': (curses.COLOR_BLUE, -1),
+        'MAGENTA': (curses.COLOR_MAGENTA, -1),
+        'CYAN': (curses.COLOR_CYAN, -1),
+        }
+
+    @classmethod
+    def get_level(cls, level):
+
+        levels = [cls.MAGENTA, cls.CYAN, cls.GREEN, cls.YELLOW]
+        return levels[level % len(levels)]
+
+    @classmethod
+    def init(cls):
+        """
+        Initialize color pairs inside of curses using the default background.
+
+        This should be called once during the curses initial setup. Afterwards,
+        curses color pairs can be accessed directly through class attributes.
+        """
+
+        # Assign the terminal's default (background) color to code -1
+        curses.use_default_colors()
+
+        for index, (attr, code) in enumerate(cls.COLORS.items(), start=1):
+            curses.init_pair(index, code[0], code[1])
+            setattr(cls, attr, curses.color_pair(index))
+
 def text_input(window):
     """
     Transform a window into a text box that will accept user input and loop
@@ -156,22 +189,13 @@ def curses_session():
         # module -- the error return from C start_color() is ignorable.
         try:
             curses.start_color()
-
-            # Assign the terminal's default (background) color to code -1
-            curses.use_default_colors()
         except:
             pass
+        else:
+            Color.init()
 
         # Hide blinking cursor
         curses.curs_set(0)
-
-        # Initialize color pairs - colored text on the default background
-        curses.init_pair(1, curses.COLOR_RED, -1)
-        curses.init_pair(2, curses.COLOR_GREEN, -1)
-        curses.init_pair(3, curses.COLOR_YELLOW, -1)
-        curses.init_pair(4, curses.COLOR_BLUE, -1)
-        curses.init_pair(5, curses.COLOR_MAGENTA, -1)
-        curses.init_pair(6, curses.COLOR_CYAN, -1)
 
         yield stdscr
 

@@ -1,5 +1,7 @@
 import curses
 
+from utils import Color
+
 class Navigator(object):
     """
     Handles math behind cursor movement and screen paging.
@@ -139,7 +141,9 @@ class BasePage(object):
         n_rows, n_cols = self._header_window.getmaxyx()
 
         self._header_window.erase()
-        self._header_window.addnstr(0, 0, self.content.name, n_cols-1)
+        attr = curses.A_REVERSE | curses.A_BOLD | Color.RED
+        self._header_window.addnstr(0, 0, self.content.name, n_cols-1, attr)
+        self._header_window.refresh()
 
     def _draw_content(self):
         """
@@ -164,8 +168,8 @@ class BasePage(object):
             start = current_row - window_rows if inverted else current_row
             subwindow = self._content_window.derwin(
                 window_rows, window_cols, start, data['offset'])
-            self.draw_item(subwindow, data, inverted)
-            self._subwindows.append(subwindow)
+            attr = self.draw_item(subwindow, data, inverted)
+            self._subwindows.append((subwindow, attr))
             available_rows -= (window_rows + 1)  # Add one for the blank line
             current_row += step * (window_rows + 1)
             if available_rows <= 0:
@@ -188,13 +192,16 @@ class BasePage(object):
 
         self.add_cursor()
 
-    def _edit_cursor(self, attribute):
+    def _edit_cursor(self, attribute=None):
 
         # Don't allow the cursor to go below page index 0
         if self.nav.absolute_index < 0:
             return
 
-        window = self._subwindows[self.nav.cursor_index]
+        # TODO: attach attr to data[attr] or something
+        window, attr = self._subwindows[self.nav.cursor_index]
+        if attr is not None:
+            attribute |= attr
 
         n_rows, _ = window.getmaxyx()
         for row in xrange(n_rows):

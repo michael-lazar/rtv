@@ -103,7 +103,7 @@ class BaseContent(object):
         if isinstance(comment, praw.objects.MoreComments):
             data['type'] = 'MoreComments'
             data['count'] = comment.count
-            data['body'] = 'More comments [{}]'.format(comment.count)
+            data['body'] = 'More comments'.format(comment.count)
         else:
             data['type'] = 'Comment'
             data['body'] = clean(comment.body)
@@ -111,6 +111,10 @@ class BaseContent(object):
             data['score'] = '{} pts'.format(comment.score)
             data['author'] = (clean(comment.author.name) if
                               getattr(comment, 'author') else '[deleted]')
+
+            sub_author = (clean(comment.submission.author.name) if
+                          getattr(comment.submission, 'author') else '[deleted]')
+            data['is_author'] = (data['author'] == sub_author)
 
         return data
 
@@ -157,7 +161,7 @@ class SubmissionContent(BaseContent):
         self.max_indent_level = max_indent_level
         self._loader = loader
 
-        self._submissin = submission
+        self._submission = submission
         self._submission_data = self.strip_praw_submission(submission)
         self.name = self._submission_data['permalink']
         with self._loader():
@@ -184,7 +188,7 @@ class SubmissionContent(BaseContent):
 
     def reset(self):
 
-        self._submissin.refresh()
+        self._submission.refresh()
         self._submission_data = self.strip_praw_submission(submission)
         self.name = self._submission_data['permalink']
         comments = self.flatten_comments(submission.comments)

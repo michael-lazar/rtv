@@ -3,7 +3,7 @@ import sys
 
 from content import SubmissionContent
 from page import BasePage
-from utils import LoadScreen
+from utils import LoadScreen, Color
 
 class SubmissionPage(BasePage):
 
@@ -70,51 +70,64 @@ class SubmissionPage(BasePage):
     def draw_item(self, win, data, inverted=False):
 
         if data['type'] == 'MoreComments':
-            self.draw_more_comments(win, data)
+            return self.draw_more_comments(win, data)
 
         elif data['type'] == 'HiddenComment':
-            self.draw_more_comments(win, data)
+            return self.draw_more_comments(win, data)
 
         elif data['type'] == 'Comment':
-            self.draw_comment(win, data, inverted=inverted)
+            return self.draw_comment(win, data, inverted=inverted)
 
         else:
-            self.draw_submission(win, data)
+            return self.draw_submission(win, data)
 
     @staticmethod
     def draw_comment(win, data, inverted=False):
 
         n_rows, n_cols = win.getmaxyx()
-        n_cols -= 2
+        n_cols -= 1
 
         # Handle the case where the window is not large enough to fit the data.
         valid_rows = range(0, n_rows)
         offset = 0 if not inverted else -(data['n_rows'] - n_rows)
 
         row = offset
-        text = '{} {} {}'.format(data['author'], data['score'], data['created'])
         if row in valid_rows:
-            win.addnstr(row, 1, text, n_cols)
+            text = '{author}'.format(**data)
+            attr = curses.A_BOLD
+            attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
+            win.addnstr(row, 1, text, n_cols-1, attr)
+            text = ' {score} {created}'.format(**data)
+            win.addnstr(text, n_cols - win.getyx()[1])
 
         n_body = len(data['split_body'])
         for row, text in enumerate(data['split_body'], start=offset+1):
             if row in valid_rows:
-                win.addnstr(row, 1, text, n_cols)
+                win.addnstr(row, 1, text, n_cols-1)
 
         # Vertical line, unfortunately vline() doesn't support custom color so
         # we have to build it one chr at a time.
+        attr = Color.get_level(data['level'])
         for y in xrange(n_rows):
-            win.addch(y, 0, curses.ACS_VLINE)
+            win.addch(y, 0, curses.ACS_VLINE, attr)
+
+        return attr | curses.ACS_VLINE
 
     @staticmethod
     def draw_more_comments(win, data):
 
         n_rows, n_cols = win.getmaxyx()
-        n_cols -= 2
-        win.addnstr(0, 1, data['body'], n_cols)
+        n_cols -= 1
+        win.addnstr(0, 1, data['body'], n_cols-1)
+        text = ' [{count}]'.format(**data)
+        attr = curses.A_BOLD
+        win.addnstr(text, n_cols - win.getyx()[1], attr)
 
+        attr = Color.get_level(data['level'])
         for y in xrange(n_rows):
-            win.addch(y, 0, curses.ACS_VLINE)
+            win.addch(y, 0, curses.ACS_VLINE, attr)
+
+        return attr | curses.ACS_VLINE
 
     @staticmethod
     def draw_submission(win, data):

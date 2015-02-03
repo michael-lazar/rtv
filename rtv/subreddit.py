@@ -5,7 +5,7 @@ from errors import SubredditNameError
 from page import BasePage
 from submission import SubmissionPage
 from content import SubredditContent
-from utils import LoadScreen, text_input, display_message
+from utils import LoadScreen, text_input, display_message, Color
 
 class SubredditPage(BasePage):
 
@@ -108,11 +108,13 @@ class SubredditPage(BasePage):
         n_title = len(data['split_title'])
         for row, text in enumerate(data['split_title'], start=offset):
             if row in valid_rows:
-                win.addstr(row, 1, text)
+                attr = curses.A_BOLD
+                win.addstr(row, 1, text, attr)
 
         row = n_title + offset
         if row in valid_rows:
-            win.addnstr(row, 1, '{url}'.format(**data), n_cols)
+            attr = curses.A_UNDERLINE | Color.BLUE
+            win.addnstr(row, 1, '{url}'.format(**data), n_cols, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:

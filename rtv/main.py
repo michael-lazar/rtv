@@ -10,12 +10,14 @@ from submission import SubmissionPage
 parser = argparse.ArgumentParser(description='Reddit Terminal Viewer')
 parser.add_argument('-s', dest='subreddit', default='front', help='subreddit name')
 parser.add_argument('-l', dest='link', help='full link to a submission')
+
 group = parser.add_argument_group('authentication (optional)')
 group.add_argument('-u', dest='username', help='reddit username')
 group.add_argument('-p', dest='password', help='reddit password')
-group.add_argument('--debug', action='store_true')
 
-def main(args):
+def main():
+
+    args = parser.parse_args()
 
     try:
         reddit = praw.Reddit(user_agent='reddit terminal viewer v0.0')
@@ -46,13 +48,6 @@ def main(args):
     except SubredditNameError as e:
         print 'Could not reach subreddit: {}'.format(e.name)
 
-    # except Exception:
-    #     if not args.debug:
-    #         print 'Unhandled exception'
-    #     else:
-    #         raise
 
 if __name__ == '__main__':
-
-    args = parser.parse_args()
-    main(args)
+    main()
