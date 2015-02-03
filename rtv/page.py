@@ -204,7 +204,7 @@ class BasePage(object):
             attribute |= attr
 
         n_rows, _ = window.getmaxyx()
-        for row in xrange(n_rows):
+        for row in range(n_rows):
             window.chgat(row, 0, 1, attribute)
 
         window.refresh()

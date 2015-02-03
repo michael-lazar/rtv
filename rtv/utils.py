@@ -77,8 +77,8 @@ def display_message(stdscr, message):
 
     message_len = len(message)
     n_rows, n_cols = stdscr.getmaxyx()
-    s_row = (n_rows - 2) / 2
-    s_col = (n_cols - message_len - 1) / 2
+    s_row = (n_rows - 2) // 2
+    s_col = (n_cols - message_len - 1) // 2
     window = stdscr.derwin(3, message_len+2, s_row, s_col)
 
     window.erase()
@@ -137,12 +137,12 @@ class LoadScreen(object):
 
         message_len = len(message) + len(trail)
         n_rows, n_cols = self._stdscr.getmaxyx()
-        s_row = (n_rows - 2) / 2
-        s_col = (n_cols - message_len - 1) / 2
+        s_row = (n_rows - 2) // 2
+        s_col = (n_cols - message_len - 1) // 2
         window = self._stdscr.derwin(3, message_len+2, s_row, s_col)
 
         while True:
-            for i in xrange(len(trail)+1):
+            for i in range(len(trail)+1):
 
                 if not self._is_running:
                     window.clear()

@@ -3,6 +3,7 @@ from datetime import datetime
 from contextlib import contextmanager
 
 import praw
+import six
 
 from errors import SubmissionURLError, SubredditNameError
 
@@ -11,7 +12,13 @@ def clean(unicode_string):
     Convert unicode string into ascii-safe characters.
     """
 
-    return unicode_string.encode('ascii', 'replace').replace('\\', '')
+    if six.PY2:
+        ascii_string = unicode_string.encode('ascii', 'replace')
+    else:
+        ascii_string = unicode_string.encode().decode('ascii', 'replace')
+
+    ascii_string = ascii_string.replace('\\', '')
+    return ascii_string
 
 
 def strip_subreddit_url(permalink):
@@ -34,19 +41,19 @@ def humanize_timestamp(utc_timestamp, verbose=False):
     seconds = int(timedelta.total_seconds())
     if seconds < 60:
         return 'moments ago' if verbose else '0min'
-    minutes = seconds / 60
+    minutes = seconds // 60
     if minutes < 60:
         return ('%d minutes ago' % minutes) if verbose else ('%dmin' % minutes)
-    hours = minutes / 60
+    hours = minutes // 60
     if hours < 24:
         return ('%d hours ago' % hours) if verbose else ('%dhr' % hours)
-    days = hours / 24
+    days = hours // 24
     if days < 30:
         return ('%d days ago' % days) if verbose else ('%dday' % days)
-    months = days / 30.4
+    months = days // 30.4
     if months < 12:
         return ('%d months ago' % months) if verbose else ('%dmonth' % months)
-    years = months / 12
+    years = months // 12
     return ('%d years ago' % years) if verbose else ('%dyr' % years)
 
 @contextmanager
@@ -312,7 +319,7 @@ class SubredditContent(BaseContent):
 
             try:
                 with self._loader():
-                    submission = self._submissions.next()
+                    submission = next(self._submissions)
             except StopIteration:
                 raise IndexError
             else:

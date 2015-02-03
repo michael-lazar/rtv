@@ -1,6 +1,8 @@
 import curses
 import sys
 
+import six
+
 from content import SubmissionContent
 from page import BasePage
 from utils import LoadScreen, Color
@@ -108,8 +110,14 @@ class SubmissionPage(BasePage):
         # Vertical line, unfortunately vline() doesn't support custom color so
         # we have to build it one chr at a time.
         attr = Color.get_level(data['level'])
-        for y in xrange(n_rows):
-            win.addch(y, 0, curses.ACS_VLINE, attr)
+        for y in range(n_rows):
+
+            # Nobody pays attention to curses ;(
+            # http://bugs.python.org/issue21088
+            x = 0
+            if (sys.version_info.major, sys.version_info.minor) == (3, 4):
+                x, y = y, x
+            win.addch(y, x, curses.ACS_VLINE, attr)
 
         return attr | curses.ACS_VLINE
 
@@ -124,7 +132,7 @@ class SubmissionPage(BasePage):
         win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         attr = Color.get_level(data['level'])
-        for y in xrange(n_rows):
+        for y in range(n_rows):
             win.addch(y, 0, curses.ACS_VLINE, attr)
 
         return attr | curses.ACS_VLINE

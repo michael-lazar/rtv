@@ -40,13 +40,13 @@ def main():
         return
 
     except ConnectionError:
-        print 'Timeout: Could not connect to website'
+        print('Timeout: Could not connect to website')
 
     except SubmissionURLError as e:
-        print 'Could not reach submission URL: {}'.format(e.url)
+        print('Could not reach submission URL: {}'.format(e.url))
 
     except SubredditNameError as e:
-        print 'Could not reach subreddit: {}'.format(e.name)
+        print('Could not reach subreddit: {}'.format(e.name))
 
 
 if __name__ == '__main__':

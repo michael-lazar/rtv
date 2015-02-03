@@ -1,4 +1,6 @@
 from setuptools import setup
+#python setup.py develop --user
+#python setup.py develop --user --uninstall
 
 setup(
     name='rtv',
@@ -10,8 +12,6 @@ setup(
     license='MIT',
     keywords='reddit terminal praw',
     packages=['rtv'],
-    install_requires=['praw'],
+    install_requires=['praw', 'six'],
     entry_points={'console_scripts': ['rtv=rtv:main']}
 )
-
-#python setup.py develop --user
