@@ -1,6 +1,6 @@
 import curses
 
-from utils import Color
+from .utils import Color
 
 class Navigator(object):
     """

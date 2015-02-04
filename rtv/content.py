@@ -5,7 +5,7 @@ from contextlib import contextmanager
 import praw
 import six
 
-from errors import SubmissionURLError, SubredditNameError
+from .errors import SubmissionURLError, SubredditNameError
 
 def clean(unicode_string):
     """
@@ -69,7 +69,7 @@ class BaseContent(object):
 
         while True:
             try:
-                yield self.get(index, n_cols)
+                yield self.get(index, n_cols=n_cols)
             except IndexError:
                 break
             index += step
@@ -231,7 +231,7 @@ class SubmissionContent(BaseContent):
 
         return data
 
-    def toggle(self, index):
+    def toggle(self, index, n_cols=70):
         """
         Toggle the state of the object at the given index.
 
@@ -244,7 +244,7 @@ class SubmissionContent(BaseContent):
         if data['type'] == 'Comment':
             cache = [data]
             count = 1
-            for d in self.iterate(index+1, 1):
+            for d in self.iterate(index+1, 1, n_cols):
                 if d['level'] <= data['level']:
                     break
 
@@ -256,7 +256,7 @@ class SubmissionContent(BaseContent):
             comment['cache'] = cache
             comment['count'] = count
             comment['level'] = data['level']
-            comment['body'] = 'Hidden [{}]'.format(count)
+            comment['body'] = 'Hidden'.format(count)
             self._comment_data[index:index+len(cache)] = [comment]
 
         elif data['type'] == 'HiddenComment':

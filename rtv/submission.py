@@ -3,9 +3,9 @@ import sys
 
 import six
 
-from content import SubmissionContent
-from page import BasePage
-from utils import LoadScreen, Color
+from .content import SubmissionContent
+from .page import BasePage
+from .utils import LoadScreen, Color
 
 class SubmissionPage(BasePage):
 

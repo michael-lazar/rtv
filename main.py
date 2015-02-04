@@ -2,10 +2,10 @@ import argparse
 import praw
 from requests.exceptions import ConnectionError
 
-from errors import SubmissionURLError, SubredditNameError
-from utils import curses_session
-from subreddit import SubredditPage
-from submission import SubmissionPage
+from rtv.errors import SubmissionURLError, SubredditNameError
+from rtv.utils import curses_session
+from rtv.subreddit import SubredditPage
+from rtv.submission import SubmissionPage
 
 parser = argparse.ArgumentParser(description='Reddit Terminal Viewer')
 parser.add_argument('-s', dest='subreddit', default='front', help='subreddit name')

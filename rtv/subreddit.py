@@ -1,11 +1,11 @@
 import curses
 import sys
 
-from errors import SubredditNameError
-from page import BasePage
-from submission import SubmissionPage
-from content import SubredditContent
-from utils import LoadScreen, text_input, display_message, Color
+from .errors import SubredditNameError
+from .page import BasePage
+from .submission import SubmissionPage
+from .content import SubredditContent
+from .utils import LoadScreen, text_input, display_message, Color
 
 class SubredditPage(BasePage):
 

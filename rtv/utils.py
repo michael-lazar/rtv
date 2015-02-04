@@ -5,7 +5,7 @@ import threading
 from curses import textpad
 from contextlib import contextmanager
 
-from errors import EscapePressed
+from .errors import EscapePressed
 
 class Color(object):
 
