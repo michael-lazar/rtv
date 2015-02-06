@@ -167,13 +167,12 @@ class SubmissionContent(BaseContent):
         self.indent_size = indent_size
         self.max_indent_level = max_indent_level
         self._loader = loader
-
         self._submission = submission
-        self._submission_data = self.strip_praw_submission(submission)
-        self.name = self._submission_data['permalink']
-        with self._loader():
-            comments = self.flatten_comments(submission.comments)
-        self._comment_data = [self.strip_praw_comment(c) for c in comments]
+        self._submission_data = None
+        self._comment_data = None
+        self.name = None
+
+        self.reset()
 
     @classmethod
     def from_url(
@@ -195,11 +194,12 @@ class SubmissionContent(BaseContent):
 
     def reset(self):
 
-        self._submission.refresh()
-        self._submission_data = self.strip_praw_submission(submission)
-        self.name = self._submission_data['permalink']
-        comments = self.flatten_comments(submission.comments)
-        self._comment_data = [self.strip_praw_comment(c) for c in comments]
+        with self._loader():
+            self._submission.refresh()
+            self._submission_data = self.strip_praw_submission(self._submission)
+            self.name = self._submission_data['permalink']
+            comments = self.flatten_comments(self._submission.comments)
+            self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
     def get(self, index, n_cols=70):
         """

@@ -16,6 +16,7 @@ class Color(object):
         'BLUE': (curses.COLOR_BLUE, -1),
         'MAGENTA': (curses.COLOR_MAGENTA, -1),
         'CYAN': (curses.COLOR_CYAN, -1),
+        'WHITE': (curses.COLOR_WHITE, -1),
         }
 
     @classmethod

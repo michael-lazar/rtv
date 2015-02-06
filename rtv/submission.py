@@ -41,7 +41,7 @@ class SubmissionPage(BasePage):
                 self.refresh_content()
 
             # Show / hide a comment tree
-            elif cmd == ord(' '):
+            elif cmd in (curses.KEY_RIGHT, ord(' ')):
                 self.toggle_comment()
 
             elif cmd == curses.KEY_RESIZE:
@@ -126,10 +126,10 @@ class SubmissionPage(BasePage):
 
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
-        win.addnstr(0, 1, data['body'], n_cols-1)
+        text = '{body}'.format(**data)
+        win.addnstr(0, 1, text, n_cols-1)
         text = ' [{count}]'.format(**data)
-        attr = curses.A_BOLD
-        win.addnstr(text, n_cols - win.getyx()[1], attr)
+        win.addnstr(text, n_cols - win.getyx()[1], curses.A_BOLD)
 
         attr = Color.get_level(data['level'])
         for y in range(n_rows):
@@ -147,21 +147,26 @@ class SubmissionPage(BasePage):
             return
 
         for row, text in enumerate(data['split_title'], start=1):
-            win.addnstr(row, 1, text, n_cols)
+            win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
-        text = '{} {} {}'.format(data['author'], data['created'], data['subreddit'])
         row = len(data['split_title']) + 1
-        win.addnstr(row, 1, text, n_cols)
+        attr = curses.A_BOLD | Color.GREEN
+        text = '{author}'.format(**data)
+        win.addnstr(row, 1, text, n_cols, attr)
+        text = ' {created} {subreddit}'.format(**data)
+        win.addnstr(text, n_cols - win.getyx()[1])
 
         row = len(data['split_title']) + 2
-        win.addnstr(row, 1, data['url'], n_cols)
+        attr = curses.A_UNDERLINE | Color.BLUE
+        text = '{url}'.format(**data)
+        win.addnstr(row, 1, text, n_cols, attr)
 
         offset = len(data['split_title']) + 3
         for row, text in enumerate(data['split_text'], start=offset):
             win.addnstr(row, 1, text, n_cols)
 
-        text = '{} {}'.format(data['score'], data['comments'])
         row = len(data['split_title']) + len(data['split_text']) + 3
-        win.addnstr(row, 1, text, n_cols)
+        text = '{} {}'.format(data['score'], data['comments'])
+        win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         win.border()

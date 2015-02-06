@@ -29,7 +29,6 @@ def main():
         with curses_session() as stdscr:
 
                 if args.link:
-                    # Go directly to submission
                     page = SubmissionPage(stdscr, reddit, url=args.link)
                     page.loop()
 

@@ -99,7 +99,7 @@ class SubredditPage(BasePage):
     def draw_item(win, data, inverted=False):
 
         n_rows, n_cols = win.getmaxyx()
-        n_cols -= 2  # Leave space for the cursor in the first column
+        n_cols -= 1  # Leave space for the cursor in the first column
 
         # Handle the case where the window is not large enough to fit the data.
         valid_rows = range(0, n_rows)
@@ -114,12 +114,17 @@ class SubredditPage(BasePage):
         row = n_title + offset
         if row in valid_rows:
             attr = curses.A_UNDERLINE | Color.BLUE
-            win.addnstr(row, 1, '{url}'.format(**data), n_cols, attr)
+            text = '{url}'.format(**data)
+            win.addnstr(row, 1, text, n_cols-1, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
-            win.addnstr(row, 1, '{created} {comments} {score}'.format(**data), n_cols)
+            text = '{created} {comments} {score}'.format(**data)
+            win.addnstr(row, 1, text, n_cols-1)
 
         row = n_title + offset + 2
         if row in valid_rows:
-            win.addnstr(row, 1, '{author} {subreddit}'.format(**data), n_cols)
+            text = '{author}'.format(**data)
+            win.addnstr(row, 1, text, n_cols-1, curses.A_BOLD)
+            text = ' {subreddit}'.format(**data)
+            win.addnstr(text, n_cols - win.getyx()[1], Color.YELLOW)
