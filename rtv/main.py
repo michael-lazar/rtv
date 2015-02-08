@@ -2,20 +2,19 @@ import argparse
 import praw
 from requests.exceptions import ConnectionError
 
-from rtv.errors import SubmissionURLError, SubredditNameError
-from rtv.utils import curses_session
-from rtv.subreddit import SubredditPage
-from rtv.submission import SubmissionPage
-
-parser = argparse.ArgumentParser(description='Reddit Terminal Viewer')
-parser.add_argument('-s', dest='subreddit', default='front', help='subreddit name')
-parser.add_argument('-l', dest='link', help='full link to a submission')
-
-group = parser.add_argument_group('authentication (optional)')
-group.add_argument('-u', dest='username', help='reddit username')
-group.add_argument('-p', dest='password', help='reddit password')
+from .errors import SubmissionURLError, SubredditNameError
+from .utils import curses_session
+from .subreddit import SubredditPage
+from .submission import SubmissionPage
 
 def main():
+
+    parser = argparse.ArgumentParser(description='Reddit Terminal Viewer')
+    parser.add_argument('-s', dest='subreddit', default='front', help='subreddit name')
+    parser.add_argument('-l', dest='link', help='full link to a submission')
+    group = parser.add_argument_group('authentication (optional)')
+    group.add_argument('-u', dest='username', help='reddit username')
+    group.add_argument('-p', dest='password', help='reddit password')
 
     args = parser.parse_args()
 
