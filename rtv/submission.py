@@ -142,8 +142,10 @@ class SubmissionPage(BasePage):
 
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 3 # one for each side of the border + one for offset
+
         # Don't print at all if there is not enough room to fit the whole sub
         if data['n_rows'] > n_rows:
+            win.addnstr(0, 0, '(Not enough space to display)', n_cols)
             return
 
         for row, text in enumerate(data['split_title'], start=1):
@@ -166,7 +168,7 @@ class SubmissionPage(BasePage):
             win.addnstr(row, 1, text, n_cols)
 
         row = len(data['split_title']) + len(data['split_text']) + 3
-        text = '{} {}'.format(data['score'], data['comments'])
+        text = '{score} {comments}'.format(**data)
         win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         win.border()

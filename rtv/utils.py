@@ -41,6 +41,7 @@ class Color(object):
             curses.init_pair(index, code[0], code[1])
             setattr(cls, attr, curses.color_pair(index))
 
+
 def text_input(window):
     """
     Transform a window into a text box that will accept user input and loop
