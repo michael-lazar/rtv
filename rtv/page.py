@@ -160,8 +160,8 @@ class BasePage(object):
         # If not inverted, align the first submission with the top and draw
         # downwards. If inverted, align the first submission with the bottom
         # and draw upwards.
-        current_row = n_rows if inverted else 0
-        available_rows = n_rows
+        current_row = (n_rows - 1) if inverted else 0
+        available_rows = (n_rows - 1) if inverted else n_rows
         for data in self.content.iterate(page_index, step, n_cols-2):
             window_rows = min(available_rows, data['n_rows'])
             window_cols = n_cols - data['offset']
