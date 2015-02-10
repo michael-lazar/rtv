@@ -53,21 +53,28 @@ class Navigator(object):
             else:
                 self.cursor_index += 1
                 if self.cursor_index >= n_windows - 1:
-                    # We have reached the end of the page - flip the orientation
-                    self.page_index += (self.step * self.cursor_index)
-                    self.cursor_index = 0
-                    self.inverted = not self.inverted
-                    redraw = True
+                    # We have reached the end of the page
+                    if self._is_valid(self.absolute_index):
+                        # Flip the orientation
+                        self.page_index += (self.step * self.cursor_index)
+                        self.cursor_index = 0
+                        self.inverted = not self.inverted
+                        redraw = True
+                    else:
+                        # Unless we are at the absolute end of the submission
+                        self.cursor_index -= 1  # Revert
+                        valid = False
         else:
             if self.cursor_index > 0:
                 self.cursor_index -= 1
             else:
-                if self._is_valid(self.page_index - self.step):
+                self.page_index -= self.step
+                if self._is_valid(self.absolute_index):
                     # We have reached the beginning of the page - move the index
-                    self.page_index -= self.step
                     redraw = True
                 else:
-                    valid = False
+                    self.page_index += self.step
+                    valid = False # Revert
 
         return valid, redraw
 

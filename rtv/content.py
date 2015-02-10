@@ -241,7 +241,11 @@ class SubmissionContent(BaseContent):
         """
         data = self.get(index)
 
-        if data['type'] == 'Comment':
+        if data['type'] == 'Submission':
+            # Can't hide the submission!
+            pass
+
+        elif data['type'] == 'Comment':
             cache = [data]
             count = 1
             for d in self.iterate(index+1, 1, n_cols):
@@ -260,11 +264,9 @@ class SubmissionContent(BaseContent):
             self._comment_data[index:index+len(cache)] = [comment]
 
         elif data['type'] == 'HiddenComment':
-
             self._comment_data[index:index+1] = data['cache']
 
         elif data['type'] == 'MoreComments':
-
             with self._loader():
                 comments = data['object'].comments()
             comments = self.flatten_comments(comments, root_level=data['level'])
