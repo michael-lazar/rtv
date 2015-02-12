@@ -36,10 +36,12 @@ class SubredditPage(BasePage):
             # View submission
             elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER, ord(' '), 10):
                 self.open_submission()
+                self.draw()
 
             # Enter edit mode to change subreddit
             elif cmd == ord('/'):
                 self.prompt_subreddit()
+                self.draw()
 
             # Refresh page
             elif cmd in (curses.KEY_F5, ord('r')):
@@ -72,8 +74,6 @@ class SubredditPage(BasePage):
             self.nav.inverted = False
             self.name = name
 
-        self.draw()
-
     def prompt_subreddit(self):
 
         attr = curses.A_BOLD | Color.MAGENTA
@@ -85,9 +85,7 @@ class SubredditPage(BasePage):
         window.attrset(attr)
 
         out = text_input(window)
-        if out is None:
-            self.draw()
-        else:
+        if out is not None:
             self.refresh_content(name=out)
 
     def open_submission(self):

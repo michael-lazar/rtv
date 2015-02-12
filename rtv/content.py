@@ -68,6 +68,12 @@ class BaseContent(object):
     def iterate(self, index, step, n_cols):
 
         while True:
+
+            # Hack to prevent displaying negative indicies if iterating in the
+            # negative direction.
+            if step < 0 and index < 0:
+                break
+
             try:
                 yield self.get(index, n_cols=n_cols)
             except IndexError:

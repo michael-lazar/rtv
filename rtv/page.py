@@ -52,18 +52,15 @@ class Navigator(object):
                     valid = False
             else:
                 self.cursor_index += 1
-                if self.cursor_index >= n_windows - 1:
-                    # We have reached the end of the page
-                    if self._is_valid(self.absolute_index):
-                        # Flip the orientation
-                        self.page_index += (self.step * self.cursor_index)
-                        self.cursor_index = 0
-                        self.inverted = not self.inverted
-                        redraw = True
-                    else:
-                        # Unless we are at the absolute end of the submission
-                        self.cursor_index -= 1  # Revert
-                        valid = False
+                if not self._is_valid(self.absolute_index):
+                    # Move would take us out of bounds
+                    self.cursor_index -= 1
+                    valid = False
+                elif self.cursor_index >= (n_windows - 1):
+                    # Flip the orientation and reset the cursor
+                    self.flip(self.cursor_index)
+                    self.cursor_index = 0
+                    redraw = True
         else:
             if self.cursor_index > 0:
                 self.cursor_index -= 1
@@ -78,12 +75,17 @@ class Navigator(object):
 
         return valid, redraw
 
+    def flip(self, n_windows):
+        "Flip the orientation of the page"
+        self.page_index += (self.step * n_windows)
+        self.cursor_index = n_windows
+        self.inverted = not self.inverted
+
     def _is_valid(self, page_index):
         "Check if a page index will cause entries to fall outside valid range"
 
         try:
             self._page_cb(page_index)
-            self._page_cb(page_index + self.step * self.cursor_index)
         except IndexError:
             return False
         else:
@@ -185,6 +187,15 @@ class BasePage(object):
             current_row += step * (window_rows + 1)
             if available_rows <= 0:
                 break
+        else:
+            # If the page is not full we need to make sure that it is NOT
+            # inverted. Unfortunately, this currently means drawing the whole
+            # page over again. Could not think of a better way to pre-determine
+            # if the content will fill up the page, given that it is dependent
+            # on the size of the terminal.
+            if self.nav.inverted:
+                self.nav.flip((len(self._subwindows) - 1))
+                self._draw_content()
 
         self._content_window.refresh()
 
@@ -196,7 +207,7 @@ class BasePage(object):
         if not valid:
             curses.flash()
 
-        # If we don't redraw, ACS_VLINE gets screwed up when changing the
+        # TODO: If we don't redraw, ACS_VLINE gets screwed up when changing the
         # attr back to normal. There may be a way around this.
         if True: #if redraw
             self._draw_content()

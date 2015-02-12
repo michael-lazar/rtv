@@ -39,10 +39,12 @@ class SubmissionPage(BasePage):
             # Refresh page
             elif cmd in (curses.KEY_F5, ord('r')):
                 self.refresh_content()
+                self.draw()
 
             # Show / hide a comment tree
             elif cmd in (curses.KEY_RIGHT, ord(' ')):
                 self.toggle_comment()
+                self.draw()
 
             elif cmd == curses.KEY_RESIZE:
                 self.draw()
@@ -61,14 +63,12 @@ class SubmissionPage(BasePage):
     def toggle_comment(self):
 
         self.content.toggle(self.nav.absolute_index)
-        self.draw()
 
     def refresh_content(self):
 
         self.content.reset()
         self.nav.page_index, self.nav.cursor_index = -1, 0
         self.nav.inverted = False
-        self.draw()
 
     def draw_item(self, win, data, inverted=False):
 
