@@ -13,5 +13,5 @@ setup(
     keywords='reddit terminal praw',
     packages=['rtv'],
     install_requires=['praw', 'six'],
-    entry_points={'console_scripts': ['rtv=rtv.main:main']}
+    entry_points={'console_scripts': ['rtv=main:main']}
 )
