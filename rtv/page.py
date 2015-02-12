@@ -136,11 +136,14 @@ class BasePage(object):
         self._header_window = self.stdscr.derwin(1, n_cols, 0, 0)
         self._content_window = self.stdscr.derwin(1, 0)
 
+        self.stdscr.erase()
         self._draw_header()
         self._draw_content()
+
         self.add_cursor()
 
-    def draw_item(self, window, data, inverted):
+    @staticmethod
+    def draw_item(window, data, inverted):
         raise NotImplementedError
 
     def _draw_header(self):
@@ -149,7 +152,8 @@ class BasePage(object):
 
         self._header_window.erase()
         attr = curses.A_REVERSE | curses.A_BOLD | Color.CYAN
-        self._header_window.addnstr(0, 0, self.content.name, n_cols-1, attr)
+        self._header_window.bkgd(' ', attr)
+        self._header_window.addnstr(0, 0, self.content.name, n_cols-1)
         self._header_window.refresh()
 
     def _draw_content(self):

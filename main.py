@@ -1,6 +1,6 @@
 import argparse
 import praw
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, HTTPError
 
 from rtv.errors import SubmissionURLError, SubredditNameError
 from rtv.utils import curses_session
@@ -39,6 +39,9 @@ def main():
 
     except ConnectionError:
         print('Timeout: Could not connect to website')
+
+    except HTTPError:
+        print('HTTP Error: 404 Not Found')
 
     except SubmissionURLError as e:
         print('Could not reach submission URL: {}'.format(e.url))

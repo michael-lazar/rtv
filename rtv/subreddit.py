@@ -1,5 +1,6 @@
 import curses
 import sys
+from requests.exceptions import HTTPError
 
 from .errors import SubredditNameError
 from .page import BasePage
@@ -63,7 +64,7 @@ class SubredditPage(BasePage):
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.loader)
 
-        except SubredditNameError:
+        except (SubredditNameError, HTTPError):
             display_message(self.stdscr, 'Invalid Subreddit')
 
         else:
