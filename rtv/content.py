@@ -269,9 +269,9 @@ class SubmissionContent(BaseContent):
         elif data['type'] == 'MoreComments':
             with self._loader():
                 comments = data['object'].comments()
-            comments = self.flatten_comments(comments, root_level=data['level'])
-            comment_data = [self.strip_praw_comment(c) for c in comments]
-            self._comment_data[index:index+1] = comment_data
+                comments = self.flatten_comments(comments, root_level=data['level'])
+                comment_data = [self.strip_praw_comment(c) for c in comments]
+                self._comment_data[index:index+1] = comment_data
 
         else:
             raise ValueError('% type not recognized' % data['type'])

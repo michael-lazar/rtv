@@ -66,7 +66,8 @@ class SubmissionPage(BasePage):
     def refresh_content(self):
 
         self.content.reset()
-        self.stdscr.clear()
+        self.nav.page_index, self.nav.cursor_index = -1, 0
+        self.nav.inverted = False
         self.draw()
 
     def draw_item(self, win, data, inverted=False):

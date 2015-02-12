@@ -148,7 +148,7 @@ class BasePage(object):
         n_rows, n_cols = self._header_window.getmaxyx()
 
         self._header_window.erase()
-        attr = curses.A_REVERSE | curses.A_BOLD | Color.RED
+        attr = curses.A_REVERSE | curses.A_BOLD | Color.CYAN
         self._header_window.addnstr(0, 0, self.content.name, n_cols-1, attr)
         self._header_window.refresh()
 
