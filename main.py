@@ -9,7 +9,11 @@ from rtv.submission import SubmissionPage
 
 def main():
 
-    parser = argparse.ArgumentParser(description='Reddit Terminal Viewer')
+    description = (
+        "Reddit Terminal Viewer (RTV) is a python application that enables "
+        "browsing content from Reddit (www.reddit.com) in a terminal window.")
+
+    parser = argparse.ArgumentParser(prog='rtv', description=description)
     parser.add_argument('-s', dest='subreddit', default='front', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
     group = parser.add_argument_group('authentication (optional)')
