@@ -7,6 +7,8 @@ from contextlib import contextmanager
 
 from .errors import EscapePressed
 
+ESCAPE = 27
+
 class Color(object):
 
     COLORS = {
@@ -57,7 +59,7 @@ def text_input(window):
 
     def validate(ch):
         "Filters characters for special key sequences"
-        if ch == 27:
+        if ch == ESCAPE:
             raise EscapePressed
         return ch
 
@@ -166,7 +168,7 @@ def curses_session():
         # Curses must wait for some time after the Escape key is pressed to see
         # check if it is the beginning of an escape sequence indicating a
         # special key. The default wait time is 1 second, which means that
-        # getch() will not return the escape key (ord(27)), until a full second
+        # getch() will not return the escape key (27), until a full second
         # after it has been pressed. Turn this down to 25 ms, which is close to
         # what VIM uses.
         # http://stackoverflow.com/questions/27372068

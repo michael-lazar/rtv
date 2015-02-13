@@ -38,7 +38,6 @@ class Navigator(object):
 
         valid, redraw = True, False
 
-        # TODO: add variable movement
         forward = ((direction*self.step) > 0)
 
         if forward:

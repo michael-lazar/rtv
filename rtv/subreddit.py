@@ -6,7 +6,7 @@ from .errors import SubredditNameError
 from .page import BasePage
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .utils import LoadScreen, text_input, display_message, Color
+from .utils import LoadScreen, text_input, display_message, Color, ESCAPE
 
 class SubredditPage(BasePage):
 
@@ -34,7 +34,7 @@ class SubredditPage(BasePage):
                 self.clear_input_queue()
 
             # View submission
-            elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER, ord(' '), 10):
+            elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER):
                 self.open_submission()
                 self.draw()
 

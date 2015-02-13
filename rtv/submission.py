@@ -5,7 +5,7 @@ import six
 
 from .content import SubmissionContent
 from .page import BasePage
-from .utils import LoadScreen, Color
+from .utils import LoadScreen, Color, ESCAPE
 
 class SubmissionPage(BasePage):
 
@@ -42,7 +42,7 @@ class SubmissionPage(BasePage):
                 self.draw()
 
             # Show / hide a comment tree
-            elif cmd in (curses.KEY_RIGHT, ord(' ')):
+            elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER):
                 self.toggle_comment()
                 self.draw()
 
@@ -50,7 +50,7 @@ class SubmissionPage(BasePage):
                 self.draw()
 
             # Go back
-            elif cmd in (ord('b'), 27, curses.KEY_LEFT):
+            elif cmd in (ESCAPE, curses.KEY_LEFT):
                 break
 
             # Quit
