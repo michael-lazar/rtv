@@ -7,15 +7,27 @@ from rtv.utils import curses_session
 from rtv.subreddit import SubredditPage
 from rtv.submission import SubmissionPage
 
+description = """
+Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
+terminal window.
+"""
+
+epilog = """
+controls:
+  arrow keys    navigate submissions and open comments
+  q             quit
+  F5            refresh the page
+  /             open a prompt to switch subreddits
+"""
+
 def main():
 
-    description = (
-        "Reddit Terminal Viewer (RTV) is a python application that enables "
-        "browsing content from Reddit (www.reddit.com) in a terminal window.")
-
-    parser = argparse.ArgumentParser(prog='rtv', description=description)
+    parser = argparse.ArgumentParser(
+        prog='rtv', description=description, epilog=epilog,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-s', dest='subreddit', default='front', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
+
     group = parser.add_argument_group('authentication (optional)')
     group.add_argument('-u', dest='username', help='reddit username')
     group.add_argument('-p', dest='password', help='reddit password')
