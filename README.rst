@@ -1,8 +1,9 @@
 ======================
 Reddit Terminal Viewer
 ======================
-**Reddit Terminal Viewer (RTV)** is a python application that enables browsing content from Reddit (www.reddit.com) in a terminal window.
-RTV utilizes the **curses** library and is compatible with a large range of terminals.
+**Reddit Terminal Viewer (RTV)** is a lightweight browser for Reddit (www.reddit.com) built into a terminal window.
+RTV is built in Python and utilizes the **curses** library. 
+It is compatible with a large range of terminal emulators on Linux and OSX systems. 
 
 ------------
 Installation
@@ -31,18 +32,20 @@ Additional options can be viewed with
 Controls 
 --------
 
+Navigating content in RTV is primarily done via the arrow keys.
+
+:``Up/Down``: Control the cursor and scroll through items.
+:``r`` or ``F5``: Refresh the page
+:``q``: Quit
+
+RTV currently supports browsing both subreddits and individual submissions. In each mode, controls are slightly different.
+
 **Subreddit Mode**
 
-:``Up/Down``: move cursor
-:``Right`` or ``Enter``: view the selected submission
-:``q``: quit
-:``r`` or ``F5``: refresh
-:``/``: open prompt to nagivate to a different subreddit
+:``Right`` or ``Enter``: Open the page for the currently selected submission
+:``/``: Open a prompt to switch to a different subreddit
 
 **Submission Mode**
 
-:``Up/Down``: move cursor
-:``Left``: return to subreddit
-:``Right`` or ``Enter``: toggle the selected comment and its children between hidden and visible
-:``q``: quit
-:``r`` or ``F5``: refresh
+:``Left``: Exit the submission and return to the subreddit
+:``Right`` or ``Enter``: Toggle the selected comment and its children between hidden and visible states
