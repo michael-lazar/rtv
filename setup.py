@@ -6,7 +6,7 @@ setup(
     name='rtv',
     version='1.0a1',
     description='A simple terminal viewer for Reddit (Reddit Terminal Viewer)',
-    url='http://TODO',
+    url='https://github.com/michael-lazar/rtv',
     author='Michael Lazar',
     author_email='lazar.michael22@gmail.com',
     license='MIT',
