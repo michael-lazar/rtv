@@ -298,26 +298,47 @@ class SubredditContent(BaseContent):
 
     @classmethod
     def from_name(cls, reddit, name, loader=default_loader):
+        
+        display_type = 'normal'
 
         if name == 'front':
             return cls('Front Page', reddit.get_front_page(limit=None), loader)
 
         if name == 'all':
             sub = reddit.get_subreddit(name)
-
+        
         else:
+            
+            if '/' in name:
+                parse = name.split('/')
+                name = parse[0]
+
+                if parse[1] == 'top':
+                    display_type = 'top'
+   
+                elif parse[1] == 'new':
+                    display_type = 'new'
+
             try:
                 with loader():
                     sub = reddit.get_subreddit(name, fetch=True)
             except praw.errors.ClientException:
                 raise SubredditNameError(name)
+        
+        if display_type == 'top':
+            return cls('/r/'+sub.display_name, sub.get_top_from_all(limit=None), loader)
 
-        return cls('/r/'+sub.display_name, sub.get_hot(limit=None), loader)
+        elif display_type == 'new':
+            return cls('/r/'+sub.display_name, sub.get_new(limit=None), loader)
+
+        else:
+            return cls('/r/'+sub.display_name, sub.get_hot(limit=None), loader)
 
     def get(self, index, n_cols=70):
         """
         Grab the `i`th submission, with the title field formatted to fit inside
         of a window of width `n`
+
         """
 
         if index < 0:
