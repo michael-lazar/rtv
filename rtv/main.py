@@ -6,7 +6,6 @@ from rtv.errors import SubmissionURLError, SubredditNameError
 from rtv.utils import curses_session
 from rtv.subreddit import SubredditPage
 from rtv.submission import SubmissionPage
-import ConfigParser
 from getpass import getpass
 
 description = """
@@ -32,6 +31,7 @@ def main():
 
     group = parser.add_argument_group('authentication (optional)')
     group.add_argument('-u', dest='username', help='reddit username')
+    group.add_argument('-p', dest='password', help='reddit password')
 
     args = parser.parse_args()
 
@@ -40,8 +40,11 @@ def main():
         reddit.config.decode_html_entities = True
 
         if args.username:
-            password = getpass()
-            reddit.login(args.username, password)
+            if args.password:
+                reddit.login(args.username, args.password)
+            else:
+                password = getpass()
+                reddit.login(args.username, password)
 
         with curses_session() as stdscr:
 
