@@ -28,11 +28,11 @@ class SubmissionPage(BasePage):
         while True:
             cmd = self.stdscr.getch()
 
-            if cmd == curses.KEY_UP:
+            if cmd in (curses.KEY_UP, ord('k')):
                 self.move_cursor_up()
                 self.clear_input_queue()
 
-            elif cmd == curses.KEY_DOWN:
+            elif cmd in (curses.KEY_DOWN, ord('j')):
                 self.move_cursor_down()
                 self.clear_input_queue()
 
@@ -42,7 +42,7 @@ class SubmissionPage(BasePage):
                 self.draw()
 
             # Show / hide a comment tree
-            elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER):
+            elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER, ord('l')):
                 self.toggle_comment()
                 self.draw()
 
@@ -50,7 +50,7 @@ class SubmissionPage(BasePage):
                 self.draw()
 
             # Go back
-            elif cmd in (ESCAPE, curses.KEY_LEFT):
+            elif cmd in (ESCAPE, curses.KEY_LEFT, ord('h')):
                 break
 
             # Quit

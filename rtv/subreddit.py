@@ -25,16 +25,16 @@ class SubredditPage(BasePage):
         while True:
             cmd = self.stdscr.getch()
 
-            if cmd == curses.KEY_UP:
+            if cmd in (curses.KEY_UP, ord('k')):
                 self.move_cursor_up()
                 self.clear_input_queue()
 
-            elif cmd == curses.KEY_DOWN:
+            elif cmd in (curses.KEY_DOWN, ord('j')):
                 self.move_cursor_down()
                 self.clear_input_queue()
 
             # View submission
-            elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER):
+            elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER, ord('l')):
                 self.open_submission()
                 self.draw()
 
