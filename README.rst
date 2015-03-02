@@ -5,6 +5,8 @@ Reddit Terminal Viewer
 RTV is built in Python and utilizes the **curses** library. 
 It is compatible with a large range of terminal emulators on Linux and OSX systems. 
 
+.. image:: /resources/demo.gif
+
 ------------
 Installation
 ------------
