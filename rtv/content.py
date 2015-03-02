@@ -338,7 +338,6 @@ class SubredditContent(BaseContent):
         """
         Grab the `i`th submission, with the title field formatted to fit inside
         of a window of width `n`
-
         """
 
         if index < 0:
