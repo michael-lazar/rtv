@@ -113,11 +113,15 @@ class SubmissionPage(BasePage):
         attr = Color.get_level(data['level'])
         for y in range(n_rows):
 
+            x = 0
+
             # Nobody pays attention to curses ;(
             # http://bugs.python.org/issue21088
-            x = 0
-            if (sys.version_info.major, sys.version_info.minor) == (3, 4):
+            if (sys.version_info.major,
+                sys.version_info.minor, 
+                sys.version_info.micro) == (3, 4, 0):
                 x, y = y, x
+            
             win.addch(y, x, curses.ACS_VLINE, attr)
 
         return attr | curses.ACS_VLINE
