@@ -6,19 +6,41 @@ from rtv.errors import SubmissionURLError, SubredditNameError
 from rtv.utils import curses_session
 from rtv.subreddit import SubredditPage
 from rtv.submission import SubmissionPage
-from getpass import getpass
 
 description = """
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
 terminal window.
 """
 
+# TODO: Figure out a way to sync this with the README
 epilog = """
-controls:
-  arrow keys    navigate submissions and open comments
-  q             quit
-  F5            refresh the page
-  /             open a prompt to switch subreddits
+Usage
+-----
+RTV currently supports browsing both subreddits and individual submissions.
+In each mode the controls are slightly different. In subreddit mode you can 
+browse through the top submissions on either the front page or a specific 
+subreddit. In submission mode you can view the self text for a submission and 
+browse comments.
+
+Global Commands
+  Arrow Keys or `hjkl`: RTV supports both the arrow keys and vim bindings for
+                        navigation. Move up and down to scroll through items
+                        on the page.
+  `r` or `F5`         : Refresh the current page.
+  `q`                 : Quit the program.
+
+Subreddit Mode
+  Right or `Enter`    : Open the currently selected submission in a new page.
+  `/`                 : Open a prompt to switch to a different subreddit. For
+                        example, pressing `/` and typing "python" will open
+                        "/r/python". You can return to Reddit's front page
+                        by using the alias "/r/front".
+
+Submission Mode
+  Right or `Enter`    : Toggle the currently selected comment between hidden
+                        and visible. Alternatively, load addition comments
+                        identified by "[+] more comments".
+  Left                : Exit the submission page and return to the subreddit.
 """
 
 def main():
@@ -29,7 +51,11 @@ def main():
     parser.add_argument('-s', dest='subreddit', default='front', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
 
-    group = parser.add_argument_group('authentication (optional)')
+    group = parser.add_argument_group(
+        'authentication (optional)', 
+        'Authenticating allows you to view your customized front page. '
+        'If only the username is given, the password will be prompted '
+        'securely.')
     group.add_argument('-u', dest='username', help='reddit username')
     group.add_argument('-p', dest='password', help='reddit password')
 
@@ -39,12 +65,8 @@ def main():
         reddit = praw.Reddit(user_agent='reddit terminal viewer v0.0')
         reddit.config.decode_html_entities = True
 
-        if args.username:
-            if args.password:
-                reddit.login(args.username, args.password)
-            else:
-                password = getpass()
-                reddit.login(args.username, password)
+        if args.username and args.password:
+            reddit.login(args.username, args.password)
 
         with curses_session() as stdscr:
 
