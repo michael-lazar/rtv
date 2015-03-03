@@ -6,6 +6,7 @@ from rtv.errors import SubmissionURLError, SubredditNameError
 from rtv.utils import curses_session
 from rtv.subreddit import SubredditPage
 from rtv.submission import SubmissionPage
+from getpass import getpass
 
 description = """
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
@@ -38,8 +39,12 @@ def main():
         reddit = praw.Reddit(user_agent='reddit terminal viewer v0.0')
         reddit.config.decode_html_entities = True
 
-        if args.username and args.password:
-            reddit.login(args.username, args.password)
+        if args.username:
+            if args.password:
+                reddit.login(args.username, args.password)
+            else:
+                password = getpass()
+                reddit.login(args.username, password)
 
         with curses_session() as stdscr:
 
