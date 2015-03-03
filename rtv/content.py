@@ -298,21 +298,34 @@ class SubredditContent(BaseContent):
 
     @classmethod
     def from_name(cls, reddit, name, loader=default_loader):
+        
+        display_type = 'normal'
 
         if name == 'front':
             return cls('Front Page', reddit.get_front_page(limit=None), loader)
 
         if name == 'all':
             sub = reddit.get_subreddit(name)
-
+        
         else:
+            
+            if '/' in name:
+                name, display_type = name.split('/')
+
             try:
                 with loader():
                     sub = reddit.get_subreddit(name, fetch=True)
             except praw.errors.ClientException:
                 raise SubredditNameError(name)
+        
+        if display_type == 'top':
+            return cls('/r/'+sub.display_name + '/top', sub.get_top_from_all(limit=None), loader)
 
-        return cls('/r/'+sub.display_name, sub.get_hot(limit=None), loader)
+        elif display_type == 'new':
+            return cls('/r/'+sub.display_name + '/new', sub.get_new(limit=None), loader)
+
+        else:
+            return cls('/r/'+sub.display_name, sub.get_hot(limit=None), loader)
 
     def get(self, index, n_cols=70):
         """
