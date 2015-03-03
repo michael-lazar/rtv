@@ -316,6 +316,9 @@ class SubredditContent(BaseContent):
         if name == 'front':
             return cls('Front Page', reddit.get_front_page(limit=None), loader)
 
+        if name == 'new':
+            return cls('New', reddit.get_new(limit=None), loader)
+
         if name == 'all':
             sub = reddit.get_subreddit(name)
 
