@@ -1,4 +1,5 @@
 import argparse
+from getpass import getpass
 import praw
 from requests.exceptions import ConnectionError, HTTPError
 
@@ -65,8 +66,12 @@ def main():
         reddit = praw.Reddit(user_agent='reddit terminal viewer v0.0')
         reddit.config.decode_html_entities = True
 
-        if args.username and args.password:
-            reddit.login(args.username, args.password)
+        if args.username:
+            if args.password:
+                reddit.login(args.username, args.password)
+            else:
+                password = getpass()
+                reddit.login(args.username, password)
 
         with curses_session() as stdscr:
 
