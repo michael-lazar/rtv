@@ -319,10 +319,10 @@ class SubredditContent(BaseContent):
                 raise SubredditNameError(name)
         
         if display_type == 'top':
-            return cls('/r/'+sub.display_name + '/top', sub.get_top_from_all(limit=None), loader)
+            return cls('/r/'+sub.display_name+'/top', sub.get_top_from_all(limit=None), loader)
 
         elif display_type == 'new':
-            return cls('/r/'+sub.display_name + '/new', sub.get_new(limit=None), loader)
+            return cls('/r/'+sub.display_name+'/new', sub.get_new(limit=None), loader)
 
         else:
             return cls('/r/'+sub.display_name, sub.get_hot(limit=None), loader)
