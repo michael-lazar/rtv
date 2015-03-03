@@ -7,6 +7,7 @@ import six
 
 from .errors import SubmissionURLError, SubredditNameError
 
+
 def clean(unicode_string):
     """
     Convert unicode string into ascii-safe characters.
@@ -19,6 +20,17 @@ def clean(unicode_string):
 
     ascii_string = ascii_string.replace('\\', '')
     return ascii_string
+
+
+def split_text(big_text, width):
+    return [
+        text
+        for line in big_text.splitlines()
+        # wrap returns an empty list when "line" is a newline
+        # in order to consider newlines we need a list containing an
+        # empty string
+        for text in (textwrap.wrap(line, width=width) or [''])
+    ]
 
 
 def strip_subreddit_url(permalink):
@@ -219,7 +231,7 @@ class SubmissionContent(BaseContent):
         elif index == -1:
             data = self._submission_data
             data['split_title'] = textwrap.wrap(data['title'], width=n_cols-2)
-            data['split_text'] = textwrap.wrap(data['text'], width=n_cols-2)
+            data['split_text'] = split_text(data['text'], width=n_cols-2)
             data['n_rows'] = (len(data['split_title']) + len(data['split_text']) + 5)
             data['offset'] = 0
 
@@ -229,7 +241,7 @@ class SubmissionContent(BaseContent):
             data['offset'] = indent_level * self.indent_size
 
             if data['type'] == 'Comment':
-                data['split_body'] = textwrap.wrap(
+                data['split_body'] = split_text(
                     data['body'], width=n_cols-data['offset'])
                 data['n_rows'] = len(data['split_body']) + 1
             else:
@@ -298,7 +310,7 @@ class SubredditContent(BaseContent):
 
     @classmethod
     def from_name(cls, reddit, name, loader=default_loader):
-        
+
         display_type = 'normal'
 
         if name == 'front':
@@ -306,9 +318,9 @@ class SubredditContent(BaseContent):
 
         if name == 'all':
             sub = reddit.get_subreddit(name)
-        
+
         else:
-            
+
             if '/' in name:
                 name, display_type = name.split('/')
 
@@ -317,7 +329,7 @@ class SubredditContent(BaseContent):
                     sub = reddit.get_subreddit(name, fetch=True)
             except praw.errors.ClientException:
                 raise SubredditNameError(name)
-        
+
         if display_type == 'top':
             return cls('/r/'+sub.display_name+'/top', sub.get_top_from_all(limit=None), loader)
 
