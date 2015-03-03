@@ -30,24 +30,28 @@ Additional options can be viewed with
 
    $ rtv --help
 
---------
-Controls 
---------
+-----
+Usage 
+-----
 
-Navigating content in RTV is primarily done via the arrow keys.
+RTV currently supports browsing both subreddits and individual submissions. In each mode the controls are slightly different.
 
-:``Up/Down``: Control the cursor and scroll through items.
-:``r`` or ``F5``: Refresh the page
-:``q``: Quit
+**Global Commands**
 
-RTV currently supports browsing both subreddits and individual submissions. In each mode, controls are slightly different.
+:``Arrow Keys`` or ``hjkl``: RTV supports both the arrow keys and vim bindings for navigation. Move up and down to scroll through items on the page.
+:``r`` or ``F5``: Refresh the current page.
+:``q``: Quit the program.
 
 **Subreddit Mode**
 
-:``Right`` or ``Enter``: Open the page for the currently selected submission
-:``/``: Open a prompt to switch to a different subreddit
+In subreddit mode you can browse through the top submissions on either the front page or a specific subreddit.
+
+:``Right`` or ``Enter``: Open the currently selected submission in a new page.
+:``/``: Open a prompt to switch to a different subreddit. For example, pressing ``/`` and typing *python* will open */r/python*. You can return to Reddit's front page by using the alias */r/front*.
 
 **Submission Mode**
 
-:``Left``: Exit the submission and return to the subreddit
-:``Right`` or ``Enter``: Toggle the selected comment and its children between hidden and visible states
+In submission mode you can view the self text for a submission and browse comments.
+
+:``Right`` or ``Enter``: Toggle the currently selected comment between hidden and visible. Alternatively, load additional comments identified by *[+] more comments*.
+:``Left``: Exit the submission page and return to the subreddit.
