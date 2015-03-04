@@ -54,6 +54,7 @@ In subreddit mode you can browse through the top submissions on either the front
 
 :``Right`` or ``Enter``: Open the currently selected submission in a new page.
 :``/``: Open a prompt to switch to a different subreddit. For example, pressing ``/`` and typing *python* will open */r/python*. You can return to Reddit's front page by using the alias */r/front*.
+:``o``: Opens the url for a link-post in the default browser.
 
 **Submission Mode**
 

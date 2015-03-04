@@ -1,5 +1,6 @@
 import curses
 import sys
+import webbrowser
 from requests.exceptions import HTTPError
 
 from .errors import SubredditNameError
@@ -37,6 +38,9 @@ class SubredditPage(BasePage):
             elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER, ord('l')):
                 self.open_submission()
                 self.draw()
+
+            elif cmd == ord('o'):
+                self.open_link()
 
             # Enter edit mode to change subreddit
             elif cmd == ord('/'):
@@ -128,3 +132,7 @@ class SubredditPage(BasePage):
             win.addnstr(row, 1, text, n_cols-1, curses.A_BOLD)
             text = ' {subreddit}'.format(**data)
             win.addnstr(text, n_cols - win.getyx()[1], Color.YELLOW)
+
+    def open_link(self):
+        url = self.content.get(self.nav.absolute_index)['url']
+        webbrowser.open_new_tab(url)
