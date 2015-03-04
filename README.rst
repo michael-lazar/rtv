@@ -13,9 +13,9 @@ Installation
 Reddit Terminal Viewer is Py2/Py3 compatible. The quickest way to install is through pip.
 
 .. code-block:: bash
-   $ sudo pip install rtv
+   $ sudo pip install --pre rtv
 
-Alternatively, the repo can be installed directly using python setuptools.
+Alternatively, you can install directly from the repo using python setuptools.
 
 .. code-block:: bash
 

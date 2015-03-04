@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='rtv',
-    version='1.0a3',
+    version='1.0a4',
     description='A simple terminal viewer for Reddit (Reddit Terminal Viewer)',
     long_description=(
         '**Reddit Terminal Viewer (RTV)** is a lightweight browser '
