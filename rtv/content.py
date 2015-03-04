@@ -329,7 +329,7 @@ class SubredditContent(BaseContent):
 
             try:
                 with loader():
-                    sub = reddit.get_subreddit(name, fetch=True)
+                    sub = reddit.get_subreddit(name)
             except praw.errors.ClientException:
                 raise SubredditNameError(name)
 
