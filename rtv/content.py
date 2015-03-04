@@ -325,6 +325,9 @@ class SubredditContent(BaseContent):
         else:
 
             if '/' in name:
+                if name[0] == '/':
+                    raise SubredditNameError(name)
+
                 name, display_type = name.split('/')
 
             try:
