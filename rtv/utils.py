@@ -2,9 +2,9 @@ import os
 import curses
 import time
 import threading
-from curses import textpad
-from contextlib import contextmanager
 import subprocess
+from curses import textpad, ascii
+from contextlib import contextmanager
 from functools import partial
 from types import MethodType
 
@@ -73,8 +73,14 @@ def text_input(window):
 
     def validate(ch):
         "Filters characters for special key sequences"
+
         if ch == ESCAPE:
             raise EscapePressed
+
+        # Fix backspace for iterm
+        if ch == ascii.DEL:
+            ch = curses.KEY_BACKSPACE
+
         return ch
 
     # Wrapping in an exception block so that we can distinguish when the user
