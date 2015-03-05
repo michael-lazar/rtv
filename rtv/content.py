@@ -327,9 +327,6 @@ class SubredditContent(BaseContent):
     @classmethod
     def from_name(cls, reddit, name, loader=default_loader, display_type = 'hot'):
 
-        if name == 'front':
-            return cls('Front Page', reddit.get_front_page(limit=None), loader)
-
         if name == 'new':
             return cls('New', reddit.get_new(limit=None), loader)
 
