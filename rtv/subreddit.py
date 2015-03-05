@@ -34,7 +34,6 @@ class SubredditPage(BasePage):
                 self.move_cursor_down()
                 self.clear_input_queue()
 
-            # View submission
             elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER, ord('l')):
                 self.open_submission()
                 self.draw()
@@ -42,12 +41,10 @@ class SubredditPage(BasePage):
             elif cmd == ord('o'):
                 self.open_link()
 
-            # Enter edit mode to change subreddit
             elif cmd == ord('/'):
                 self.prompt_subreddit()
                 self.draw()
 
-            # Refresh page
             elif cmd in (curses.KEY_F5, ord('r')):
                 self.refresh_content()
                 self.draw()
@@ -55,7 +52,6 @@ class SubredditPage(BasePage):
             elif cmd == curses.KEY_RESIZE:
                 self.draw()
 
-            # Quit
             elif cmd == ord('q'):
                 sys.exit()
 
@@ -99,6 +95,11 @@ class SubredditPage(BasePage):
         page = SubmissionPage(self.stdscr, self.reddit, submission=submission)
         page.loop()
 
+    def open_link(self):
+
+        url = self.content.get(self.nav.absolute_index)['url_full']
+        webbrowser.open_new_tab(url)
+
     @staticmethod
     def draw_item(win, data, inverted=False):
 
@@ -132,7 +133,3 @@ class SubredditPage(BasePage):
             win.addnstr(row, 1, text, n_cols-1, curses.A_BOLD)
             text = ' {subreddit}'.format(**data)
             win.addnstr(text, n_cols - win.getyx()[1], Color.YELLOW)
-
-    def open_link(self):
-        url = self.content.get(self.nav.absolute_index)['url']
-        webbrowser.open_new_tab(url)

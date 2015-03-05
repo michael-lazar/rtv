@@ -1,5 +1,6 @@
 import curses
 import sys
+import webbrowser
 
 import six
 
@@ -36,24 +37,23 @@ class SubmissionPage(BasePage):
                 self.move_cursor_down()
                 self.clear_input_queue()
 
-            # Refresh page
             elif cmd in (curses.KEY_F5, ord('r')):
                 self.refresh_content()
                 self.draw()
 
-            # Show / hide a comment tree
             elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER, ord('l')):
                 self.toggle_comment()
                 self.draw()
 
+            elif cmd == ord('o'):
+                self.open_link()
+
             elif cmd == curses.KEY_RESIZE:
                 self.draw()
 
-            # Go back
             elif cmd in (ESCAPE, curses.KEY_LEFT, ord('h')):
                 break
 
-            # Quit
             elif cmd == ord('q'):
                 sys.exit()
 
@@ -69,6 +69,13 @@ class SubmissionPage(BasePage):
         self.content.reset()
         self.nav.page_index, self.nav.cursor_index = -1, 0
         self.nav.inverted = False
+
+    def open_link(self):
+
+        # Always open the page for the submission
+        # May want to expand at some point to open comment permalinks
+        url = self.content.get(-1)['permalink']
+        webbrowser.open_new_tab(url)
 
     def draw_item(self, win, data, inverted=False):
 
