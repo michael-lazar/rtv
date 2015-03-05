@@ -11,7 +11,7 @@ def read(*paths):
 
 setup(
     name='rtv',
-    version='1.0a5',
+    version='1.0a6',
     description='A simple terminal viewer for Reddit (Reddit Terminal Viewer)',
     long_description=(read('README.rst')),
     url='https://github.com/michael-lazar/rtv',

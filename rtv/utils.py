@@ -221,7 +221,8 @@ def curses_session():
         # Hide blinking cursor
         curses.curs_set(0)
 
-        patch_popen()
+        # Breaks python3
+        # patch_popen()
 
         yield stdscr
 
