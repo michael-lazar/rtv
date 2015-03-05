@@ -4,6 +4,9 @@ import time
 import threading
 from curses import textpad
 from contextlib import contextmanager
+import subprocess
+from functools import partial
+from types import MethodType
 
 from .errors import EscapePressed
 
@@ -43,6 +46,17 @@ class Color(object):
             curses.init_pair(index, code[0], code[1])
             setattr(cls, attr, curses.color_pair(index))
 
+def patch_popen():
+    """
+    Patch subprocess.Popen default behavior to redirect stdout + stderr to null.
+    This is a hack to stop the webbrowser from spewing errors in firefox.
+    """
+
+    # http://stackoverflow.com/a/13359757/2526287
+    stdout = open(os.devnull, 'w')
+    func = partial(subprocess.Popen.__init__,
+                   stdout=stdout, stderr=stdout, close_fds=True)
+    subprocess.Popen.__init__ = MethodType(func, None, subprocess.Popen)
 
 def text_input(window):
     """
@@ -200,6 +214,8 @@ def curses_session():
 
         # Hide blinking cursor
         curses.curs_set(0)
+
+        patch_popen()
 
         yield stdscr
 
