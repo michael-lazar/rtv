@@ -47,6 +47,7 @@ RTV currently supports browsing both subreddits and individual submissions. In e
 :``Arrow Keys`` or ``hjkl``: RTV supports both the arrow keys and vim bindings for navigation. Move up and down to scroll through items on the page.
 :``r`` or ``F5``: Refresh the current page.
 :``q``: Quit the program.
+:``o``: Open the url of the selected item in the default web browser.
 
 **Subreddit Mode**
 
@@ -54,7 +55,6 @@ In subreddit mode you can browse through the top submissions on either the front
 
 :``Right`` or ``Enter``: Open the currently selected submission in a new page.
 :``/``: Open a prompt to switch to a different subreddit. For example, pressing ``/`` and typing *python* will open */r/python*. You can return to Reddit's front page by using the alias */r/front*.
-:``o``: Opens the url for a link-post in the default browser.
 
 **Submission Mode**
 
