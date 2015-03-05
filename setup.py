@@ -11,7 +11,7 @@ def read(*paths):
 
 setup(
     name='rtv',
-    version='1.0a4',
+    version='1.0a5',
     description='A simple terminal viewer for Reddit (Reddit Terminal Viewer)',
     long_description=(read('README.rst')),
     url='https://github.com/michael-lazar/rtv',
@@ -29,7 +29,6 @@ setup(
         'Operating System :: POSIX',
         'Natural Language :: English',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.0',
         'Programming Language :: Python :: 3.1',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
