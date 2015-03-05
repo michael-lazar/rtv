@@ -8,6 +8,9 @@ from contextlib import contextmanager
 from functools import partial
 from types import MethodType
 
+from six.moves import configparser
+from six import create_bound_method
+
 from .errors import EscapePressed
 
 ESCAPE = 27
@@ -46,6 +49,22 @@ class Color(object):
             curses.init_pair(index, code[0], code[1])
             setattr(cls, attr, curses.color_pair(index))
 
+def load_config():
+    """
+    Search for a configuration file at the location ~/.rtv and attempt to load
+    saved settings for things like the username and password.
+    """
+
+    config_path = os.path.join(os.path.expanduser('~'), '.rtv')
+    config = configparser.ConfigParser()
+    config.read(config_path)
+
+    defaults = {}
+    if config.has_section('rtv'):
+        defaults = dict(config.items('rtv'))
+
+    return defaults
+
 def patch_popen():
     """
     Patch subprocess.Popen default behavior to redirect stdout + stderr to null.
@@ -56,7 +75,7 @@ def patch_popen():
     stdout = open(os.devnull, 'w')
     func = partial(subprocess.Popen.__init__,
                    stdout=stdout, stderr=stdout, close_fds=True)
-    subprocess.Popen.__init__ = MethodType(func, None, subprocess.Popen)
+    subprocess.Popen.__init__ = create_bound_method(func, subprocess.Popen)
 
 def text_input(window):
     """

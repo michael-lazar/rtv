@@ -4,7 +4,7 @@ import praw
 from requests.exceptions import ConnectionError, HTTPError
 
 from rtv.errors import SubmissionURLError, SubredditNameError
-from rtv.utils import curses_session
+from rtv.utils import curses_session, load_config
 from rtv.subreddit import SubredditPage
 from rtv.submission import SubmissionPage
 
@@ -29,6 +29,8 @@ Global Commands
                         on the page.
   `r` or `F5`         : Refresh the current page.
   `q`                 : Quit the program.
+  `o`                 : Open the url of the selected item in the default web
+                        browser.
 
 Subreddit Mode
   Right or `Enter`    : Open the currently selected submission in a new page.
@@ -49,7 +51,7 @@ def main():
     parser = argparse.ArgumentParser(
         prog='rtv', description=description, epilog=epilog,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('-s', dest='subreddit', default='front', help='subreddit name')
+    parser.add_argument('-s', dest='subreddit', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
 
     group = parser.add_argument_group(
@@ -62,8 +64,18 @@ def main():
 
     args = parser.parse_args()
 
+    # Try to fill in empty arguments with values from the config.
+    # Command line flags should always take priority!
+    for key, val in load_config().items():
+        if getattr(args, key) is None:
+            setattr(args, key, val)
+
+    if args.subreddit is None:
+        args.subreddit = 'front'
+
     try:
-        reddit = praw.Reddit(user_agent='reddit terminal viewer v0.0')
+        # TODO: Move version number to a centralized location
+        reddit = praw.Reddit(user_agent='reddit terminal viewer v1.05a')
         reddit.config.decode_html_entities = True
 
         if args.username:
