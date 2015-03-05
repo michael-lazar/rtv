@@ -1,17 +1,19 @@
 from setuptools import setup
+import os
 #python setup.py develop --user
 #python setup.py develop --user --uninstall
+
+
+def read(*paths):
+    """ read files """
+    with open(os.path.join(*paths), 'r') as filename:
+        return filename.read()
 
 setup(
     name='rtv',
     version='1.0a4',
     description='A simple terminal viewer for Reddit (Reddit Terminal Viewer)',
-    long_description=(
-        '**Reddit Terminal Viewer (RTV)** is a lightweight browser '
-        'for Reddit (www.reddit.com) built into a terminal window. '
-        'RTV is built in Python and utilizes the **curses** library. ' 
-        'It is compatible with a large range of terminal emulators on '
-        'Linux and OSX systems.'),
+    long_description=(read('README.rst')),
     url='https://github.com/michael-lazar/rtv',
     author='Michael Lazar',
     author_email='lazar.michael22@gmail.com',
