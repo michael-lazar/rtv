@@ -34,8 +34,6 @@ Submission Mode
   Left                : Exit the submission page and return to the subreddit.
 """
 
-help_msg = help_msg.split("\n")
-
 
 class Color(object):
 
@@ -159,6 +157,14 @@ def display_message(stdscr, message):
     window.clear()
     window = None
     stdscr.refresh()
+
+
+def display_help(stdscr):
+    """Display a help message box at the center of the screen and wait for a
+    keypress"""
+
+    help_msgs = help_msg.split("\n")
+    display_message(stdscr, help_msgs)
 
 
 class LoadScreen(object):

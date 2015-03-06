@@ -7,7 +7,7 @@ from .errors import SubredditNameError
 from .page import BasePage
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .utils import LoadScreen, text_input, display_message, Color, ESCAPE, help_msg
+from .utils import LoadScreen, text_input, display_message, Color, ESCAPE, display_help
 
 class SubredditPage(BasePage):
 
@@ -53,7 +53,7 @@ class SubredditPage(BasePage):
                 self.draw()
 
             elif cmd == ord('?'):
-                display_message(self.stdscr, help_msg)
+                display_help(self.stdscr)
                 self.draw()
 
             elif cmd == ord('q'):
