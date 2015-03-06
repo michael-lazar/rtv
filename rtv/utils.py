@@ -16,6 +16,27 @@ from .errors import EscapePressed
 
 ESCAPE = 27
 
+help_msg = """Global Commands
+  Arrow Keys or `hjkl`: Navigations.
+  `r` or `F5`         : Refresh the current page.
+  `q`                 : Quit the program.
+  `o`                 : Open the url of the selected item in the default web
+                        browser.
+  `?`                 : Show this help message.
+
+Subreddit Mode
+  Right or `Enter`    : Open the currently selected submission in a new page.
+  `/`                 : Open a prompt to switch to a different subreddit.
+
+Submission Mode
+  Right or `Enter`    : Toggle the currently selected comment between hidden
+                        and visible.
+  Left                : Exit the submission page and return to the subreddit.
+"""
+
+help_msg = help_msg.split("\n")
+
+
 class Color(object):
 
     COLORS = {
@@ -118,17 +139,29 @@ def text_input(window):
 def display_message(stdscr, message):
     "Display a message box at the center of the screen and wait for a keypress"
 
-    message_len = len(message)
     n_rows, n_cols = stdscr.getmaxyx()
-    s_row = (n_rows - 2) // 2
-    s_col = (n_cols - message_len - 1) // 2
-    window = stdscr.derwin(3, message_len+2, s_row, s_col)
+
+    if type(message) == list:
+        message_len = max(map(len, message))
+        s_row = (n_rows - len(message)) // 2
+        s_col = (n_cols - message_len - 1) // 2
+        window = stdscr.derwin(len(message) + 2, message_len + 3, s_row, s_col)
+    else:
+        message_len = len(message)
+        s_row = (n_rows - 2) // 2
+        s_col = (n_cols - message_len - 1) // 2
+        window = stdscr.derwin(10, 3, s_row, s_col)
 
     window.erase()
     window.border()
-    window.addstr(1, 1, message)
-    window.refresh()
 
+    if type(message) == list:
+        for i in range(len(message)):
+            window.addstr(i + 1, 1, message[i])
+    else:
+        window.addstr(1, 1, message)
+
+    window.refresh()
     stdscr.getch()
 
     window.clear()

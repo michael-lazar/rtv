@@ -7,7 +7,7 @@ from .errors import SubredditNameError
 from .page import BasePage
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .utils import LoadScreen, text_input, display_message, Color, ESCAPE
+from .utils import LoadScreen, text_input, display_message, Color, ESCAPE, help_msg
 
 class SubredditPage(BasePage):
 
@@ -51,6 +51,9 @@ class SubredditPage(BasePage):
 
             elif cmd == curses.KEY_RESIZE:
                 self.draw()
+
+            elif cmd == ord('?'):
+                display_message(self.stdscr, help_msg)
 
             elif cmd == ord('q'):
                 sys.exit()
