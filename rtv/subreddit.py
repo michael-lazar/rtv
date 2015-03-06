@@ -71,7 +71,7 @@ class SubredditPage(BasePage):
                 self.reddit, name, self.loader)
 
         except (SubredditNameError, HTTPError):
-            display_message(self.stdscr, 'Invalid Subreddit')
+            display_message(self.stdscr, ['Invalid Subreddit'])
 
         else:
             self.nav.page_index, self.nav.cursor_index = 0, 0

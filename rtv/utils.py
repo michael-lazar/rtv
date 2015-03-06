@@ -141,25 +141,17 @@ def display_message(stdscr, message):
 
     n_rows, n_cols = stdscr.getmaxyx()
 
-    if type(message) == list:
-        message_len = max(map(len, message))
-        s_row = (n_rows - len(message)) // 2
-        s_col = (n_cols - message_len - 1) // 2
-        window = stdscr.derwin(len(message) + 2, message_len + 3, s_row, s_col)
-    else:
-        message_len = len(message)
-        s_row = (n_rows - 2) // 2
-        s_col = (n_cols - message_len - 1) // 2
-        window = stdscr.derwin(10, 3, s_row, s_col)
+    box_width = max(map(len, message))
+    box_height = len(message)
+    s_row = (n_rows - box_height) // 2
+    s_col = (n_cols - box_width - 1) // 2
+    window = stdscr.derwin(box_height + 2, box_width + 3, s_row, s_col)
 
     window.erase()
     window.border()
 
-    if type(message) == list:
-        for i in range(len(message)):
-            window.addstr(i + 1, 1, message[i])
-    else:
-        window.addstr(1, 1, message)
+    for i in range(box_height):
+        window.addstr(i + 1, 1, message[i])
 
     window.refresh()
     stdscr.getch()
