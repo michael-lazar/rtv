@@ -96,7 +96,7 @@ def main():
                 page.loop()
 
     except InvalidUserPass:
-        print('Invalid password for username: ' + args.username)
+        print('Invalid password for username: {}'.format(args.username)) 
 
     except KeyboardInterrupt:
         return
