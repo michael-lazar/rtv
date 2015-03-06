@@ -2,6 +2,7 @@ import argparse
 from getpass import getpass
 import praw
 from requests.exceptions import ConnectionError, HTTPError
+from praw.errors import InvalidUserPass
 
 from rtv.errors import SubmissionURLError, SubredditNameError
 from rtv.utils import curses_session, load_config
@@ -93,6 +94,9 @@ def main():
 
                 page = SubredditPage(stdscr, reddit, args.subreddit)
                 page.loop()
+
+    except InvalidUserPass:
+        print('Invalid password for username: ' + args.username)
 
     except KeyboardInterrupt:
         return
