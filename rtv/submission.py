@@ -56,7 +56,8 @@ class SubmissionPage(BasePage):
 
             elif cmd == ord('?'):
                 display_message(self.stdscr, help_msg)
-            
+                self.draw()
+                
             elif cmd == ord('q'):
                 sys.exit()
 
