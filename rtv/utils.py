@@ -1,4 +1,5 @@
 import os
+import sys
 import curses
 import time
 import threading
@@ -65,17 +66,16 @@ def load_config():
 
     return defaults
 
-def patch_popen():
+def hide_stderr():
     """
-    Patch subprocess.Popen default behavior to redirect stdout + stderr to null.
-    This is a hack to stop the webbrowser from spewing errors in firefox.
+    Redirect all stderr output to null. This is a hack to stop the webbrowser
+    from spewing errors in firefox.
     """
 
-    # http://stackoverflow.com/a/13359757/2526287
-    stdout = open(os.devnull, 'w')
-    func = partial(subprocess.Popen.__init__,
-                   stdout=stdout, stderr=stdout, close_fds=True)
-    subprocess.Popen.__init__ = create_bound_method(func, subprocess.Popen)
+    # http://www.thecodingforums.com/threads/how-to-change-redirect-stderr.355342/#post-1868822
+    sys.stderr.flush()
+    err = open(os.devnull, 'ab+', 0)
+    os.dup2(err.fileno(), sys.stderr.fileno())
 
 def text_input(window):
     """
@@ -204,12 +204,12 @@ class LoadScreen(object):
 def curses_session():
 
     try:
-        # Curses must wait for some time after the Escape key is pressed to see
+        # Curses must wait for some time after the Escape key is pressed to
         # check if it is the beginning of an escape sequence indicating a
         # special key. The default wait time is 1 second, which means that
-        # getch() will not return the escape key (27), until a full second
-        # after it has been pressed. Turn this down to 25 ms, which is close to
-        # what VIM uses.
+        # getch() will not return the escape key (27) until a full second
+        # after it has been pressed.
+        # Turn this down to 25 ms, which is close to what VIM uses.
         # http://stackoverflow.com/questions/27372068
         os.environ['ESCDELAY'] = '25'
 
@@ -234,14 +234,13 @@ def curses_session():
             curses.start_color()
         except:
             pass
-        else:
-            Color.init()
+
+        Color.init()
 
         # Hide blinking cursor
         curses.curs_set(0)
 
-        # Breaks python3
-        # patch_popen()
+        hide_stderr()
 
         yield stdscr
 
