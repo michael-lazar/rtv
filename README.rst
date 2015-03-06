@@ -62,3 +62,22 @@ In submission mode you can view the self text for a submission and browse commen
 
 :``Right`` or ``Enter``: Toggle the currently selected comment between hidden and visible. Alternatively, load additional comments identified by *[+] more comments*.
 :``Left``: Exit the submission page and return to the subreddit.
+
+-------------
+Configuration
+-------------
+
+RTV will read a configuration dotfile located at **~/.rtv**.
+This can be used to avoid having to re-enter login credentials every time the program is launched.
+Each line in the file will replace the corresponding default argument in the launch script.
+
+Example config file (**~/.rtv**):
+
+::
+
+  [rtv]
+  username=MyUsername
+  password=MySecretPassword
+  
+  # Default subreddit
+  subreddit=CollegeBasketball
