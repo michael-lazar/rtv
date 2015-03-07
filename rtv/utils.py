@@ -16,24 +16,22 @@ from .errors import EscapePressed
 
 ESCAPE = 27
 
-help_msg = """Global Commands
-  Arrow Keys or `hjkl`: Navigations.
-  `r` or `F5`         : Refresh the current page.
-  `q`                 : Quit the program.
-  `o`                 : Open the url of the selected item in the default web
-                        browser.
-  `?`                 : Show this help message.
+HELP = """
+Global Commands
+  `UP/DOWN` or `j/k`  : Scroll to the prev/next item
+  `r` or `F5`         : Refresh the current page
+  `q`                 : Quit the program
+  `o`                 : Open the selected item in the default web browser
+  `?`                 : Show this help message
 
 Subreddit Mode
-  Right or `Enter`    : Open the currently selected submission in a new page.
-  `/`                 : Open a prompt to switch to a different subreddit.
+  `RIGHT` or `l`      : View comments for the selected submission
+  `/`                 : Open a prompt to switch subreddits
 
 Submission Mode
-  Right or `Enter`    : Toggle the currently selected comment between hidden
-                        and visible.
-  Left                : Exit the submission page and return to the subreddit.
+  `LEFT` or `h`       : Return to subreddit mode
+  `RIGHT` or `l`      : Fold the selected comment, or load additional comments
 """
-
 
 class Color(object):
 
@@ -139,17 +137,24 @@ def display_message(stdscr, message):
 
     n_rows, n_cols = stdscr.getmaxyx()
 
-    box_width = max(map(len, message))
-    box_height = len(message)
+    box_width = max(map(len, message)) + 2
+    box_height = len(message) + 2
+
+    # Make sure the window is large enough to fit the message
+    # TODO: Should find a better way to display the message in this situation
+    if (box_width > n_cols) or (box_height > n_rows):
+        curses.flash()
+        return
+
     s_row = (n_rows - box_height) // 2
-    s_col = (n_cols - box_width - 1) // 2
-    window = stdscr.derwin(box_height + 2, box_width + 3, s_row, s_col)
+    s_col = (n_cols - box_width) // 2
+    window = stdscr.derwin(box_height, box_width, s_row, s_col)
 
     window.erase()
     window.border()
 
-    for i in range(box_height):
-        window.addstr(i + 1, 1, message[i])
+    for index, line in enumerate(message, start=1):
+        window.addstr(index, 1, line)
 
     window.refresh()
     stdscr.getch()
@@ -163,7 +168,7 @@ def display_help(stdscr):
     """Display a help message box at the center of the screen and wait for a
     keypress"""
 
-    help_msgs = help_msg.split("\n")
+    help_msgs = HELP.split("\n")
     display_message(stdscr, help_msgs)
 
 

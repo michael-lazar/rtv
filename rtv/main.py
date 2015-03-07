@@ -4,7 +4,7 @@ import praw
 from requests.exceptions import ConnectionError, HTTPError
 
 from rtv.errors import SubmissionURLError, SubredditNameError
-from rtv.utils import curses_session, load_config
+from rtv.utils import curses_session, load_config, HELP
 from rtv.subreddit import SubredditPage
 from rtv.submission import SubmissionPage
 
@@ -15,37 +15,16 @@ terminal window.
 
 # TODO: Figure out a way to sync this with the README
 epilog = """
-Usage
+Controls
 -----
 RTV currently supports browsing both subreddits and individual submissions.
 In each mode the controls are slightly different. In subreddit mode you can 
 browse through the top submissions on either the front page or a specific 
 subreddit. In submission mode you can view the self text for a submission and 
 browse comments.
-
-Global Commands
-  Arrow Keys or `hjkl`: RTV supports both the arrow keys and vim bindings for
-                        navigation. Move up and down to scroll through items
-                        on the page.
-  `r` or `F5`         : Refresh the current page.
-  `q`                 : Quit the program.
-  `o`                 : Open the url of the selected item in the default web
-                        browser.
-  `?`                 : Show the help message.
-
-Subreddit Mode
-  Right or `Enter`    : Open the currently selected submission in a new page.
-  `/`                 : Open a prompt to switch to a different subreddit. For
-                        example, pressing `/` and typing "python" will open
-                        "/r/python". You can return to Reddit's front page
-                        by using the alias "/r/front".
-
-Submission Mode
-  Right or `Enter`    : Toggle the currently selected comment between hidden
-                        and visible. Alternatively, load addition comments
-                        identified by "[+] more comments".
-  Left                : Exit the submission page and return to the subreddit.
 """
+
+epilog += HELP
 
 def main():
 
