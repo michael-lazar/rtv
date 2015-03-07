@@ -6,11 +6,11 @@
 Reddit Terminal Viewer
 ======================
 
-Browse Reddit from your terminal.
-
-.. image:: http://i.imgur.com/4a3Yrov.gif
+Browse Reddit from your terminal
 
 RTV is built in python using the curses library, and is compatable with *most* terminal emulators on Linux and OS X.
+
+.. image:: http://i.imgur.com/4a3Yrov.gif
 
 ------------
 Installation
