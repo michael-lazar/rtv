@@ -31,6 +31,7 @@ Global Commands
   `q`                 : Quit the program.
   `o`                 : Open the url of the selected item in the default web
                         browser.
+  `?`                 : Show the help message.
 
 Subreddit Mode
   Right or `Enter`    : Open the currently selected submission in a new page.

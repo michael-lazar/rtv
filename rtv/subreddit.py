@@ -7,7 +7,7 @@ from .errors import SubredditNameError
 from .page import BasePage
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .utils import LoadScreen, text_input, display_message, Color, ESCAPE
+from .utils import LoadScreen, text_input, display_message, Color, ESCAPE, display_help
 
 class SubredditPage(BasePage):
 
@@ -52,6 +52,10 @@ class SubredditPage(BasePage):
             elif cmd == curses.KEY_RESIZE:
                 self.draw()
 
+            elif cmd == ord('?'):
+                display_help(self.stdscr)
+                self.draw()
+
             elif cmd == ord('q'):
                 sys.exit()
 
@@ -67,7 +71,7 @@ class SubredditPage(BasePage):
                 self.reddit, name, self.loader)
 
         except (SubredditNameError, HTTPError):
-            display_message(self.stdscr, 'Invalid Subreddit')
+            display_message(self.stdscr, ['Invalid Subreddit'])
 
         else:
             self.nav.page_index, self.nav.cursor_index = 0, 0

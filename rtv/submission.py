@@ -6,7 +6,7 @@ import six
 
 from .content import SubmissionContent
 from .page import BasePage
-from .utils import LoadScreen, Color, ESCAPE
+from .utils import LoadScreen, Color, ESCAPE, display_help
 
 class SubmissionPage(BasePage):
 
@@ -54,6 +54,10 @@ class SubmissionPage(BasePage):
             elif cmd in (ESCAPE, curses.KEY_LEFT, ord('h')):
                 break
 
+            elif cmd == ord('?'):
+                display_help(self.stdscr)
+                self.draw()
+                
             elif cmd == ord('q'):
                 sys.exit()
 

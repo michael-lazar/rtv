@@ -16,6 +16,25 @@ from .errors import EscapePressed
 
 ESCAPE = 27
 
+help_msg = """Global Commands
+  Arrow Keys or `hjkl`: Navigations.
+  `r` or `F5`         : Refresh the current page.
+  `q`                 : Quit the program.
+  `o`                 : Open the url of the selected item in the default web
+                        browser.
+  `?`                 : Show this help message.
+
+Subreddit Mode
+  Right or `Enter`    : Open the currently selected submission in a new page.
+  `/`                 : Open a prompt to switch to a different subreddit.
+
+Submission Mode
+  Right or `Enter`    : Toggle the currently selected comment between hidden
+                        and visible.
+  Left                : Exit the submission page and return to the subreddit.
+"""
+
+
 class Color(object):
 
     COLORS = {
@@ -118,22 +137,34 @@ def text_input(window):
 def display_message(stdscr, message):
     "Display a message box at the center of the screen and wait for a keypress"
 
-    message_len = len(message)
     n_rows, n_cols = stdscr.getmaxyx()
-    s_row = (n_rows - 2) // 2
-    s_col = (n_cols - message_len - 1) // 2
-    window = stdscr.derwin(3, message_len+2, s_row, s_col)
+
+    box_width = max(map(len, message))
+    box_height = len(message)
+    s_row = (n_rows - box_height) // 2
+    s_col = (n_cols - box_width - 1) // 2
+    window = stdscr.derwin(box_height + 2, box_width + 3, s_row, s_col)
 
     window.erase()
     window.border()
-    window.addstr(1, 1, message)
-    window.refresh()
 
+    for i in range(box_height):
+        window.addstr(i + 1, 1, message[i])
+
+    window.refresh()
     stdscr.getch()
 
     window.clear()
     window = None
     stdscr.refresh()
+
+
+def display_help(stdscr):
+    """Display a help message box at the center of the screen and wait for a
+    keypress"""
+
+    help_msgs = help_msg.split("\n")
+    display_message(stdscr, help_msgs)
 
 
 class LoadScreen(object):
