@@ -216,7 +216,7 @@ class LoadScreen(object):
 
         message_len = len(message) + len(trail)
         n_rows, n_cols = self._stdscr.getmaxyx()
-        s_row = (n_rows - 2) // 2
+        s_row = (n_rows - 3) // 2
         s_col = (n_cols - message_len - 1) // 2
         window = self._stdscr.derwin(3, message_len+2, s_row, s_col)
 
@@ -276,7 +276,7 @@ def curses_session():
         # Hide blinking cursor
         curses.curs_set(0)
 
-        hide_stderr()
+        # hide_stderr()
 
         yield stdscr
 
