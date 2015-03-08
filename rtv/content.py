@@ -355,17 +355,15 @@ class SubredditContent(BaseContent):
             else:
                 raise SubredditNameError(display_name)
 
-        with loader():
-
-            # Verify that content exists for the given submission generator.
-            # This is necessary because PRAW loads submissions lazily, and
-            # there is is no other way to check things like multireddits that
-            # don't have a real corresponding subreddit object.
-            try:
-                content = cls(display_name, submissions, loader)
-                content.get(0)
-            except:
-                raise SubredditNameError(display_name)
+        # Verify that content exists for the given submission generator.
+        # This is necessary because PRAW loads submissions lazily, and
+        # there is is no other way to check things like multireddits that
+        # don't have a real corresponding subreddit object.
+        content = cls(display_name, submissions, loader)
+        try:
+            content.get(0)
+        except:
+            raise SubredditNameError(display_name)
 
         return content
 
