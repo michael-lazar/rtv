@@ -4,6 +4,7 @@ from contextlib import contextmanager
 
 import praw
 import six
+import requests
 
 from .errors import SubmissionURLError, SubredditNameError
 
@@ -67,22 +68,6 @@ def humanize_timestamp(utc_timestamp, verbose=False):
         return ('%d months ago' % months) if verbose else ('%dmonth' % months)
     years = months // 12
     return ('%d years ago' % years) if verbose else ('%dyr' % years)
-
-def validate_backslashes(name):
-    """
-    Makes sure backslashes in subreddit name work with for_name()
-    """
-
-    if name[0] == '/':
-        raise SubredditNameError(name)
-       
-    if name[-1] == '/':
-        name = name[:-1]
-
-    if name.count('/') > 1:
-        raise SubredditNameError(name)
-
-    return name
 
 @contextmanager
 def default_loader(self):
@@ -318,7 +303,7 @@ class SubredditContent(BaseContent):
     list for repeat access.
     """
 
-    def __init__(self, name, submissions, loader=default_loader):
+    def __init__(self, name, submissions, loader):
 
         self.name = name
         self._loader = loader
@@ -326,62 +311,63 @@ class SubredditContent(BaseContent):
         self._submission_data = []
 
     @classmethod
-    def from_name(cls, reddit, name, loader=default_loader, display_type = 'hot'):
+    def from_name(cls, reddit, name, loader, order='hot'):
 
-        if name == 'new':
-            return cls('New', reddit.get_new(limit=None), loader)
+        name = name.strip(' /')  # Strip leading and trailing backslashes
+        if name.startswith('r/'):
+            name = name[2:]
 
-        if name == 'all':
-            sub = reddit.get_subreddit(name)
+        # Grab the display type e.g. "python/new"
+        if '/' in name:
+            name, order = name.split('/')
+
+        if order == 'hot':
+            display_name = '/r/{}'.format(name)
+        else:
+            display_name = '/r/{}/{}'.format(name, order)
+
+        if name == 'front':
+            if order == 'hot':
+                submissions = reddit.get_front_page(limit=None)
+            elif order == 'top':
+                submissions = reddit.get_top(limit=None)
+            elif order == 'rising':
+                submissions = reddit.get_rising(limit=None)
+            elif order == 'new':
+                submissions = reddit.get_new(limit=None)
+            elif order == 'controversial':
+                submissions = reddit.get_controversial(limit=None)
+            else:
+                raise SubredditNameError(display_name)
 
         else:
+            subreddit = reddit.get_subreddit(name)
+            if order == 'hot':
+                submissions = subreddit.get_hot(limit=None)
+            elif order == 'top':
+                submissions = subreddit.get_top(limit=None)
+            elif order == 'rising':
+                submissions = subreddit.get_rising(limit=None)
+            elif order == 'new':
+                submissions = subreddit.get_new(limit=None)
+            elif order == 'controversial':
+                submissions = subreddit.get_controversial(limit=None)
+            else:
+                raise SubredditNameError(display_name)
 
-            name = validate_backslashes(name)
+        with loader():
 
-            if '/' in name:
-                name, display_type = name.split('/')
-
-            if display_type not in ['new', 'top', 'hot', 'rising', 'controversial']:
-                raise SubredditNameError(name)
-
-            if name == 'front':
-                
-                if display_type == 'new':
-                    return cls('New', reddit.get_new(limit=None), loader)
-
-                elif display_type == 'top':
-                    return cls('Top', reddit.get_top(limit=None), loader)
-
-                elif display_type == 'hot':
-                    return cls('Front Page', reddit.get_front_page(limit=None), loader)
-
-                elif display_type == 'rising':
-                    return cls('Rising', reddit.get_rising(limit=None), loader)
-
-                elif display_type == 'controversial':
-                    return cls('Controversial', reddit.get_controversial(limit=None), loader)
-
+            # Verify that content exists for the given submission generator.
+            # This is necessary because PRAW loads submissions lazily, and
+            # there is is no other way to check things like multireddits that
+            # don't have a real corresponding subreddit object.
             try:
-                with loader():
-                    sub = reddit.get_subreddit(name, fetch=True)
-            except praw.errors.ClientException:
-                raise SubredditNameError(name)
+                content = cls(display_name, submissions, loader)
+                content.get(0)
+            except:
+                raise SubredditNameError(display_name)
 
-        if display_type == 'new':
-            return cls('/r/'+sub.display_name+'/new', sub.get_new(limit=None), loader)
-
-        elif display_type == 'top':
-            return cls('/r/'+sub.display_name+'/top', sub.get_top_from_all(limit=None), loader)
-
-        elif display_type == 'hot':
-            return cls('/r/'+sub.display_name, sub.get_hot(limit=None), loader)
-
-        elif display_type == 'rising':
-            return cls('/r/'+sub.display_name+'/rising', sub.get_rising(limit=None), loader)
-
-        elif display_type == 'controversial':
-            return cls('/r/'+sub.display_name+'/controversial', sub.get_controversial(limit=None), loader)
-
+        return content
 
     def get(self, index, n_cols=70):
         """

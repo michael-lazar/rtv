@@ -276,7 +276,7 @@ def curses_session():
         # Hide blinking cursor
         curses.curs_set(0)
 
-        hide_stderr()
+        # hide_stderr()
 
         yield stdscr
 
