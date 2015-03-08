@@ -11,7 +11,6 @@ from .submission import SubmissionPage
 import locale
 import rtv.content
 
-is_utf8 = True # if -a is set then this is set to false
 
 DESCRIPTION = """
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
