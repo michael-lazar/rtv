@@ -9,13 +9,12 @@ from rtv.utils import curses_session, load_config, HELP
 from rtv.subreddit import SubredditPage
 from rtv.submission import SubmissionPage
 
-description = """
+DESCRIPTION = """
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
 terminal window.
 """
 
-# TODO: Figure out a way to sync this with the README
-epilog = """
+EPILOG = """
 Controls
 -----
 RTV currently supports browsing both subreddits and individual submissions.
@@ -25,12 +24,12 @@ subreddit. In submission mode you can view the self text for a submission and
 browse comments.
 """
 
-epilog += HELP
+EPILOG += HELP
 
 def main():
 
     parser = argparse.ArgumentParser(
-        prog='rtv', description=description, epilog=epilog,
+        prog='rtv', description=DESCRIPTION, epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-s', dest='subreddit', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
@@ -92,7 +91,3 @@ def main():
 
     except SubredditNameError as e:
         print('Could not reach subreddit: {}'.format(e.name))
-
-
-if __name__ == '__main__':
-    main()
