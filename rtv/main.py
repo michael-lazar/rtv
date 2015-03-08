@@ -4,10 +4,11 @@ import praw
 from requests.exceptions import ConnectionError, HTTPError
 from praw.errors import InvalidUserPass
 
-from rtv.errors import SubmissionURLError, SubredditNameError
-from rtv.utils import curses_session, load_config, HELP
-from rtv.subreddit import SubredditPage
-from rtv.submission import SubmissionPage
+from .errors import SubmissionURLError, SubredditNameError
+from .utils import curses_session, load_config, HELP
+from .subreddit import SubredditPage
+from .submission import SubmissionPage
+
 
 DESCRIPTION = """
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
@@ -54,8 +55,7 @@ def main():
         args.subreddit = 'front'
 
     try:
-        # TODO: Move version number to a centralized location
-        reddit = praw.Reddit(user_agent='reddit terminal viewer v1.05a')
+        reddit = praw.Reddit(user_agent='desktop:https://github.com/michael-lazar/rtv:(by /u/civilization_phaze_3)')
         reddit.config.decode_html_entities = True
 
         if args.username:

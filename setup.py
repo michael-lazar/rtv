@@ -1,19 +1,12 @@
 from setuptools import setup
-import os
-#python setup.py develop --user
-#python setup.py develop --user --uninstall
 
-
-def read(*paths):
-    """ read files """
-    with open(os.path.join(*paths), 'r') as filename:
-        return filename.read()
+__version__ = '1.0a8'
 
 setup(
     name='rtv',
-    version='1.0a7',
+    version=__version__,
     description='A simple terminal viewer for Reddit (Reddit Terminal Viewer)',
-    long_description=(read('README.rst')),
+    long_description=open('README.rst').read(),
     url='https://github.com/michael-lazar/rtv',
     author='Michael Lazar',
     author_email='lazar.michael22@gmail.com',
