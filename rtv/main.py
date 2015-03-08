@@ -8,7 +8,10 @@ from .errors import SubmissionURLError, SubredditNameError
 from .utils import curses_session, load_config, HELP
 from .subreddit import SubredditPage
 from .submission import SubmissionPage
+import locale
+import rtv.content
 
+is_utf8 = True # if -a is set then this is set to false
 
 DESCRIPTION = """
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
@@ -19,9 +22,9 @@ EPILOG = """
 Controls
 -----
 RTV currently supports browsing both subreddits and individual submissions.
-In each mode the controls are slightly different. In subreddit mode you can 
-browse through the top submissions on either the front page or a specific 
-subreddit. In submission mode you can view the self text for a submission and 
+In each mode the controls are slightly different. In subreddit mode you can
+browse through the top submissions on either the front page or a specific
+subreddit. In submission mode you can view the self text for a submission and
 browse comments.
 """
 
@@ -34,9 +37,11 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-s', dest='subreddit', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
+    parser.add_argument('-a', dest='force_ascii',
+        help='forces ascii (disables unicode)', action='store_true')
 
     group = parser.add_argument_group(
-        'authentication (optional)', 
+        'authentication (optional)',
         'Authenticating allows you to view your customized front page. '
         'If only the username is given, the password will be prompted '
         'securely.')
@@ -53,6 +58,10 @@ def main():
 
     if args.subreddit is None:
         args.subreddit = 'front'
+
+    if args.force_ascii:
+        rtv.content.is_utf8 = False
+        locale.setlocale(locale.LC_ALL, '')
 
     try:
         reddit = praw.Reddit(user_agent='desktop:https://github.com/michael-lazar/rtv:(by /u/civilization_phaze_3)')
@@ -75,7 +84,7 @@ def main():
                 page.loop()
 
     except InvalidUserPass:
-        print('Invalid password for username: {}'.format(args.username)) 
+        print('Invalid password for username: {}'.format(args.username))
 
     except KeyboardInterrupt:
         return
