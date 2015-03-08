@@ -85,7 +85,7 @@ class SubredditPage(BasePage):
         n_rows, n_cols = self.stdscr.getmaxyx()
         self.stdscr.addstr(n_rows-1, 0, prompt, attr)
         self.stdscr.refresh()
-        window = self.stdscr.derwin(n_rows-1, len(prompt))
+        window = self.stdscr.derwin(1, n_cols-len(prompt),n_rows-1, len(prompt))
         window.attrset(attr)
 
         out = text_input(window)
