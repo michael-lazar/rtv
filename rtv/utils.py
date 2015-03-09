@@ -3,14 +3,10 @@ import sys
 import curses
 import time
 import threading
-import subprocess
 from curses import textpad, ascii
 from contextlib import contextmanager
-from functools import partial
-from types import MethodType
 
 from six.moves import configparser
-from six import create_bound_method
 
 from .errors import EscapePressed
 
@@ -82,17 +78,6 @@ def load_config():
         defaults = dict(config.items('rtv'))
 
     return defaults
-
-def hide_stderr():
-    """
-    Redirect all stderr output to null. This is a hack to stop the webbrowser
-    from spewing errors in firefox.
-    """
-
-    # http://www.thecodingforums.com/threads/how-to-change-redirect-stderr.355342/#post-1868822
-    sys.stderr.flush()
-    err = open(os.devnull, 'ab+', 0)
-    os.dup2(err.fileno(), sys.stderr.fileno())
 
 def text_input(window):
     """
@@ -276,12 +261,9 @@ def curses_session():
         # Hide blinking cursor
         curses.curs_set(0)
 
-        # hide_stderr()
-
         yield stdscr
 
     finally:
-
         if stdscr is not None:
             stdscr.keypad(0)
             curses.echo()
