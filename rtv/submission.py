@@ -21,7 +21,7 @@ class SubmissionPage(BasePage):
         else:
             raise ValueError('Must specify url or submission')
 
-        super(SubmissionPage, self).__init__(stdscr, content, page_index=-1)
+        super(SubmissionPage, self).__init__(stdscr, reddit, content, page_index=-1)
 
     def loop(self):
 

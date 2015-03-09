@@ -17,11 +17,10 @@ class SubredditPage(BasePage):
 
     def __init__(self, stdscr, reddit, name):
 
-        self.reddit = reddit
         self.loader = LoadScreen(stdscr)
 
         content = SubredditContent.from_name(reddit, name, self.loader)
-        super(SubredditPage, self).__init__(stdscr, content)
+        super(SubredditPage, self).__init__(stdscr, reddit, content)
 
     def loop(self):
 
