@@ -13,7 +13,7 @@ setup(
     license='MIT',
     keywords='reddit terminal praw curses',
     packages=['rtv'],
-    install_requires=['praw', 'six', 'requests'],
+    install_requires=['praw>=2.1.6', 'six', 'requests'],
     entry_points={'console_scripts': ['rtv=rtv.main:main']},
     classifiers=[
         'Intended Audience :: End Users/Desktop',

@@ -1,5 +1,4 @@
 import argparse
-from getpass import getpass
 import praw
 from requests.exceptions import ConnectionError, HTTPError
 from praw.errors import InvalidUserPass
@@ -59,11 +58,7 @@ def main():
         reddit.config.decode_html_entities = True
 
         if args.username:
-            if args.password:
-                reddit.login(args.username, args.password)
-            else:
-                password = getpass()
-                reddit.login(args.username, password)
+            reddit.login(args.username, args.password)
 
         with curses_session() as stdscr:
 
