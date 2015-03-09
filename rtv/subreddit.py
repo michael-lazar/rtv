@@ -8,7 +8,8 @@ from .errors import SubredditNameError
 from .page import BasePage
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .utils import LoadScreen, text_input, display_message, Color, ESCAPE, display_help
+from .utils import LoadScreen, Color, text_input, display_message, display_help
+
 
 # Used to keep track of browsing history across the current session
 _opened_links = set()
