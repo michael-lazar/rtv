@@ -1,6 +1,7 @@
 import curses
 import sys
 import webbrowser
+
 from requests.exceptions import HTTPError
 
 from .errors import SubredditNameError
@@ -9,12 +10,14 @@ from .submission import SubmissionPage
 from .content import SubredditContent
 from .utils import LoadScreen, text_input, display_message, Color, ESCAPE, display_help
 
+# Used to keep track of browsing history across the current session
+_opened_links = set()
+
 class SubredditPage(BasePage):
 
     def __init__(self, stdscr, reddit, name):
 
         self.reddit = reddit
-        self.name = name
         self.loader = LoadScreen(stdscr)
 
         content = SubredditContent.from_name(reddit, name, self.loader)
@@ -66,7 +69,7 @@ class SubredditPage(BasePage):
 
     def refresh_content(self, name=None):
 
-        name = name or self.name
+        name = name or self.content.name
 
         try:
             self.content = SubredditContent.from_name(
@@ -78,11 +81,10 @@ class SubredditPage(BasePage):
         else:
             self.nav.page_index, self.nav.cursor_index = 0, 0
             self.nav.inverted = False
-            self.name = name
 
     def prompt_subreddit(self):
 
-        attr = curses.A_BOLD | Color.MAGENTA
+        attr = curses.A_BOLD | Color.CYAN
         prompt = 'Enter Subreddit: /r/'
         n_rows, n_cols = self.stdscr.getmaxyx()
         self.stdscr.addstr(n_rows-1, 0, prompt, attr)
@@ -97,14 +99,21 @@ class SubredditPage(BasePage):
     def open_submission(self):
         "Select the current submission to view posts"
 
-        submission = self.content.get(self.nav.absolute_index)['object']
-        page = SubmissionPage(self.stdscr, self.reddit, submission=submission)
+        data = self.content.get(self.nav.absolute_index)
+        page = SubmissionPage(self.stdscr, self.reddit, submission=data['object'])
         page.loop()
+
+        if data['url'] == 'selfpost':
+            global _opened_links
+            _opened_links.add(data['url_full'])
 
     def open_link(self):
 
-        url = self.content.get(self.nav.absolute_index)['url_full']
-        webbrowser.open_new_tab(url)
+        url_full = self.content.get(self.nav.absolute_index)['url_full']
+        webbrowser.open_new_tab(url_full)
+
+        global _opened_links
+        _opened_links.add(url_full)
 
     @staticmethod
     def draw_item(win, data, inverted=False):
@@ -124,7 +133,9 @@ class SubredditPage(BasePage):
 
         row = n_title + offset
         if row in valid_rows:
-            attr = curses.A_UNDERLINE | Color.BLUE
+            seen = (data['url_full'] in _opened_links)
+            link_color = Color.MAGENTA if seen else Color.BLUE
+            attr = curses.A_UNDERLINE | link_color
             text = '{url}'.format(**data)
             win.addnstr(row, 1, text, n_cols-1, attr)
 
