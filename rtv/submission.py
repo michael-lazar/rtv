@@ -26,6 +26,7 @@ class SubmissionPage(BasePage):
     def loop(self):
 
         self.draw()
+
         while True:
             cmd = self.stdscr.getch()
 
@@ -37,29 +38,30 @@ class SubmissionPage(BasePage):
                 self.move_cursor_down()
                 self.clear_input_queue()
 
-            elif cmd in (curses.KEY_F5, ord('r')):
-                self.refresh_content()
-                self.draw()
-
             elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER, ord('l')):
                 self.toggle_comment()
                 self.draw()
 
             elif cmd == ord('o'):
                 self.open_link()
-
-            elif cmd == curses.KEY_RESIZE:
                 self.draw()
 
-            elif cmd in (ESCAPE, curses.KEY_LEFT, ord('h')):
-                break
+            elif cmd in (curses.KEY_F5, ord('r')):
+                self.refresh_content()
+                self.draw()
 
             elif cmd == ord('?'):
                 display_help(self.stdscr)
                 self.draw()
-                
+
             elif cmd == ord('q'):
                 sys.exit()
+
+            elif cmd == curses.KEY_RESIZE:
+                self.draw()
+                
+            elif cmd in (ESCAPE, curses.KEY_LEFT, ord('h')):
+                break
 
             else:
                 curses.beep()

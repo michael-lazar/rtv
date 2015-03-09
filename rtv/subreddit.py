@@ -23,6 +23,7 @@ class SubredditPage(BasePage):
     def loop(self):
 
         self.draw()
+
         while True:
             cmd = self.stdscr.getch()
 
@@ -40,16 +41,10 @@ class SubredditPage(BasePage):
 
             elif cmd == ord('o'):
                 self.open_link()
-
-            elif cmd == ord('/'):
-                self.prompt_subreddit()
                 self.draw()
 
             elif cmd in (curses.KEY_F5, ord('r')):
                 self.refresh_content()
-                self.draw()
-
-            elif cmd == curses.KEY_RESIZE:
                 self.draw()
 
             elif cmd == ord('?'):
@@ -58,6 +53,13 @@ class SubredditPage(BasePage):
 
             elif cmd == ord('q'):
                 sys.exit()
+
+            elif cmd == curses.KEY_RESIZE:
+                self.draw()
+
+            elif cmd == ord('/'):
+                self.prompt_subreddit()
+                self.draw()
 
             else:
                 curses.beep()
