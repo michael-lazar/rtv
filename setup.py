@@ -1,6 +1,6 @@
 from setuptools import setup
 
-__version__ = '1.0a8'
+__version__ = '1.0a9'
 
 setup(
     name='rtv',
