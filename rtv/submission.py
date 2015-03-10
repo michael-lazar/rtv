@@ -6,7 +6,7 @@ import six
 
 from .content import SubmissionContent
 from .page import BasePage
-from .utils import LoadScreen, Color, ESCAPE, display_help
+from .utils import LoadScreen, Color, ESCAPE, display_help, open_new_tab
 
 class SubmissionPage(BasePage):
 
@@ -81,7 +81,7 @@ class SubmissionPage(BasePage):
         # Always open the page for the submission
         # May want to expand at some point to open comment permalinks
         url = self.content.get(-1)['permalink']
-        webbrowser.open_new_tab(url)
+        open_new_tab(url)
 
     def draw_item(self, win, data, inverted=False):
 

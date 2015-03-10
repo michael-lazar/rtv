@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 import curses
 import time
 import threading
@@ -116,7 +117,6 @@ def text_input(window):
     curses.curs_set(0)
     return out
 
-
 def display_message(stdscr, message):
     "Display a message box at the center of the screen and wait for a keypress"
 
@@ -148,14 +148,12 @@ def display_message(stdscr, message):
     window = None
     stdscr.refresh()
 
-
 def display_help(stdscr):
     """Display a help message box at the center of the screen and wait for a
     keypress"""
 
     help_msgs = HELP.split("\n")
     display_message(stdscr, help_msgs)
-
 
 class LoadScreen(object):
 
@@ -220,6 +218,18 @@ class LoadScreen(object):
                 window.refresh()
                 time.sleep(interval)
 
+def open_new_tab(url):
+    """
+    Call webbrowser.open_new_tab(url) and redirect stdout/stderr to devnull.
+
+    This is a workaround to stop firefox from spewing warning messages to the
+    console. See http://bugs.python.org/issue22277 for a better description
+    of the problem.
+    """
+    command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
+    args = [sys.executable, '-c', command]
+    with open(os.devnull, 'ab+', 0) as null:
+        subprocess.check_call(args, stdout=null, stderr=null)
 
 @contextmanager
 def curses_session():

@@ -1,6 +1,5 @@
 import curses
 import sys
-import webbrowser
 
 from requests.exceptions import HTTPError
 
@@ -8,7 +7,8 @@ from .errors import SubredditNameError
 from .page import BasePage
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .utils import LoadScreen, Color, text_input, display_message, display_help
+from .utils import (LoadScreen, Color, text_input, display_message,
+                    display_help, open_new_tab)
 
 
 # Used to keep track of browsing history across the current session
@@ -109,11 +109,11 @@ class SubredditPage(BasePage):
 
     def open_link(self):
 
-        url_full = self.content.get(self.nav.absolute_index)['url_full']
-        webbrowser.open_new_tab(url_full)
+        url = self.content.get(self.nav.absolute_index)['url_full']
+        open_new_tab(url)
 
         global _opened_links
-        _opened_links.add(url_full)
+        _opened_links.add(url)
 
     @staticmethod
     def draw_item(win, data, inverted=False):
