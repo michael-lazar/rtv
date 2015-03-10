@@ -36,7 +36,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-s', dest='subreddit', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
-    parser.add_argument('-a', dest='force_ascii',
+    parser.add_argument('--force-ascii', dest='force_ascii',
         help='forces ascii (disables unicode)', action='store_true')
 
     group = parser.add_argument_group(
