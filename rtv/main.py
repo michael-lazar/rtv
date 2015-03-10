@@ -8,6 +8,9 @@ from .utils import curses_session, load_config, HELP
 from .subreddit import SubredditPage
 from .submission import SubmissionPage
 
+# Debugging
+# import logging
+# logging.basicConfig(level=logging.DEBUG, filename='rtv.log')
 
 DESCRIPTION = """
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
@@ -76,7 +79,7 @@ def main():
         return
 
     except ConnectionError:
-        print('Timeout: Could not connect to website')
+        print('Connection timeout: Could not connect to http://www.reddit.com')
 
     except HTTPError:
         print('HTTP Error: 404 Not Found')
