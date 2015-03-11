@@ -135,5 +135,8 @@ class SubredditPage(BasePage):
         if row in valid_rows:
             text = '{author}'.format(**data)
             win.addnstr(row, 1, text, n_cols-1, curses.A_BOLD)
+            if data['flair'] != None:
+                text = ' {flair}'.format(**data)
+                win.addnstr(text, n_cols - 1, curses.A_BOLD | Color.GREEN)
             text = ' {subreddit}'.format(**data)
             win.addnstr(text, n_cols - win.getyx()[1], Color.YELLOW)

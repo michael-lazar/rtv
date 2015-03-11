@@ -141,6 +141,10 @@ class BaseContent(object):
             sub_author = (clean(comment.submission.author.name) if
                           getattr(comment.submission, 'author') else '[deleted]')
             data['is_author'] = (data['author'] == sub_author)
+            if comment.author_flair_text != None:
+                data['flair'] = comment.author_flair_text
+            else:
+                data['flair'] = ""
 
         return data
 
@@ -162,9 +166,14 @@ class BaseContent(object):
         data['comments'] = '{} comments'.format(sub.num_comments)
         data['score'] = '{} pts'.format(sub.score)
         data['author'] = (clean(sub.author.name) if getattr(sub, 'author')
+
                           else '[deleted]')
         data['permalink'] = clean(sub.permalink)
         data['subreddit'] = strip_subreddit_url(sub.permalink)
+        if sub.link_flair_text != None:
+            data['flair'] = sub.link_flair_text
+        else:
+            data['flair'] = ""
         data['url_full'] = clean(sub.url)
         data['url'] = ('selfpost' if is_selfpost(sub.url) else clean(sub.url))
 
@@ -364,6 +373,7 @@ class SubredditContent(BaseContent):
             content.get(0)
         except:
             raise SubredditNameError(display_name)
+
 
         return content
 
