@@ -8,19 +8,30 @@ import requests
 
 from .errors import SubmissionURLError, SubredditNameError
 
+is_utf8 = True
+
 
 def clean(unicode_string):
     """
-    Convert unicode string into ascii-safe characters.
+    Checks if -a was given, if it was it
+    converts unicode string into ascii-safe characters.
     """
+    if not is_utf8:
+        if six.PY2:
+            ascii_string = unicode_string.encode('ascii', 'replace')
+        else:
+            ascii_string = unicode_string.encode().decode('ascii', 'replace')
 
-    if six.PY2:
-        ascii_string = unicode_string.encode('ascii', 'replace')
+            ascii_string = ascii_string.replace('\\', '')
+        return ascii_string
     else:
-        ascii_string = unicode_string.encode().decode('ascii', 'replace')
+        if six.PY2:
+            utf8_string = unicode_string.encode('utf-8', 'replace')
+        else:
+            utf8_string = unicode_string.encode().decode('utf-8', 'replace')
 
-    ascii_string = ascii_string.replace('\\', '')
-    return ascii_string
+            utf8_string = utf8_string.replace('\\', '')
+        return utf8_string
 
 
 def split_text(big_text, width):
