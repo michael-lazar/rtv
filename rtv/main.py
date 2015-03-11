@@ -1,18 +1,25 @@
 import argparse
+import locale
+
 import praw
 from requests.exceptions import ConnectionError, HTTPError
 from praw.errors import InvalidUserPass
 
+from . import content
 from .errors import SubmissionURLError, SubredditNameError
 from .utils import curses_session, load_config, HELP
 from .subreddit import SubredditPage
 from .submission import SubmissionPage
-import locale
-import rtv.content
 
 # Debugging
 # import logging
 # logging.basicConfig(level=logging.DEBUG, filename='rtv.log')
+
+locale.setlocale(locale.LC_ALL, '')
+
+AGENT = """
+desktop:https://github.com/michael-lazar/rtv:(by /u/civilization_phaze_3)
+"""
 
 DESCRIPTION = """
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
@@ -39,7 +46,7 @@ def main():
     parser.add_argument('-s', dest='subreddit', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
     parser.add_argument('--force-ascii', dest='force_ascii',
-        help='forces ascii (disables unicode)', action='store_true')
+        help='disable unicode', action='store_true')
 
     group = parser.add_argument_group(
         'authentication (optional)',
@@ -57,15 +64,14 @@ def main():
         if getattr(args, key) is None:
             setattr(args, key, val)
 
+    content.FORCE_ASCII = args.force_ascii
+
     if args.subreddit is None:
         args.subreddit = 'front'
 
-    if args.force_ascii:
-        rtv.content.is_utf8 = False
-        locale.setlocale(locale.LC_ALL, '')
-
     try:
-        reddit = praw.Reddit(user_agent='desktop:https://github.com/michael-lazar/rtv:(by /u/civilization_phaze_3)')
+        print('Connecting...')
+        reddit = praw.Reddit(user_agent=AGENT)
         reddit.config.decode_html_entities = True
 
         if args.username:
@@ -83,9 +89,6 @@ def main():
     except InvalidUserPass:
         print('Invalid password for username: {}'.format(args.username))
 
-    except KeyboardInterrupt:
-        return
-
     except ConnectionError:
         print('Connection timeout: Could not connect to http://www.reddit.com')
 
@@ -97,3 +100,7 @@ def main():
 
     except SubredditNameError as e:
         print('Could not reach subreddit: {}'.format(e.name))
+
+    except KeyboardInterrupt:
+        return
+

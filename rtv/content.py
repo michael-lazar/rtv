@@ -8,31 +8,19 @@ import requests
 
 from .errors import SubmissionURLError, SubredditNameError
 
-is_utf8 = True
+FORCE_ASCII = True
 
+def clean(string):
 
-def clean(unicode_string):
-    """
-    Checks if -a was given, if it was it
-    converts unicode string into ascii-safe characters.
-    """
-    if not is_utf8:
-        if six.PY2:
-            ascii_string = unicode_string.encode('ascii', 'replace')
-        else:
-            ascii_string = unicode_string.encode().decode('ascii', 'replace')
+    encoding = 'ascii' if FORCE_ASCII else 'utf-8'
 
-            ascii_string = ascii_string.replace('\\', '')
-        return ascii_string
+    if six.PY2:
+        out = string.encode(encoding, 'replace')
     else:
-        if six.PY2:
-            utf8_string = unicode_string.encode('utf-8', 'replace')
-        else:
-            utf8_string = unicode_string.encode().decode('utf-8', 'replace')
-
-            utf8_string = utf8_string.replace('\\', '')
-        return utf8_string
-
+        out = string.encode().decode(encoding, 'replace')
+    
+    out = out.replace('\\', '')
+    return out
 
 def split_text(big_text, width):
     return [
@@ -374,6 +362,7 @@ class SubredditContent(BaseContent):
         try:
             content.get(0)
         except:
+            # TODO: Trap specific errors
             raise SubredditNameError(display_name)
 
         return content
