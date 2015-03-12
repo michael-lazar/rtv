@@ -141,10 +141,7 @@ class BaseContent(object):
             sub_author = (clean(comment.submission.author.name) if
                           getattr(comment.submission, 'author') else '[deleted]')
             data['is_author'] = (data['author'] == sub_author)
-            if comment.author_flair_text != None:
-                data['flair'] = comment.author_flair_text
-            else:
-                data['flair'] = ""
+            data['flair'] = (clean(comment.author_flair_text) if comment.author_flair_text else "")
 
         return data
 
@@ -170,10 +167,7 @@ class BaseContent(object):
                           else '[deleted]')
         data['permalink'] = clean(sub.permalink)
         data['subreddit'] = strip_subreddit_url(sub.permalink)
-        if sub.link_flair_text != None:
-            data['flair'] = sub.link_flair_text
-        else:
-            data['flair'] = ""
+        data['flair'] = (clean(sub.link_flair_text) if sub.link_flair_text else "")
         data['url_full'] = clean(sub.url)
         data['url'] = ('selfpost' if is_selfpost(sub.url) else clean(sub.url))
 

@@ -107,10 +107,12 @@ class SubmissionPage(BasePage):
 
         row = offset
         if row in valid_rows:
-            text = '{author} {flair}'.format(**data)
+            text = '{author}'.format(**data)
             attr = curses.A_BOLD
             attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
             win.addnstr(row, 1, text, n_cols-1, attr)
+            text = ' {flair}'.format(**data)
+            win.addnstr(text, n_cols-win.getyx()[1], curses.A_BOLD | Color.YELLOW)
             text = ' {score} {created}'.format(**data)
             win.addnstr(text, n_cols - win.getyx()[1])
 
@@ -171,8 +173,8 @@ class SubmissionPage(BasePage):
         attr = curses.A_BOLD | Color.GREEN
         text = '{author}'.format(**data)
         win.addnstr(row, 1, text, n_cols, attr)
-        text = '{flair}'.format(**data)
-        win.addnstr(row, 1, text, n_cols, curses.A_BOLD | Color.GREEN)
+        text = ' {flair}'.format(**data)
+        win.addnstr(text, n_cols-win.getyx()[1], curses.A_BOLD | Color.YELLOW)
         text = ' {created} {subreddit}'.format(**data)
         win.addnstr(text, n_cols - win.getyx()[1])
 
