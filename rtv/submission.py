@@ -50,6 +50,11 @@ class SubmissionPage(BasePage):
                 self.refresh_content()
                 self.draw()
 
+            elif cmd == ord('c'):
+                self.add_comment()
+                self.refresh_content()
+                self.draw()
+                
             elif cmd == ord('?'):
                 display_help(self.stdscr)
                 self.draw()
@@ -209,3 +214,6 @@ class SubmissionPage(BasePage):
         win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         win.border()
+
+    def add_comment(self):
+        self.content._submission.add_comment('test')
