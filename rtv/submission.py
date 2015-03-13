@@ -225,8 +225,9 @@ class SubmissionPage(BasePage):
         window = self.stdscr.derwin(1, n_cols-len(prompt),n_rows-1, len(prompt))
         window.attrset(attr)
 
-        comment_text = text_input(window)
-
+        comment_text = text_input(window, show_cursor=True)
+        
+        
         if comment_text is not None:
             try:
                 self.content._submission.add_comment(comment_text)
