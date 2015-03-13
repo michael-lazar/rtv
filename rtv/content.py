@@ -8,18 +8,17 @@ import requests
 
 from .errors import SubmissionURLError, SubredditNameError
 
-FORCE_ASCII = True
+UNICODE = False
 
 def clean(string):
 
-    encoding = 'ascii' if FORCE_ASCII else 'utf-8'
+    encoding = 'utf-8' if UNICODE else 'ascii'
 
     if six.PY2:
         out = string.encode(encoding, 'replace')
     else:
         out = string.encode().decode(encoding, 'replace')
     
-    out = out.replace('\\', '')
     return out
 
 def split_text(big_text, width):
