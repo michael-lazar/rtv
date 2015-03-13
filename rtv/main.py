@@ -5,7 +5,7 @@ import praw
 from requests.exceptions import ConnectionError, HTTPError
 from praw.errors import InvalidUserPass
 
-from . import content
+from . import utils
 from .errors import SubmissionURLError, SubredditNameError
 from .utils import curses_session, load_config, HELP
 from .subreddit import SubredditPage
@@ -64,7 +64,7 @@ def main():
         if getattr(args, key) is None:
             setattr(args, key, val)
 
-    content.FORCE_ASCII = args.force_ascii
+    utils.FORCE_ASCII = args.force_ascii
 
     if args.subreddit is None:
         args.subreddit = 'front'

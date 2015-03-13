@@ -1,6 +1,6 @@
 import curses
 
-from .utils import Color
+from .utils import Color, clean
 
 class Navigator(object):
     """
@@ -157,14 +157,15 @@ class BasePage(object):
         self._header_window.bkgd(' ', attr)
 
         sub_name = self.content.name.replace('/r/front', 'Front Page ')
-        self._header_window.addnstr(0, 0, sub_name, n_cols-1)
+        self._header_window.addnstr(0, 0, clean(sub_name), n_cols-1)
 
         if self.reddit.user is not None:
             username = self.reddit.user.name
             s_col = (n_cols - len(username) - 1)
             # Only print the username if it fits in the empty space on the right
             if (s_col - 1) >= len(sub_name):
-                self._header_window.addnstr(0, s_col, username, (n_cols-s_col-1))
+                n = (n_cols - s_col - 1)
+                self._header_window.addnstr(0, s_col, clean(username), n)
 
         self._header_window.refresh()
 

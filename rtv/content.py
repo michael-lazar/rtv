@@ -3,24 +3,9 @@ from datetime import datetime
 from contextlib import contextmanager
 
 import praw
-import six
 import requests
 
 from .errors import SubmissionURLError, SubredditNameError
-
-FORCE_ASCII = True
-
-def clean(string):
-
-    encoding = 'ascii' if FORCE_ASCII else 'utf-8'
-
-    if six.PY2:
-        out = string.encode(encoding, 'replace')
-    else:
-        out = string.encode().decode(encoding, 'replace')
-    
-    out = out.replace('\\', '')
-    return out
 
 def split_text(big_text, width):
     return [
@@ -32,14 +17,13 @@ def split_text(big_text, width):
         for text in (textwrap.wrap(line, width=width) or [''])
     ]
 
-
 def strip_subreddit_url(permalink):
     """
     Grab the subreddit from the permalink because submission.subreddit.url
     makes a seperate call to the API.
     """
 
-    subreddit = clean(permalink).split('/')[4]
+    subreddit = permalink.split('/')[4]
     return '/r/{}'.format(subreddit)
 
 
@@ -131,13 +115,12 @@ class BaseContent(object):
             data['body'] = 'More comments'.format(comment.count)
         else:
             data['type'] = 'Comment'
-            data['body'] = clean(comment.body)
+            data['body'] = comment.body
             data['created'] = humanize_timestamp(comment.created_utc)
             data['score'] = '{} pts'.format(comment.score)
-            data['author'] = (clean(comment.author.name) if
+            data['author'] = (comment.author.name if
                               getattr(comment, 'author') else '[deleted]')
-
-            sub_author = (clean(comment.submission.author.name) if
+            sub_author = (comment.submission.author.name if
                           getattr(comment.submission, 'author') else '[deleted]')
             data['is_author'] = (data['author'] == sub_author)
 
@@ -155,17 +138,17 @@ class BaseContent(object):
         data = {}
         data['object'] = sub
         data['type'] = 'Submission'
-        data['title'] = clean(sub.title)
-        data['text'] = clean(sub.selftext)
+        data['title'] = sub.title
+        data['text'] = sub.selftext
         data['created'] = humanize_timestamp(sub.created_utc)
         data['comments'] = '{} comments'.format(sub.num_comments)
         data['score'] = '{} pts'.format(sub.score)
-        data['author'] = (clean(sub.author.name) if getattr(sub, 'author')
+        data['author'] = (sub.author.name if getattr(sub, 'author')
                           else '[deleted]')
-        data['permalink'] = clean(sub.permalink)
+        data['permalink'] = sub.permalink
         data['subreddit'] = strip_subreddit_url(sub.permalink)
-        data['url_full'] = clean(sub.url)
-        data['url'] = ('selfpost' if is_selfpost(sub.url) else clean(sub.url))
+        data['url_full'] = sub.url
+        data['url'] = ('selfpost' if is_selfpost(sub.url) else sub.url)
 
         return data
 
@@ -359,11 +342,11 @@ class SubredditContent(BaseContent):
         # there is is no other way to check things like multireddits that
         # don't have a real corresponding subreddit object.
         content = cls(display_name, submissions, loader)
-        try:
-            content.get(0)
-        except:
-            # TODO: Trap specific errors
-            raise SubredditNameError(display_name)
+        #try:
+        content.get(0)
+        #except:
+        #    # TODO: Trap specific errors
+        #    raise SubredditNameError(display_name)
 
         return content
 

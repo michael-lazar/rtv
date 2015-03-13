@@ -6,7 +6,7 @@ import six
 
 from .content import SubmissionContent
 from .page import BasePage
-from .utils import LoadScreen, Color, ESCAPE, display_help, open_new_tab
+from .utils import LoadScreen, Color, ESCAPE, display_help, open_new_tab, clean
 
 class SubmissionPage(BasePage):
 
@@ -99,7 +99,8 @@ class SubmissionPage(BasePage):
 
     @staticmethod
     def draw_comment(win, data, inverted=False):
-
+        import logging
+        _logger = logging.getLogger(__name__)
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
 
@@ -112,14 +113,14 @@ class SubmissionPage(BasePage):
             text = '{author}'.format(**data)
             attr = curses.A_BOLD
             attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
-            win.addnstr(row, 1, text, n_cols-1, attr)
+            win.addnstr(row, 1, clean(text), n_cols-1, attr)
             text = ' {score} {created}'.format(**data)
-            win.addnstr(text, n_cols - win.getyx()[1])
+            win.addnstr(clean(text), n_cols - win.getyx()[1])
 
         n_body = len(data['split_body'])
         for row, text in enumerate(data['split_body'], start=offset+1):
             if row in valid_rows:
-                win.addnstr(row, 1, text, n_cols-1)
+                win.addnstr(row, 1, clean(text), n_cols-50)
 
         # Vertical line, unfortunately vline() doesn't support custom color so
         # we have to build it one chr at a time.
@@ -145,9 +146,9 @@ class SubmissionPage(BasePage):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
         text = '{body}'.format(**data)
-        win.addnstr(0, 1, text, n_cols-1)
+        win.addnstr(0, 1, clean(text), n_cols-1)
         text = ' [{count}]'.format(**data)
-        win.addnstr(text, n_cols - win.getyx()[1], curses.A_BOLD)
+        win.addnstr(clean(text), n_cols - win.getyx()[1], curses.A_BOLD)
 
         attr = Color.get_level(data['level'])
         for y in range(n_rows):
@@ -167,26 +168,26 @@ class SubmissionPage(BasePage):
             return
 
         for row, text in enumerate(data['split_title'], start=1):
-            win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
+            win.addnstr(row, 1, clean(text), n_cols, curses.A_BOLD)
 
         row = len(data['split_title']) + 1
         attr = curses.A_BOLD | Color.GREEN
         text = '{author}'.format(**data)
-        win.addnstr(row, 1, text, n_cols, attr)
+        win.addnstr(row, 1, clean(text), n_cols, attr)
         text = ' {created} {subreddit}'.format(**data)
-        win.addnstr(text, n_cols - win.getyx()[1])
+        win.addnstr(clean(text), n_cols - win.getyx()[1])
 
         row = len(data['split_title']) + 2
         attr = curses.A_UNDERLINE | Color.BLUE
         text = '{url}'.format(**data)
-        win.addnstr(row, 1, text, n_cols, attr)
+        win.addnstr(row, 1, clean(text), n_cols, attr)
 
         offset = len(data['split_title']) + 3
         for row, text in enumerate(data['split_text'], start=offset):
-            win.addnstr(row, 1, text, n_cols)
+            win.addnstr(row, 1, clean(text), n_cols)
 
         row = len(data['split_title']) + len(data['split_text']) + 3
         text = '{score} {comments}'.format(**data)
-        win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
+        win.addnstr(row, 1, clean(text), n_cols, curses.A_BOLD)
 
         win.border()

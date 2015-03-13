@@ -8,7 +8,7 @@ from .page import BasePage
 from .submission import SubmissionPage
 from .content import SubredditContent
 from .utils import (LoadScreen, Color, text_input, display_message,
-                    display_help, open_new_tab)
+                    display_help, open_new_tab, clean)
 
 
 # Used to keep track of browsing history across the current session
@@ -87,7 +87,7 @@ class SubredditPage(BasePage):
         attr = curses.A_BOLD | Color.CYAN
         prompt = 'Enter Subreddit: /r/'
         n_rows, n_cols = self.stdscr.getmaxyx()
-        self.stdscr.addstr(n_rows-1, 0, prompt, attr)
+        self.stdscr.addstr(n_rows-1, 0, clean(prompt), attr)
         self.stdscr.refresh()
         window = self.stdscr.derwin(1, n_cols-len(prompt),n_rows-1, len(prompt))
         window.attrset(attr)
@@ -129,7 +129,7 @@ class SubredditPage(BasePage):
         for row, text in enumerate(data['split_title'], start=offset):
             if row in valid_rows:
                 attr = curses.A_BOLD
-                win.addstr(row, 1, text, attr)
+                win.addstr(row, 1, clean(text), attr)
 
         row = n_title + offset
         if row in valid_rows:
@@ -137,16 +137,16 @@ class SubredditPage(BasePage):
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
             text = '{url}'.format(**data)
-            win.addnstr(row, 1, text, n_cols-1, attr)
+            win.addnstr(row, 1, clean(text), n_cols-1, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
             text = '{created} {comments} {score}'.format(**data)
-            win.addnstr(row, 1, text, n_cols-1)
+            win.addnstr(row, 1, clean(text), n_cols-1)
 
         row = n_title + offset + 2
         if row in valid_rows:
             text = '{author}'.format(**data)
-            win.addnstr(row, 1, text, n_cols-1, curses.A_BOLD)
+            win.addnstr(row, 1, clean(text), n_cols-1, curses.A_BOLD)
             text = ' {subreddit}'.format(**data)
-            win.addnstr(text, n_cols - win.getyx()[1], Color.YELLOW)
+            win.addnstr(clean(text), n_cols - win.getyx()[1], Color.YELLOW)

@@ -7,10 +7,12 @@ import threading
 from curses import textpad, ascii
 from contextlib import contextmanager
 
+import six
 from six.moves import configparser
 
 from .errors import EscapePressed
 
+FORCE_ASCII = True
 ESCAPE = 27
 
 HELP = """
@@ -29,6 +31,31 @@ Submission Mode
   `LEFT` or `h`       : Return to subreddit mode
   `RIGHT` or `l`      : Fold the selected comment, or load additional comments
 """
+
+def clean(string):
+    """
+    Required reading!
+        http://nedbatchelder.com/text/unipain.html
+
+    Python 2 input string will be a unicode type (unicode code points). Curses
+    will accept that if all of the points are in the ascii range. However, if
+    any of the code points are not valid ascii curses will throw a
+    UnicodeEncodeError: 'ascii' codec can't encode character, ordinal not in
+    range(128). However, if we encode the unicode to a utf-8 byte string and
+    pass that to curses, curses will render correctly.
+
+    Python 3 input string will be a string type (unicode code points). Curses
+    will accept that in all cases. However, the n character count in addnstr
+    will get screwed up.
+
+    """
+    if six.PY2:
+        string = string.encode('utf-8', 'replace')
+    else:
+        string = string.encode('utf-8', 'replace')
+        pass
+
+    return string
 
 class Color(object):
 
