@@ -1,9 +1,11 @@
 import curses
 import sys
+import praw.errors
 
 from .content import SubmissionContent
 from .page import BasePage
-from .utils import LoadScreen, Color, Symbol, display_help, open_browser
+from .utils import (LoadScreen, Color, Symbol, display_help, open_browser,
+                    text_input, display_message)
 
 class SubmissionPage(BasePage):
 
@@ -52,8 +54,6 @@ class SubmissionPage(BasePage):
 
             elif cmd == ord('c'):
                 self.add_comment()
-                self.refresh_content()
-                self.draw()
                 
             elif cmd == ord('?'):
                 display_help(self.stdscr)
@@ -216,4 +216,24 @@ class SubmissionPage(BasePage):
         win.border()
 
     def add_comment(self):
-        self.content._submission.add_comment('test')
+        attr = curses.A_BOLD | Color.CYAN
+        prompt = 'Enter comment: '
+        n_rows, n_cols = self.stdscr.getmaxyx()
+        self.stdscr.addstr(n_rows-1, 0, prompt, attr)
+        self.stdscr.refresh()
+        window = self.stdscr.derwin(1, n_cols-len(prompt),n_rows-1, len(prompt))
+        window.attrset(attr)
+
+        comment_text = text_input(window)
+
+        if comment_text is not None:
+            try:
+                self.content._submission.add_comment(comment_text)
+
+            except praw.errors.APIException as e:
+                display_message(self.stdscr, [e.message])
+
+            else:
+                self.refresh_content()
+
+            self.draw()
