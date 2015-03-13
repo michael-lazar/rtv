@@ -99,8 +99,7 @@ class SubmissionPage(BasePage):
 
     @staticmethod
     def draw_comment(win, data, inverted=False):
-        import logging
-        _logger = logging.getLogger(__name__)
+
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
 
@@ -114,13 +113,15 @@ class SubmissionPage(BasePage):
             attr = curses.A_BOLD
             attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
             win.addnstr(row, 1, clean(text), n_cols-1, attr)
+            text = ' {flair}'.format(**data)
+            win.addnstr(clean(text), n_cols-win.getyx()[1], curses.A_BOLD | Color.YELLOW)
             text = ' {score} {created}'.format(**data)
             win.addnstr(clean(text), n_cols - win.getyx()[1])
 
         n_body = len(data['split_body'])
         for row, text in enumerate(data['split_body'], start=offset+1):
             if row in valid_rows:
-                win.addnstr(row, 1, clean(text), n_cols-50)
+                win.addnstr(row, 1, clean(text), n_cols-1)
 
         # Vertical line, unfortunately vline() doesn't support custom color so
         # we have to build it one chr at a time.
@@ -174,6 +175,8 @@ class SubmissionPage(BasePage):
         attr = curses.A_BOLD | Color.GREEN
         text = '{author}'.format(**data)
         win.addnstr(row, 1, clean(text), n_cols, attr)
+        text = ' {flair}'.format(**data)
+        win.addnstr(clean(text), n_cols-win.getyx()[1], curses.A_BOLD | Color.YELLOW)
         text = ' {created} {subreddit}'.format(**data)
         win.addnstr(clean(text), n_cols - win.getyx()[1])
 

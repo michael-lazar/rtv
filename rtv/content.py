@@ -3,6 +3,7 @@ from datetime import datetime
 from contextlib import contextmanager
 
 import praw
+import six
 import requests
 
 from .errors import SubmissionURLError, SubredditNameError
@@ -123,6 +124,7 @@ class BaseContent(object):
             sub_author = (comment.submission.author.name if
                           getattr(comment.submission, 'author') else '[deleted]')
             data['is_author'] = (data['author'] == sub_author)
+            data['flair'] = (comment.author_flair_text if comment.author_flair_text else "")
 
         return data
 
@@ -147,6 +149,7 @@ class BaseContent(object):
                           else '[deleted]')
         data['permalink'] = sub.permalink
         data['subreddit'] = strip_subreddit_url(sub.permalink)
+        data['flair'] = (sub.link_flair_text if sub.link_flair_text else "")        
         data['url_full'] = sub.url
         data['url'] = ('selfpost' if is_selfpost(sub.url) else sub.url)
 
@@ -342,11 +345,11 @@ class SubredditContent(BaseContent):
         # there is is no other way to check things like multireddits that
         # don't have a real corresponding subreddit object.
         content = cls(display_name, submissions, loader)
-        #try:
-        content.get(0)
-        #except:
-        #    # TODO: Trap specific errors
-        #    raise SubredditNameError(display_name)
+        try:
+            content.get(0)
+        except:
+            # TODO: Trap specific errors
+            raise SubredditNameError(display_name)
 
         return content
 

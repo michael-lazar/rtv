@@ -150,3 +150,5 @@ class SubredditPage(BasePage):
             win.addnstr(row, 1, clean(text), n_cols-1, curses.A_BOLD)
             text = ' {subreddit}'.format(**data)
             win.addnstr(clean(text), n_cols - win.getyx()[1], Color.YELLOW)
+            text = ' {flair}'.format(**data)
+            win.addnstr(clean(text), n_cols - win.getyx()[1], Color.RED)

@@ -45,8 +45,8 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-s', dest='subreddit', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
-    parser.add_argument('--force-ascii', dest='force_ascii',
-        help='disable unicode', action='store_true')
+    parser.add_argument('--unicode', help='enable unicode (beta)',
+            action='store_true')
 
     group = parser.add_argument_group(
         'authentication (optional)',
@@ -64,7 +64,7 @@ def main():
         if getattr(args, key) is None:
             setattr(args, key, val)
 
-    utils.FORCE_ASCII = args.force_ascii
+    utils.UNICODE = args.unicode
 
     if args.subreddit is None:
         args.subreddit = 'front'
