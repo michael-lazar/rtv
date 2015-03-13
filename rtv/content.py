@@ -27,7 +27,6 @@ def strip_subreddit_url(permalink):
     subreddit = permalink.split('/')[4]
     return '/r/{}'.format(subreddit)
 
-
 def humanize_timestamp(utc_timestamp, verbose=False):
     """
     Convert a utc timestamp into a human readable relative-time.
@@ -119,12 +118,10 @@ class BaseContent(object):
             data['body'] = comment.body
             data['created'] = humanize_timestamp(comment.created_utc)
             data['score'] = '{} pts'.format(comment.score)
-            data['author'] = (comment.author.name if
-                              getattr(comment, 'author') else '[deleted]')
-            sub_author = (comment.submission.author.name if
-                          getattr(comment.submission, 'author') else '[deleted]')
+            data['author'] = (comment.author.name if getattr(comment, 'author') else '[deleted]')
+            sub_author = (comment.submission.author.name if getattr(comment.submission, 'author') else '[deleted]')
             data['is_author'] = (data['author'] == sub_author)
-            data['flair'] = (comment.author_flair_text if comment.author_flair_text else "")
+            data['flair'] = (comment.author_flair_text if comment.author_flair_text else '')
 
         return data
 
@@ -145,11 +142,10 @@ class BaseContent(object):
         data['created'] = humanize_timestamp(sub.created_utc)
         data['comments'] = '{} comments'.format(sub.num_comments)
         data['score'] = '{} pts'.format(sub.score)
-        data['author'] = (sub.author.name if getattr(sub, 'author')
-                          else '[deleted]')
+        data['author'] = (sub.author.name if getattr(sub, 'author') else '[deleted]')
         data['permalink'] = sub.permalink
         data['subreddit'] = strip_subreddit_url(sub.permalink)
-        data['flair'] = (sub.link_flair_text if sub.link_flair_text else "")        
+        data['flair'] = (sub.link_flair_text if sub.link_flair_text else '')
         data['url_full'] = sub.url
         data['url'] = ('selfpost' if is_selfpost(sub.url) else sub.url)
 
@@ -228,8 +224,7 @@ class SubmissionContent(BaseContent):
             data['offset'] = indent_level * self.indent_size
 
             if data['type'] == 'Comment':
-                data['split_body'] = split_text(
-                    data['body'], width=n_cols-data['offset'])
+                data['split_body'] = split_text(data['body'], width=n_cols-data['offset'])
                 data['n_rows'] = len(data['split_body']) + 1
             else:
                 data['n_rows'] = 1
@@ -347,8 +342,7 @@ class SubredditContent(BaseContent):
         content = cls(display_name, submissions, loader)
         try:
             content.get(0)
-        except:
-            # TODO: Trap specific errors
+        except (praw.errors.APIException, requests.HTTPError):
             raise SubredditNameError(display_name)
 
         return content
