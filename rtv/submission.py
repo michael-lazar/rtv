@@ -1,5 +1,6 @@
 import curses
 import sys
+import time
 import praw.errors
 
 from .content import SubmissionContent
@@ -234,6 +235,7 @@ class SubmissionPage(BasePage):
                 display_message(self.stdscr, [e.message])
 
             else:
+                time.sleep(0.5)
                 self.refresh_content()
 
             self.draw()
