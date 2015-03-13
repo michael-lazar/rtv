@@ -217,26 +217,36 @@ class SubmissionPage(BasePage):
         win.border()
 
     def add_comment(self):
+        """
+        Add a comment on the submission if a header is selected.
+        Reply to a comment if the comment is selected.
+        """
+
+        if not self.reddit.is_logged_in():
+            display_message(self.stdscr, ["You are not logged in!"])
+            return
+
         attr = curses.A_BOLD | Color.CYAN
         prompt = 'Enter comment: '
         n_rows, n_cols = self.stdscr.getmaxyx()
         self.stdscr.addstr(n_rows-1, 0, prompt, attr)
         self.stdscr.refresh()
-        window = self.stdscr.derwin(1, n_cols-len(prompt),n_rows-1, len(prompt))
+        window = self.stdscr.derwin(1, n_cols-len(prompt), n_rows-1,
+                                    len(prompt))
         window.attrset(attr)
-
         comment_text = text_input(window, show_cursor=True)
-        
-        
+
+        cursor_position = self.nav.absolute_index
         if comment_text is not None:
             try:
-                self.content._submission.add_comment(comment_text)
-
+                if cursor_position == -1:  # comment on submission
+                    self.content._submission.add_comment(comment_text)
+                else:  # reply on a selected comment
+                    self.content.get(cursor_position)['object']\
+                                .reply(comment_text)
             except praw.errors.APIException as e:
                 display_message(self.stdscr, [e.message])
-
             else:
                 time.sleep(0.5)
                 self.refresh_content()
-
             self.draw()
