@@ -55,6 +55,7 @@ class SubmissionPage(BasePage):
 
             elif cmd == ord('c'):
                 self.add_comment()
+                self.draw()
                 
             elif cmd == ord('?'):
                 display_help(self.stdscr)
@@ -226,18 +227,25 @@ class SubmissionPage(BasePage):
             display_message(self.stdscr, ["You are not logged in!"])
             return
 
-        attr = curses.A_BOLD | Color.CYAN
-        prompt = 'Enter comment: '
         n_rows, n_cols = self.stdscr.getmaxyx()
-        self.stdscr.addstr(n_rows-1, 0, prompt, attr)
+        box_height = n_rows/2
+
+        attr = curses.A_BOLD | Color.CYAN
+        prompt = 'Enter comment: ESC to cancel, Ctrl+g to submit'
+        prompt = '-'*((n_cols-len(prompt))/2) + prompt \
+                 + '-'*((n_cols-len(prompt)+1)/2)
+        self.stdscr.addstr(n_rows-box_height-1, 0, prompt, attr)
         self.stdscr.refresh()
-        window = self.stdscr.derwin(1, n_cols-len(prompt), n_rows-1,
-                                    len(prompt))
+
+        window = self.stdscr.derwin(box_height, n_cols,
+                                    n_rows-box_height, 0)
+
         window.attrset(attr)
-        comment_text = text_input(window, show_cursor=True)
+        comment_text = text_input(window, show_cursor=True, insert_mode=False)
 
         cursor_position = self.nav.absolute_index
         if comment_text is not None:
+
             try:
                 if cursor_position == -1:  # comment on submission
                     self.content._submission.add_comment(comment_text)
@@ -249,4 +257,3 @@ class SubmissionPage(BasePage):
             else:
                 time.sleep(0.5)
                 self.refresh_content()
-            self.draw()

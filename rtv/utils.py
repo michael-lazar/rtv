@@ -118,7 +118,7 @@ def load_config():
 
     return defaults
 
-def text_input(window, show_cursor=False):
+def text_input(window, show_cursor=False, insert_mode=True):
     """
     Transform a window into a text box that will accept user input and loop
     until an escape sequence is entered.
@@ -129,7 +129,7 @@ def text_input(window, show_cursor=False):
 
     window.clear()
     curses.curs_set(1 if show_cursor else 2)
-    textbox = textpad.Textbox(window, insert_mode=True)
+    textbox = textpad.Textbox(window, insert_mode=insert_mode)
 
     def validate(ch):
         "Filters characters for special key sequences"
