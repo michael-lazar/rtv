@@ -12,9 +12,6 @@ from six.moves import configparser
 
 from .errors import EscapePressed
 
-FORCE_ASCII = True
-ESCAPE = 27
-
 HELP = """
 Global Commands
   `UP/DOWN` or `j/k`  : Scroll to the prev/next item
@@ -32,30 +29,43 @@ Submission Mode
   `RIGHT` or `l`      : Fold the selected comment, or load additional comments
 """
 
-def clean(string):
-    """
-    Required reading!
-        http://nedbatchelder.com/text/unipain.html
+class Symbol(object):
 
-    Python 2 input string will be a unicode type (unicode code points). Curses
-    will accept that if all of the points are in the ascii range. However, if
-    any of the code points are not valid ascii curses will throw a
-    UnicodeEncodeError: 'ascii' codec can't encode character, ordinal not in
-    range(128). However, if we encode the unicode to a utf-8 byte string and
-    pass that to curses, curses will render correctly.
+    UNICODE = False
 
-    Python 3 input string will be a string type (unicode code points). Curses
-    will accept that in all cases. However, the n character count in addnstr
-    will get screwed up.
+    ESCAPE = 27
 
-    """
-    if six.PY2:
-        string = string.encode('utf-8', 'replace')
-    else:
-        string = string.encode('utf-8', 'replace')
-        pass
+    # Curses does define constants for these (e.g. curses.ACS_BULLET)
+    # However, they rely on using the curses.addch() function, which has been
+    # found to be buggy and a PITA to work with. By defining them as unicode
+    # points they can be added via the more reliable curses.addstr().
+    # http://bugs.python.org/issue21088
+    UARROW = u'\u25b2'.encode('utf-8')
+    DARROW = u'\u25bc'.encode('utf-8')
+    BULLET = u'\u2022'.encode('utf-8')
 
-    return string
+    @classmethod
+    def clean(cls, string):
+        """
+        Required reading!
+            http://nedbatchelder.com/text/unipain.html
+
+        Python 2 input string will be a unicode type (unicode code points). Curses
+        will accept that if all of the points are in the ascii range. However, if
+        any of the code points are not valid ascii curses will throw a
+        UnicodeEncodeError: 'ascii' codec can't encode character, ordinal not in
+        range(128). However, if we encode the unicode to a utf-8 byte string and
+        pass that to curses, curses will render correctly.
+
+        Python 3 input string will be a string type (unicode code points). Curses
+        will accept that in all cases. However, the n character count in addnstr
+        will get screwed up.
+
+        """
+
+        encoding = 'utf-8' if cls.UNICODE else 'ascii'
+        string = string.encode(encoding, 'replace')
+        return string
 
 class Color(object):
 
@@ -123,7 +133,7 @@ def text_input(window):
     def validate(ch):
         "Filters characters for special key sequences"
 
-        if ch == ESCAPE:
+        if ch == Symbol.ESCAPE:
             raise EscapePressed
 
         # Fix backspace for iterm
@@ -245,7 +255,7 @@ class LoadScreen(object):
                 window.refresh()
                 time.sleep(interval)
 
-def open_new_tab(url):
+def open_browser(url):
     """
     Call webbrowser.open_new_tab(url) and redirect stdout/stderr to devnull.
 

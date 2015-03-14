@@ -10,13 +10,10 @@ from .errors import SubmissionURLError, SubredditNameError
 
 def split_text(big_text, width):
     return [
-        text
-        for line in big_text.splitlines()
-        # wrap returns an empty list when "line" is a newline
-        # in order to consider newlines we need a list containing an
-        # empty string
-        for text in (textwrap.wrap(line, width=width) or [''])
-    ]
+        text for line in big_text.splitlines()
+        # wrap returns an empty list when "line" is a newline. In order to
+        # consider newlines we need a list containing an empty string.
+        for text in (textwrap.wrap(line, width=width) or [''])]
 
 def strip_subreddit_url(permalink):
     """
@@ -64,12 +61,10 @@ class BaseContent(object):
     def iterate(self, index, step, n_cols):
 
         while True:
-
-            # Hack to prevent displaying negative indicies if iterating in the
-            # negative direction.
             if step < 0 and index < 0:
+                # Hack to prevent displaying negative indicies if iterating in
+                # the negative direction.
                 break
-
             try:
                 yield self.get(index, n_cols=n_cols)
             except IndexError:
@@ -109,6 +104,11 @@ class BaseContent(object):
         data['object'] = comment
         data['level'] = comment.nested_level
 
+        if getattr(comment.submission, 'author'):
+            sub_author = comment.submission.author.name
+        else:
+            sub_author = '[deleted]'
+
         if isinstance(comment, praw.objects.MoreComments):
             data['type'] = 'MoreComments'
             data['count'] = comment.count
@@ -119,9 +119,9 @@ class BaseContent(object):
             data['created'] = humanize_timestamp(comment.created_utc)
             data['score'] = '{} pts'.format(comment.score)
             data['author'] = (comment.author.name if getattr(comment, 'author') else '[deleted]')
-            sub_author = (comment.submission.author.name if getattr(comment.submission, 'author') else '[deleted]')
             data['is_author'] = (data['author'] == sub_author)
             data['flair'] = (comment.author_flair_text if comment.author_flair_text else '')
+            data['likes'] = comment.likes
 
         return data
 
@@ -148,6 +148,7 @@ class BaseContent(object):
         data['flair'] = (sub.link_flair_text if sub.link_flair_text else '')
         data['url_full'] = sub.url
         data['url'] = ('selfpost' if is_selfpost(sub.url) else sub.url)
+        data['likes'] = sub.likes
 
         return data
 

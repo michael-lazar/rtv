@@ -1,6 +1,6 @@
 import curses
 
-from .utils import Color, clean
+from .utils import Color, Symbol
 
 class Navigator(object):
     """
@@ -129,14 +129,41 @@ class BasePage(object):
             continue
         self.stdscr.nodelay(0)
 
+    def upvote(self):
+
+        data = self.content.get(self.nav.absolute_index)
+        if 'likes' not in data:
+            curses.flash()
+
+        elif data['likes']:
+            data['object'].clear_vote()
+            data['likes'] = None
+        else:
+            data['object'].upvote()
+            data['likes'] = True
+
+    def downvote(self):
+
+        data = self.content.get(self.nav.absolute_index)
+        if 'likes' not in data:
+            curses.flash()
+
+        if data['likes'] is False:
+            data['object'].clear_vote()
+            data['likes'] = None
+        else:
+            data['object'].downvote()
+            data['likes'] = False
+
     def draw(self):
 
         n_rows, n_cols = self.stdscr.getmaxyx()
         if n_rows < self.MIN_HEIGHT or n_cols < self.MIN_WIDTH:
             return
 
+        # Note: 2 argument form of derwin breaks PDcurses on Windows 7!
         self._header_window = self.stdscr.derwin(1, n_cols, 0, 0)
-        self._content_window = self.stdscr.derwin(1, 0)
+        self._content_window = self.stdscr.derwin(n_rows-1, n_cols, 1, 0)
 
         self.stdscr.erase()
         self._draw_header()
@@ -157,7 +184,7 @@ class BasePage(object):
         self._header_window.bkgd(' ', attr)
 
         sub_name = self.content.name.replace('/r/front', 'Front Page ')
-        self._header_window.addnstr(0, 0, clean(sub_name), n_cols-1)
+        self._header_window.addnstr(0, 0, Symbol.clean(sub_name), n_cols-1)
 
         if self.reddit.user is not None:
             username = self.reddit.user.name
@@ -165,7 +192,7 @@ class BasePage(object):
             # Only print the username if it fits in the empty space on the right
             if (s_col - 1) >= len(sub_name):
                 n = (n_cols - s_col - 1)
-                self._header_window.addnstr(0, s_col, clean(username), n)
+                self._header_window.addnstr(0, s_col, Symbol.clean(username), n)
 
         self._header_window.refresh()
 
@@ -215,14 +242,11 @@ class BasePage(object):
         self.remove_cursor()
 
         valid, redraw = self.nav.move(direction, len(self._subwindows))
-        if not valid:
-            curses.flash()
+        if not valid: curses.flash()
 
-        # TODO: If we don't redraw, ACS_VLINE gets screwed up when changing the
-        # attr back to normal. There may be a way around this.
-        if True: #if redraw
-            self._draw_content()
-
+        # Note: ACS_VLINE doesn't like changing the attribute, so always redraw.
+        # if redraw: self._draw_content()
+        self._draw_content()
         self.add_cursor()
 
     def _edit_cursor(self, attribute=None):
@@ -231,7 +255,6 @@ class BasePage(object):
         if self.nav.absolute_index < 0:
             return
 
-        # TODO: attach attr to data[attr] or something
         window, attr = self._subwindows[self.nav.cursor_index]
         if attr is not None:
             attribute |= attr

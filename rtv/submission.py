@@ -1,12 +1,9 @@
 import curses
 import sys
-import webbrowser
-
-import six
 
 from .content import SubmissionContent
 from .page import BasePage
-from .utils import LoadScreen, Color, ESCAPE, display_help, open_new_tab, clean
+from .utils import LoadScreen, Color, Symbol, display_help, open_browser
 
 class SubmissionPage(BasePage):
 
@@ -42,6 +39,9 @@ class SubmissionPage(BasePage):
                 self.toggle_comment()
                 self.draw()
 
+            elif cmd in (curses.KEY_LEFT, ord('h')):
+                break
+
             elif cmd == ord('o'):
                 self.open_link()
                 self.draw()
@@ -54,17 +54,19 @@ class SubmissionPage(BasePage):
                 display_help(self.stdscr)
                 self.draw()
 
+            elif cmd == ord('a'):
+                self.upvote()
+                self.draw()
+
+            elif cmd == ord('z'):
+                self.downvote()
+                self.draw()
+
             elif cmd == ord('q'):
                 sys.exit()
 
             elif cmd == curses.KEY_RESIZE:
                 self.draw()
-                
-            elif cmd in (ESCAPE, curses.KEY_LEFT, ord('h')):
-                break
-
-            else:
-                curses.beep()
 
     def toggle_comment(self):
 
@@ -81,19 +83,16 @@ class SubmissionPage(BasePage):
         # Always open the page for the submission
         # May want to expand at some point to open comment permalinks
         url = self.content.get(-1)['permalink']
-        open_new_tab(url)
+        open_browser(url)
 
     def draw_item(self, win, data, inverted=False):
 
         if data['type'] == 'MoreComments':
             return self.draw_more_comments(win, data)
-
         elif data['type'] == 'HiddenComment':
             return self.draw_more_comments(win, data)
-
         elif data['type'] == 'Comment':
             return self.draw_comment(win, data, inverted=inverted)
-
         else:
             return self.draw_submission(win, data)
 
@@ -109,53 +108,66 @@ class SubmissionPage(BasePage):
 
         row = offset
         if row in valid_rows:
-            text = '{author}'.format(**data)
+
+            text = Symbol.clean('{author} '.format(**data))
             attr = curses.A_BOLD
             attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
-            win.addnstr(row, 1, clean(text), n_cols-1, attr)
-            text = ' {flair}'.format(**data)
-            win.addnstr(clean(text), n_cols-win.getyx()[1], curses.A_BOLD | Color.YELLOW)
-            text = ' {score} {created}'.format(**data)
-            win.addnstr(clean(text), n_cols - win.getyx()[1])
+            win.addnstr(row, 1, text, n_cols-1, attr)
+
+            if data['flair']:
+                text = Symbol.clean('{flair} '.format(**data))
+                attr = curses.A_BOLD | Color.YELLOW
+                win.addnstr(text, n_cols-win.getyx()[1], attr)
+
+            if data['likes'] is None:
+                text, attr = Symbol.BULLET, curses.A_BOLD
+            elif data['likes']:
+                text, attr = Symbol.UARROW, (curses.A_BOLD | Color.GREEN)
+            else:
+                text, attr = Symbol.DARROW, (curses.A_BOLD | Color.RED)
+            win.addnstr(text, n_cols-win.getyx()[1], attr)
+
+            text = Symbol.clean(' {score} {created}'.format(**data))
+            win.addnstr(text, n_cols-win.getyx()[1])
 
         n_body = len(data['split_body'])
         for row, text in enumerate(data['split_body'], start=offset+1):
             if row in valid_rows:
-                win.addnstr(row, 1, clean(text), n_cols-1)
+                text = Symbol.clean(text)
+                win.addnstr(row, 1, text, n_cols-1)
 
-        # Vertical line, unfortunately vline() doesn't support custom color so
-        # we have to build it one chr at a time.
+        # Unfortunately vline() doesn't support custom color so we have to
+        # build it one segment at a time.
         attr = Color.get_level(data['level'])
         for y in range(n_rows):
-
             x = 0
-
-            # Nobody pays attention to curses ;(
             # http://bugs.python.org/issue21088
             if (sys.version_info.major,
-                sys.version_info.minor, 
+                sys.version_info.minor,
                 sys.version_info.micro) == (3, 4, 0):
                 x, y = y, x
-            
+
             win.addch(y, x, curses.ACS_VLINE, attr)
 
-        return attr | curses.ACS_VLINE
+        return (attr | curses.ACS_VLINE)
 
     @staticmethod
     def draw_more_comments(win, data):
 
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
-        text = '{body}'.format(**data)
-        win.addnstr(0, 1, clean(text), n_cols-1)
-        text = ' [{count}]'.format(**data)
-        win.addnstr(clean(text), n_cols - win.getyx()[1], curses.A_BOLD)
 
+        text = Symbol.clean('{body}'.format(**data))
+        win.addnstr(0, 1, text, n_cols-1)
+        text = Symbol.clean(' [{count}]'.format(**data))
+        win.addnstr(text, n_cols-win.getyx()[1], curses.A_BOLD)
+
+        # Unfortunately vline() doesn't support custom color so we have to
+        # build it one segment at a time.
         attr = Color.get_level(data['level'])
-        for y in range(n_rows):
-            win.addch(y, 0, curses.ACS_VLINE, attr)
+        win.addch(0, 0, curses.ACS_VLINE, attr)
 
-        return attr | curses.ACS_VLINE
+        return (attr | curses.ACS_VLINE)
 
     @staticmethod
     def draw_submission(win, data):
@@ -169,28 +181,31 @@ class SubmissionPage(BasePage):
             return
 
         for row, text in enumerate(data['split_title'], start=1):
-            win.addnstr(row, 1, clean(text), n_cols, curses.A_BOLD)
+            text = Symbol.clean(text)
+            win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         row = len(data['split_title']) + 1
         attr = curses.A_BOLD | Color.GREEN
-        text = '{author}'.format(**data)
-        win.addnstr(row, 1, clean(text), n_cols, attr)
-        text = ' {flair}'.format(**data)
-        win.addnstr(clean(text), n_cols-win.getyx()[1], curses.A_BOLD | Color.YELLOW)
-        text = ' {created} {subreddit}'.format(**data)
-        win.addnstr(clean(text), n_cols - win.getyx()[1])
+        text = Symbol.clean('{author}'.format(**data))
+        win.addnstr(row, 1, text, n_cols, attr)
+        attr = curses.A_BOLD | Color.YELLOW
+        text = Symbol.clean(' {flair}'.format(**data))
+        win.addnstr(text, n_cols-win.getyx()[1], attr)
+        text = Symbol.clean(' {created} {subreddit}'.format(**data))
+        win.addnstr(text, n_cols-win.getyx()[1])
 
         row = len(data['split_title']) + 2
         attr = curses.A_UNDERLINE | Color.BLUE
-        text = '{url}'.format(**data)
-        win.addnstr(row, 1, clean(text), n_cols, attr)
+        text = Symbol.clean('{url}'.format(**data))
+        win.addnstr(row, 1, text, n_cols, attr)
 
         offset = len(data['split_title']) + 3
         for row, text in enumerate(data['split_text'], start=offset):
-            win.addnstr(row, 1, clean(text), n_cols)
+            text = Symbol.clean(text)
+            win.addnstr(row, 1, text, n_cols)
 
         row = len(data['split_title']) + len(data['split_text']) + 3
-        text = '{score} {comments}'.format(**data)
-        win.addnstr(row, 1, clean(text), n_cols, curses.A_BOLD)
+        text = Symbol.clean('{score} {comments}'.format(**data))
+        win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         win.border()

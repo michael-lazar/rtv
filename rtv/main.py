@@ -5,9 +5,8 @@ import praw
 from requests.exceptions import ConnectionError, HTTPError
 from praw.errors import InvalidUserPass
 
-from . import utils
 from .errors import SubmissionURLError, SubredditNameError
-from .utils import curses_session, load_config, HELP
+from .utils import Symbol, curses_session, load_config, HELP
 from .subreddit import SubredditPage
 from .submission import SubmissionPage
 
@@ -28,7 +27,7 @@ terminal window.
 
 EPILOG = """
 Controls
------
+--------
 RTV currently supports browsing both subreddits and individual submissions.
 In each mode the controls are slightly different. In subreddit mode you can
 browse through the top submissions on either the front page or a specific
@@ -45,7 +44,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-s', dest='subreddit', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
-    parser.add_argument('--unicode', help='enable unicode (beta)',
+    parser.add_argument('--unicode', help='enable unicode (experimental)',
             action='store_true')
 
     group = parser.add_argument_group(
@@ -64,7 +63,7 @@ def main():
         if getattr(args, key) is None:
             setattr(args, key, val)
 
-    utils.UNICODE = args.unicode
+    Symbol.UNICODE = args.unicode
 
     if args.subreddit is None:
         args.subreddit = 'front'
@@ -75,6 +74,7 @@ def main():
         reddit.config.decode_html_entities = True
 
         if args.username:
+            # PRAW will prompt for password if it is None
             reddit.login(args.username, args.password)
 
         with curses_session() as stdscr:

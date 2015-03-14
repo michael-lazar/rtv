@@ -7,9 +7,8 @@ from .errors import SubredditNameError
 from .page import BasePage
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .utils import (LoadScreen, Color, text_input, display_message,
-                    display_help, open_new_tab, clean)
-
+from .utils import (LoadScreen, Symbol, Color, text_input, display_message,
+                    display_help, open_browser)
 
 # Used to keep track of browsing history across the current session
 _opened_links = set()
@@ -54,6 +53,14 @@ class SubredditPage(BasePage):
                 display_help(self.stdscr)
                 self.draw()
 
+            elif cmd == ord('a'):
+                self.upvote()
+                self.draw()
+
+            elif cmd == ord('z'):
+                self.downvote()
+                self.draw()
+
             elif cmd == ord('q'):
                 sys.exit()
 
@@ -64,9 +71,6 @@ class SubredditPage(BasePage):
                 self.prompt_subreddit()
                 self.draw()
 
-            else:
-                curses.beep()
-
     def refresh_content(self, name=None):
 
         name = name or self.content.name
@@ -75,19 +79,23 @@ class SubredditPage(BasePage):
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.loader)
 
-        except (SubredditNameError, HTTPError):
-            display_message(self.stdscr, ['Invalid Subreddit'])
+        except SubredditNameError:
+            display_message(self.stdscr, ['Invalid subreddit'])
+
+        except HTTPError:
+            display_message(self.stdscr, ['Could not reach subreddit'])
 
         else:
             self.nav.page_index, self.nav.cursor_index = 0, 0
             self.nav.inverted = False
 
     def prompt_subreddit(self):
+        "Open a prompt to type in a new subreddit"
 
         attr = curses.A_BOLD | Color.CYAN
         prompt = 'Enter Subreddit: /r/'
         n_rows, n_cols = self.stdscr.getmaxyx()
-        self.stdscr.addstr(n_rows-1, 0, clean(prompt), attr)
+        self.stdscr.addstr(n_rows-1, 0, prompt, attr)
         self.stdscr.refresh()
         window = self.stdscr.derwin(1, n_cols-len(prompt),n_rows-1, len(prompt))
         window.attrset(attr)
@@ -108,9 +116,10 @@ class SubredditPage(BasePage):
             _opened_links.add(data['url_full'])
 
     def open_link(self):
+        "Open a link with the webbrowser"
 
         url = self.content.get(self.nav.absolute_index)['url_full']
-        open_new_tab(url)
+        open_browser(url)
 
         global _opened_links
         _opened_links.add(url)
@@ -128,27 +137,38 @@ class SubredditPage(BasePage):
         n_title = len(data['split_title'])
         for row, text in enumerate(data['split_title'], start=offset):
             if row in valid_rows:
-                attr = curses.A_BOLD
-                win.addstr(row, 1, clean(text), attr)
+                text = Symbol.clean(text)
+                win.addnstr(row, 1, text, n_cols-1, curses.A_BOLD)
 
         row = n_title + offset
         if row in valid_rows:
             seen = (data['url_full'] in _opened_links)
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
-            text = '{url}'.format(**data)
-            win.addnstr(row, 1, clean(text), n_cols-1, attr)
+            text = Symbol.clean('{url}'.format(**data))
+            win.addnstr(row, 1, text, n_cols-1, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
-            text = '{created} {comments} {score}'.format(**data)
-            win.addnstr(row, 1, clean(text), n_cols-1)
+            text = Symbol.clean('{score} '.format(**data))
+            win.addnstr(row, 1, text, n_cols-1)
+
+            if data['likes'] is None:
+                text, attr = Symbol.BULLET, curses.A_BOLD
+            elif data['likes']:
+                text, attr = Symbol.UARROW, curses.A_BOLD | Color.GREEN
+            else:
+                text, attr = Symbol.DARROW, curses.A_BOLD | Color.RED
+            win.addnstr(text, n_cols-win.getyx()[1], attr)
+
+            text = Symbol.clean(' {created} {comments}'.format(**data))
+            win.addnstr(text, n_cols-win.getyx()[1])
 
         row = n_title + offset + 2
         if row in valid_rows:
-            text = '{author}'.format(**data)
-            win.addnstr(row, 1, clean(text), n_cols-1, curses.A_BOLD)
-            text = ' {subreddit}'.format(**data)
-            win.addnstr(clean(text), n_cols - win.getyx()[1], Color.YELLOW)
-            text = ' {flair}'.format(**data)
-            win.addnstr(clean(text), n_cols - win.getyx()[1], Color.RED)
+            text = Symbol.clean('{author}'.format(**data))
+            win.addnstr(row, 1, text, n_cols-1, curses.A_BOLD)
+            text = Symbol.clean(' {subreddit}'.format(**data))
+            win.addnstr(text, n_cols-win.getyx()[1], Color.YELLOW)
+            text = Symbol.clean(' {flair}'.format(**data))
+            win.addnstr(text, n_cols-win.getyx()[1], Color.RED)
