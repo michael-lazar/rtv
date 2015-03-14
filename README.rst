@@ -20,7 +20,7 @@ Install using pip
 
 .. code-block:: bash
    
-   $ sudo pip install --pre rtv
+   $ sudo pip install rtv
 
 Or clone the repository
 
@@ -46,8 +46,9 @@ RTV currently supports browsing both subreddits and individual submissions. In e
 **Global Commands**
 
 :``▲``/``▼`` or ``j``/``k``: Scroll to the prev/next item
+:``a``/``z``: Upvote/downvote the selected item
 :``o``: Open the selected item in the default web browser
-:``r`` or ``F5``: Refresh the current page
+:``r``: Refresh the current page
 :``?``: Show the help message
 :``q``: Quit
 
