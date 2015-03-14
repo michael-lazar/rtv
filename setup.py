@@ -1,6 +1,6 @@
 from setuptools import setup
 
-__version__ = '1.0'
+__version__ = '1.0.post1'
 
 setup(
     name='rtv',
@@ -22,6 +22,7 @@ setup(
         'Operating System :: POSIX',
         'Natural Language :: English',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3',
         'Topic :: Terminals',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Message Boards',

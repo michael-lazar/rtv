@@ -2,6 +2,10 @@
     :target: https://pypi.python.org/pypi/rtv/
     :alt: Latest Version
 
+.. image:: https://pypip.in/py_versions/rtv/badge.svg?style=flat
+    :target: https://pypi.python.org/pypi/rtv/
+    :alt: Supported Python versions
+
 ======================
 Reddit Terminal Viewer
 ======================
