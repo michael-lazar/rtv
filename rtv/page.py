@@ -1,6 +1,8 @@
 import curses
 
-from .utils import Color, Symbol
+import praw
+
+from .utils import Color, Symbol, display_message
 
 class Navigator(object):
     """
@@ -132,28 +134,32 @@ class BasePage(object):
     def upvote(self):
 
         data = self.content.get(self.nav.absolute_index)
-        if 'likes' not in data:
-            curses.flash()
-
-        elif data['likes']:
-            data['object'].clear_vote()
-            data['likes'] = None
-        else:
-            data['object'].upvote()
-            data['likes'] = True
+        try:
+            if 'likes' not in data:
+                pass
+            elif data['likes']:
+                data['object'].clear_vote()
+                data['likes'] = None
+            else:
+                data['object'].upvote()
+                data['likes'] = True
+        except praw.errors.LoginOrScopeRequired:
+            display_message(self.stdscr, ['Login to vote'])
 
     def downvote(self):
 
         data = self.content.get(self.nav.absolute_index)
-        if 'likes' not in data:
-            curses.flash()
-
-        if data['likes'] is False:
-            data['object'].clear_vote()
-            data['likes'] = None
-        else:
-            data['object'].downvote()
-            data['likes'] = False
+        try:
+            if 'likes' not in data:
+                pass
+            if data['likes'] is False:
+                data['object'].clear_vote()
+                data['likes'] = None
+            else:
+                data['object'].downvote()
+                data['likes'] = False
+        except praw.errors.LoginOrScopeRequired:
+            display_message(self.stdscr, ['Login to vote'])
 
     def draw(self):
 

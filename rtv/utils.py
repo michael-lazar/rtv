@@ -15,7 +15,8 @@ from .errors import EscapePressed
 HELP = """
 Global Commands
   `UP/DOWN` or `j/k`  : Scroll to the prev/next item
-  `r` or `F5`         : Refresh the current page
+  `a/z`               : Upvote/downvote the selected item
+  `r`                 : Refresh the current page
   `q`                 : Quit the program
   `o`                 : Open the selected item in the default web browser
   `?`                 : Show this help message
