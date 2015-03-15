@@ -227,6 +227,11 @@ class SubmissionPage(BasePage):
             display_message(self.stdscr, ["You are not logged in!"])
             return
 
+        cursor_position = self.nav.absolute_index
+        if self.content.get(cursor_position)['type'] != 'Comment':
+            display_message(self.stdscr, ['Expand the comments first!'])
+            return
+        
         n_rows, n_cols = self.stdscr.getmaxyx()
         box_height = n_rows/2
 
@@ -239,13 +244,10 @@ class SubmissionPage(BasePage):
 
         window = self.stdscr.derwin(box_height, n_cols,
                                     n_rows-box_height, 0)
-
         window.attrset(attr)
+        
         comment_text = text_input(window, show_cursor=True, insert_mode=False)
-
-        cursor_position = self.nav.absolute_index
         if comment_text is not None:
-
             try:
                 if cursor_position == -1:  # comment on submission
                     self.content._submission.add_comment(comment_text)
