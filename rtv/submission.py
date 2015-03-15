@@ -228,10 +228,11 @@ class SubmissionPage(BasePage):
             return
 
         cursor_position = self.nav.absolute_index
-        if self.content.get(cursor_position)['type'] != 'Comment':
+        if (self.content.get(cursor_position)['type'] != 'Comment') \
+           & (self.content.get(cursor_position)['type'] != 'Submission'):
             display_message(self.stdscr, ['Expand the comments first!'])
             return
-        
+
         n_rows, n_cols = self.stdscr.getmaxyx()
         box_height = n_rows/2
 
@@ -245,7 +246,7 @@ class SubmissionPage(BasePage):
         window = self.stdscr.derwin(box_height, n_cols,
                                     n_rows-box_height, 0)
         window.attrset(attr)
-        
+
         comment_text = text_input(window, show_cursor=True, insert_mode=False)
         if comment_text is not None:
             try:
