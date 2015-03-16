@@ -69,8 +69,14 @@ class SubmissionPage(BasePage):
                 self.draw()
 
     def toggle_comment(self):
-
-        self.content.toggle(self.nav.absolute_index)
+        
+        current_index = self.nav.absolute_index
+        self.content.toggle(current_index)
+        if self.nav.inverted:
+            # Reset the page so that the bottom is at the cursor position.
+            # This is a workaround to handle if folding the causes the
+            # cursor index to go out of bounds.
+            self.nav.page_index, self.nav.cursor_index = current_index, 0
 
     def refresh_content(self):
 

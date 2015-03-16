@@ -118,12 +118,6 @@ class BasePage(object):
     def move_cursor_down(self):
         self._move_cursor(1)
 
-    def add_cursor(self):
-        self._edit_cursor(curses.A_REVERSE)
-
-    def remove_cursor(self):
-        self._edit_cursor(curses.A_NORMAL)
-
     def clear_input_queue(self):
         "Clear excessive input caused by the scroll wheel or holding down a key"
         self.stdscr.nodelay(1)
@@ -174,8 +168,7 @@ class BasePage(object):
         self.stdscr.erase()
         self._draw_header()
         self._draw_content()
-
-        self.add_cursor()
+        self._add_cursor()
 
     @staticmethod
     def draw_item(window, data, inverted):
@@ -243,9 +236,15 @@ class BasePage(object):
 
         self._content_window.refresh()
 
+    def _add_cursor(self):
+        self._edit_cursor(curses.A_REVERSE)
+
+    def _remove_cursor(self):
+        self._edit_cursor(curses.A_NORMAL)
+
     def _move_cursor(self, direction):
 
-        self.remove_cursor()
+        self._remove_cursor()
 
         valid, redraw = self.nav.move(direction, len(self._subwindows))
         if not valid: curses.flash()
@@ -253,7 +252,7 @@ class BasePage(object):
         # Note: ACS_VLINE doesn't like changing the attribute, so always redraw.
         # if redraw: self._draw_content()
         self._draw_content()
-        self.add_cursor()
+        self._add_cursor()
 
     def _edit_cursor(self, attribute=None):
 
