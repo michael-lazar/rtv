@@ -3,7 +3,8 @@ import sys
 
 from .content import SubmissionContent
 from .page import BasePage
-from .utils import LoadScreen, Color, Symbol, display_help, open_browser
+from .utils import Color, Symbol, display_help
+from .workers import LoadScreen, open_browser
 
 class SubmissionPage(BasePage):
 
@@ -80,7 +81,8 @@ class SubmissionPage(BasePage):
 
     def refresh_content(self):
 
-        self.content.reset()
+        url = self.content.name
+        self.content = SubmissionContent.from_url(self.reddit, url, self.loader)
         self.nav.page_index, self.nav.cursor_index = -1, 0
         self.nav.inverted = False
 

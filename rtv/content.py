@@ -50,7 +50,7 @@ def humanize_timestamp(utc_timestamp, verbose=False):
     return ('%d years ago' % years) if verbose else ('%dyr' % years)
 
 @contextmanager
-def default_loader(self):
+def default_loader():
     yield
 
 class BaseContent(object):
@@ -85,6 +85,8 @@ class BaseContent(object):
         retval = []
         while stack:
             item = stack.pop(0)
+            if isinstance(item, praw.objects.MoreComments) and (item.count==0):
+                continue
             nested = getattr(item, 'replies', None)
             if nested:
                 for n in nested:
@@ -104,11 +106,6 @@ class BaseContent(object):
         data['object'] = comment
         data['level'] = comment.nested_level
 
-        if getattr(comment.submission, 'author'):
-            sub_author = comment.submission.author.name
-        else:
-            sub_author = '[deleted]'
-
         if isinstance(comment, praw.objects.MoreComments):
             data['type'] = 'MoreComments'
             data['count'] = comment.count
@@ -119,7 +116,7 @@ class BaseContent(object):
             data['created'] = humanize_timestamp(comment.created_utc)
             data['score'] = '{} pts'.format(comment.score)
             data['author'] = (comment.author.name if getattr(comment, 'author') else '[deleted]')
-            data['is_author'] = (data['author'] == sub_author)
+            data['is_author'] = (data['author'] == getattr(comment.submission, 'author'))
             data['flair'] = (comment.author_flair_text if comment.author_flair_text else '')
             data['likes'] = comment.likes
 
@@ -170,11 +167,11 @@ class SubmissionContent(BaseContent):
         self.max_indent_level = max_indent_level
         self._loader = loader
         self._submission = submission
-        self._submission_data = None
-        self._comment_data = None
-        self.name = None
 
-        self.reset()
+        self._submission_data = self.strip_praw_submission(self._submission)
+        self.name = self._submission_data['permalink']
+        comments = self.flatten_comments(self._submission.comments)
+        self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
     @classmethod
     def from_url(
@@ -187,21 +184,11 @@ class SubmissionContent(BaseContent):
 
         try:
             with loader():
-                submission = reddit.get_submission(url)
-
+                submission = reddit.get_submission(url, comment_sort='hot')
         except praw.errors.APIException:
             raise SubmissionURLError(url)
 
         return cls(submission, loader, indent_size, max_indent_level)
-
-    def reset(self):
-
-        with self._loader():
-            self._submission.refresh()
-            self._submission_data = self.strip_praw_submission(self._submission)
-            self.name = self._submission_data['permalink']
-            comments = self.flatten_comments(self._submission.comments)
-            self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
     def get(self, index, n_cols=70):
         """
@@ -269,7 +256,7 @@ class SubmissionContent(BaseContent):
 
         elif data['type'] == 'MoreComments':
             with self._loader():
-                comments = data['object'].comments()
+                comments = data['object'].comments(update=False)
                 comments = self.flatten_comments(comments, root_level=data['level'])
                 comment_data = [self.strip_praw_comment(c) for c in comments]
                 self._comment_data[index:index+1] = comment_data

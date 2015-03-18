@@ -7,8 +7,8 @@ from .errors import SubredditNameError
 from .page import BasePage
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .utils import (LoadScreen, Symbol, Color, text_input, display_message,
-                    display_help, open_browser)
+from .utils import Symbol, Color, text_input, display_message, display_help
+from .workers import LoadScreen, open_browser
 
 # Used to keep track of browsing history across the current session
 _opened_links = set()
@@ -108,7 +108,7 @@ class SubredditPage(BasePage):
         "Select the current submission to view posts"
 
         data = self.content.get(self.nav.absolute_index)
-        page = SubmissionPage(self.stdscr, self.reddit, submission=data['object'])
+        page = SubmissionPage(self.stdscr, self.reddit, url=data['permalink'])
         page.loop()
 
         if data['url'] == 'selfpost':
