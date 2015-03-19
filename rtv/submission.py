@@ -1,7 +1,8 @@
 import curses
 import sys
 import time
-import praw.errors
+
+from praw.errors import APIException
 
 from .content import SubmissionContent
 from .page import BasePage
@@ -21,7 +22,8 @@ class SubmissionPage(BasePage):
         else:
             raise ValueError('Must specify url or submission')
 
-        super(SubmissionPage, self).__init__(stdscr, reddit, content, page_index=-1)
+        super(SubmissionPage, self).__init__(stdscr, reddit, content,
+                                             page_index=-1)
 
     def loop(self):
 
@@ -116,7 +118,7 @@ class SubmissionPage(BasePage):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
 
-        # Handle the case where the window is not large enough to fit the data.
+        # Handle the case where the window is not large enough to fit the text.
         valid_rows = range(0, n_rows)
         offset = 0 if not inverted else -(data['n_rows'] - n_rows)
 
@@ -231,39 +233,48 @@ class SubmissionPage(BasePage):
         """
 
         if not self.reddit.is_logged_in():
-            display_message(self.stdscr, ["You are not logged in!"])
+            display_message(self.stdscr, ["Login to reply"])
             return
 
-        cursor_position = self.nav.absolute_index
-        if (self.content.get(cursor_position)['type'] != 'Comment') \
-           & (self.content.get(cursor_position)['type'] != 'Submission'):
-            display_message(self.stdscr, ['Expand the comments first!'])
+        data = self.content.get(self.nav.absolute_index)
+        if data['type'] not in ('Comment', 'Submission'):
+            curses.flash()
             return
 
+        # Fill the bottom half of the screen with the comment box
         n_rows, n_cols = self.stdscr.getmaxyx()
-        box_height = n_rows/2
-
+        box_height = n_rows // 2
         attr = curses.A_BOLD | Color.CYAN
+
+        for x in range(n_cols):
+            y = box_height - 1
+            # http://bugs.python.org/issue21088
+            if (sys.version_info.major,
+                sys.version_info.minor,
+                sys.version_info.micro) == (3, 4, 0):
+                x, y = y, x
+
+            self.stdscr.addch(y, x, curses.ACS_HLINE, attr)
+
         prompt = 'Enter comment: ESC to cancel, Ctrl+g to submit'
-        prompt = '-'*((n_cols-len(prompt))/2) + prompt \
-                 + '-'*((n_cols-len(prompt)+1)/2)
-        self.stdscr.addstr(n_rows-box_height-1, 0, prompt, attr)
+        scol = max(0, (n_cols // 2) - (len(prompt) // 2))
+        self.stdscr.addnstr(box_height-1, scol, prompt, n_cols-scol, attr)
         self.stdscr.refresh()
 
-        window = self.stdscr.derwin(box_height, n_cols,
-                                    n_rows-box_height, 0)
-        window.attrset(attr)
+        window = self.stdscr.derwin(n_rows-box_height, n_cols, box_height, 0)
+        window.attrset(Color.CYAN)
 
-        comment_text = text_input(window, show_cursor=True, insert_mode=False)
-        if comment_text is not None:
-            try:
-                if cursor_position == -1:  # comment on submission
-                    self.content._submission.add_comment(comment_text)
-                else:  # reply on a selected comment
-                    self.content.get(cursor_position)['object']\
-                                .reply(comment_text)
-            except praw.errors.APIException as e:
-                display_message(self.stdscr, [e.message])
+        comment_text = text_input(window, allow_resize=False)
+        if comment_text is None:
+            return
+        
+        try:
+            if data['type'] == 'Submission':
+                data['object'].add_comment(comment_text)
             else:
-                time.sleep(0.5)
-                self.refresh_content()
+                data['object'].reply(comment_text)
+        except APIException as e:
+            display_message(self.stdscr, [e.message])
+        else:
+            time.sleep(0.5)
+            self.refresh_content()

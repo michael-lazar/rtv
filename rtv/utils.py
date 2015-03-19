@@ -114,7 +114,7 @@ def load_config():
 
     return defaults
 
-def text_input(window, show_cursor=False, insert_mode=True):
+def text_input(window, allow_resize=True):
     """
     Transform a window into a text box that will accept user input and loop
     until an escape sequence is entered.
@@ -124,13 +124,24 @@ def text_input(window, show_cursor=False, insert_mode=True):
     """
 
     window.clear()
-    curses.curs_set(1 if show_cursor else 2)
-    textbox = textpad.Textbox(window, insert_mode=insert_mode)
+    
+    # Set cursor mode to 1 because 2 doesn't display on some terminals
+    curses.curs_set(1)
+
+    # Turn insert_mode off to avoid the recursion error described here
+    # http://bugs.python.org/issue13051
+    textbox = textpad.Textbox(window, insert_mode=False)
+
+    # Strip whitespace from the textbox 'smarter' than textpad.Textbox() does.
+    textbox.stripspaces = 0
 
     def validate(ch):
         "Filters characters for special key sequences"
 
         if ch == Symbol.ESCAPE:
+            raise EscapePressed
+
+        if (not allow_resize) and (ch == curses.KEY_RESIZE):
             raise EscapePressed
 
         # Fix backspace for iterm
@@ -144,11 +155,42 @@ def text_input(window, show_cursor=False, insert_mode=True):
     # input.
     try:
         out = textbox.edit(validate=validate)
-        out = out.strip()
     except EscapePressed:
         out = None
 
     curses.curs_set(0)
+
+    if out is None:
+        return out
+    else:
+        return strip_text(out)
+
+def strip_text(text):
+    "Intelligently strip whitespace from the text output of a curses textpad."
+
+    # Trivial case where the textbox is only one line long.
+    if '\n' not in text:
+        return text.rstrip()
+
+    # Allow one space at the end of the line. If there is more than one space,
+    # assume that a newline operation was intended by the user
+    stack, current_line = [], ''
+    for line in text.split('\n'):
+        if line.endswith('  '):
+            stack.append(current_line + line.rstrip())
+            current_line = ''
+        else:
+            current_line += line
+    stack.append(current_line)
+
+    # Prune empty lines at the bottom of the textbox.
+    for item in stack[::-1]:
+        if len(item) == 0:
+            stack.pop()
+        else:
+            break
+
+    out = '\n'.join(stack)
     return out
 
 def display_message(stdscr, message):
