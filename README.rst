@@ -76,6 +76,7 @@ In submission mode you can view the self text for a submission and browse commen
 
 :``◄`` or ``h``: Return to subreddit mode
 :``►`` or ``l``: Fold the selected comment, or load additional comments
+:``c``: Comment/reply on the selected item
 
 -------------
 Configuration

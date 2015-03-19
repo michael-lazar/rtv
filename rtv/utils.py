@@ -24,6 +24,7 @@ Subreddit Mode
 Submission Mode
   `LEFT` or `h`       : Return to subreddit mode
   `RIGHT` or `l`      : Fold the selected comment, or load additional comments
+  `c`                 : Comment/reply on the selected item
 """
 
 class Symbol(object):
