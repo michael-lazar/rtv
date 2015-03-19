@@ -1,9 +1,11 @@
 import curses
 import sys
+import time
+import praw.errors
 
 from .content import SubmissionContent
 from .page import BasePage
-from .utils import Color, Symbol, display_help
+from .utils import Color, Symbol, display_help, text_input
 from .workers import LoadScreen, open_browser
 
 class SubmissionPage(BasePage):
@@ -51,6 +53,10 @@ class SubmissionPage(BasePage):
                 self.refresh_content()
                 self.draw()
 
+            elif cmd == ord('c'):
+                self.add_comment()
+                self.draw()
+                
             elif cmd == ord('?'):
                 display_help(self.stdscr)
                 self.draw()
@@ -217,3 +223,47 @@ class SubmissionPage(BasePage):
         win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         win.border()
+
+    def add_comment(self):
+        """
+        Add a comment on the submission if a header is selected.
+        Reply to a comment if the comment is selected.
+        """
+
+        if not self.reddit.is_logged_in():
+            display_message(self.stdscr, ["You are not logged in!"])
+            return
+
+        cursor_position = self.nav.absolute_index
+        if (self.content.get(cursor_position)['type'] != 'Comment') \
+           & (self.content.get(cursor_position)['type'] != 'Submission'):
+            display_message(self.stdscr, ['Expand the comments first!'])
+            return
+
+        n_rows, n_cols = self.stdscr.getmaxyx()
+        box_height = n_rows/2
+
+        attr = curses.A_BOLD | Color.CYAN
+        prompt = 'Enter comment: ESC to cancel, Ctrl+g to submit'
+        prompt = '-'*((n_cols-len(prompt))/2) + prompt \
+                 + '-'*((n_cols-len(prompt)+1)/2)
+        self.stdscr.addstr(n_rows-box_height-1, 0, prompt, attr)
+        self.stdscr.refresh()
+
+        window = self.stdscr.derwin(box_height, n_cols,
+                                    n_rows-box_height, 0)
+        window.attrset(attr)
+
+        comment_text = text_input(window, show_cursor=True, insert_mode=False)
+        if comment_text is not None:
+            try:
+                if cursor_position == -1:  # comment on submission
+                    self.content._submission.add_comment(comment_text)
+                else:  # reply on a selected comment
+                    self.content.get(cursor_position)['object']\
+                                .reply(comment_text)
+            except praw.errors.APIException as e:
+                display_message(self.stdscr, [e.message])
+            else:
+                time.sleep(0.5)
+                self.refresh_content()
