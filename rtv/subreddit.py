@@ -1,17 +1,20 @@
 import curses
 import sys
 
-from requests.exceptions import HTTPError
+import requests
 
-from .errors import SubredditNameError
+from .exceptions import SubredditError
 from .page import BasePage
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .utils import Symbol, Color, text_input, display_message, display_help
 from .workers import LoadScreen, open_browser
+from .curses_helpers import (BULLET, UARROW, DARROW, Color, text_input,
+                             show_notification, show_help)
+
+__all__ = ['opened_links', 'SubredditPage']
 
 # Used to keep track of browsing history across the current session
-_opened_links = set()
+opened_links = set()
 
 class SubredditPage(BasePage):
 
@@ -79,11 +82,11 @@ class SubredditPage(BasePage):
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.loader)
 
-        except SubredditNameError:
-            display_message(self.stdscr, ['Invalid subreddit'])
+        except SubredditError:
+            show_notification(self.stdscr, ['Invalid subreddit'])
 
-        except HTTPError:
-            display_message(self.stdscr, ['Could not reach subreddit'])
+        except requests.HTTPError:
+            show_notification(self.stdscr, ['Could not reach subreddit'])
 
         else:
             self.nav.page_index, self.nav.cursor_index = 0, 0
@@ -112,8 +115,8 @@ class SubredditPage(BasePage):
         page.loop()
 
         if data['url'] == 'selfpost':
-            global _opened_links
-            _opened_links.add(data['url_full'])
+            global opened_links
+            opened_links.add(data['url_full'])
 
     def open_link(self):
         "Open a link with the webbrowser"
@@ -121,8 +124,8 @@ class SubredditPage(BasePage):
         url = self.content.get(self.nav.absolute_index)['url_full']
         open_browser(url)
 
-        global _opened_links
-        _opened_links.add(url)
+        global opened_links
+        opened_links.add(url)
 
     @staticmethod
     def draw_item(win, data, inverted=False):
@@ -137,38 +140,38 @@ class SubredditPage(BasePage):
         n_title = len(data['split_title'])
         for row, text in enumerate(data['split_title'], start=offset):
             if row in valid_rows:
-                text = Symbol.clean(text)
+                text = clean(text)
                 win.addnstr(row, 1, text, n_cols-1, curses.A_BOLD)
 
         row = n_title + offset
         if row in valid_rows:
-            seen = (data['url_full'] in _opened_links)
+            seen = (data['url_full'] in opened_links)
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
-            text = Symbol.clean('{url}'.format(**data))
+            text = clean('{url}'.format(**data))
             win.addnstr(row, 1, text, n_cols-1, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
-            text = Symbol.clean('{score} '.format(**data))
+            text = clean('{score} '.format(**data))
             win.addnstr(row, 1, text, n_cols-1)
 
             if data['likes'] is None:
-                text, attr = Symbol.BULLET, curses.A_BOLD
+                text, attr = BULLET, curses.A_BOLD
             elif data['likes']:
-                text, attr = Symbol.UARROW, curses.A_BOLD | Color.GREEN
+                text, attr = UARROW, curses.A_BOLD | Color.GREEN
             else:
-                text, attr = Symbol.DARROW, curses.A_BOLD | Color.RED
+                text, attr = DARROW, curses.A_BOLD | Color.RED
             win.addnstr(text, n_cols-win.getyx()[1], attr)
 
-            text = Symbol.clean(' {created} {comments}'.format(**data))
+            text = clean(' {created} {comments}'.format(**data))
             win.addnstr(text, n_cols-win.getyx()[1])
 
         row = n_title + offset + 2
         if row in valid_rows:
-            text = Symbol.clean('{author}'.format(**data))
+            text = clean('{author}'.format(**data))
             win.addnstr(row, 1, text, n_cols-1, curses.A_BOLD)
-            text = Symbol.clean(' {subreddit}'.format(**data))
+            text = clean(' {subreddit}'.format(**data))
             win.addnstr(text, n_cols-win.getyx()[1], Color.YELLOW)
-            text = Symbol.clean(' {flair}'.format(**data))
+            text = clean(' {flair}'.format(**data))
             win.addnstr(text, n_cols-win.getyx()[1], Color.RED)

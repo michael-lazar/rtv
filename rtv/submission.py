@@ -2,12 +2,15 @@ import curses
 import sys
 import time
 
-from praw.errors import APIException
+import praw.errors
 
 from .content import SubmissionContent
 from .page import BasePage
-from .utils import Color, Symbol, display_help, text_input
 from .workers import LoadScreen, open_browser
+from .curses_helpers import (BULLET, UARROW, DARROW, Color, show_help,
+                             text_input)
+
+__all__ = ['SubmissionPage']
 
 class SubmissionPage(BasePage):
 
@@ -125,31 +128,31 @@ class SubmissionPage(BasePage):
         row = offset
         if row in valid_rows:
 
-            text = Symbol.clean('{author} '.format(**data))
+            text = clean('{author} '.format(**data))
             attr = curses.A_BOLD
             attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
             win.addnstr(row, 1, text, n_cols-1, attr)
 
             if data['flair']:
-                text = Symbol.clean('{flair} '.format(**data))
+                text = clean('{flair} '.format(**data))
                 attr = curses.A_BOLD | Color.YELLOW
                 win.addnstr(text, n_cols-win.getyx()[1], attr)
 
             if data['likes'] is None:
-                text, attr = Symbol.BULLET, curses.A_BOLD
+                text, attr = BULLET, curses.A_BOLD
             elif data['likes']:
-                text, attr = Symbol.UARROW, (curses.A_BOLD | Color.GREEN)
+                text, attr = UARROW, (curses.A_BOLD | Color.GREEN)
             else:
-                text, attr = Symbol.DARROW, (curses.A_BOLD | Color.RED)
+                text, attr = DARROW, (curses.A_BOLD | Color.RED)
             win.addnstr(text, n_cols-win.getyx()[1], attr)
 
-            text = Symbol.clean(' {score} {created}'.format(**data))
+            text = clean(' {score} {created}'.format(**data))
             win.addnstr(text, n_cols-win.getyx()[1])
 
         n_body = len(data['split_body'])
         for row, text in enumerate(data['split_body'], start=offset+1):
             if row in valid_rows:
-                text = Symbol.clean(text)
+                text = clean(text)
                 win.addnstr(row, 1, text, n_cols-1)
 
         # Unfortunately vline() doesn't support custom color so we have to
@@ -173,9 +176,9 @@ class SubmissionPage(BasePage):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
 
-        text = Symbol.clean('{body}'.format(**data))
+        text = clean('{body}'.format(**data))
         win.addnstr(0, 1, text, n_cols-1)
-        text = Symbol.clean(' [{count}]'.format(**data))
+        text = clean(' [{count}]'.format(**data))
         win.addnstr(text, n_cols-win.getyx()[1], curses.A_BOLD)
 
         # Unfortunately vline() doesn't support custom color so we have to
@@ -197,31 +200,31 @@ class SubmissionPage(BasePage):
             return
 
         for row, text in enumerate(data['split_title'], start=1):
-            text = Symbol.clean(text)
+            text = clean(text)
             win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         row = len(data['split_title']) + 1
         attr = curses.A_BOLD | Color.GREEN
-        text = Symbol.clean('{author}'.format(**data))
+        text = clean('{author}'.format(**data))
         win.addnstr(row, 1, text, n_cols, attr)
         attr = curses.A_BOLD | Color.YELLOW
-        text = Symbol.clean(' {flair}'.format(**data))
+        text = clean(' {flair}'.format(**data))
         win.addnstr(text, n_cols-win.getyx()[1], attr)
-        text = Symbol.clean(' {created} {subreddit}'.format(**data))
+        text = clean(' {created} {subreddit}'.format(**data))
         win.addnstr(text, n_cols-win.getyx()[1])
 
         row = len(data['split_title']) + 2
         attr = curses.A_UNDERLINE | Color.BLUE
-        text = Symbol.clean('{url}'.format(**data))
+        text = clean('{url}'.format(**data))
         win.addnstr(row, 1, text, n_cols, attr)
 
         offset = len(data['split_title']) + 3
         for row, text in enumerate(data['split_text'], start=offset):
-            text = Symbol.clean(text)
+            text = clean(text)
             win.addnstr(row, 1, text, n_cols)
 
         row = len(data['split_title']) + len(data['split_text']) + 3
-        text = Symbol.clean('{score} {comments}'.format(**data))
+        text = clean('{score} {comments}'.format(**data))
         win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         win.border()
@@ -273,7 +276,7 @@ class SubmissionPage(BasePage):
                 data['object'].add_comment(comment_text)
             else:
                 data['object'].reply(comment_text)
-        except APIException as e:
+        except praw.errors.APIException as e:
             display_message(self.stdscr, [e.message])
         else:
             time.sleep(0.5)

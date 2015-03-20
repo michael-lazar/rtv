@@ -1,6 +1,5 @@
 from setuptools import setup
-
-__version__ = '1.0.post1'
+from version import __version__ as version
 
 setup(
     name='rtv',
@@ -13,8 +12,9 @@ setup(
     license='MIT',
     keywords='reddit terminal praw curses',
     packages=['rtv'],
+    include_package_data=True,
     install_requires=['praw>=2.1.6', 'six', 'requests'],
-    entry_points={'console_scripts': ['rtv=rtv.main:main']},
+    entry_points={'console_scripts': ['rtv=rtv.__main__:main']},
     classifiers=[
         'Intended Audience :: End Users/Desktop',
         'Environment :: Console :: Curses',

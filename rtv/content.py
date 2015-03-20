@@ -1,57 +1,12 @@
 import textwrap
-from datetime import datetime
-from contextlib import contextmanager
 
 import praw
-import six
 import requests
 
-from .errors import SubmissionURLError, SubredditNameError
+from .exceptions import SubmissionError, SubredditError
+from .helpers import humanize_timestamp, wrap_text, strip_subreddit_url
 
-def split_text(big_text, width):
-    return [
-        text for line in big_text.splitlines()
-        # wrap returns an empty list when "line" is a newline. In order to
-        # consider newlines we need a list containing an empty string.
-        for text in (textwrap.wrap(line, width=width) or [''])]
-
-def strip_subreddit_url(permalink):
-    """
-    Grab the subreddit from the permalink because submission.subreddit.url
-    makes a seperate call to the API.
-    """
-
-    subreddit = permalink.split('/')[4]
-    return '/r/{}'.format(subreddit)
-
-def humanize_timestamp(utc_timestamp, verbose=False):
-    """
-    Convert a utc timestamp into a human readable relative-time.
-    """
-
-    timedelta = datetime.utcnow() - datetime.utcfromtimestamp(utc_timestamp)
-
-    seconds = int(timedelta.total_seconds())
-    if seconds < 60:
-        return 'moments ago' if verbose else '0min'
-    minutes = seconds // 60
-    if minutes < 60:
-        return ('%d minutes ago' % minutes) if verbose else ('%dmin' % minutes)
-    hours = minutes // 60
-    if hours < 24:
-        return ('%d hours ago' % hours) if verbose else ('%dhr' % hours)
-    days = hours // 24
-    if days < 30:
-        return ('%d days ago' % days) if verbose else ('%dday' % days)
-    months = days // 30.4
-    if months < 12:
-        return ('%d months ago' % months) if verbose else ('%dmonth' % months)
-    years = months // 12
-    return ('%d years ago' % years) if verbose else ('%dyr' % years)
-
-@contextmanager
-def default_loader():
-    yield
+__all__ = ['SubredditContent', 'SubmissionContent']
 
 class BaseContent(object):
 
@@ -149,7 +104,6 @@ class BaseContent(object):
 
         return data
 
-
 class SubmissionContent(BaseContent):
     """
     Grab a submission from PRAW and lazily store comments to an internal
@@ -159,7 +113,7 @@ class SubmissionContent(BaseContent):
     def __init__(
             self,
             submission,
-            loader=default_loader,
+            loader,
             indent_size=2,
             max_indent_level=4):
 
@@ -178,7 +132,7 @@ class SubmissionContent(BaseContent):
             cls,
             reddit,
             url,
-            loader=default_loader,
+            loader,
             indent_size=2,
             max_indent_level=4):
 
@@ -186,7 +140,7 @@ class SubmissionContent(BaseContent):
             with loader():
                 submission = reddit.get_submission(url, comment_sort='hot')
         except praw.errors.APIException:
-            raise SubmissionURLError(url)
+            raise SubmissionError(url)
 
         return cls(submission, loader, indent_size, max_indent_level)
 
@@ -202,8 +156,8 @@ class SubmissionContent(BaseContent):
         elif index == -1:
             data = self._submission_data
             data['split_title'] = textwrap.wrap(data['title'], width=n_cols-2)
-            data['split_text'] = split_text(data['text'], width=n_cols-2)
-            data['n_rows'] = (len(data['split_title']) + len(data['split_text']) + 5)
+            data['split_text'] = wrap_text(data['text'], width=n_cols-2)
+            data['n_rows'] = len(data['split_title'])+len(data['split_text'])+5
             data['offset'] = 0
 
         else:
@@ -212,7 +166,8 @@ class SubmissionContent(BaseContent):
             data['offset'] = indent_level * self.indent_size
 
             if data['type'] == 'Comment':
-                data['split_body'] = split_text(data['body'], width=n_cols-data['offset'])
+                width = n_cols - data['offset']
+                data['split_body'] = wrap_text(data['body'], width=width)
                 data['n_rows'] = len(data['split_body']) + 1
             else:
                 data['n_rows'] = 1
@@ -257,7 +212,8 @@ class SubmissionContent(BaseContent):
         elif data['type'] == 'MoreComments':
             with self._loader():
                 comments = data['object'].comments(update=False)
-                comments = self.flatten_comments(comments, root_level=data['level'])
+                comments = self.flatten_comments(comments,
+                                                 root_level=data['level'])
                 comment_data = [self.strip_praw_comment(c) for c in comments]
                 self._comment_data[index:index+1] = comment_data
 
@@ -280,6 +236,9 @@ class SubredditContent(BaseContent):
 
     @classmethod
     def from_name(cls, reddit, name, loader, order='hot'):
+
+        if name is None:
+            name = 'front'
 
         name = name.strip(' /')  # Strip leading and trailing backslashes
         if name.startswith('r/'):
@@ -306,7 +265,7 @@ class SubredditContent(BaseContent):
             elif order == 'controversial':
                 submissions = reddit.get_controversial(limit=None)
             else:
-                raise SubredditNameError(display_name)
+                raise SubredditError(display_name)
 
         else:
             subreddit = reddit.get_subreddit(name)
@@ -321,7 +280,7 @@ class SubredditContent(BaseContent):
             elif order == 'controversial':
                 submissions = subreddit.get_controversial(limit=None)
             else:
-                raise SubredditNameError(display_name)
+                raise SubredditError(display_name)
 
         # Verify that content exists for the given submission generator.
         # This is necessary because PRAW loads submissions lazily, and
@@ -331,7 +290,7 @@ class SubredditContent(BaseContent):
         try:
             content.get(0)
         except (praw.errors.APIException, requests.HTTPError):
-            raise SubredditNameError(display_name)
+            raise SubredditError(display_name)
 
         return content
 

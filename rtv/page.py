@@ -1,8 +1,11 @@
 import curses
 
-import praw
+import praw.errors
 
-from .utils import Color, Symbol, display_message
+from .helpers import clean
+from .curses_helpers import Color, show_notification
+
+__all__ = ['Navigator']
 
 class Navigator(object):
     """
@@ -138,7 +141,7 @@ class BasePage(object):
                 data['object'].upvote()
                 data['likes'] = True
         except praw.errors.LoginOrScopeRequired:
-            display_message(self.stdscr, ['Login to vote'])
+            show_notification(self.stdscr, ['Login to vote'])
 
     def downvote(self):
 
@@ -153,7 +156,7 @@ class BasePage(object):
                 data['object'].downvote()
                 data['likes'] = False
         except praw.errors.LoginOrScopeRequired:
-            display_message(self.stdscr, ['Login to vote'])
+            show_notification(self.stdscr, ['Login to vote'])
 
     def draw(self):
 
@@ -183,7 +186,7 @@ class BasePage(object):
         self._header_window.bkgd(' ', attr)
 
         sub_name = self.content.name.replace('/r/front', 'Front Page ')
-        self._header_window.addnstr(0, 0, Symbol.clean(sub_name), n_cols-1)
+        self._header_window.addnstr(0, 0, clean(sub_name), n_cols-1)
 
         if self.reddit.user is not None:
             username = self.reddit.user.name
@@ -191,7 +194,7 @@ class BasePage(object):
             # Only print the username if it fits in the empty space on the right
             if (s_col - 1) >= len(sub_name):
                 n = (n_cols - s_col - 1)
-                self._header_window.addnstr(0, s_col, Symbol.clean(username), n)
+                self._header_window.addnstr(0, s_col, clean(username), n)
 
         self._header_window.refresh()
 
