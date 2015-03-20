@@ -45,8 +45,8 @@ def command_line():
     parser.add_argument('-l', dest='link', help='full link to a submission')
     parser.add_argument('--unicode', action='store_true',
                         help='enable unicode (experimental)')
-    parser.add_argument('--log', action='store',
-                        help='Log all HTTP requests to the given file')
+    parser.add_argument('--log', metavar='FILE', action='store',
+                        help='Log HTTP requests')
 
     group = parser.add_argument_group('authentication (optional)', AUTH)
     group.add_argument('-u', dest='username', help='reddit username')

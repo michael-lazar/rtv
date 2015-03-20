@@ -3,6 +3,7 @@ import time
 import threading
 import curses
 from curses import textpad, ascii
+from contextlib import contextmanager
 
 from .docs import HELP
 from .helpers import strip_textpad

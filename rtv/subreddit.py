@@ -7,9 +7,9 @@ from .exceptions import SubredditError
 from .page import BasePage
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .workers import LoadScreen, open_browser
-from .curses_helpers import (BULLET, UARROW, DARROW, Color, text_input,
-                             show_notification, show_help)
+from .helpers import clean, open_browser
+from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen, 
+                             text_input, show_notification, show_help)
 
 __all__ = ['opened_links', 'SubredditPage']
 

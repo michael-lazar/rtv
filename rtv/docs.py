@@ -11,10 +11,9 @@ Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
 terminal window.
 """
 
-AUTH = """
-Authenticating is required to vote and leave comments. For added security, it
-is recommended that only you only provide a username. There will be an
-additional prompt for the password if it is not provided.
+AUTH = """\
+Authenticating is required to vote and leave comments. If only a username is
+given, the program will display a secure prompt to enter a password.
 """
 
 CONTROLS = """

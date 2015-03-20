@@ -6,9 +6,9 @@ import praw.errors
 
 from .content import SubmissionContent
 from .page import BasePage
-from .workers import LoadScreen, open_browser
-from .curses_helpers import (BULLET, UARROW, DARROW, Color, show_help,
-                             text_input)
+from .helpers import clean, open_browser
+from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
+                             show_help, text_input)
 
 __all__ = ['SubmissionPage']
 
