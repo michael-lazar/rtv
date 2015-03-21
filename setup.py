@@ -3,7 +3,7 @@ from version import __version__ as version
 
 setup(
     name='rtv',
-    version=__version__,
+    version=version,
     description='A simple terminal viewer for Reddit (Reddit Terminal Viewer)',
     long_description=open('README.rst').read(),
     url='https://github.com/michael-lazar/rtv',
