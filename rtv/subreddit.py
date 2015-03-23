@@ -53,7 +53,7 @@ class SubredditPage(BasePage):
                 self.draw()
 
             elif cmd == ord('?'):
-                display_help(self.stdscr)
+                show_help(self.stdscr)
                 self.draw()
 
             elif cmd == ord('a'):

@@ -8,7 +8,7 @@ from .content import SubmissionContent
 from .page import BasePage
 from .helpers import clean, open_browser
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
-                             show_help, text_input)
+                             show_help, show_notification, text_input)
 
 __all__ = ['SubmissionPage']
 
@@ -63,7 +63,7 @@ class SubmissionPage(BasePage):
                 self.draw()
                 
             elif cmd == ord('?'):
-                display_help(self.stdscr)
+                show_help(self.stdscr)
                 self.draw()
 
             elif cmd == ord('a'):
@@ -236,7 +236,7 @@ class SubmissionPage(BasePage):
         """
 
         if not self.reddit.is_logged_in():
-            display_message(self.stdscr, ["Login to reply"])
+            show_notification(self.stdscr, ["Login to reply"])
             return
 
         data = self.content.get(self.nav.absolute_index)
@@ -277,7 +277,7 @@ class SubmissionPage(BasePage):
             else:
                 data['object'].reply(comment_text)
         except praw.errors.APIException as e:
-            display_message(self.stdscr, [e.message])
+            show_notification(self.stdscr, [e.message])
         else:
             time.sleep(0.5)
             self.refresh_content()
