@@ -7,6 +7,7 @@ from contextlib import contextmanager
 
 from .docs import HELP
 from .helpers import strip_textpad
+from .exceptions import EscapeInterrupt
 
 __all__ = ['ESCAPE', 'UARROW', 'DARROW', 'BULLET', 'show_notification',
            'show_help', 'LoadScreen', 'Color', 'text_input', 'curses_session']
