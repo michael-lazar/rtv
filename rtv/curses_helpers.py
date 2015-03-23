@@ -60,7 +60,7 @@ def show_help(stdscr):
     """
     Overlay a message box with the help screen.
     """
-    show_notification(stdscr, docs.HELP.split("\n"))
+    show_notification(stdscr, HELP.split("\n"))
 
 class LoadScreen(object):
     """
