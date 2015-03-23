@@ -43,3 +43,17 @@ Submission Mode
   `LEFT` or `h`       : Return to subreddit mode
   `RIGHT` or `l`      : Fold the selected comment, or load additional comments
 """
+
+COMMENT_FILE = """
+--% {0} %--
+Do not edit the line above.
+Type your comment above the line.
+All text below the line will be discarded.
+
+If there is nothing but whitespace above the line
+then the comment will be discarded.
+
+Replying to {1}'s {2}
+
+{3}
+"""

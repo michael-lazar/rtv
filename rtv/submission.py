@@ -3,6 +3,7 @@ import sys
 import time
 import tempfile
 import os
+import uuid
 
 import praw.errors
 
@@ -11,6 +12,7 @@ from .page import BasePage
 from .helpers import clean, open_browser
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
                              show_help, show_notification, text_input)
+from .docs import COMMENT_FILE
 
 __all__ = ['SubmissionPage']
 
@@ -247,16 +249,27 @@ class SubmissionPage(BasePage):
 
         curses.endwin()
 
-        fd, filename = tempfile.mkstemp(prefix="rtv_comment-");
-        os.system('%s %s' % (os.getenv('EDITOR'), filename))
+        fd, filename = tempfile.mkstemp(prefix="rtv-comment-", suffix=".txt")
+        cid = str(uuid.uuid4())
+        try:
+            with open(filename, 'w') as comment_file:
+                if data['type'] == 'Submission':
+                    info = (data['author'], 'submission', data['text'])
+                else:
+                    info = (data['author'], 'comment', data['body'])
 
-        with os.fdopen(fd, 'r') as comment_file:
-            comment_text = comment_file.read()
+                comment_info = COMMENT_FILE.format(cid, *info)
+                comment_file.write(comment_info)
 
-        curses.doupdate()
+            os.system('%s %s' % (os.getenv('EDITOR'), filename))
+            with open(filename, 'r') as comment_file:
+                comment_text = (comment_file.read()
+                                .split('--% ' + cid + ' %--'))[0]
+        finally:
+            os.remove(filename)
+            curses.doupdate()
 
-
-        if comment_text is None:
+        if comment_text is None or comment_text.isspace():
             return
 
         try:
