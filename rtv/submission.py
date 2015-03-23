@@ -1,6 +1,8 @@
 import curses
 import sys
 import time
+import tempfile
+import os
 
 import praw.errors
 
@@ -234,7 +236,6 @@ class SubmissionPage(BasePage):
         Add a comment on the submission if a header is selected.
         Reply to a comment if the comment is selected.
         """
-
         if not self.reddit.is_logged_in():
             show_notification(self.stdscr, ["Login to reply"])
             return
@@ -244,33 +245,20 @@ class SubmissionPage(BasePage):
             curses.flash()
             return
 
-        # Fill the bottom half of the screen with the comment box
-        n_rows, n_cols = self.stdscr.getmaxyx()
-        box_height = n_rows // 2
-        attr = curses.A_BOLD | Color.CYAN
+        curses.endwin()
 
-        for x in range(n_cols):
-            y = box_height - 1
-            # http://bugs.python.org/issue21088
-            if (sys.version_info.major,
-                sys.version_info.minor,
-                sys.version_info.micro) == (3, 4, 0):
-                x, y = y, x
+        fd, filename = tempfile.mkstemp(prefix="rtv_comment-");
+        os.system('%s %s' % (os.getenv('EDITOR'), filename))
 
-            self.stdscr.addch(y, x, curses.ACS_HLINE, attr)
+        with os.fdopen(fd, 'r') as comment_file:
+            comment_text = comment_file.read()
 
-        prompt = 'Enter comment: ESC to cancel, Ctrl+g to submit'
-        scol = max(0, (n_cols // 2) - (len(prompt) // 2))
-        self.stdscr.addnstr(box_height-1, scol, prompt, n_cols-scol, attr)
-        self.stdscr.refresh()
+        curses.doupdate()
 
-        window = self.stdscr.derwin(n_rows-box_height, n_cols, box_height, 0)
-        window.attrset(Color.CYAN)
 
-        comment_text = text_input(window, allow_resize=False)
         if comment_text is None:
             return
-        
+
         try:
             if data['type'] == 'Submission':
                 data['object'].add_comment(comment_text)
