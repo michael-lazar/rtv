@@ -4,6 +4,7 @@ import time
 import os
 from uuid import uuid4
 from tempfile import NamedTemporaryFile
+from subprocess import Popen
 
 import praw.errors
 
@@ -265,7 +266,7 @@ class SubmissionPage(BasePage):
                 return
 
             curses.endwin()
-            os.system(editor + ' ' + fp.name)
+            Popen([editor, fp.name]).wait()
             curses.doupdate()
 
             fp.seek(0)
