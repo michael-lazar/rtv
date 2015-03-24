@@ -1,9 +1,9 @@
 import curses
 import sys
 import time
-import tempfile
 import os
-import uuid
+from uuid import uuid4
+from tempfile import NamedTemporaryFile
 
 import praw.errors
 
@@ -249,25 +249,29 @@ class SubmissionPage(BasePage):
 
         curses.endwin()
 
-        fd, filename = tempfile.mkstemp(prefix="rtv-comment-", suffix=".txt")
-        cid = str(uuid.uuid4())
-        try:
-            with open(filename, 'w') as comment_file:
-                if data['type'] == 'Submission':
-                    info = (data['author'], 'submission', data['text'])
-                else:
-                    info = (data['author'], 'comment', data['body'])
+        cid = str(uuid4())
+        if data['type'] == 'Submission':
+            info = (data['author'], 'submission', data['text'])
+        else:
+            info = (data['author'], 'comment', data['body'])
 
-                comment_info = COMMENT_FILE.format(cid, *info)
-                comment_file.write(comment_info)
+        comment_info = COMMENT_FILE.format(cid, *info)
 
-            os.system('%s %s' % (os.getenv('EDITOR'), filename))
-            with open(filename, 'r') as comment_file:
-                comment_text = (comment_file.read()
-                                .split('--% ' + cid + ' %--'))[0]
-        finally:
-            os.remove(filename)
-            curses.doupdate()
+        with NamedTemporaryFile(prefix='rtv-comment-', mode='w+') as fp:
+            fp.write(comment_info)
+            fp.flush()
+
+            editor = os.getenv('RTVEDITOR') or os.getenv('EDITOR')
+            if editor is None:
+                show_notification(self.stdscr, ['No EDITOR defined'])
+                return
+
+            os.system(editor + ' ' + fp.name)
+
+            fp.seek(0)
+            comment_text = fp.read().split('--% ' + cid + ' %--')[0]
+
+        curses.doupdate()
 
         if comment_text is None or comment_text.isspace():
             return
