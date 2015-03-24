@@ -247,14 +247,12 @@ class SubmissionPage(BasePage):
             curses.flash()
             return
 
-        curses.endwin()
 
         cid = str(uuid4())
         if data['type'] == 'Submission':
             info = (data['author'], 'submission', data['text'])
         else:
             info = (data['author'], 'comment', data['body'])
-
         comment_info = COMMENT_FILE.format(cid, *info)
 
         with NamedTemporaryFile(prefix='rtv-comment-', mode='w+') as fp:
@@ -266,12 +264,13 @@ class SubmissionPage(BasePage):
                 show_notification(self.stdscr, ['No EDITOR defined'])
                 return
 
+            curses.endwin()
             os.system(editor + ' ' + fp.name)
+            curses.doupdate()
 
             fp.seek(0)
             comment_text = fp.read().split('--% ' + cid + ' %--')[0]
 
-        curses.doupdate()
 
         if comment_text is None or comment_text.isspace():
             return
