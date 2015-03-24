@@ -2,7 +2,6 @@ import curses
 import sys
 import time
 import os
-from uuid import uuid4
 from tempfile import NamedTemporaryFile
 from subprocess import Popen
 
@@ -248,13 +247,19 @@ class SubmissionPage(BasePage):
             curses.flash()
             return
 
-
-        cid = str(uuid4())
-        if data['type'] == 'Submission':
-            info = (data['author'], 'submission', data['text'])
+        if data['type'] is 'Submission':
+            content = data['text']
         else:
-            info = (data['author'], 'comment', data['body'])
-        comment_info = COMMENT_FILE.format(cid, *info)
+            content = data['body']
+
+        # Comment out every line of the content
+        content = '\n'.join(['#|' + line for line in content.split('\n')])
+
+        info = {'author': data['author'],
+                'type': data['type'],
+                'content': content}
+
+        comment_info = COMMENT_FILE.format(**info)
 
         with NamedTemporaryFile(prefix='rtv-comment-', mode='w+') as fp:
             fp.write(comment_info)
@@ -270,8 +275,8 @@ class SubmissionPage(BasePage):
             curses.doupdate()
 
             fp.seek(0)
-            comment_text = fp.read().split('--% ' + cid + ' %--')[0]
-
+            comment_text = '\n'.join([line for line in fp.read().split('\n')
+                                               if not line.startswith("#")])
 
         if comment_text is None or comment_text.isspace():
             return

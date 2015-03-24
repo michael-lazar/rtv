@@ -45,15 +45,11 @@ Submission Mode
 """
 
 COMMENT_FILE = """
---% {0} %--
-Do not edit the line above.
-Type your comment above the line.
-All text below the line will be discarded.
-
-If there is nothing but whitespace above the line
-then the comment will be discarded.
-
-Replying to {1}'s {2}
-
-{3}
+# All lines starting with a # will be ignored
+#
+# If there is only whitespace left then the comment
+# will not be posted.
+#
+# Replying to {author}'s {type}
+{content}
 """
