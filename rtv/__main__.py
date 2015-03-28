@@ -68,7 +68,7 @@ def main():
     # Fill in empty arguments with config file values. Paramaters explicitly
     # typed on the command line will take priority over config file params.
     for key, val in local_config.items():
-        if getattr(args, key) is None:
+        if getattr(args, key, None) is None:
             setattr(args, key, val)
 
     config.unicode = args.unicode
