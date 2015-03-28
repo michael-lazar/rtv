@@ -45,10 +45,8 @@ Submission Mode
 """
 
 COMMENT_FILE = """
-# All lines starting with a # will be ignored
-#
-# If there is only whitespace left then the comment
-# will not be posted.
+# Please enter a comment. Lines starting with '#' will be ignored,
+# and an empty message aborts the message.
 #
 # Replying to {author}'s {type}
 {content}
