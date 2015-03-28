@@ -1,15 +1,13 @@
 import curses
 import sys
 import time
-import os
 from tempfile import NamedTemporaryFile
-from subprocess import Popen
 
 import praw.errors
 
 from .content import SubmissionContent
 from .page import BasePage
-from .helpers import clean, open_browser
+from .helpers import clean, open_browser, open_editor
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
                              show_help, show_notification, text_input)
 from .docs import COMMENT_FILE
@@ -107,6 +105,56 @@ class SubmissionPage(BasePage):
         # May want to expand at some point to open comment permalinks
         url = self.content.get(-1)['permalink']
         open_browser(url)
+
+    def add_comment(self):
+        """
+        Add a comment on the submission if a header is selected.
+        Reply to a comment if the comment is selected.
+        """
+        if not self.reddit.is_logged_in():
+            show_notification(self.stdscr, ["Login to reply"])
+            return
+
+        data = self.content.get(self.nav.absolute_index)
+        if data['type'] == 'Submission':
+            content = data['text']
+        elif data['type'] == 'Comment':
+            content = data['body']
+        else:
+            curses.flash()
+            return
+
+        # Comment out every line of the content
+        content = '\n'.join(['#|' + line for line in content.split('\n')])
+        info = {'author': data['author'],
+                'type': data['type'],
+                'content': content}
+        comment_info = COMMENT_FILE.format(**info)
+
+        curses.endwin()
+        with NamedTemporaryFile(prefix='rtv-comment-', mode='w+') as fp:
+            fp.write(comment_info)
+            fp.flush()
+            open_editor(fp.name)  # Open the default text editor and block
+            fp.seek(0)
+            comment_text = '\n'.join(line for line in fp.read().split('\n')
+                                     if not line.startswith("#"))
+        curses.doupdate()
+
+        if comment_text is None or comment_text.isspace():
+            curses.flash()
+            return
+
+        try:
+            if data['type'] == 'Submission':
+                data['object'].add_comment(comment_text)
+            else:
+                data['object'].reply(comment_text)
+        except praw.errors.APIException as e:
+            show_notification(self.stdscr, [e.message])
+        else:
+            time.sleep(0.5)
+            self.refresh_content()
 
     def draw_item(self, win, data, inverted=False):
 
@@ -232,62 +280,3 @@ class SubmissionPage(BasePage):
         win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         win.border()
-
-    def add_comment(self):
-        """
-        Add a comment on the submission if a header is selected.
-        Reply to a comment if the comment is selected.
-        """
-        if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ["Login to reply"])
-            return
-
-        data = self.content.get(self.nav.absolute_index)
-        if data['type'] not in ('Comment', 'Submission'):
-            curses.flash()
-            return
-
-        if data['type'] is 'Submission':
-            content = data['text']
-        else:
-            content = data['body']
-
-        # Comment out every line of the content
-        content = '\n'.join(['#|' + line for line in content.split('\n')])
-
-        info = {'author': data['author'],
-                'type': data['type'],
-                'content': content}
-
-        comment_info = COMMENT_FILE.format(**info)
-
-        with NamedTemporaryFile(prefix='rtv-comment-', mode='w+') as fp:
-            fp.write(comment_info)
-            fp.flush()
-
-            editor = os.getenv('RTVEDITOR') or os.getenv('EDITOR')
-            if editor is None:
-                show_notification(self.stdscr, ['No EDITOR defined'])
-                return
-
-            curses.endwin()
-            Popen([editor, fp.name]).wait()
-            curses.doupdate()
-
-            fp.seek(0)
-            comment_text = '\n'.join([line for line in fp.read().split('\n')
-                                               if not line.startswith("#")])
-
-        if comment_text is None or comment_text.isspace():
-            return
-
-        try:
-            if data['type'] == 'Submission':
-                data['object'].add_comment(comment_text)
-            else:
-                data['object'].reply(comment_text)
-        except praw.errors.APIException as e:
-            show_notification(self.stdscr, [e.message])
-        else:
-            time.sleep(0.5)
-            self.refresh_content()

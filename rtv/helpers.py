@@ -9,6 +9,20 @@ from . import config
 __all__ = ['open_browser', 'clean', 'wrap_text', 'strip_textpad',
            'strip_subreddit_url', 'humanize_timestamp']
 
+def open_editor(filename):
+    """
+    Open the given file using the system's default editor.
+    """
+
+    editors = [os.getenv('RTV_EDITOR'), os.getenv('EDITOR'), 'nano', 'vi']
+    for program in editors:
+        if program:
+            try:
+                subprocess.Popen([program, filename]).wait()
+                break
+            except OSError:
+                pass
+
 def open_browser(url):
     """
     Call webbrowser.open_new_tab(url) and redirect stdout/stderr to devnull.
