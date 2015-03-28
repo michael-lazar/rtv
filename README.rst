@@ -97,3 +97,6 @@ Example config:
   
   # Default subreddit
   subreddit=CollegeBasketball
+
+RTV will attempt to use the system's default text editor when writing comments.
+Set the environment variable ``$RTV_EDITOR`` to change the default editor.
