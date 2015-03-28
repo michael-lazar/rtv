@@ -125,7 +125,7 @@ class SubmissionPage(BasePage):
             return
 
         # Comment out every line of the content
-        content = '\n'.join(['#|' + line for line in content.split('\n')])
+        content = '\n'.join(['# |' + line for line in content.split('\n')])
         info = {'author': data['author'],
                 'type': data['type'],
                 'content': content}
@@ -139,9 +139,10 @@ class SubmissionPage(BasePage):
             fp.seek(0)
             comment_text = '\n'.join(line for line in fp.read().split('\n')
                                      if not line.startswith("#"))
+            comment_text = comment_text.rstrip()
         curses.doupdate()
 
-        if comment_text is None or comment_text.isspace():
+        if not comment_text:
             curses.flash()
             return
 
