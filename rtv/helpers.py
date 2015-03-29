@@ -3,25 +3,36 @@ import os
 import textwrap
 import subprocess
 from datetime import datetime
+from tempfile import NamedTemporaryFile
 
 from . import config
 
 __all__ = ['open_browser', 'clean', 'wrap_text', 'strip_textpad',
-           'strip_subreddit_url', 'humanize_timestamp']
+           'strip_subreddit_url', 'humanize_timestamp', 'open_editor']
 
-def open_editor(filename):
+def open_editor(data=''):
     """
-    Open the given file using the system's default editor.
+    Open a temporary file using the system's default editor.
+
+    The data string will be written to the file before opening. This function
+    will block until the editor has closed. At that point the file will be
+    read and and lines starting with '#' will be stripped.
     """
 
-    editors = [os.getenv('RTV_EDITOR'), os.getenv('EDITOR'), 'nano', 'vi']
-    for program in editors:
-        if program:
-            try:
-                subprocess.Popen([program, filename]).wait()
-                break
-            except OSError:
-                pass
+    with NamedTemporaryFile(prefix='rtv-', suffix='.txt', mode='w') as fp:
+        fp.write(data)
+        fp.flush()
+        editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
+        subprocess.Popen([editor, fp.name]).wait()
+
+        # Open a second file object to read. This appears to be necessary in
+        # order to read the changes made by some editors (gedit). w+ mode does
+        # not work!
+        with open(fp.name) as fp2:
+            text = ''.join(line for line in fp2 if not line.startswith('#'))
+            text = text.rstrip()
+
+    return text
 
 def open_browser(url):
     """

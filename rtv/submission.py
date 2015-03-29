@@ -1,7 +1,6 @@
 import curses
 import sys
 import time
-from tempfile import NamedTemporaryFile
 
 import praw.errors
 
@@ -126,26 +125,18 @@ class SubmissionPage(BasePage):
 
         # Comment out every line of the content
         content = '\n'.join(['# |' + line for line in content.split('\n')])
-        info = {'author': data['author'],
-                'type': data['type'],
-                'content': content}
-        comment_info = COMMENT_FILE.format(**info)
+        comment_info = COMMENT_FILE.format(
+            author=data['author'],
+            type=data['type'].lower(),
+            content=content)
 
         curses.endwin()
-        with NamedTemporaryFile(prefix='rtv-comment-', mode='w+') as fp:
-            fp.write(comment_info)
-            fp.flush()
-            open_editor(fp.name)  # Open the default text editor and block
-            fp.seek(0)
-            comment_text = '\n'.join(line for line in fp.read().split('\n')
-                                     if not line.startswith("#"))
-            comment_text = comment_text.rstrip()
+        comment_text = open_editor(comment_info)
         curses.doupdate()
 
         if not comment_text:
             curses.flash()
             return
-
         try:
             if data['type'] == 'Submission':
                 data['object'].add_comment(comment_text)
