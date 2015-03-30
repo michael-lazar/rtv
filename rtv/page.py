@@ -1,5 +1,6 @@
 import curses
 import six
+import sys
 
 import praw.errors
 
