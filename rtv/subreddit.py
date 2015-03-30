@@ -4,7 +4,7 @@ import sys
 import requests
 
 from .exceptions import SubredditError
-from .page import BasePage
+from .page import BasePage, Navigator
 from .submission import SubmissionPage
 from .content import SubredditContent
 from .helpers import clean, open_browser
@@ -81,16 +81,12 @@ class SubredditPage(BasePage):
         try:
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.loader)
-
         except SubredditError:
             show_notification(self.stdscr, ['Invalid subreddit'])
-
         except requests.HTTPError:
             show_notification(self.stdscr, ['Could not reach subreddit'])
-
         else:
-            self.nav.page_index, self.nav.cursor_index = 0, 0
-            self.nav.inverted = False
+            self.nav = Navigator(self.content.get)
 
     def prompt_subreddit(self):
         "Open a prompt to type in a new subreddit"

@@ -5,7 +5,7 @@ import time
 import praw.errors
 
 from .content import SubmissionContent
-from .page import BasePage
+from .page import BasePage, Navigator
 from .helpers import clean, open_browser, open_editor
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
                              show_help, show_notification, text_input)
@@ -95,8 +95,7 @@ class SubmissionPage(BasePage):
 
         url = self.content.name
         self.content = SubmissionContent.from_url(self.reddit, url, self.loader)
-        self.nav.page_index, self.nav.cursor_index = -1, 0
-        self.nav.inverted = False
+        self.nav = Navigator(self.content.get, page_index=-1)
 
     def open_link(self):
 
