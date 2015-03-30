@@ -96,6 +96,55 @@ class Navigator(object):
             return True
 
 
+class BaseController(object):
+    """
+    Event handler for triggering functions with curses keypresses.
+
+    Register a keystroke to a class method using the @egister decorator.
+    #>>> @Controller.register('a', 'A')
+    #>>> def func(self, *args)
+
+    Register a default behavior by using `None`.
+    #>>> @Controller.register(None)
+    #>>> def default_func(self, *args)
+
+    Bind the controller to a class instance and trigger a key. Additional
+    arguments will be passed to the function.
+    #>>> controller = Controller(self)
+    #>>> controller.trigger('a', *args)
+    """
+
+    character_map = {None: (lambda *args, **kwargs: None)}
+
+    def __init__(self, instance):
+        self.instance = instance
+
+    def trigger(self, char, *args, **kwargs):
+
+        if isinstance(char, six.string_types) and len(char) == 1:
+            char = ord(char)
+
+        func = self.character_map.get(char)
+        if func is None:
+            func = Controller.character_map.get(char)
+        if func is None:
+            func = self.character_map.get(None)
+        if func is None:
+            func = Controller.character_map.get(None)
+        return func(self.instance, *args, **kwargs)
+
+    @classmethod
+    def register(cls, *chars):
+        def wrap(f):
+            for char in chars:
+                if isinstance(char, six.string_types) and len(char) == 1:
+                    cls.character_map[ord(char)] = f
+                else:
+                    cls.character_map[char] = f
+            return f
+        return wrap
+
+
 class BasePage(object):
     """
     Base terminal viewer incorperates a cursor to navigate content
