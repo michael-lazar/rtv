@@ -5,20 +5,25 @@ import time
 import praw.errors
 
 from .content import SubmissionContent
-from .page import BasePage, Navigator
+from .page import BasePage, Navigator, BaseController
 from .helpers import clean, open_browser, open_editor
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
                              show_help, show_notification, text_input)
 from .docs import COMMENT_FILE
 
-__all__ = ['SubmissionPage']
+__all__ = ['SubmissionController', 'SubmissionPage']
+
+
+class SubmissionController(BaseController):
+    character_map = {}
+
 
 class SubmissionPage(BasePage):
 
     def __init__(self, stdscr, reddit, url=None, submission=None):
 
+        self.controller = SubmissionController(self)
         self.loader = LoadScreen(stdscr)
-
         if url is not None:
             content = SubmissionContent.from_url(reddit, url, self.loader)
         elif submission is not None:
@@ -30,59 +35,13 @@ class SubmissionPage(BasePage):
                                              page_index=-1)
 
     def loop(self):
-
-        self.draw()
-
         while True:
+            self.draw()
             cmd = self.stdscr.getch()
+            self.controller.trigger(cmd)
 
-            if cmd in (curses.KEY_UP, ord('k')):
-                self.move_cursor_up()
-                self.clear_input_queue()
-
-            elif cmd in (curses.KEY_DOWN, ord('j')):
-                self.move_cursor_down()
-                self.clear_input_queue()
-
-            elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER, ord('l')):
-                self.toggle_comment()
-                self.draw()
-
-            elif cmd in (curses.KEY_LEFT, ord('h')):
-                break
-
-            elif cmd == ord('o'):
-                self.open_link()
-                self.draw()
-
-            elif cmd in (curses.KEY_F5, ord('r')):
-                self.refresh_content()
-                self.draw()
-
-            elif cmd == ord('c'):
-                self.add_comment()
-                self.draw()
-                
-            elif cmd == ord('?'):
-                show_help(self.stdscr)
-                self.draw()
-
-            elif cmd == ord('a'):
-                self.upvote()
-                self.draw()
-
-            elif cmd == ord('z'):
-                self.downvote()
-                self.draw()
-
-            elif cmd == ord('q'):
-                sys.exit()
-
-            elif cmd == curses.KEY_RESIZE:
-                self.draw()
-
+    @SubmissionController.register(curses.KEY_RIGHT, 'l')
     def toggle_comment(self):
-        
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
         if self.nav.inverted:
@@ -91,19 +50,20 @@ class SubmissionPage(BasePage):
             # cursor index to go out of bounds.
             self.nav.page_index, self.nav.cursor_index = current_index, 0
 
+    @SubmissionController.register(curses.KEY_F5, 'r')
     def refresh_content(self):
-
         url = self.content.name
         self.content = SubmissionContent.from_url(self.reddit, url, self.loader)
         self.nav = Navigator(self.content.get, page_index=-1)
 
+    @SubmissionController.register(curses.KEY_ENTER, 'o')
     def open_link(self):
-
         # Always open the page for the submission
         # May want to expand at some point to open comment permalinks
         url = self.content.get(-1)['permalink']
         open_browser(url)
 
+    @SubmissionController.register('c')
     def add_comment(self):
         """
         Add a comment on the submission if a header is selected.

@@ -4,78 +4,41 @@ import sys
 import requests
 
 from .exceptions import SubredditError
-from .page import BasePage, Navigator
+from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
 from .content import SubredditContent
 from .helpers import clean, open_browser
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen, 
                              text_input, show_notification, show_help)
 
-__all__ = ['opened_links', 'SubredditPage']
+__all__ = ['opened_links', 'SubredditController', 'SubredditPage']
 
 # Used to keep track of browsing history across the current session
 opened_links = set()
+
+
+class SubredditController(BaseController):
+    character_map = {}
+
 
 class SubredditPage(BasePage):
 
     def __init__(self, stdscr, reddit, name):
 
+        self.controller = SubredditController(self)
         self.loader = LoadScreen(stdscr)
 
         content = SubredditContent.from_name(reddit, name, self.loader)
         super(SubredditPage, self).__init__(stdscr, reddit, content)
 
     def loop(self):
-
-        self.draw()
-
         while True:
+            self.draw()
             cmd = self.stdscr.getch()
+            self.controller.trigger(cmd)
 
-            if cmd in (curses.KEY_UP, ord('k')):
-                self.move_cursor_up()
-                self.clear_input_queue()
-
-            elif cmd in (curses.KEY_DOWN, ord('j')):
-                self.move_cursor_down()
-                self.clear_input_queue()
-
-            elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER, ord('l')):
-                self.open_submission()
-                self.draw()
-
-            elif cmd == ord('o'):
-                self.open_link()
-                self.draw()
-
-            elif cmd in (curses.KEY_F5, ord('r')):
-                self.refresh_content()
-                self.draw()
-
-            elif cmd == ord('?'):
-                show_help(self.stdscr)
-                self.draw()
-
-            elif cmd == ord('a'):
-                self.upvote()
-                self.draw()
-
-            elif cmd == ord('z'):
-                self.downvote()
-                self.draw()
-
-            elif cmd == ord('q'):
-                sys.exit()
-
-            elif cmd == curses.KEY_RESIZE:
-                self.draw()
-
-            elif cmd == ord('/'):
-                self.prompt_subreddit()
-                self.draw()
-
+    @SubredditController.register(curses.KEY_F5, 'r')
     def refresh_content(self, name=None):
-
         name = name or self.content.name
 
         try:
@@ -88,6 +51,7 @@ class SubredditPage(BasePage):
         else:
             self.nav = Navigator(self.content.get)
 
+    @SubredditController.register('/')
     def prompt_subreddit(self):
         "Open a prompt to type in a new subreddit"
 
@@ -103,6 +67,7 @@ class SubredditPage(BasePage):
         if out is not None:
             self.refresh_content(name=out)
 
+    @SubredditController.register(curses.KEY_RIGHT, 'l')
     def open_submission(self):
         "Select the current submission to view posts"
 
@@ -114,6 +79,7 @@ class SubredditPage(BasePage):
             global opened_links
             opened_links.add(data['url_full'])
 
+    @SubredditController.register(curses.KEY_ENTER, 'o')
     def open_link(self):
         "Open a link with the webbrowser"
 

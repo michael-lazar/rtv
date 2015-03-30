@@ -1,4 +1,5 @@
 import curses
+import six
 
 import praw.errors
 
@@ -126,11 +127,11 @@ class BaseController(object):
 
         func = self.character_map.get(char)
         if func is None:
-            func = Controller.character_map.get(char)
+            func = BaseController.character_map.get(char)
         if func is None:
             func = self.character_map.get(None)
         if func is None:
-            func = Controller.character_map.get(None)
+            func = BaseController.character_map.get(None)
         return func(self.instance, *args, **kwargs)
 
     @classmethod
@@ -164,9 +165,19 @@ class BasePage(object):
         self._content_window = None
         self._subwindows = None
 
+    @BaseController.register('q')
+    def exit(self):
+        sys.exit()
+
+    @BaseController.register('?')
+    def help(self):
+        show_help(self.stdscr)
+
+    @BaseController.register(curses.KEY_UP, 'k')
     def move_cursor_up(self):
         self._move_cursor(-1)
 
+    @BaseController.register(curses.KEY_DOWN, 'j')
     def move_cursor_down(self):
         self._move_cursor(1)
 
@@ -177,8 +188,8 @@ class BasePage(object):
             continue
         self.stdscr.nodelay(0)
 
+    @BaseController.register('a')
     def upvote(self):
-
         data = self.content.get(self.nav.absolute_index)
         try:
             if 'likes' not in data:
@@ -192,8 +203,8 @@ class BasePage(object):
         except praw.errors.LoginOrScopeRequired:
             show_notification(self.stdscr, ['Login to vote'])
 
+    @BaseController.register('z')
     def downvote(self):
-
         data = self.content.get(self.nav.absolute_index)
         try:
             if 'likes' not in data:
