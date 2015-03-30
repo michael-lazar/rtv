@@ -97,7 +97,8 @@ Each line in the file will replace the corresponding default argument in the lau
 Example config:
 
 **~/.rtv**
-::
+
+.. code-block:: ini
 
   [rtv]
   username=MyUsername
