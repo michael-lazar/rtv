@@ -37,50 +37,19 @@ class SubmissionPage(BasePage):
         while True:
             cmd = self.stdscr.getch()
 
-            if cmd in (curses.KEY_UP, ord('k')):
-                self.move_cursor_up()
-                self.clear_input_queue()
-
-            elif cmd in (curses.KEY_DOWN, ord('j')):
-                self.move_cursor_down()
-                self.clear_input_queue()
-
-            elif cmd in (curses.KEY_RIGHT, ord('l')):
+            if cmd in (curses.KEY_RIGHT, ord('l')):
                 self.toggle_comment()
                 self.draw()
 
             elif cmd in (curses.KEY_LEFT, ord('h')):
                 break
 
-            elif cmd in (10, curses.KEY_ENTER, ord('o')):
-                self.open_link()
-                self.draw()
-
-            elif cmd in (curses.KEY_F5, ord('r')):
-                self.refresh_content()
-                self.draw()
-
             elif cmd == ord('c'):
                 self.add_comment()
                 self.draw()
 
-            elif cmd == ord('?'):
-                show_help(self.stdscr)
-                self.draw()
-
-            elif cmd == ord('a'):
-                self.upvote()
-                self.draw()
-
-            elif cmd == ord('z'):
-                self.downvote()
-                self.draw()
-
-            elif cmd == ord('q'):
-                sys.exit()
-
-            elif cmd == curses.KEY_RESIZE:
-                self.draw()
+            else:
+                self.loop_command(cmd)
 
     def toggle_comment(self):
 
