@@ -115,6 +115,41 @@ class BasePage(object):
         self._content_window = None
         self._subwindows = None
 
+    def loop_command(self, cmd):
+        if cmd in (curses.KEY_UP, ord('k')):
+            self.move_cursor_up()
+            self.clear_input_queue()
+
+        elif cmd in (curses.KEY_DOWN, ord('j')):
+            self.move_cursor_down()
+            self.clear_input_queue()
+
+        elif cmd in (10, curses.KEY_ENTER, ord('o')):
+            self.open_link()
+            self.draw()
+
+        elif cmd in (curses.KEY_F5, ord('r')):
+            self.refresh_content()
+            self.draw()
+
+        elif cmd == ord('a'):
+            self.upvote()
+            self.draw()
+
+        elif cmd == ord('z'):
+            self.downvote()
+            self.draw()
+
+        elif cmd == ord('?'):
+            show_help(self.stdscr)
+            self.draw()
+
+        elif cmd == curses.KEY_RESIZE:
+            self.draw()
+
+        elif cmd == ord('q'):
+            sys.exit()
+
     def move_cursor_up(self):
         self._move_cursor(-1)
 
