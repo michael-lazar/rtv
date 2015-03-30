@@ -6,6 +6,7 @@ from datetime import datetime
 from tempfile import NamedTemporaryFile
 
 from . import config
+from .exceptions import ProgramError
 
 __all__ = ['open_browser', 'clean', 'wrap_text', 'strip_textpad',
            'strip_subreddit_url', 'humanize_timestamp', 'open_editor']
@@ -23,7 +24,11 @@ def open_editor(data=''):
         fp.write(data)
         fp.flush()
         editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
-        subprocess.Popen([editor, fp.name]).wait()
+
+        try:
+            subprocess.Popen([editor, fp.name]).wait()
+        except OSError as e:
+            raise ProgramError(editor)
 
         # Open a second file object to read. This appears to be necessary in
         # order to read the changes made by some editors (gedit). w+ mode does

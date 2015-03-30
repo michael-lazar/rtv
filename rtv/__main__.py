@@ -10,7 +10,7 @@ import praw.errors
 from six.moves import configparser
 
 from . import config
-from .exceptions import SubmissionError, SubredditError
+from .exceptions import SubmissionError, SubredditError, ProgramError
 from .curses_helpers import curses_session
 from .submission import SubmissionPage
 from .subreddit import SubredditPage
@@ -99,6 +99,9 @@ def main():
         print('Could not reach submission URL: {}'.format(e.url))
     except SubredditError as e:
         print('Could not reach subreddit: {}'.format(e.name))
+    except ProgramError as e:
+        print('Error: could not open file with program "{}", '
+              'try setting RTV_EDITOR'.format(e.name))
     except KeyboardInterrupt:
         return
 
