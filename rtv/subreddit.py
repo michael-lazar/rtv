@@ -79,7 +79,7 @@ class SubredditPage(BasePage):
             global opened_links
             opened_links.add(data['url_full'])
 
-    @SubredditController.register(curses.KEY_ENTER, 'o')
+    @SubredditController.register(curses.KEY_ENTER, 10, 'o')
     def open_link(self):
         "Open a link with the webbrowser"
 

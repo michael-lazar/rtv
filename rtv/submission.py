@@ -35,7 +35,8 @@ class SubmissionPage(BasePage):
                                              page_index=-1)
 
     def loop(self):
-        while True:
+        self.active = True
+        while self.active:
             self.draw()
             cmd = self.stdscr.getch()
             self.controller.trigger(cmd)
@@ -50,13 +51,17 @@ class SubmissionPage(BasePage):
             # cursor index to go out of bounds.
             self.nav.page_index, self.nav.cursor_index = current_index, 0
 
+    @SubmissionController.register(curses.KEY_LEFT, 'h')
+    def exit_submission(self):
+        self.active = False
+
     @SubmissionController.register(curses.KEY_F5, 'r')
     def refresh_content(self):
         url = self.content.name
         self.content = SubmissionContent.from_url(self.reddit, url, self.loader)
         self.nav = Navigator(self.content.get, page_index=-1)
 
-    @SubmissionController.register(curses.KEY_ENTER, 'o')
+    @SubmissionController.register(curses.KEY_ENTER, 10, 'o')
     def open_link(self):
         # Always open the page for the submission
         # May want to expand at some point to open comment permalinks
