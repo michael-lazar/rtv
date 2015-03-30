@@ -98,5 +98,9 @@ Example config:
   # Default subreddit
   subreddit=CollegeBasketball
 
-RTV will attempt to use the system's default text editor when writing comments.
-Set the environment variable ``$RTV_EDITOR`` to change the default editor.
+RTV allows users to compose comments and replys using their preferred text editor (**vi**, **nano**, **gedit**, etc).
+Set the environment variable ``RTV_EDITOR`` to specify which editor the program should use.
+
+.. code-block:: bash
+
+   $ export RTV_EDITOR=gedit
