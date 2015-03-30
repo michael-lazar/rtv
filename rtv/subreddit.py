@@ -40,11 +40,11 @@ class SubredditPage(BasePage):
                 self.move_cursor_down()
                 self.clear_input_queue()
 
-            elif cmd in (curses.KEY_RIGHT, curses.KEY_ENTER, ord('l')):
+            elif cmd in (curses.KEY_RIGHT, ord('l')):
                 self.open_submission()
                 self.draw()
 
-            elif cmd == ord('o'):
+            elif cmd in (10, curses.KEY_ENTER, ord('o')):
                 self.open_link()
                 self.draw()
 
