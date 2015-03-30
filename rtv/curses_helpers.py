@@ -1,9 +1,11 @@
 import os
+import sys
 import time
 import threading
 import curses
-from curses import textpad, ascii
+from curses import ascii
 from contextlib import contextmanager
+import texteditpad as textpad
 
 from .docs import HELP
 from .helpers import strip_textpad
@@ -198,7 +200,7 @@ def text_input(window, allow_resize=True):
 
     # Turn insert_mode off to avoid the recursion error described here
     # http://bugs.python.org/issue13051
-    textbox = textpad.Textbox(window, insert_mode=False)
+    textbox = textpad.Textbox(window, resize_mode=allow_resize)
     textbox.stripspaces = 0
 
     def validate(ch):
@@ -221,7 +223,39 @@ def text_input(window, allow_resize=True):
         out = None
 
     curses.curs_set(0)
-    return strip_textpad(out)
+    return out
+
+
+def open_textinput(page):
+    """
+    Open a text input box on the bottom half of the screen.
+    """
+    
+    # Fill the bottom half of the screen with the comment box
+    n_rows, n_cols = page.stdscr.getmaxyx()
+    box_height = n_rows // 2
+    attr = curses.A_BOLD | Color.CYAN
+
+    for x in range(n_cols):
+        y = box_height - 1
+        # http://bugs.python.org/issue21088
+        if (sys.version_info.major,
+            sys.version_info.minor,
+            sys.version_info.micro) == (3, 4, 0):
+            x, y = y, x
+
+        page.stdscr.addch(y, x, curses.ACS_HLINE, attr)
+
+    prompt = 'Enter comment: ESC to cancel, Ctrl+g to submit'
+    scol = max(0, (n_cols // 2) - (len(prompt) // 2))
+    page.stdscr.addnstr(box_height-1, scol, prompt, n_cols-scol, attr)
+    page.stdscr.refresh()
+
+    window = page.stdscr.derwin(n_rows-box_height, n_cols, box_height, 0)
+    window.attrset(Color.CYAN)
+
+    return text_input(window, allow_resize=True)
+
 
 @contextmanager
 def curses_session():
