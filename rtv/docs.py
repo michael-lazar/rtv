@@ -32,7 +32,7 @@ Global Commands
   `a/z`               : Upvote/downvote the selected item
   `r`                 : Refresh the current page
   `q`                 : Quit the program
-  `o`                 : Open the selected item in the default web browser
+  `ENTER` or `o`      : Open the selected item in the default web browser
   `?`                 : Show this help message
 
 Subreddit Mode
