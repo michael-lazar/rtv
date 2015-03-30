@@ -289,7 +289,8 @@ class SubredditContent(BaseContent):
         content = cls(display_name, submissions, loader)
         try:
             content.get(0)
-        except (praw.errors.APIException, requests.HTTPError):
+        except (praw.errors.APIException, requests.HTTPError,
+                praw.errors.RedirectException):
             raise SubredditError(display_name)
 
         return content
