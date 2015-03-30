@@ -1,3 +1,4 @@
+import os
 import curses
 import sys
 import time
@@ -8,7 +9,7 @@ from .content import SubmissionContent
 from .page import BasePage, Navigator
 from .helpers import clean, open_browser, open_editor
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
-                             show_help, show_notification, text_input)
+                             show_help, show_notification, open_textinput)
 from .docs import COMMENT_FILE
 
 __all__ = ['SubmissionPage']
@@ -122,17 +123,21 @@ class SubmissionPage(BasePage):
             curses.flash()
             return
 
-        # Comment out every line of the content
-        content = '\n'.join(['# |' + line for line in content.split('\n')])
-        comment_info = COMMENT_FILE.format(
-            author=data['author'],
-            type=data['type'].lower(),
-            content=content)
+        editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR')
+        if editor:
+            # Comment out every line of the content
+            content = '\n'.join(['# |' + line for line in content.split('\n')])
+            comment_info = COMMENT_FILE.format(
+                author=data['author'],
+                type=data['type'].lower(),
+                content=content)
 
-        curses.endwin()
-        comment_text = open_editor(comment_info)
-        curses.doupdate()
-
+            curses.endwin()
+            comment_text = open_editor(comment_info)
+            curses.doupdate()
+        else:
+            comment_text = open_textinput(self)
+            
         if not comment_text:
             curses.flash()
             return
