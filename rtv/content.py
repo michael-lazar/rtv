@@ -72,16 +72,12 @@ class BaseContent(object):
             data['body'] = comment.body
             data['created'] = humanize_timestamp(comment.created_utc)
             data['score'] = '{} pts'.format(comment.score)
-            data['author'] = (
-                comment.author.name if getattr(
-                    comment,
-                    'author') else '[deleted]')
-            data['is_author'] = (
-                data['author'] == getattr(
-                    comment.submission,
-                    'author'))
-            data['flair'] = (
-                comment.author_flair_text if comment.author_flair_text else '')
+            author = getattr(comment, 'author')
+            data['author'] = (author.name if author else '[deleted]')
+            sub_author = getattr(comment.submission, 'author')
+            data['is_author'] = (data['author'] == sub_author)
+            flair = comment.author_flair_text
+            data['flair'] = (flair if flair else '')
             data['likes'] = comment.likes
 
         return data
@@ -103,10 +99,8 @@ class BaseContent(object):
         data['created'] = humanize_timestamp(sub.created_utc)
         data['comments'] = '{} comments'.format(sub.num_comments)
         data['score'] = '{} pts'.format(sub.score)
-        data['author'] = (
-            sub.author.name if getattr(
-                sub,
-                'author') else '[deleted]')
+        author = getattr(sub, 'author')
+        data['author'] = (author.name if author else '[deleted]')
         data['permalink'] = sub.permalink
         data['subreddit'] = strip_subreddit_url(sub.permalink)
         data['flair'] = (sub.link_flair_text if sub.link_flair_text else '')
@@ -169,13 +163,10 @@ class SubmissionContent(BaseContent):
 
         elif index == -1:
             data = self._submission_data
-            data['split_title'] = textwrap.wrap(
-                data['title'],
-                width=n_cols -
-                2)
+            data['split_title'] = textwrap.wrap(data['title'],
+                                                width=n_cols -2)
             data['split_text'] = wrap_text(data['text'], width=n_cols - 2)
-            data['n_rows'] = len(
-                data['split_title']) + len(data['split_text']) + 5
+            data['n_rows'] = len(data['split_title']) + len(data['split_text']) + 5
             data['offset'] = 0
 
         else:
