@@ -5,7 +5,7 @@ import sys
 import praw.errors
 
 from .helpers import clean
-from .curses_helpers import Color, show_notification
+from .curses_helpers import Color, show_notification, show_help
 
 __all__ = ['Navigator']
 
