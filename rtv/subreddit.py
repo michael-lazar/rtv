@@ -64,8 +64,11 @@ class SubredditPage(BasePage):
 
         search = text_input(window)
         if search is not None:
-            self.content = SubredditContent.from_name(self.reddit, name,
+            try:
+                self.content = SubredditContent.from_name(self.reddit, name,
                                                    self.loader, search=search)
+            except:
+                show_notification(self.stdscr, ['No results found'])
 
     @SubredditController.register('/')
     def prompt_subreddit(self):
