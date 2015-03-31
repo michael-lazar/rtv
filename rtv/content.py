@@ -8,6 +8,7 @@ from .helpers import humanize_timestamp, wrap_text, strip_subreddit_url
 
 __all__ = ['SubredditContent', 'SubmissionContent']
 
+
 class BaseContent(object):
 
     def get(self, index, n_cols):
@@ -40,7 +41,8 @@ class BaseContent(object):
         retval = []
         while stack:
             item = stack.pop(0)
-            if isinstance(item, praw.objects.MoreComments) and (item.count==0):
+            if isinstance(item, praw.objects.MoreComments) and (
+                    item.count == 0):
                 continue
             nested = getattr(item, 'replies', None)
             if nested:
@@ -70,9 +72,16 @@ class BaseContent(object):
             data['body'] = comment.body
             data['created'] = humanize_timestamp(comment.created_utc)
             data['score'] = '{} pts'.format(comment.score)
-            data['author'] = (comment.author.name if getattr(comment, 'author') else '[deleted]')
-            data['is_author'] = (data['author'] == getattr(comment.submission, 'author'))
-            data['flair'] = (comment.author_flair_text if comment.author_flair_text else '')
+            data['author'] = (
+                comment.author.name if getattr(
+                    comment,
+                    'author') else '[deleted]')
+            data['is_author'] = (
+                data['author'] == getattr(
+                    comment.submission,
+                    'author'))
+            data['flair'] = (
+                comment.author_flair_text if comment.author_flair_text else '')
             data['likes'] = comment.likes
 
         return data
@@ -94,7 +103,10 @@ class BaseContent(object):
         data['created'] = humanize_timestamp(sub.created_utc)
         data['comments'] = '{} comments'.format(sub.num_comments)
         data['score'] = '{} pts'.format(sub.score)
-        data['author'] = (sub.author.name if getattr(sub, 'author') else '[deleted]')
+        data['author'] = (
+            sub.author.name if getattr(
+                sub,
+                'author') else '[deleted]')
         data['permalink'] = sub.permalink
         data['subreddit'] = strip_subreddit_url(sub.permalink)
         data['flair'] = (sub.link_flair_text if sub.link_flair_text else '')
@@ -104,7 +116,9 @@ class BaseContent(object):
 
         return data
 
+
 class SubmissionContent(BaseContent):
+
     """
     Grab a submission from PRAW and lazily store comments to an internal
     list for repeat access.
@@ -155,9 +169,13 @@ class SubmissionContent(BaseContent):
 
         elif index == -1:
             data = self._submission_data
-            data['split_title'] = textwrap.wrap(data['title'], width=n_cols-2)
-            data['split_text'] = wrap_text(data['text'], width=n_cols-2)
-            data['n_rows'] = len(data['split_title'])+len(data['split_text'])+5
+            data['split_title'] = textwrap.wrap(
+                data['title'],
+                width=n_cols -
+                2)
+            data['split_text'] = wrap_text(data['text'], width=n_cols - 2)
+            data['n_rows'] = len(
+                data['split_title']) + len(data['split_text']) + 5
             data['offset'] = 0
 
         else:
@@ -191,7 +209,7 @@ class SubmissionContent(BaseContent):
         elif data['type'] == 'Comment':
             cache = [data]
             count = 1
-            for d in self.iterate(index+1, 1, n_cols):
+            for d in self.iterate(index + 1, 1, n_cols):
                 if d['level'] <= data['level']:
                     break
 
@@ -204,10 +222,10 @@ class SubmissionContent(BaseContent):
             comment['count'] = count
             comment['level'] = data['level']
             comment['body'] = 'Hidden'.format(count)
-            self._comment_data[index:index+len(cache)] = [comment]
+            self._comment_data[index:index + len(cache)] = [comment]
 
         elif data['type'] == 'HiddenComment':
-            self._comment_data[index:index+1] = data['cache']
+            self._comment_data[index:index + 1] = data['cache']
 
         elif data['type'] == 'MoreComments':
             with self._loader():
@@ -215,13 +233,14 @@ class SubmissionContent(BaseContent):
                 comments = self.flatten_comments(comments,
                                                  root_level=data['level'])
                 comment_data = [self.strip_praw_comment(c) for c in comments]
-                self._comment_data[index:index+1] = comment_data
+                self._comment_data[index:index + 1] = comment_data
 
         else:
             raise ValueError('% type not recognized' % data['type'])
 
 
 class SubredditContent(BaseContent):
+
     """
     Grabs a subreddit from PRAW and lazily stores submissions to an internal
     list for repeat access.

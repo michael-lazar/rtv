@@ -9,7 +9,9 @@ from .curses_helpers import Color, show_notification, show_help
 
 __all__ = ['Navigator']
 
+
 class Navigator(object):
+
     """
     Handles math behind cursor movement and screen paging.
     """
@@ -45,7 +47,7 @@ class Navigator(object):
 
         valid, redraw = True, False
 
-        forward = ((direction*self.step) > 0)
+        forward = ((direction * self.step) > 0)
 
         if forward:
             if self.page_index < 0:
@@ -73,11 +75,12 @@ class Navigator(object):
             else:
                 self.page_index -= self.step
                 if self._is_valid(self.absolute_index):
-                    # We have reached the beginning of the page - move the index
+                    # We have reached the beginning of the page - move the
+                    # index
                     redraw = True
                 else:
                     self.page_index += self.step
-                    valid = False # Revert
+                    valid = False  # Revert
 
         return valid, redraw
 
@@ -99,6 +102,7 @@ class Navigator(object):
 
 
 class BaseController(object):
+
     """
     Event handler for triggering functions with curses keypresses.
 
@@ -148,6 +152,7 @@ class BaseController(object):
 
 
 class BasePage(object):
+
     """
     Base terminal viewer incorperates a cursor to navigate content
     """
@@ -229,7 +234,7 @@ class BasePage(object):
 
         # Note: 2 argument form of derwin breaks PDcurses on Windows 7!
         self._header_window = self.stdscr.derwin(1, n_cols, 0, 0)
-        self._content_window = self.stdscr.derwin(n_rows-1, n_cols, 1, 0)
+        self._content_window = self.stdscr.derwin(n_rows - 1, n_cols, 1, 0)
 
         self.stdscr.erase()
         self._draw_header()
@@ -249,12 +254,13 @@ class BasePage(object):
         self._header_window.bkgd(' ', attr)
 
         sub_name = self.content.name.replace('/r/front', 'Front Page ')
-        self._header_window.addnstr(0, 0, clean(sub_name), n_cols-1)
+        self._header_window.addnstr(0, 0, clean(sub_name), n_cols - 1)
 
         if self.reddit.user is not None:
             username = self.reddit.user.name
             s_col = (n_cols - len(username) - 1)
-            # Only print the username if it fits in the empty space on the right
+            # Only print the username if it fits in the empty space on the
+            # right
             if (s_col - 1) >= len(sub_name):
                 n = (n_cols - s_col - 1)
                 self._header_window.addnstr(0, s_col, clean(username), n)
@@ -278,7 +284,7 @@ class BasePage(object):
         # and draw upwards.
         current_row = (n_rows - 1) if inverted else 0
         available_rows = (n_rows - 1) if inverted else n_rows
-        for data in self.content.iterate(page_index, step, n_cols-2):
+        for data in self.content.iterate(page_index, step, n_cols - 2):
             window_rows = min(available_rows, data['n_rows'])
             window_cols = n_cols - data['offset']
             start = current_row - window_rows if inverted else current_row
@@ -313,7 +319,8 @@ class BasePage(object):
         self._remove_cursor()
 
         valid, redraw = self.nav.move(direction, len(self._subwindows))
-        if not valid: curses.flash()
+        if not valid:
+            curses.flash()
 
         # Note: ACS_VLINE doesn't like changing the attribute, so always redraw.
         # if redraw: self._draw_content()
