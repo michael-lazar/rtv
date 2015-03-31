@@ -177,10 +177,12 @@ class BasePage(object):
     @BaseController.register(curses.KEY_UP, 'k')
     def move_cursor_up(self):
         self._move_cursor(-1)
+        self.clear_input_queue()
 
     @BaseController.register(curses.KEY_DOWN, 'j')
     def move_cursor_down(self):
         self._move_cursor(1)
+        self.clear_input_queue()
 
     def clear_input_queue(self):
         "Clear excessive input caused by the scroll wheel or holding down a key"
