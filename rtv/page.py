@@ -1,9 +1,11 @@
 import curses
+import six
+import sys
 
 import praw.errors
 
 from .helpers import clean
-from .curses_helpers import Color, show_notification
+from .curses_helpers import Color, show_notification, show_help
 
 __all__ = ['Navigator']
 
@@ -96,6 +98,55 @@ class Navigator(object):
             return True
 
 
+class BaseController(object):
+    """
+    Event handler for triggering functions with curses keypresses.
+
+    Register a keystroke to a class method using the @egister decorator.
+    #>>> @Controller.register('a', 'A')
+    #>>> def func(self, *args)
+
+    Register a default behavior by using `None`.
+    #>>> @Controller.register(None)
+    #>>> def default_func(self, *args)
+
+    Bind the controller to a class instance and trigger a key. Additional
+    arguments will be passed to the function.
+    #>>> controller = Controller(self)
+    #>>> controller.trigger('a', *args)
+    """
+
+    character_map = {None: (lambda *args, **kwargs: None)}
+
+    def __init__(self, instance):
+        self.instance = instance
+
+    def trigger(self, char, *args, **kwargs):
+
+        if isinstance(char, six.string_types) and len(char) == 1:
+            char = ord(char)
+
+        func = self.character_map.get(char)
+        if func is None:
+            func = BaseController.character_map.get(char)
+        if func is None:
+            func = self.character_map.get(None)
+        if func is None:
+            func = BaseController.character_map.get(None)
+        return func(self.instance, *args, **kwargs)
+
+    @classmethod
+    def register(cls, *chars):
+        def wrap(f):
+            for char in chars:
+                if isinstance(char, six.string_types) and len(char) == 1:
+                    cls.character_map[ord(char)] = f
+                else:
+                    cls.character_map[char] = f
+            return f
+        return wrap
+
+
 class BasePage(object):
     """
     Base terminal viewer incorperates a cursor to navigate content
@@ -115,11 +166,23 @@ class BasePage(object):
         self._content_window = None
         self._subwindows = None
 
+    @BaseController.register('q')
+    def exit(self):
+        sys.exit()
+
+    @BaseController.register('?')
+    def help(self):
+        show_help(self.stdscr)
+
+    @BaseController.register(curses.KEY_UP, 'k')
     def move_cursor_up(self):
         self._move_cursor(-1)
+        self.clear_input_queue()
 
+    @BaseController.register(curses.KEY_DOWN, 'j')
     def move_cursor_down(self):
         self._move_cursor(1)
+        self.clear_input_queue()
 
     def clear_input_queue(self):
         "Clear excessive input caused by the scroll wheel or holding down a key"
@@ -128,8 +191,8 @@ class BasePage(object):
             continue
         self.stdscr.nodelay(0)
 
+    @BaseController.register('a')
     def upvote(self):
-
         data = self.content.get(self.nav.absolute_index)
         try:
             if 'likes' not in data:
@@ -143,8 +206,8 @@ class BasePage(object):
         except praw.errors.LoginOrScopeRequired:
             show_notification(self.stdscr, ['Login to vote'])
 
+    @BaseController.register('z')
     def downvote(self):
-
         data = self.content.get(self.nav.absolute_index)
         try:
             if 'likes' not in data:

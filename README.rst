@@ -59,7 +59,7 @@ RTV currently supports browsing both subreddits and individual submissions. In e
 
 :``▲``/``▼`` or ``j``/``k``: Scroll to the prev/next item
 :``a``/``z``: Upvote/downvote the selected item
-:``o``: Open the selected item in the default web browser
+:``ENTER`` or ``o``: Open the selected item in the default web browser
 :``r``: Refresh the current page
 :``?``: Show the help message
 :``q``: Quit
