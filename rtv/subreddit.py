@@ -61,7 +61,7 @@ class SubredditPage(BasePage):
                 self.nav.cursor_index = 0
                 self.content = SubredditContent.from_name(self.reddit, name,
                                                    self.loader, search=search)
-            except:
+            except IndexError: # if there are no submissions
                 show_notification(self.stdscr, ['No results found'])
 
     @SubredditController.register('/')
