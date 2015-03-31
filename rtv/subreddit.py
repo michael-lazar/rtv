@@ -7,7 +7,7 @@ from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
 from .content import SubredditContent
 from .helpers import clean, open_browser
-from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen, 
+from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
                              text_input, show_notification)
 
 __all__ = ['opened_links', 'SubredditController', 'SubredditPage']
@@ -57,9 +57,10 @@ class SubredditPage(BasePage):
         attr = curses.A_BOLD | Color.CYAN
         prompt = 'Enter Subreddit: /r/'
         n_rows, n_cols = self.stdscr.getmaxyx()
-        self.stdscr.addstr(n_rows-1, 0, prompt, attr)
+        self.stdscr.addstr(n_rows - 1, 0, prompt, attr)
         self.stdscr.refresh()
-        window = self.stdscr.derwin(1, n_cols-len(prompt),n_rows-1, len(prompt))
+        window = self.stdscr.derwin(1, n_cols - len(prompt),
+                                    n_rows - 1, len(prompt))
         window.attrset(attr)
 
         out = text_input(window)
@@ -102,7 +103,7 @@ class SubredditPage(BasePage):
         for row, text in enumerate(data['split_title'], start=offset):
             if row in valid_rows:
                 text = clean(text)
-                win.addnstr(row, 1, text, n_cols-1, curses.A_BOLD)
+                win.addnstr(row, 1, text, n_cols - 1, curses.A_BOLD)
 
         row = n_title + offset
         if row in valid_rows:
@@ -110,12 +111,12 @@ class SubredditPage(BasePage):
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
             text = clean('{url}'.format(**data))
-            win.addnstr(row, 1, text, n_cols-1, attr)
+            win.addnstr(row, 1, text, n_cols - 1, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
             text = clean('{score} '.format(**data))
-            win.addnstr(row, 1, text, n_cols-1)
+            win.addnstr(row, 1, text, n_cols - 1)
 
             if data['likes'] is None:
                 text, attr = BULLET, curses.A_BOLD
@@ -123,16 +124,16 @@ class SubredditPage(BasePage):
                 text, attr = UARROW, curses.A_BOLD | Color.GREEN
             else:
                 text, attr = DARROW, curses.A_BOLD | Color.RED
-            win.addnstr(text, n_cols-win.getyx()[1], attr)
+            win.addnstr(text, n_cols - win.getyx()[1], attr)
 
             text = clean(' {created} {comments}'.format(**data))
-            win.addnstr(text, n_cols-win.getyx()[1])
+            win.addnstr(text, n_cols - win.getyx()[1])
 
         row = n_title + offset + 2
         if row in valid_rows:
             text = clean('{author}'.format(**data))
-            win.addnstr(row, 1, text, n_cols-1, curses.A_BOLD)
+            win.addnstr(row, 1, text, n_cols - 1, curses.A_BOLD)
             text = clean(' {subreddit}'.format(**data))
-            win.addnstr(text, n_cols-win.getyx()[1], Color.YELLOW)
+            win.addnstr(text, n_cols - win.getyx()[1], Color.YELLOW)
             text = clean(' {flair}'.format(**data))
-            win.addnstr(text, n_cols-win.getyx()[1], Color.RED)
+            win.addnstr(text, n_cols - win.getyx()[1], Color.RED)

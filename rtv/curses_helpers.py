@@ -23,6 +23,7 @@ UARROW = u'\u25b2'.encode('utf-8')
 DARROW = u'\u25bc'.encode('utf-8')
 BULLET = u'\u2022'.encode('utf-8')
 
+
 def show_notification(stdscr, message):
     """
     Overlay a message box on the center of the screen and wait for user input.
@@ -57,13 +58,16 @@ def show_notification(stdscr, message):
     window = None
     stdscr.refresh()
 
+
 def show_help(stdscr):
     """
     Overlay a message box with the help screen.
     """
     show_notification(stdscr, HELP.split("\n"))
 
+
 class LoadScreen(object):
+
     """
     Display a loading dialog while waiting for a blocking action to complete.
 
@@ -128,10 +132,10 @@ class LoadScreen(object):
         n_rows, n_cols = self._stdscr.getmaxyx()
         s_row = (n_rows - 3) // 2
         s_col = (n_cols - message_len - 1) // 2
-        window = self._stdscr.derwin(3, message_len+2, s_row, s_col)
+        window = self._stdscr.derwin(3, message_len + 2, s_row, s_col)
 
         while True:
-            for i in range(len(trail)+1):
+            for i in range(len(trail) + 1):
 
                 if not self._is_running:
                     window.clear()
@@ -145,7 +149,9 @@ class LoadScreen(object):
                 window.refresh()
                 time.sleep(interval)
 
+
 class Color(object):
+
     """
     Color attributes for curses.
     """
@@ -158,7 +164,7 @@ class Color(object):
         'MAGENTA': (curses.COLOR_MAGENTA, -1),
         'CYAN': (curses.COLOR_CYAN, -1),
         'WHITE': (curses.COLOR_WHITE, -1),
-        }
+    }
 
     @classmethod
     def init(cls):
@@ -182,6 +188,7 @@ class Color(object):
         levels = [cls.MAGENTA, cls.CYAN, cls.GREEN, cls.YELLOW]
         return levels[level % len(levels)]
 
+
 def text_input(window, allow_resize=True):
     """
     Transform a window into a text box that will accept user input and loop
@@ -192,7 +199,7 @@ def text_input(window, allow_resize=True):
     """
 
     window.clear()
-    
+
     # Set cursor mode to 1 because 2 doesn't display on some terminals
     curses.curs_set(1)
 
@@ -222,6 +229,7 @@ def text_input(window, allow_resize=True):
 
     curses.curs_set(0)
     return strip_textpad(out)
+
 
 @contextmanager
 def curses_session():

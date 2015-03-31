@@ -58,7 +58,10 @@ class SubmissionPage(BasePage):
     @SubmissionController.register(curses.KEY_F5, 'r')
     def refresh_content(self):
         url = self.content.name
-        self.content = SubmissionContent.from_url(self.reddit, url, self.loader)
+        self.content = SubmissionContent.from_url(
+            self.reddit,
+            url,
+            self.loader)
         self.nav = Navigator(self.content.get, page_index=-1)
 
     @SubmissionController.register(curses.KEY_ENTER, 10, 'o')
@@ -139,12 +142,12 @@ class SubmissionPage(BasePage):
             text = clean('{author} '.format(**data))
             attr = curses.A_BOLD
             attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
-            win.addnstr(row, 1, text, n_cols-1, attr)
+            win.addnstr(row, 1, text, n_cols - 1, attr)
 
             if data['flair']:
                 text = clean('{flair} '.format(**data))
                 attr = curses.A_BOLD | Color.YELLOW
-                win.addnstr(text, n_cols-win.getyx()[1], attr)
+                win.addnstr(text, n_cols - win.getyx()[1], attr)
 
             if data['likes'] is None:
                 text, attr = BULLET, curses.A_BOLD
@@ -152,16 +155,16 @@ class SubmissionPage(BasePage):
                 text, attr = UARROW, (curses.A_BOLD | Color.GREEN)
             else:
                 text, attr = DARROW, (curses.A_BOLD | Color.RED)
-            win.addnstr(text, n_cols-win.getyx()[1], attr)
+            win.addnstr(text, n_cols - win.getyx()[1], attr)
 
             text = clean(' {score} {created}'.format(**data))
-            win.addnstr(text, n_cols-win.getyx()[1])
+            win.addnstr(text, n_cols - win.getyx()[1])
 
         n_body = len(data['split_body'])
-        for row, text in enumerate(data['split_body'], start=offset+1):
+        for row, text in enumerate(data['split_body'], start=offset + 1):
             if row in valid_rows:
                 text = clean(text)
-                win.addnstr(row, 1, text, n_cols-1)
+                win.addnstr(row, 1, text, n_cols - 1)
 
         # Unfortunately vline() doesn't support custom color so we have to
         # build it one segment at a time.
@@ -170,8 +173,8 @@ class SubmissionPage(BasePage):
             x = 0
             # http://bugs.python.org/issue21088
             if (sys.version_info.major,
-                sys.version_info.minor,
-                sys.version_info.micro) == (3, 4, 0):
+                    sys.version_info.minor,
+                    sys.version_info.micro) == (3, 4, 0):
                 x, y = y, x
 
             win.addch(y, x, curses.ACS_VLINE, attr)
@@ -185,9 +188,9 @@ class SubmissionPage(BasePage):
         n_cols -= 1
 
         text = clean('{body}'.format(**data))
-        win.addnstr(0, 1, text, n_cols-1)
+        win.addnstr(0, 1, text, n_cols - 1)
         text = clean(' [{count}]'.format(**data))
-        win.addnstr(text, n_cols-win.getyx()[1], curses.A_BOLD)
+        win.addnstr(text, n_cols - win.getyx()[1], curses.A_BOLD)
 
         # Unfortunately vline() doesn't support custom color so we have to
         # build it one segment at a time.
@@ -200,7 +203,7 @@ class SubmissionPage(BasePage):
     def draw_submission(win, data):
 
         n_rows, n_cols = win.getmaxyx()
-        n_cols -= 3 # one for each side of the border + one for offset
+        n_cols -= 3  # one for each side of the border + one for offset
 
         # Don't print at all if there is not enough room to fit the whole sub
         if data['n_rows'] > n_rows:
@@ -217,9 +220,9 @@ class SubmissionPage(BasePage):
         win.addnstr(row, 1, text, n_cols, attr)
         attr = curses.A_BOLD | Color.YELLOW
         text = clean(' {flair}'.format(**data))
-        win.addnstr(text, n_cols-win.getyx()[1], attr)
+        win.addnstr(text, n_cols - win.getyx()[1], attr)
         text = clean(' {created} {subreddit}'.format(**data))
-        win.addnstr(text, n_cols-win.getyx()[1])
+        win.addnstr(text, n_cols - win.getyx()[1])
 
         row = len(data['split_title']) + 2
         attr = curses.A_UNDERLINE | Color.BLUE
