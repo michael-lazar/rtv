@@ -1,5 +1,4 @@
 import curses
-import sys
 
 import requests
 
