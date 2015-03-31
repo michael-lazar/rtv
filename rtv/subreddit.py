@@ -8,7 +8,7 @@ from .submission import SubmissionPage
 from .content import SubredditContent
 from .helpers import clean, open_browser
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
-                             text_input, show_notification)
+                             show_notification)
 
 __all__ = ['opened_links', 'SubredditController', 'SubredditPage']
 
@@ -52,19 +52,13 @@ class SubredditPage(BasePage):
 
     @SubredditController.register('f')
     def search_subreddit(self, name=None):
+        """Open a prompt to search the subreddit"""
         name = name or self.content.name
-        attr = curses.A_BOLD | Color.CYAN
         prompt = 'Search this Subreddit: '
-        n_rows, n_cols = self.stdscr.getmaxyx()
-        self.stdscr.addstr(n_rows - 1, 0, prompt, attr)
-        self.stdscr.refresh()
-        window = self.stdscr.derwin(1, n_cols - len(prompt),
-                                    n_rows - 1, len(prompt))
-        window.attrset(attr)
-
-        search = text_input(window)
+        search = self.prompt_input(prompt)
         if search is not None:
             try:
+                self.nav.cursor_index = 0
                 self.content = SubredditContent.from_name(self.reddit, name,
                                                    self.loader, search=search)
             except:
@@ -72,20 +66,11 @@ class SubredditPage(BasePage):
 
     @SubredditController.register('/')
     def prompt_subreddit(self):
-        "Open a prompt to type in a new subreddit"
-
-        attr = curses.A_BOLD | Color.CYAN
+        """Open a prompt to type in a new subreddit"""
         prompt = 'Enter Subreddit: /r/'
-        n_rows, n_cols = self.stdscr.getmaxyx()
-        self.stdscr.addstr(n_rows - 1, 0, prompt, attr)
-        self.stdscr.refresh()
-        window = self.stdscr.derwin(1, n_cols - len(prompt),
-                                    n_rows - 1, len(prompt))
-        window.attrset(attr)
-
-        out = text_input(window)
-        if out is not None:
-            self.refresh_content(name=out)
+        name = self.prompt_input(prompt)
+        if name is not None:
+            self.refresh_content(name=name)
 
     @SubredditController.register(curses.KEY_RIGHT, 'l')
     def open_submission(self):

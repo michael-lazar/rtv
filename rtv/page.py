@@ -5,7 +5,7 @@ import sys
 import praw.errors
 
 from .helpers import clean
-from .curses_helpers import Color, show_notification, show_help
+from .curses_helpers import Color, show_notification, show_help, text_input
 
 __all__ = ['Navigator']
 
@@ -225,6 +225,19 @@ class BasePage(object):
                 data['likes'] = False
         except praw.errors.LoginOrScopeRequired:
             show_notification(self.stdscr, ['Login to vote'])
+
+    def prompt_input(self, prompt):
+        """Prompt the user for input"""
+        attr = curses.A_BOLD | Color.CYAN
+        n_rows, n_cols = self.stdscr.getmaxyx()
+        self.stdscr.addstr(n_rows - 1, 0, prompt, attr)
+        self.stdscr.refresh()
+        window = self.stdscr.derwin(1, n_cols - len(prompt),
+                                    n_rows - 1, len(prompt))
+        window.attrset(attr)
+
+        out = text_input(window)
+        return out
 
     def draw(self):
 
