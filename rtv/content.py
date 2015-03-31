@@ -245,7 +245,7 @@ class SubredditContent(BaseContent):
         self._submission_data = []
 
     @classmethod
-    def from_name(cls, reddit, name, loader, order='hot'):
+    def from_name(cls, reddit, name, loader, order='hot', search=None):
 
         if name is None:
             name = 'front'
@@ -263,34 +263,37 @@ class SubredditContent(BaseContent):
         else:
             display_name = '/r/{}/{}'.format(name, order)
 
-        if name == 'front':
-            if order == 'hot':
-                submissions = reddit.get_front_page(limit=None)
-            elif order == 'top':
-                submissions = reddit.get_top(limit=None)
-            elif order == 'rising':
-                submissions = reddit.get_rising(limit=None)
-            elif order == 'new':
-                submissions = reddit.get_new(limit=None)
-            elif order == 'controversial':
-                submissions = reddit.get_controversial(limit=None)
-            else:
-                raise SubredditError(display_name)
+        if search:
+            submissions = reddit.search(search, name, order)
 
         else:
-            subreddit = reddit.get_subreddit(name)
-            if order == 'hot':
-                submissions = subreddit.get_hot(limit=None)
-            elif order == 'top':
-                submissions = subreddit.get_top(limit=None)
-            elif order == 'rising':
-                submissions = subreddit.get_rising(limit=None)
-            elif order == 'new':
-                submissions = subreddit.get_new(limit=None)
-            elif order == 'controversial':
-                submissions = subreddit.get_controversial(limit=None)
+            if name == 'front':
+                if order == 'hot':
+                    submissions = reddit.get_front_page(limit=None)
+                elif order == 'top':
+                    submissions = reddit.get_top(limit=None)
+                elif order == 'rising':
+                    submissions = reddit.get_rising(limit=None)
+                elif order == 'new':
+                    submissions = reddit.get_new(limit=None)
+                elif order == 'controversial':
+                    submissions = reddit.get_controversial(limit=None)
+                else:
+                    raise SubredditError(display_name)
             else:
-                raise SubredditError(display_name)
+                subreddit = reddit.get_subreddit(name)
+                if order == 'hot':
+                    submissions = subreddit.get_hot(limit=None)
+                elif order == 'top':
+                    submissions = subreddit.get_top(limit=None)
+                elif order == 'rising':
+                    submissions = subreddit.get_rising(limit=None)
+                elif order == 'new':
+                    submissions = subreddit.get_new(limit=None)
+                elif order == 'controversial':
+                    submissions = subreddit.get_controversial(limit=None)
+                else:
+                    raise SubredditError(display_name)
 
         # Verify that content exists for the given submission generator.
         # This is necessary because PRAW loads submissions lazily, and

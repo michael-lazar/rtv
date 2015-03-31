@@ -50,6 +50,23 @@ class SubredditPage(BasePage):
         else:
             self.nav = Navigator(self.content.get)
 
+    @SubredditController.register('f')
+    def search_subreddit(self, name=None):
+        name = name or self.content.name
+        attr = curses.A_BOLD | Color.CYAN
+        prompt = 'Search this Subreddit: '
+        n_rows, n_cols = self.stdscr.getmaxyx()
+        self.stdscr.addstr(n_rows - 1, 0, prompt, attr)
+        self.stdscr.refresh()
+        window = self.stdscr.derwin(1, n_cols - len(prompt),
+                                    n_rows - 1, len(prompt))
+        window.attrset(attr)
+
+        search = text_input(window)
+        if search is not None:
+            self.content = SubredditContent.from_name(self.reddit, name,
+                                                   self.loader, search=search)
+
     @SubredditController.register('/')
     def prompt_subreddit(self):
         "Open a prompt to type in a new subreddit"
