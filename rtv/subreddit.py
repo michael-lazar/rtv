@@ -8,7 +8,7 @@ from .submission import SubmissionPage
 from .content import SubredditContent
 from .helpers import clean, open_browser
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen, 
-                             text_input, show_notification, show_help)
+                             text_input, show_notification)
 
 __all__ = ['opened_links', 'SubredditController', 'SubredditPage']
 

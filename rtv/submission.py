@@ -8,7 +8,7 @@ from .content import SubmissionContent
 from .page import BasePage, Navigator, BaseController
 from .helpers import clean, open_browser, open_editor
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
-                             show_help, show_notification, text_input)
+                             show_notification, text_input)
 from .docs import COMMENT_FILE
 
 __all__ = ['SubmissionController', 'SubmissionPage']
