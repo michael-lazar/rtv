@@ -60,7 +60,6 @@ def show_notification(stdscr, message):
 
     return ch
 
-
 def show_help(stdscr):
     """
     Overlay a message box with the help screen.

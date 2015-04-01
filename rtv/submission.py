@@ -172,6 +172,12 @@ class SubmissionPage(BasePage):
             show_notification(self.stdscr, ["It is not your post"])
             return
 
+        if 121 != show_notification(self.stdscr,
+                                    ["Are you sure you want to delete "
+                                     "this post? (y/n)"]):
+            curses.flash()
+            return
+        
         try:
             data['object'].delete()
         except praw.errors.APIException as e:
