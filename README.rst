@@ -70,6 +70,7 @@ In subreddit mode you can browse through the top submissions on either the front
 
 :``►`` or ``l``: View comments for the selected submission
 :``/``: Open a prompt to switch subreddits
+:``f``: Open a prompt to search the current subreddit
 
 The ``/`` prompt accepts subreddits in the following formats
 

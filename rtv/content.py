@@ -245,7 +245,7 @@ class SubredditContent(BaseContent):
         self._submission_data = []
 
     @classmethod
-    def from_name(cls, reddit, name, loader, order='hot'):
+    def from_name(cls, reddit, name, loader, order='hot', search=None):
 
         if name is None:
             name = 'front'
@@ -262,9 +262,11 @@ class SubredditContent(BaseContent):
             display_name = '/r/{}'.format(name)
         else:
             display_name = '/r/{}/{}'.format(name, order)
-
+            
         if name == 'front':
-            if order == 'hot':
+            if search:
+                submissions = reddit.search(search, None, order)
+            elif order == 'hot':
                 submissions = reddit.get_front_page(limit=None)
             elif order == 'top':
                 submissions = reddit.get_top(limit=None)
@@ -276,10 +278,11 @@ class SubredditContent(BaseContent):
                 submissions = reddit.get_controversial(limit=None)
             else:
                 raise SubredditError(display_name)
-
         else:
             subreddit = reddit.get_subreddit(name)
-            if order == 'hot':
+            if search:
+                submissions = reddit.search(search, name, order)
+            elif order == 'hot':
                 submissions = subreddit.get_hot(limit=None)
             elif order == 'top':
                 submissions = subreddit.get_top(limit=None)
