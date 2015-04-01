@@ -74,7 +74,7 @@ class BaseContent(object):
             data['score'] = '{} pts'.format(comment.score)
             author = getattr(comment, 'author')
             data['author'] = (author.name if author else '[deleted]')
-            sub_author = getattr(comment.submission, 'author')
+            sub_author = getattr(comment.submission.author, 'name')
             data['is_author'] = (data['author'] == sub_author)
             flair = comment.author_flair_text
             data['flair'] = (flair if flair else '')
