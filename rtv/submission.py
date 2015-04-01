@@ -73,8 +73,8 @@ class SubmissionPage(BasePage):
 
     def check_content(self):
         if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ["Login to edit"])
-            return
+            show_notification(self.stdscr, ["Login to add/edit/delete"])
+            return None, None
 
         data = self.content.get(self.nav.absolute_index)
         if data['type'] == 'Submission':
@@ -83,7 +83,7 @@ class SubmissionPage(BasePage):
             content = data['body']
         else:
             curses.flash()
-            return
+            return None, None
 
         return data, content
         
