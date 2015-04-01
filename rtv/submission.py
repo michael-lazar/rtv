@@ -71,14 +71,9 @@ class SubmissionPage(BasePage):
         url = self.content.get(-1)['permalink']
         open_browser(url)
 
-    @SubmissionController.register('c')
-    def add_comment(self):
-        """
-        Add a comment on the submission if a header is selected.
-        Reply to a comment if the comment is selected.
-        """
+    def check_content(self):
         if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ["Login to reply"])
+            show_notification(self.stdscr, ["Login to edit"])
             return
 
         data = self.content.get(self.nav.absolute_index)
@@ -88,6 +83,18 @@ class SubmissionPage(BasePage):
             content = data['body']
         else:
             curses.flash()
+            return
+
+        return data, content
+        
+    @SubmissionController.register('c')
+    def add_comment(self):
+        """
+        Add a comment on the submission if a header is selected.
+        Reply to a comment if the comment is selected.
+        """
+        data, content = self.check_content()
+        if data is None:
             return
 
         # Comment out every line of the content
@@ -114,23 +121,15 @@ class SubmissionPage(BasePage):
         else:
             time.sleep(2.0)
             self.refresh_content()
-
+                    
     @SubmissionController.register('e')
-    def add_comment(self):
+    def edit_comment(self):
         """
         Edit a comment/reply on the submission if it is yours
         """
-        if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ["Login to edit"])
-            return
 
-        data = self.content.get(self.nav.absolute_index)
-        if data['type'] == 'Submission':
-            content = data['text']
-        elif data['type'] == 'Comment':
-            content = data['body']
-        else:
-            curses.flash()
+        data, content = self.check_content()
+        if data is None:
             return
         
         if data['author'] != self.reddit.user.name:
@@ -165,17 +164,8 @@ class SubmissionPage(BasePage):
         """
         Delete a selected comment/reply if it is yours.
         """
-        if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ["Login to delete"])
-            return
-        
-        data = self.content.get(self.nav.absolute_index)
-        if data['type'] == 'Submission':
-            content = data['text']
-        elif data['type'] == 'Comment':
-            content = data['body']
-        else:
-            curses.flash()
+        data, content = self.check_content()
+        if data is None:
             return
         
         if data['author'] != self.reddit.user.name:
