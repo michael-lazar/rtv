@@ -226,17 +226,43 @@ class BasePage(object):
         except praw.errors.LoginOrScopeRequired:
             show_notification(self.stdscr, ['Login to vote'])
 
-    def prompt_input(self, prompt):
+    @BaseController.register('+')
+    def login(self):
+        username = self.prompt_input('Enter username: ')
+        password = self.prompt_input('Enter password: ', hide=True)
+
+        if (username == '') or (password == ''):
+            curses.flash()
+            return
+        try:
+            self.reddit.login(username, password)
+            
+        except praw.errors.InvalidUserPass:
+            show_notification(self.stdscr,
+                              ['Invalid password for username: {}'.format(username)])
+        else:
+            show_notification(self.stdscr,
+                              ['Successfully logged in as: {}'.format(username)])
+
+        return
+            
+    def prompt_input(self, prompt, hide=False):
         """Prompt the user for input"""
         attr = curses.A_BOLD | Color.CYAN
         n_rows, n_cols = self.stdscr.getmaxyx()
-        self.stdscr.addstr(n_rows - 1, 0, prompt, attr)
-        self.stdscr.refresh()
-        window = self.stdscr.derwin(1, n_cols - len(prompt),
-                                    n_rows - 1, len(prompt))
-        window.attrset(attr)
 
-        out = text_input(window)
+        if hide:
+            self.stdscr.addstr(n_rows - 1, 0, prompt+' '*(n_rows-1-len(prompt)), attr)
+            out = self.stdscr.getstr(n_rows-1, 1)
+        else:
+            self.stdscr.addstr(n_rows - 1, 0, prompt, attr)
+            self.stdscr.refresh()
+            window = self.stdscr.derwin(1, n_cols - len(prompt),
+                                    n_rows - 1, len(prompt))
+            window.attrset(attr)
+
+            out = text_input(window)
+            
         return out
 
     def draw(self):
