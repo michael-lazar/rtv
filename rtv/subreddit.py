@@ -1,12 +1,13 @@
 import curses
-
+import time
 import requests
 
 from .exceptions import SubredditError
 from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .helpers import clean, open_browser
+from .helpers import clean, open_browser, open_editor
+from .docs import SUBMISSION_FILE
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
                              text_input, show_notification)
 
@@ -88,6 +89,37 @@ class SubredditPage(BasePage):
 
         global opened_links
         opened_links.add(url)
+
+    @SubredditController.register('p')
+    def post_submission(self):
+        # Abort if user isn't logged in
+        if not self.reddit.is_logged_in():
+            show_notification(self.stdscr, ["Login to reply"])
+            return
+
+        name = self.content.name
+        if '+' in name:
+            show_notification(self.stdscr, ['Can\'t post to a multireddit'])
+            return
+
+        # Open the submission window
+        submission_info = SUBMISSION_FILE.format(name=name)
+        curses.endwin()
+        submission_text = open_editor(submission_info)
+        curses.doupdate()
+
+        # Abort if there is no content
+        if not submission_text:
+            curses.flash()
+            return
+        try:
+            title, content = submission_text.split('\n', 1)
+            show_notification(self.stdscr, [title])
+        except praw.errors.APIException as e:
+            show_notification(self.stdscr, [e.message])
+        else:
+            time.sleep(0.5)
+            self.refresh_content()
 
     @staticmethod
     def draw_item(win, data, inverted=False):
