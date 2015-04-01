@@ -1,6 +1,7 @@
 import curses
 import time
 import requests
+import praw
 
 from .exceptions import SubredditError
 from .page import BasePage, Navigator, BaseController
@@ -102,6 +103,10 @@ class SubredditPage(BasePage):
             show_notification(self.stdscr, ['Can\'t post to a multireddit'])
             return
 
+        name = name.strip(' /')  # Strip leading and trailing backslashes
+        if name.startswith('r/'):
+            name = name[2:]
+
         # Open the submission window
         submission_info = SUBMISSION_FILE.format(name=name)
         curses.endwin()
@@ -114,7 +119,7 @@ class SubredditPage(BasePage):
             return
         try:
             title, content = submission_text.split('\n', 1)
-            show_notification(self.stdscr, [title])
+            self.reddit.submit(name, title, text=content)
         except praw.errors.APIException as e:
             show_notification(self.stdscr, [e.message])
         else:
