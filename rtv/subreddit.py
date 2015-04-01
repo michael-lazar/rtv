@@ -101,9 +101,10 @@ class SubredditPage(BasePage):
         subreddit = self.reddit.get_subreddit(self.content.name)
 
         # Make sure it is a valid subreddit for submission
-        sub = str(subreddit)
-        if '+' in sub or sub == '/r/all' or sub == '/r/front':
-            message = 'Can\'t post to {0}'.format(sub)
+        # Strips the subreddit to just the name
+        sub = str(subreddit).split('/')[2]
+        if '+' in sub or sub == 'all' or sub == 'front':
+            message = 'Can\'t post to /r/{0}'.format(sub)
             show_notification(self.stdscr, [message])
             return
 
@@ -119,7 +120,7 @@ class SubredditPage(BasePage):
             return
         try:
             title, content = submission_text.split('\n', 1)
-            self.reddit.submit(subreddit, title, text=content)
+            self.reddit.submit(sub, title, text=content)
         except praw.errors.APIException as e:
             show_notification(self.stdscr, [e.message])
         else:
