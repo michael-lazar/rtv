@@ -95,20 +95,20 @@ class SubredditPage(BasePage):
     def post_submission(self):
         # Abort if user isn't logged in
         if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ["Login to reply"])
+            show_notification(self.stdscr, ['Login to reply'])
             return
 
-        name = self.content.name
-        if '+' in name:
-            show_notification(self.stdscr, ['Can\'t post to a multireddit'])
-            return
+        subreddit = self.reddit.get_subreddit(self.content.name)
 
-        name = name.strip(' /')  # Strip leading and trailing backslashes
-        if name.startswith('r/'):
-            name = name[2:]
+        # Make sure it is a valid subreddit for submission
+        sub = str(subreddit)
+        if '+' in sub or sub == '/r/all' or sub == '/r/front':
+            message = 'Can\'t post to {0}'.format(sub)
+            show_notification(self.stdscr, [message])
+            return
 
         # Open the submission window
-        submission_info = SUBMISSION_FILE.format(name=name)
+        submission_info = SUBMISSION_FILE.format(name=sub)
         curses.endwin()
         submission_text = open_editor(submission_info)
         curses.doupdate()
@@ -119,7 +119,7 @@ class SubredditPage(BasePage):
             return
         try:
             title, content = submission_text.split('\n', 1)
-            self.reddit.submit(name, title, text=content)
+            self.reddit.submit(subreddit, title, text=content)
         except praw.errors.APIException as e:
             show_notification(self.stdscr, [e.message])
         else:

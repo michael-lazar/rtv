@@ -60,5 +60,5 @@ SUBMISSION_FILE = """
 # The first line will be interpreted as the title
 # Following lines will be interpreted as the content
 #
-# Posting to /r/{name}
+# Posting to {name}
 """
