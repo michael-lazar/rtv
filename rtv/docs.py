@@ -58,7 +58,7 @@ SUBMISSION_FILE = """
 # and an empty field aborts the submission.
 #
 # The first line will be interpreted as the title
-# Following titles will be interpreted as the content
+# Following lines will be interpreted as the content
 #
 # Posting to /r/{name}
 """
