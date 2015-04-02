@@ -15,6 +15,7 @@ from .curses_helpers import curses_session
 from .submission import SubmissionPage
 from .subreddit import SubredditPage
 from .docs import *
+from .__version__ import __version__
 
 __all__ = []
 
@@ -67,6 +68,13 @@ def main():
 
     args = command_line()
     local_config = load_config()
+
+    # set the terminal title
+    title = 'rtv {0}'.format(__version__)
+    try:
+        sys.stdout.write("\x1b]2;{0}\x07".format(title))
+    except:
+        os.system(title)
 
     # Fill in empty arguments with config file values. Paramaters explicitly
     # typed on the command line will take priority over config file params.
