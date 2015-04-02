@@ -123,6 +123,8 @@ class SubredditPage(BasePage):
             self.reddit.submit(sub, title, text=content)
         except praw.errors.APIException as e:
             show_notification(self.stdscr, [e.message])
+        except ValueError:
+            show_notification(self.stdscr, ['No post content! Post aborted.'])
         else:
             time.sleep(0.5)
             self.refresh_content()
