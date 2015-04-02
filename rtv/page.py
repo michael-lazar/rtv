@@ -230,39 +230,38 @@ class BasePage(object):
     @BaseController.register('u')
     def login(self):
         """
-        Prompt to log out if logged in.
-        Prompt to log in if looged out.
+        Prompt to log into the user's account. Log out if the user is already
+        logged in.
         """
 
         if self.reddit.is_logged_in():
-            ch = show_notification(self.stdscr, ["Log out? (y/N)"])
+            self.logout()
+            return
 
-            if ch == 121:  # 'y'
-                self.reddit.clear_authentication()
-                show_notification(self.stdscr,
-                                  ['Logged out'])
-            else:
-                curses.flash()
+        username = self.prompt_input('Enter username:')
+        password = self.prompt_input('Enter password:', hide=True)
+        if not username or not password:
+            curses.flash()
+            return
 
+        try:
+            self.reddit.login(username, password)
+        except praw.errors.InvalidUserPass:
+            show_notification(self.stdscr, ['Invalid user/pass'])
         else:
-            username = self.prompt_input('Enter username: ')
-            password = self.prompt_input('Enter password: ', hide=True)
+            show_notification(self.stdscr, ['Logged in'])
 
-            if (username == '' or username is None) \
-               or (password == '' or password is None):
-                curses.flash()
-                return
+    def logout(self):
+        """
+        Prompt to log out of the user's account.
+        """
 
-            try:
-                self.reddit.login(username, password)
-            except praw.errors.InvalidUserPass:
-                show_notification(self.stdscr,
-                                  ['Invalid password for username: {}'.format(username)])
-            else:
-                show_notification(self.stdscr,
-                                  ['Successfully logged in as: {}'.format(username)])
-
-        return
+        ch = self.prompt_input("Log out? (y/n):")
+        if ch == 'y':
+            self.reddit.clear_authentication()
+            show_notification(self.stdscr, ['Logged out'])
+        elif ch != 'n':
+            curses.flash()
 
     def prompt_input(self, prompt, hide=False):
         """Prompt the user for input"""
@@ -270,18 +269,17 @@ class BasePage(object):
         n_rows, n_cols = self.stdscr.getmaxyx()
 
         if hide:
-            self.stdscr.addstr(n_rows - 1, 0, prompt+' '*(n_cols-1-len(prompt)),
-                               attr)
+            prompt += ' ' * (n_cols - len(prompt) - 1)
+            self.stdscr.addstr(n_rows-1, 0, prompt, attr)
             out = self.stdscr.getstr(n_rows-1, 1)
         else:
             self.stdscr.addstr(n_rows - 1, 0, prompt, attr)
             self.stdscr.refresh()
             window = self.stdscr.derwin(1, n_cols - len(prompt),
-                                    n_rows - 1, len(prompt))
+                                        n_rows - 1, len(prompt))
             window.attrset(attr)
-
             out = text_input(window)
-            
+
         return out
 
     def draw(self):
