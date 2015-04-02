@@ -71,10 +71,14 @@ class SubmissionPage(BasePage):
         url = self.content.get(-1)['permalink']
         open_browser(url)
 
-    def check_content(self):
+    def manipulate_comment(self, command):
+        """
+        Handles add, delete, and edit comment/reply.
+        """
+        
         if not self.reddit.is_logged_in():
             show_notification(self.stdscr, ["Login to add/edit/delete"])
-            return None, None
+            return 
 
         data = self.content.get(self.nav.absolute_index)
         if data['type'] == 'Submission':
@@ -83,109 +87,81 @@ class SubmissionPage(BasePage):
             content = data['body']
         else:
             curses.flash()
-            return None, None
+            return 
 
-        return data, content
+        if command in 'ed':
+            if data['author'] != self.reddit.user.name:
+                show_notification(self.stdscr, ["It is not your post"])
+                return
         
-    @SubmissionController.register('c')
-    def add_comment(self):
-        """
-        Add a comment on the submission if a header is selected.
-        Reply to a comment if the comment is selected.
-        """
-        data, content = self.check_content()
-        if data is None:
-            return
-
         # Comment out every line of the content
-        content = '\n'.join(['# |' + line for line in content.split('\n')])
-        comment_info = COMMENT_FILE.format(
-            author=data['author'],
-            type=data['type'].lower(),
-            content=content)
-
-        curses.endwin()
-        comment_text = open_editor(comment_info)
-        curses.doupdate()
-
-        if not comment_text:
-            curses.flash()
-            return
-        try:
-            if data['type'] == 'Submission':
-                data['object'].add_comment(comment_text)
+        if command == 'c':
+            content = '\n'.join(['# |' + line for line in content.split('\n')])
+            _FILE = COMMENT_FILE
+        elif command == 'e':
+            _FILE = COMMENT_EDIT_FILE
+        elif command == 'd':
+            if 121 != show_notification(self.stdscr,
+                                        ["Are you sure you want to delete "
+                                         "this post? (y/n)"]):
+                curses.flash()
+                return
+            try:
+                data['object'].delete()
+            except praw.errors.APIException as e:
+                show_notification(self.stdscr, [e.message])
             else:
-                data['object'].reply(comment_text)
-        except praw.errors.APIException as e:
-            show_notification(self.stdscr, [e.message])
-        else:
-            time.sleep(2.0)
-            self.refresh_content()
-                    
-    @SubmissionController.register('e')
-    def edit_comment(self):
-        """
-        Edit a comment/reply on the submission if it is yours
-        """
-
-        data, content = self.check_content()
-        if data is None:
+                time.sleep(0.5)
+                self.refresh_content()
             return
-        
-        if data['author'] != self.reddit.user.name:
-            show_notification(self.stdscr, ["It is not your post"])
-            return
-        
-        comment_info = COMMENT_EDIT_FILE.format(
-            author=data['author'],
-            type=data['type'].lower(),
-            content=content)
-
-        curses.endwin()
-        comment_text = open_editor(comment_info)
-        curses.doupdate()
-
-        if not comment_text:
-            curses.flash()
-            return
-        try:
-            if data['type'] == 'Submission':
-                data['object'].edit(comment_text)
-            else:
-                data['object'].edit(comment_text)
-        except praw.errors.APIException as e:
-            show_notification(self.stdscr, [e.message])
-        else:
-            time.sleep(2.0)
-            self.refresh_content()
             
-    @SubmissionController.register('d')
-    def delete_comment(self):
-        """
-        Delete a selected comment/reply if it is yours.
-        """
-        data, content = self.check_content()
-        if data is None:
-            return
-        
-        if data['author'] != self.reddit.user.name:
-            show_notification(self.stdscr, ["It is not your post"])
-            return
+        comment_info = _FILE.format(
+            author=data['author'],
+            type=data['type'].lower(),
+            content=content)
 
-        if 121 != show_notification(self.stdscr,
-                                    ["Are you sure you want to delete "
-                                     "this post? (y/n)"]):
-            curses.flash()
-            return
-        
+        curses.endwin()
+        comment_text = open_editor(comment_info)
+        curses.doupdate()
+
         try:
-            data['object'].delete()
+            if command == 'c':
+                if not comment_text:
+                    curses.flash()
+                    return
+                if data['type'] == 'Submission':
+                    data['object'].add_comment(comment_text)
+                else:
+                    data['object'].reply(comment_text)
+            else:
+                data['object'].edit(comment_text)
         except praw.errors.APIException as e:
             show_notification(self.stdscr, [e.message])
         else:
             time.sleep(0.5)
             self.refresh_content()
 
+    @SubmissionController.register('c')
+    def add_comment(self):
+        """
+        Add a comment on the submission if a header is selected.
+        Reply to a comment if the comment is selected.
+        """
+        self.manipulate_comment('c')
+        
+    @SubmissionController.register('e')
+    def edit_comment(self):
+        """
+        Edit a comment/reply on the submission if it is yours
+        """
+        self.manipulate_comment('e')
+            
+    @SubmissionController.register('d')
+    def delete_comment(self):
+        """
+        Delete a selected comment/reply if it is yours.
+        """
+        self.manipulate_comment('d')
             
     def draw_item(self, win, data, inverted=False):
 
