@@ -229,34 +229,41 @@ class BasePage(object):
 
     @BaseController.register('u')
     def login(self):
-        username = self.prompt_input('Enter username: ')
-        password = self.prompt_input('Enter password: ', hide=True)
+        """
+        Prompt to log out if logged in.
+        Prompt to log in if looged out.
+        """
 
-        if username == '' or username is None:
-            self.reddit.clear_authentication()
-            show_notification(self.stdscr,
-                              ['Logged out'])
-            return
-        elif password == '' or password is None:
-            curses.flash()
-            return
-        
-        try:
-            curses.endwin()
-            print('Connecting...')
-            _reddit = praw.Reddit(user_agent=AGENT)
-            _reddit.login(username, password)
-            curses.doupdate()
-        except praw.errors.InvalidUserPass:
-            show_notification(self.stdscr,
-                              ['Invalid password for username: {}'.format(username)])
+        if self.reddit.is_logged_in():
+            ch = show_notification(self.stdscr, ["Log out? (y/N)"])
+
+            if ch == 121:  # 'y'
+                self.reddit.clear_authentication()
+                show_notification(self.stdscr,
+                                  ['Logged out'])
+            else:
+                curses.flash()
+
         else:
-            self.reddit.login(username, password)
-            show_notification(self.stdscr,
-                              ['Successfully logged in as: {}'.format(username)])
+            username = self.prompt_input('Enter username: ')
+            password = self.prompt_input('Enter password: ', hide=True)
+
+            if (username == '' or username is None) \
+               or (password == '' or password is None):
+                curses.flash()
+                return
+
+            try:
+                self.reddit.login(username, password)
+            except praw.errors.InvalidUserPass:
+                show_notification(self.stdscr,
+                                  ['Invalid password for username: {}'.format(username)])
+            else:
+                show_notification(self.stdscr,
+                                  ['Successfully logged in as: {}'.format(username)])
 
         return
-            
+
     def prompt_input(self, prompt, hide=False):
         """Prompt the user for input"""
         attr = curses.A_BOLD | Color.CYAN

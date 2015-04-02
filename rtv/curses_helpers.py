@@ -52,11 +52,13 @@ def show_notification(stdscr, message):
     for index, line in enumerate(message, start=1):
         window.addstr(index, 1, line)
     window.refresh()
-    stdscr.getch()
+    ch = stdscr.getch()
 
     window.clear()
     window = None
     stdscr.refresh()
+
+    return ch
 
 
 def show_help(stdscr):
