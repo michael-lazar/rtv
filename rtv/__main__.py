@@ -71,10 +71,10 @@ def main():
 
     # set the terminal title
     title = 'rtv {0}'.format(__version__)
-    try:
+    if os.name == 'nt':
+        os.system('title {0}'.format(title))
+    else:
         sys.stdout.write("\x1b]2;{0}\x07".format(title))
-    except:
-        os.system(title)
 
     # Fill in empty arguments with config file values. Paramaters explicitly
     # typed on the command line will take priority over config file params.
