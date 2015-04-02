@@ -42,6 +42,8 @@ Submission Mode
   `LEFT` or `h`       : Return to subreddit mode
   `RIGHT` or `l`      : Fold the selected comment, or load additional comments
   `c`                 : Comment/reply on the selected item
+  `d`                 : Delete the selected item if it is yours
+  `e`                 : Edit the selected item if it is yours
 """
 
 COMMENT_FILE = """
@@ -50,4 +52,12 @@ COMMENT_FILE = """
 #
 # Replying to {author}'s {type}
 {content}
+"""
+
+
+COMMENT_EDIT_FILE = """{content}
+# Please enter a comment. Lines starting with '#' will be ignored,
+# and an empty message aborts the comment.
+#
+# Editing to {author}'s {type}
 """
