@@ -18,6 +18,7 @@ from .docs import *
 
 __all__ = []
 
+
 def load_config():
     """
     Search for a configuration file at the location ~/.rtv and attempt to load
@@ -34,11 +35,12 @@ def load_config():
 
     return defaults
 
+
 def command_line():
 
     parser = argparse.ArgumentParser(
         prog='rtv', description=SUMMARY,
-        epilog=CONTROLS+HELP,
+        epilog=CONTROLS + HELP,
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-s', dest='subreddit', help='subreddit name')
@@ -56,15 +58,16 @@ def command_line():
 
     return args
 
+
 def main():
     "Main entry point"
-    
+
     # logging.basicConfig(level=logging.DEBUG, filename='rtv.log')
     locale.setlocale(locale.LC_ALL, '')
 
     args = command_line()
     local_config = load_config()
-    
+
     # Fill in empty arguments with config file values. Paramaters explicitly
     # typed on the command line will take priority over config file params.
     for key, val in local_config.items():
@@ -84,11 +87,11 @@ def main():
             # PRAW will prompt for password if it is None
             reddit.login(args.username, args.password)
         with curses_session() as stdscr:
-                if args.link:
-                    page = SubmissionPage(stdscr, reddit, url=args.link)
-                    page.loop()
-                page = SubredditPage(stdscr, reddit, args.subreddit)
+            if args.link:
+                page = SubmissionPage(stdscr, reddit, url=args.link)
                 page.loop()
+            page = SubredditPage(stdscr, reddit, args.subreddit)
+            page.loop()
     except praw.errors.InvalidUserPass:
         print('Invalid password for username: {}'.format(args.username))
     except requests.ConnectionError:

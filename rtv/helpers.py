@@ -11,6 +11,7 @@ from .exceptions import ProgramError
 __all__ = ['open_browser', 'clean', 'wrap_text', 'strip_textpad',
            'strip_subreddit_url', 'humanize_timestamp', 'open_editor']
 
+
 def open_editor(data=''):
     """
     Open a temporary file using the system's default editor.
@@ -39,6 +40,7 @@ def open_editor(data=''):
 
     return text
 
+
 def open_browser(url):
     """
     Call webbrowser.open_new_tab(url) and redirect stdout/stderr to devnull.
@@ -51,6 +53,7 @@ def open_browser(url):
     args = [sys.executable, '-c', command]
     with open(os.devnull, 'ab+', 0) as null:
         subprocess.check_call(args, stdout=null, stderr=null)
+
 
 def clean(string):
     """
@@ -75,6 +78,7 @@ def clean(string):
     string = string.encode(encoding, 'replace')
     return string
 
+
 def wrap_text(text, width):
     """
     Wrap text paragraphs to the given character width while preserving newlines.
@@ -86,6 +90,7 @@ def wrap_text(text, width):
         lines = textwrap.wrap(paragraph, width=width) or ['']
         out.extend(lines)
     return out
+
 
 def strip_textpad(text):
     """
@@ -121,6 +126,7 @@ def strip_textpad(text):
     out = '\n'.join(stack)
     return out
 
+
 def strip_subreddit_url(permalink):
     """
     Strip a subreddit name from the subreddit's permalink.
@@ -130,6 +136,7 @@ def strip_subreddit_url(permalink):
 
     subreddit = permalink.split('/')[4]
     return '/r/{}'.format(subreddit)
+
 
 def humanize_timestamp(utc_timestamp, verbose=False):
     """

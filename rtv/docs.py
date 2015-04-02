@@ -2,9 +2,7 @@ from .__version__ import __version__
 
 __all__ = ['AGENT', 'SUMMARY', 'AUTH', 'CONTROLS', 'HELP']
 
-AGENT = """
-desktop:https://github.com/michael-lazar/rtv:{} (by /u/civilization_phaze_3)
-""".format(__version__)
+AGENT = "desktop:https://github.com/michael-lazar/rtv:{} (by /u/civilization_phaze_3)".format(__version__)
 
 SUMMARY = """
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
@@ -32,17 +30,19 @@ Global Commands
   `a/z`               : Upvote/downvote the selected item
   `r`                 : Refresh the current page
   `q`                 : Quit the program
-  `o`                 : Open the selected item in the default web browser
+  `ENTER` or `o`      : Open the selected item in the default web browser
+  `u`                 : Log in
   `?`                 : Show this help message
 
 Subreddit Mode
   `RIGHT` or `l`      : View comments for the selected submission
   `/`                 : Open a prompt to switch subreddits
+  `f`                 : Open a prompt to search the current subreddit
 
 Submission Mode
   `LEFT` or `h`       : Return to subreddit mode
   `RIGHT` or `l`      : Fold the selected comment, or load additional comments
-  `c`                 : Comment/reply on the selected item 
+  `c`                 : Comment/reply on the selected item
 """
 
 COMMENT_FILE = """

@@ -59,7 +59,7 @@ RTV currently supports browsing both subreddits and individual submissions. In e
 
 :``▲``/``▼`` or ``j``/``k``: Scroll to the prev/next item
 :``a``/``z``: Upvote/downvote the selected item
-:``o``: Open the selected item in the default web browser
+:``ENTER`` or ``o``: Open the selected item in the default web browser
 :``r``: Refresh the current page
 :``?``: Show the help message
 :``q``: Quit
@@ -70,6 +70,7 @@ In subreddit mode you can browse through the top submissions on either the front
 
 :``►`` or ``l``: View comments for the selected submission
 :``/``: Open a prompt to switch subreddits
+:``f``: Open a prompt to search the current subreddit
 
 The ``/`` prompt accepts subreddits in the following formats
 
