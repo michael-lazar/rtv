@@ -6,6 +6,7 @@ import praw.errors
 
 from .helpers import clean
 from .curses_helpers import Color, show_notification, show_help, text_input
+from .docs import AGENT
 
 __all__ = ['Navigator']
 
@@ -226,21 +227,31 @@ class BasePage(object):
         except praw.errors.LoginOrScopeRequired:
             show_notification(self.stdscr, ['Login to vote'])
 
-    @BaseController.register('+')
+    @BaseController.register('u')
     def login(self):
         username = self.prompt_input('Enter username: ')
         password = self.prompt_input('Enter password: ', hide=True)
 
-        if (username == '') or (password == ''):
+        if username == '' or username is None:
+            self.reddit.clear_authentication()
+            show_notification(self.stdscr,
+                              ['Logged out'])
+            return
+        elif password == '' or password is None:
             curses.flash()
             return
+        
         try:
-            self.reddit.login(username, password)
-            
+            curses.endwin()
+            print('Connecting...')
+            _reddit = praw.Reddit(user_agent=AGENT)
+            _reddit.login(username, password)
+            curses.doupdate()
         except praw.errors.InvalidUserPass:
             show_notification(self.stdscr,
                               ['Invalid password for username: {}'.format(username)])
         else:
+            self.reddit.login(username, password)
             show_notification(self.stdscr,
                               ['Successfully logged in as: {}'.format(username)])
 
@@ -252,7 +263,8 @@ class BasePage(object):
         n_rows, n_cols = self.stdscr.getmaxyx()
 
         if hide:
-            self.stdscr.addstr(n_rows - 1, 0, prompt+' '*(n_rows-1-len(prompt)), attr)
+            self.stdscr.addstr(n_rows - 1, 0, prompt+' '*(n_cols-1-len(prompt)),
+                               attr)
             out = self.stdscr.getstr(n_rows-1, 1)
         else:
             self.stdscr.addstr(n_rows - 1, 0, prompt, attr)
