@@ -205,11 +205,6 @@ class SubmissionPage(BasePage):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 3  # one for each side of the border + one for offset
 
-        # Don't print at all if there is not enough room to fit the whole sub
-        if data['n_rows'] > n_rows:
-            win.addnstr(0, 0, '(Not enough space to display)', n_cols)
-            return
-
         for row, text in enumerate(data['split_title'], start=1):
             text = clean(text)
             win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
@@ -228,13 +223,20 @@ class SubmissionPage(BasePage):
         attr = curses.A_UNDERLINE | Color.BLUE
         text = clean('{url}'.format(**data))
         win.addnstr(row, 1, text, n_cols, attr)
-
         offset = len(data['split_title']) + 3
-        for row, text in enumerate(data['split_text'], start=offset):
+
+        # Cut off text if there is not enough room to display the whole post
+        split_text = data['split_text']
+        if data['n_rows'] > n_rows:
+            cutoff = data['n_rows'] - n_rows + 1
+            split_text = split_text[:-cutoff]
+            split_text.append('(Not enough space to display)')
+
+        for row, text in enumerate(split_text, start=offset):
             text = clean(text)
             win.addnstr(row, 1, text, n_cols)
 
-        row = len(data['split_title']) + len(data['split_text']) + 3
+        row = len(data['split_title']) + len(split_text) + 3
         text = clean('{score} {comments}'.format(**data))
         win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
