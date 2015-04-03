@@ -24,13 +24,13 @@ class SubredditController(BaseController):
 
 class SubredditPage(BasePage):
 
-    def __init__(self, stdscr, reddit, name):
+    def __init__(self, stdscr, reddit, name, username):
 
         self.controller = SubredditController(self)
         self.loader = LoadScreen(stdscr)
 
         content = SubredditContent.from_name(reddit, name, self.loader)
-        super(SubredditPage, self).__init__(stdscr, reddit, content)
+        super(SubredditPage, self).__init__(stdscr, reddit, content, username)
 
     def loop(self):
         while True:
@@ -41,7 +41,9 @@ class SubredditPage(BasePage):
     @SubredditController.register(curses.KEY_F5, 'r')
     def refresh_content(self, name=None):
         name = name or self.content.name
-
+        if name == 'me' or name == '/r/me':
+            self.reddittor_profile()
+            return
         try:
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.loader)
@@ -73,6 +75,16 @@ class SubredditPage(BasePage):
         name = self.prompt_input(prompt)
         if name is not None:
             self.refresh_content(name=name)
+
+    @SubredditController.register(';')
+    def reddittor_profile(self):
+        if self.reddit.is_logged_in():
+            self.content = SubredditContent.from_reddittor(self.reddit,
+                                                           self.username,
+                                                           self.loader)
+        else:
+            show_notification(self.stdscr, ['Log in to view your profile'])
+        
 
     @SubredditController.register(curses.KEY_RIGHT, 'l')
     def open_submission(self):

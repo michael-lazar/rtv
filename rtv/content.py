@@ -309,6 +309,19 @@ class SubredditContent(BaseContent):
 
         return content
 
+    @classmethod
+    def from_reddittor(cls, reddit, username, loader, order='new'):
+        reddittor = reddit.get_redditor(username)
+        submissions = reddittor.get_submitted(sort=order)
+        display_name = '/r/me'
+        content = cls(display_name, submissions, loader)
+        try:
+            content.get(0)
+        except (praw.errors.APIException, requests.HTTPError,
+                praw.errors.RedirectException):
+            raise SubredditError(display_name)
+        return content
+
     def get(self, index, n_cols=70):
         """
         Grab the `i`th submission, with the title field formatted to fit inside

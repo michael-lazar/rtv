@@ -161,11 +161,12 @@ class BasePage(object):
     MIN_HEIGHT = 10
     MIN_WIDTH = 20
 
-    def __init__(self, stdscr, reddit, content, **kwargs):
+    def __init__(self, stdscr, reddit, content, username, **kwargs):
 
         self.stdscr = stdscr
         self.reddit = reddit
         self.content = content
+        self.username = username
         self.nav = Navigator(self.content.get, **kwargs)
 
         self._header_window = None
@@ -246,6 +247,7 @@ class BasePage(object):
 
         try:
             self.reddit.login(username, password)
+            self.username = username
         except praw.errors.InvalidUserPass:
             show_notification(self.stdscr, ['Invalid user/pass'])
         else:
