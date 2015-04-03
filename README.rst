@@ -72,6 +72,7 @@ In subreddit mode you can browse through the top submissions on either the front
 :``/``: Open a prompt to switch subreddits
 :``f``: Open a prompt to search the current subreddit
 :``p``: Post a Submission to the current subreddit
+:``;``: View your Submissions (requires login)
 
 The ``/`` prompt accepts subreddits in the following formats
 
@@ -79,6 +80,7 @@ The ``/`` prompt accepts subreddits in the following formats
 * ``/r/python/new``
 * ``/r/python+linux`` supports multireddits
 * ``/r/front`` will redirect to the front page
+* ``/r/me`` will show you your submissions on all subs
 
 **Submission Mode**
 
