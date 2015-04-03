@@ -31,6 +31,7 @@ Global Commands
   `r`                 : Refresh the current page
   `q`                 : Quit the program
   `ENTER` or `o`      : Open the selected item in the default web browser
+  `u`                 : Log in
   `?`                 : Show this help message
 
 Subreddit Mode
