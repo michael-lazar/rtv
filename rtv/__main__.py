@@ -22,11 +22,11 @@ __all__ = []
 
 def load_config():
     """
-    Search for a configuration file at the location ~/.rtv and attempt to load
+    Search for a configuration file at the location ~/.config/rtv/.rtv and attempt to load
     saved settings for things like the username and password.
     """
 
-    config_path = os.path.join(os.path.expanduser('~/config'), '.rtv')
+    config_path = os.path.join(os.path.expanduser('~/.config/rtv'), '.rtv')
     config = configparser.ConfigParser()
     config.read(config_path)
 
