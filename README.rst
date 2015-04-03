@@ -91,7 +91,7 @@ In submission mode you can view the self text for a submission and browse commen
 Configuration
 -------------
 
-RTV will read a configuration file located at **~/.config/.rtv**.
+RTV will read a configuration file located at **~/.config/rtv/.rtv**.
 This can be used to avoid having to re-enter login credentials every time the program is launched.
 Each line in the file will replace the corresponding default argument in the launch script.
 
