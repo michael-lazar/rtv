@@ -79,6 +79,7 @@ class BaseContent(object):
             flair = comment.author_flair_text
             data['flair'] = (flair if flair else '')
             data['likes'] = comment.likes
+            data['gold'] = comment.gilded > 0
 
         return data
 
