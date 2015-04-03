@@ -38,6 +38,7 @@ Subreddit Mode
   `RIGHT` or `l`      : View comments for the selected submission
   `/`                 : Open a prompt to switch subreddits
   `f`                 : Open a prompt to search the current subreddit
+  `p`                 : Post a Submission to the current subreddit
 
 Submission Mode
   `LEFT` or `h`       : Return to subreddit mode
