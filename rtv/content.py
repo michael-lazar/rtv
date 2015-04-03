@@ -230,6 +230,10 @@ class SubmissionContent(BaseContent):
         else:
             raise ValueError('% type not recognized' % data['type'])
 
+    def is_hidden_comment(self, index):
+        data = self.get(index)
+        return data['type'] == 'HiddenComment'
+
 
 class SubredditContent(BaseContent):
 
