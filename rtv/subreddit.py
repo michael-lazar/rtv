@@ -79,12 +79,13 @@ class SubredditPage(BasePage):
     @SubredditController.register(';')
     def reddittor_profile(self):
         if self.reddit.is_logged_in():
-            self.content = SubredditContent.from_reddittor(self.reddit,
-                                                           self.username,
-                                                           self.loader)
+            try:
+                self.content = SubredditContent.from_reddittor(
+                     self.reddit, self.username, self.loader)
+            except requests.HTTPError:
+                show_notification(self.stdscr, ['Could not reach subreddit'])
         else:
-            show_notification(self.stdscr, ['Log in to view your profile'])
-        
+            show_notification(self.stdscr, ['Log in to view your submissions'])
 
     @SubredditController.register(curses.KEY_RIGHT, 'l')
     def open_submission(self):
