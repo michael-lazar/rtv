@@ -139,13 +139,13 @@ class SubmissionPage(BasePage):
         row = offset
         if row in valid_rows:
 
-            text = clean('{author} '.format(**data))
+            text = clean(u'{author} '.format(**data))
             attr = curses.A_BOLD
             attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
             win.addnstr(row, 1, text, n_cols - 1, attr)
 
             if data['flair']:
-                text = clean('{flair} '.format(**data))
+                text = clean(u'{flair} '.format(**data))
                 attr = curses.A_BOLD | Color.YELLOW
                 win.addnstr(text, n_cols - win.getyx()[1], attr)
 
@@ -157,7 +157,7 @@ class SubmissionPage(BasePage):
                 text, attr = DARROW, (curses.A_BOLD | Color.RED)
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
-            text = clean(' {score} {created}'.format(**data))
+            text = clean(u' {score} {created}'.format(**data))
             win.addnstr(text, n_cols - win.getyx()[1])
 
         n_body = len(data['split_body'])
@@ -187,9 +187,9 @@ class SubmissionPage(BasePage):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
 
-        text = clean('{body}'.format(**data))
+        text = clean(u'{body}'.format(**data))
         win.addnstr(0, 1, text, n_cols - 1)
-        text = clean(' [{count}]'.format(**data))
+        text = clean(u' [{count}]'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1], curses.A_BOLD)
 
         # Unfortunately vline() doesn't support custom color so we have to
@@ -211,17 +211,17 @@ class SubmissionPage(BasePage):
 
         row = len(data['split_title']) + 1
         attr = curses.A_BOLD | Color.GREEN
-        text = clean('{author}'.format(**data))
+        text = clean(u'{author}'.format(**data))
         win.addnstr(row, 1, text, n_cols, attr)
         attr = curses.A_BOLD | Color.YELLOW
-        text = clean(' {flair}'.format(**data))
+        text = clean(u' {flair}'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1], attr)
-        text = clean(' {created} {subreddit}'.format(**data))
+        text = clean(u' {created} {subreddit}'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1])
 
         row = len(data['split_title']) + 2
         attr = curses.A_UNDERLINE | Color.BLUE
-        text = clean('{url}'.format(**data))
+        text = clean(u'{url}'.format(**data))
         win.addnstr(row, 1, text, n_cols, attr)
         offset = len(data['split_title']) + 3
 
@@ -237,7 +237,7 @@ class SubmissionPage(BasePage):
             win.addnstr(row, 1, text, n_cols)
 
         row = len(data['split_title']) + len(split_text) + 3
-        text = clean('{score} {comments}'.format(**data))
+        text = clean(u'{score} {comments}'.format(**data))
         win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         win.border()

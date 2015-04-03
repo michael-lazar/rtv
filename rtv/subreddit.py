@@ -115,12 +115,12 @@ class SubredditPage(BasePage):
             seen = (data['url_full'] in opened_links)
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
-            text = clean('{url}'.format(**data))
+            text = clean(u'{url}'.format(**data))
             win.addnstr(row, 1, text, n_cols - 1, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
-            text = clean('{score} '.format(**data))
+            text = clean(u'{score} '.format(**data))
             win.addnstr(row, 1, text, n_cols - 1)
 
             if data['likes'] is None:
@@ -131,14 +131,14 @@ class SubredditPage(BasePage):
                 text, attr = DARROW, curses.A_BOLD | Color.RED
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
-            text = clean(' {created} {comments}'.format(**data))
+            text = clean(u' {created} {comments}'.format(**data))
             win.addnstr(text, n_cols - win.getyx()[1])
 
         row = n_title + offset + 2
         if row in valid_rows:
-            text = clean('{author}'.format(**data))
+            text = clean(u'{author}'.format(**data))
             win.addnstr(row, 1, text, n_cols - 1, curses.A_BOLD)
-            text = clean(' {subreddit}'.format(**data))
+            text = clean(u' {subreddit}'.format(**data))
             win.addnstr(text, n_cols - win.getyx()[1], Color.YELLOW)
-            text = clean(' {flair}'.format(**data))
+            text = clean(u' {flair}'.format(**data))
             win.addnstr(text, n_cols - win.getyx()[1], Color.RED)
