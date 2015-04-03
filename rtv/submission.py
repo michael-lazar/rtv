@@ -7,7 +7,7 @@ import praw.errors
 from .content import SubmissionContent
 from .page import BasePage, Navigator, BaseController
 from .helpers import clean, open_browser, open_editor
-from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
+from .curses_helpers import (BULLET, UARROW, DARROW, GOLD, Color, LoadScreen,
                              show_notification, text_input)
 from .docs import COMMENT_FILE
 
@@ -157,8 +157,12 @@ class SubmissionPage(BasePage):
                 text, attr = DARROW, (curses.A_BOLD | Color.RED)
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
-            text = clean(u' {score} {created}'.format(**data))
+            text = clean(u' {score} {created} '.format(**data))
             win.addnstr(text, n_cols - win.getyx()[1])
+
+            if data['gold']:
+                text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
+                win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         n_body = len(data['split_body'])
         for row, text in enumerate(data['split_body'], start=offset + 1):
