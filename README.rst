@@ -92,13 +92,11 @@ In submission mode you can view the self text for a submission and browse commen
 Configuration
 -------------
 
-RTV will read a configuration file located at **~/.rtv**.
+RTV will read a configuration file located at ``$XDG_CONFIG_HOME/rtv/rtv.cfg`` or ``~/.config/rtv/rtv.cfg`` if ``$XDG_CONFIG_HOME`` is not set.
 This can be used to avoid having to re-enter login credentials every time the program is launched.
 Each line in the file will replace the corresponding default argument in the launch script.
 
 Example config:
-
-**~/.rtv**
 
 .. code-block:: ini
 
