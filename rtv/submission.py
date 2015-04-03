@@ -53,7 +53,11 @@ class SubmissionPage(BasePage):
 
     @SubmissionController.register(curses.KEY_LEFT, 'h')
     def exit_submission(self):
-        self.active = False
+        index = self.nav.absolute_index
+        if self.content.is_hidden_comment(index):
+            self.content.toggle(index)
+        else:
+            self.active = False
 
     @SubmissionController.register(curses.KEY_F5, 'r')
     def refresh_content(self):
