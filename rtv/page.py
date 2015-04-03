@@ -5,7 +5,8 @@ import sys
 import praw.errors
 
 from .helpers import clean
-from .curses_helpers import Color, show_notification, show_help
+from .curses_helpers import Color, show_notification, show_help, text_input
+from .docs import AGENT
 
 __all__ = ['Navigator']
 
@@ -225,6 +226,61 @@ class BasePage(object):
                 data['likes'] = False
         except praw.errors.LoginOrScopeRequired:
             show_notification(self.stdscr, ['Login to vote'])
+
+    @BaseController.register('u')
+    def login(self):
+        """
+        Prompt to log into the user's account. Log out if the user is already
+        logged in.
+        """
+
+        if self.reddit.is_logged_in():
+            self.logout()
+            return
+
+        username = self.prompt_input('Enter username:')
+        password = self.prompt_input('Enter password:', hide=True)
+        if not username or not password:
+            curses.flash()
+            return
+
+        try:
+            self.reddit.login(username, password)
+        except praw.errors.InvalidUserPass:
+            show_notification(self.stdscr, ['Invalid user/pass'])
+        else:
+            show_notification(self.stdscr, ['Logged in'])
+
+    def logout(self):
+        """
+        Prompt to log out of the user's account.
+        """
+
+        ch = self.prompt_input("Log out? (y/n):")
+        if ch == 'y':
+            self.reddit.clear_authentication()
+            show_notification(self.stdscr, ['Logged out'])
+        elif ch != 'n':
+            curses.flash()
+
+    def prompt_input(self, prompt, hide=False):
+        """Prompt the user for input"""
+        attr = curses.A_BOLD | Color.CYAN
+        n_rows, n_cols = self.stdscr.getmaxyx()
+
+        if hide:
+            prompt += ' ' * (n_cols - len(prompt) - 1)
+            self.stdscr.addstr(n_rows-1, 0, prompt, attr)
+            out = self.stdscr.getstr(n_rows-1, 1)
+        else:
+            self.stdscr.addstr(n_rows - 1, 0, prompt, attr)
+            self.stdscr.refresh()
+            window = self.stdscr.derwin(1, n_cols - len(prompt),
+                                        n_rows - 1, len(prompt))
+            window.attrset(attr)
+            out = text_input(window)
+
+        return out
 
     def draw(self):
 

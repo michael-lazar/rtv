@@ -143,13 +143,13 @@ class SubmissionPage(BasePage):
         row = offset
         if row in valid_rows:
 
-            text = clean('{author} '.format(**data))
+            text = clean(u'{author} '.format(**data))
             attr = curses.A_BOLD
             attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
             win.addnstr(row, 1, text, n_cols - 1, attr)
 
             if data['flair']:
-                text = clean('{flair} '.format(**data))
+                text = clean(u'{flair} '.format(**data))
                 attr = curses.A_BOLD | Color.YELLOW
                 win.addnstr(text, n_cols - win.getyx()[1], attr)
 
@@ -161,7 +161,7 @@ class SubmissionPage(BasePage):
                 text, attr = DARROW, (curses.A_BOLD | Color.RED)
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
-            text = clean(' {score} {created}'.format(**data))
+            text = clean(u' {score} {created}'.format(**data))
             win.addnstr(text, n_cols - win.getyx()[1])
 
         n_body = len(data['split_body'])
@@ -191,9 +191,9 @@ class SubmissionPage(BasePage):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
 
-        text = clean('{body}'.format(**data))
+        text = clean(u'{body}'.format(**data))
         win.addnstr(0, 1, text, n_cols - 1)
-        text = clean(' [{count}]'.format(**data))
+        text = clean(u' [{count}]'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1], curses.A_BOLD)
 
         # Unfortunately vline() doesn't support custom color so we have to
@@ -209,37 +209,39 @@ class SubmissionPage(BasePage):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 3  # one for each side of the border + one for offset
 
-        # Don't print at all if there is not enough room to fit the whole sub
-        if data['n_rows'] > n_rows:
-            win.addnstr(0, 0, '(Not enough space to display)', n_cols)
-            return
-
         for row, text in enumerate(data['split_title'], start=1):
             text = clean(text)
             win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         row = len(data['split_title']) + 1
         attr = curses.A_BOLD | Color.GREEN
-        text = clean('{author}'.format(**data))
+        text = clean(u'{author}'.format(**data))
         win.addnstr(row, 1, text, n_cols, attr)
         attr = curses.A_BOLD | Color.YELLOW
-        text = clean(' {flair}'.format(**data))
+        text = clean(u' {flair}'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1], attr)
-        text = clean(' {created} {subreddit}'.format(**data))
+        text = clean(u' {created} {subreddit}'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1])
 
         row = len(data['split_title']) + 2
         attr = curses.A_UNDERLINE | Color.BLUE
-        text = clean('{url}'.format(**data))
+        text = clean(u'{url}'.format(**data))
         win.addnstr(row, 1, text, n_cols, attr)
-
         offset = len(data['split_title']) + 3
-        for row, text in enumerate(data['split_text'], start=offset):
+
+        # Cut off text if there is not enough room to display the whole post
+        split_text = data['split_text']
+        if data['n_rows'] > n_rows:
+            cutoff = data['n_rows'] - n_rows + 1
+            split_text = split_text[:-cutoff]
+            split_text.append('(Not enough space to display)')
+
+        for row, text in enumerate(split_text, start=offset):
             text = clean(text)
             win.addnstr(row, 1, text, n_cols)
 
-        row = len(data['split_title']) + len(data['split_text']) + 3
-        text = clean('{score} {comments}'.format(**data))
+        row = len(data['split_title']) + len(split_text) + 3
+        text = clean(u'{score} {comments}'.format(**data))
         win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         win.border()

@@ -8,7 +8,7 @@ from .submission import SubmissionPage
 from .content import SubredditContent
 from .helpers import clean, open_browser
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
-                             text_input, show_notification)
+                             show_notification)
 
 __all__ = ['opened_links', 'SubredditController', 'SubredditPage']
 
@@ -50,22 +50,27 @@ class SubredditPage(BasePage):
         else:
             self.nav = Navigator(self.content.get)
 
+    @SubredditController.register('f')
+    def search_subreddit(self, name=None):
+        """Open a prompt to search the subreddit"""
+        name = name or self.content.name
+        prompt = 'Search this Subreddit: '
+        search = self.prompt_input(prompt)
+        if search is not None:
+            try:
+                self.nav.cursor_index = 0
+                self.content = SubredditContent.from_name(self.reddit, name,
+                                                   self.loader, search=search)
+            except IndexError: # if there are no submissions
+                show_notification(self.stdscr, ['No results found'])
+
     @SubredditController.register('/')
     def prompt_subreddit(self):
-        "Open a prompt to type in a new subreddit"
-
-        attr = curses.A_BOLD | Color.CYAN
+        """Open a prompt to type in a new subreddit"""
         prompt = 'Enter Subreddit: /r/'
-        n_rows, n_cols = self.stdscr.getmaxyx()
-        self.stdscr.addstr(n_rows - 1, 0, prompt, attr)
-        self.stdscr.refresh()
-        window = self.stdscr.derwin(1, n_cols - len(prompt),
-                                    n_rows - 1, len(prompt))
-        window.attrset(attr)
-
-        out = text_input(window)
-        if out is not None:
-            self.refresh_content(name=out)
+        name = self.prompt_input(prompt)
+        if name is not None:
+            self.refresh_content(name=name)
 
     @SubredditController.register(curses.KEY_RIGHT, 'l')
     def open_submission(self):
@@ -110,12 +115,12 @@ class SubredditPage(BasePage):
             seen = (data['url_full'] in opened_links)
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
-            text = clean('{url}'.format(**data))
+            text = clean(u'{url}'.format(**data))
             win.addnstr(row, 1, text, n_cols - 1, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
-            text = clean('{score} '.format(**data))
+            text = clean(u'{score} '.format(**data))
             win.addnstr(row, 1, text, n_cols - 1)
 
             if data['likes'] is None:
@@ -126,14 +131,14 @@ class SubredditPage(BasePage):
                 text, attr = DARROW, curses.A_BOLD | Color.RED
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
-            text = clean(' {created} {comments}'.format(**data))
+            text = clean(u' {created} {comments}'.format(**data))
             win.addnstr(text, n_cols - win.getyx()[1])
 
         row = n_title + offset + 2
         if row in valid_rows:
-            text = clean('{author}'.format(**data))
+            text = clean(u'{author}'.format(**data))
             win.addnstr(row, 1, text, n_cols - 1, curses.A_BOLD)
-            text = clean(' {subreddit}'.format(**data))
+            text = clean(u' {subreddit}'.format(**data))
             win.addnstr(text, n_cols - win.getyx()[1], Color.YELLOW)
-            text = clean(' {flair}'.format(**data))
+            text = clean(u' {flair}'.format(**data))
             win.addnstr(text, n_cols - win.getyx()[1], Color.RED)
