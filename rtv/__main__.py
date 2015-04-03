@@ -26,7 +26,7 @@ def load_config():
     saved settings for things like the username and password.
     """
 
-    config_path = os.path.join(os.path.expanduser('~'), '.rtv')
+    config_path = os.path.join(os.path.expanduser('~/config'), '.rtv')
     config = configparser.ConfigParser()
     config.read(config_path)
 
