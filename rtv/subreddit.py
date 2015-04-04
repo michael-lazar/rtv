@@ -24,13 +24,13 @@ class SubredditController(BaseController):
 
 class SubredditPage(BasePage):
 
-    def __init__(self, stdscr, reddit, name, username):
+    def __init__(self, stdscr, reddit, name):
 
         self.controller = SubredditController(self)
         self.loader = LoadScreen(stdscr)
 
         content = SubredditContent.from_name(reddit, name, self.loader)
-        super(SubredditPage, self).__init__(stdscr, reddit, content, username)
+        super(SubredditPage, self).__init__(stdscr, reddit, content)
 
     def loop(self):
         while True:
@@ -79,8 +79,9 @@ class SubredditPage(BasePage):
     def redditor_profile(self):
         if self.reddit.is_logged_in():
             try:
+                redditor = self.reddit.user.name
                 self.content = SubredditContent.from_redditor(
-                     self.reddit, self.username, self.loader)
+                     self.reddit, redditor, self.loader)
             except requests.HTTPError:
                 show_notification(self.stdscr, ['Could not reach subreddit'])
         else:
