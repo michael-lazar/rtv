@@ -42,7 +42,7 @@ class SubredditPage(BasePage):
     def refresh_content(self, name=None):
         name = name or self.content.name
         if name == 'me' or name == '/r/me':
-            self.reddittor_profile()
+            self.redditor_profile()
             return
         try:
             self.content = SubredditContent.from_name(
@@ -76,10 +76,10 @@ class SubredditPage(BasePage):
         if name is not None:
             self.refresh_content(name=name)
 
-    def reddittor_profile(self):
+    def redditor_profile(self):
         if self.reddit.is_logged_in():
             try:
-                self.content = SubredditContent.from_reddittor(
+                self.content = SubredditContent.from_redditor(
                      self.reddit, self.username, self.loader)
             except requests.HTTPError:
                 show_notification(self.stdscr, ['Could not reach subreddit'])
