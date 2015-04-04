@@ -52,3 +52,13 @@ COMMENT_FILE = """
 # Replying to {author}'s {type}
 {content}
 """
+
+SUBMISSION_FILE = """
+# Please enter your submission. Lines starting with '#' will be ignored,
+# and an empty field aborts the submission.
+#
+# The first line will be interpreted as the title
+# Following lines will be interpreted as the content
+#
+# Posting to /r/{name}
+"""
