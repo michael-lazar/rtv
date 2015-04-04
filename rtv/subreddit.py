@@ -1,12 +1,14 @@
 import curses
-
+import time
 import requests
+import praw
 
 from .exceptions import SubredditError
 from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .helpers import clean, open_browser
+from .helpers import clean, open_browser, open_editor
+from .docs import SUBMISSION_FILE
 from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
                              show_notification)
 
@@ -93,6 +95,44 @@ class SubredditPage(BasePage):
 
         global opened_links
         opened_links.add(url)
+
+    @SubredditController.register('p')
+    def post_submission(self):
+        # Abort if user isn't logged in
+        if not self.reddit.is_logged_in():
+            show_notification(self.stdscr, ['Login to reply'])
+            return
+
+        subreddit = self.reddit.get_subreddit(self.content.name)
+
+        # Make sure it is a valid subreddit for submission
+        # Strips the subreddit to just the name
+        sub = str(subreddit).split('/')[2]
+        if '+' in sub or sub == 'all' or sub == 'front':
+            message = 'Can\'t post to /r/{0}'.format(sub)
+            show_notification(self.stdscr, [message])
+            return
+
+        # Open the submission window
+        submission_info = SUBMISSION_FILE.format(name=sub)
+        curses.endwin()
+        submission_text = open_editor(submission_info)
+        curses.doupdate()
+
+        # Abort if there is no content
+        if not submission_text:
+            curses.flash()
+            return
+        try:
+            title, content = submission_text.split('\n', 1)
+            self.reddit.submit(sub, title, text=content)
+        except praw.errors.APIException as e:
+            show_notification(self.stdscr, [e.message])
+        except ValueError:
+            show_notification(self.stdscr, ['No post content! Post aborted.'])
+        else:
+            time.sleep(0.5)
+            self.refresh_content()
 
     @staticmethod
     def draw_item(win, data, inverted=False):

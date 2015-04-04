@@ -22,6 +22,7 @@ ESCAPE = 27
 UARROW = u'\u25b2'.encode('utf-8')
 DARROW = u'\u25bc'.encode('utf-8')
 BULLET = u'\u2022'.encode('utf-8')
+GOLD = u'\u272A'.encode('utf-8')
 
 
 def show_notification(stdscr, message):

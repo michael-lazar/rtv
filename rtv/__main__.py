@@ -26,9 +26,20 @@ def load_config():
     saved settings for things like the username and password.
     """
 
-    config_path = os.path.join(os.path.expanduser('~'), '.rtv')
     config = configparser.ConfigParser()
-    config.read(config_path)
+
+    HOME = os.path.expanduser('~')
+    XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
+    config_paths = [
+        os.path.join(XDG_CONFIG_HOME, 'rtv', 'rtv.cfg'),
+        os.path.join(HOME, '.rtv')
+    ]
+
+    # read only the first existing config file
+    for config_path in config_paths:
+        if os.path.exists(config_path):
+            config.read(config_path)
+            break
 
     defaults = {}
     if config.has_section('rtv'):
