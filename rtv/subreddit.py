@@ -79,9 +79,8 @@ class SubredditPage(BasePage):
     def redditor_profile(self):
         if self.reddit.is_logged_in():
             try:
-                redditor = self.reddit.user.name
                 self.content = SubredditContent.from_redditor(
-                     self.reddit, redditor, self.loader)
+                     self.reddit, self.loader)
             except requests.HTTPError:
                 show_notification(self.stdscr, ['Could not reach subreddit'])
         else:

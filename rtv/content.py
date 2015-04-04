@@ -310,9 +310,8 @@ class SubredditContent(BaseContent):
         return content
 
     @classmethod
-    def from_redditor(cls, reddit, username, loader, order='new'):
-        redditor = reddit.get_redditor(username)
-        submissions = redditor.get_submitted(sort=order)
+    def from_redditor(cls, reddit, loader, order='new'):
+        submissions = reddit.user.get_submitted(sort=order)
         display_name = '/r/me'
         content = cls(display_name, submissions, loader)
         try:
