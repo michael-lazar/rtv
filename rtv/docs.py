@@ -39,7 +39,6 @@ Subreddit Mode
   `/`                 : Open a prompt to switch subreddits
   `f`                 : Open a prompt to search the current subreddit
   `p`                 : Post a Submission to the current subreddit
-  `;`                 : View your Submissions (requires login)
 
 Submission Mode
   `LEFT` or `h`       : Return to subreddit mode

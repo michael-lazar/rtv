@@ -76,7 +76,6 @@ class SubredditPage(BasePage):
         if name is not None:
             self.refresh_content(name=name)
 
-    @SubredditController.register(';')
     def reddittor_profile(self):
         if self.reddit.is_logged_in():
             try:
