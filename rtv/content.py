@@ -108,6 +108,7 @@ class BaseContent(object):
         data['url_full'] = sub.url
         data['url'] = ('selfpost' if is_selfpost(sub.url) else sub.url)
         data['likes'] = sub.likes
+        data['gold'] = sub.gilded > 0
 
         return data
 

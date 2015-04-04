@@ -7,8 +7,8 @@ from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
 from .content import SubredditContent
 from .helpers import clean, open_browser
-from .curses_helpers import (BULLET, UARROW, DARROW, Color, LoadScreen,
-                             show_notification)
+from .curses_helpers import (BULLET, UARROW, DARROW, GOLD, Color,
+                             LoadScreen, show_notification)
 
 __all__ = ['opened_links', 'SubredditController', 'SubredditPage']
 
@@ -131,8 +131,12 @@ class SubredditPage(BasePage):
                 text, attr = DARROW, curses.A_BOLD | Color.RED
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
-            text = clean(u' {created} {comments}'.format(**data))
+            text = clean(u' {created} {comments} '.format(**data))
             win.addnstr(text, n_cols - win.getyx()[1])
+
+            if data['gold']:
+                text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
+                win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         row = n_title + offset + 2
         if row in valid_rows:

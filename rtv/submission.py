@@ -220,8 +220,12 @@ class SubmissionPage(BasePage):
         attr = curses.A_BOLD | Color.YELLOW
         text = clean(u' {flair}'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1], attr)
-        text = clean(u' {created} {subreddit}'.format(**data))
+        text = clean(u' {created} {subreddit} '.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1])
+
+        if data['gold']:
+            text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
+            win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         row = len(data['split_title']) + 2
         attr = curses.A_UNDERLINE | Color.BLUE
