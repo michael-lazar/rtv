@@ -57,12 +57,12 @@ class SubredditPage(BasePage):
         """Open a prompt to search the subreddit"""
         name = name or self.content.name
         prompt = 'Search this Subreddit: '
-        search = self.prompt_input(prompt)
-        if search is not None:
+        query = self.prompt_input(prompt)
+        if query is not None:
             try:
                 self.nav.cursor_index = 0
                 self.content = SubredditContent.from_name(self.reddit, name,
-                                                   self.loader, search=search)
+                                                   self.loader, query=query)
             except IndexError: # if there are no submissions
                 show_notification(self.stdscr, ['No results found'])
 

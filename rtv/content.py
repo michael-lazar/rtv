@@ -246,11 +246,23 @@ class SubredditContent(BaseContent):
         self._submissions = submissions
         self._submission_data = []
 
-    @classmethod
-    def from_name(cls, reddit, name, loader, order='hot', search=None):
+        # Verify that content exists for the given submission generator.
+        # This is necessary because PRAW loads submissions lazily, and
+        # there is is no other way to check things like multireddits that
+        # don't have a real corresponding subreddit object.
+        try:
+            content.get(0)
+        except (praw.errors.APIException, requests.HTTPError,
+                praw.errors.RedirectException):
+            raise SubredditError(display_name)
 
-        if name is None:
-            name = 'front'
+    @classmethod
+    def from_name(cls, reddit, name, loader, order='hot', query=None):
+
+        name = name if name else 'front'
+
+        if order not in ['hot', 'top', 'rising', 'new', 'controversial']:
+            raise SubredditError(display_name)
 
         name = name.strip(' /')  # Strip leading and trailing backslashes
         if name.startswith('r/'):
@@ -260,55 +272,37 @@ class SubredditContent(BaseContent):
         if '/' in name:
             name, order = name.split('/')
 
-        if order == 'hot':
-            display_name = '/r/{}'.format(name)
-        else:
-            display_name = '/r/{}/{}'.format(name, order)
-            
+        display_name = display_name = '/r/{}'.format(name)
+        if order != 'hot':
+            display_name += '/{}'.format(order)
+
         if name == 'front':
-            if search:
-                submissions = reddit.search(search, None, order)
-            elif order == 'hot':
-                submissions = reddit.get_front_page(limit=None)
-            elif order == 'top':
-                submissions = reddit.get_top(limit=None)
-            elif order == 'rising':
-                submissions = reddit.get_rising(limit=None)
-            elif order == 'new':
-                submissions = reddit.get_new(limit=None)
-            elif order == 'controversial':
-                submissions = reddit.get_controversial(limit=None)
-            else:
-                raise SubredditError(display_name)
+            dispatch = {
+                'hot': reddit.get_front_page,
+                'top': reddit.get_top,
+                'rising': reddit.get_rising,
+                'new': reddit.get_new,
+                'controversial': reddit.get_controversial
+            }
         else:
             subreddit = reddit.get_subreddit(name)
-            if search:
-                submissions = reddit.search(search, name, order)
-            elif order == 'hot':
-                submissions = subreddit.get_hot(limit=None)
-            elif order == 'top':
-                submissions = subreddit.get_top(limit=None)
-            elif order == 'rising':
-                submissions = subreddit.get_rising(limit=None)
-            elif order == 'new':
-                submissions = subreddit.get_new(limit=None)
-            elif order == 'controversial':
-                submissions = subreddit.get_controversial(limit=None)
+            dispatch = {
+                'hot': subreddit.get_hot,
+                'top': subreddit.get_top,
+                'rising': subreddit.get_rising,
+                'new': subreddit.get_new,
+                'controversial': subreddit.get_controversial
+            }
+
+        if query:
+            if name == 'front':
+                submissions = reddit.search(query, subreddit=None, sort=order)
             else:
-                raise SubredditError(display_name)
+                submissions = reddit.search(query, subreddit=name, sort=order)
+        else:
+            submissions = dispatch[order](limit=None)
 
-        # Verify that content exists for the given submission generator.
-        # This is necessary because PRAW loads submissions lazily, and
-        # there is is no other way to check things like multireddits that
-        # don't have a real corresponding subreddit object.
-        content = cls(display_name, submissions, loader)
-        try:
-            content.get(0)
-        except (praw.errors.APIException, requests.HTTPError,
-                praw.errors.RedirectException):
-            raise SubredditError(display_name)
-
-        return content
+        return cls(display_name, submissions, loader)
 
     def get(self, index, n_cols=70):
         """
