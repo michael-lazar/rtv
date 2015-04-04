@@ -220,12 +220,8 @@ class SubmissionPage(BasePage):
         attr = curses.A_BOLD | Color.YELLOW
         text = clean(u' {flair}'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1], attr)
-        text = clean(u' {created} {subreddit} '.format(**data))
+        text = clean(u' {created} {subreddit}'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1])
-
-        if data['gold']:
-            text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
-            win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         row = len(data['split_title']) + 2
         attr = curses.A_UNDERLINE | Color.BLUE
@@ -245,7 +241,11 @@ class SubmissionPage(BasePage):
             win.addnstr(row, 1, text, n_cols)
 
         row = len(data['split_title']) + len(split_text) + 3
-        text = clean(u'{score} {comments}'.format(**data))
+        text = clean(u'{score} {comments} '.format(**data))
         win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
+
+        if data['gold']:
+            text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
+            win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         win.border()
