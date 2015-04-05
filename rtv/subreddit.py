@@ -41,7 +41,9 @@ class SubredditPage(BasePage):
     @SubredditController.register(curses.KEY_F5, 'r')
     def refresh_content(self, name=None):
         name = name or self.content.name
-
+        if name == 'me' or name == '/r/me':
+            self.redditor_profile()
+            return
         try:
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.loader)
@@ -73,6 +75,16 @@ class SubredditPage(BasePage):
         name = self.prompt_input(prompt)
         if name is not None:
             self.refresh_content(name=name)
+
+    def redditor_profile(self):
+        if self.reddit.is_logged_in():
+            try:
+                self.content = SubredditContent.from_redditor(
+                     self.reddit, self.loader)
+            except requests.HTTPError:
+                show_notification(self.stdscr, ['Could not reach subreddit'])
+        else:
+            show_notification(self.stdscr, ['Log in to view your submissions'])
 
     @SubredditController.register(curses.KEY_RIGHT, 'l')
     def open_submission(self):
