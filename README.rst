@@ -140,13 +140,24 @@ Changelog
 ---
 1.2
 ---
-* Post submissions with the `p` command in subreddit mode.
-* View your submissions on `/r/me`.
-* Gilded comments and posts are denoted with ✪.
-* New config file location (`~/.config/rtv/rtv.cfg`).
-* Login and logout with the `u` key.
-* Search the subreddit with the `f` key
-* Links may be opened with `ENTER` or `o`.
+Features
+
+* Added user login / logout with the `u` key. @yskmt
+* Added subreddit searching with the `f` key. @Brobin
+* Added submission posting with the `p` key. @Brobin
+* Added viewing of user submissions with `/r/me`. @Brobin
+* Program title now displays in the terminal window. @Brobin
+* Gold symbols now display on guilded comments and posts. @Brobin
+* Moved default config location to XDG_CONFIG_HOME. @Ram-Z
+
+Bugfixes
+
+* Improved error handling for submission / comment posts.
+* Fixed handling of unicode flairs
+* Improved displaying of the help message and selfposts on small terminal windows.
+* The author's name now correctly highlights in submissions @Brobin
+* Corrected user agent formatting. @a-tal
+* Various minor bugfixes
 
 ---
 1.1
