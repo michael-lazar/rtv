@@ -1,37 +1,31 @@
-.. image:: https://pypip.in/version/rtv/badge.svg?text=version&style=flat
-    :target: https://pypi.python.org/pypi/rtv/
-    :alt: Latest Version
 
-.. image:: https://pypip.in/py_versions/rtv/badge.svg?style=flat
-    :target: https://pypi.python.org/pypi/rtv/
-    :alt: Supported Python versions
+===========================
+RTV: Reddit Terminal Viewer
+===========================
 
-
-======================
-Reddit Terminal Viewer
-======================
-
-Browse Reddit from your terminal
-
-1. `Overview`_
-2. `Installation`_
-3. `Configuration`_
-4. `Usage`_
-5. `Changelog`_
-
-
---------
-Overview
---------
+RTV is an application that allows you to view and interact with reddit from your terminal. It is compatible with *most* terminal emulators on Linux and OSX.
 
 .. image:: http://i.imgur.com/W1hxqCt.png
 
-RTV is built in **python** using the **curses** library, and is compatible with *most* terminal emulators on Linux and OS X.
+RTV is built in **python** using the **curses** library.
 
+---------------
+|pypi| |python|
+---------------
 
-------------
+* `Installation`_
+* `Configuration`_
+* `Usage`_
+   * `Global Commands`_
+   * `Subreddit Mode`_
+   * `Submission Mode`_
+* `Changelog`_
+* `Contributors`_
+* `License`_
+
+============
 Installation
-------------
+============
 
 Install using pip
 
@@ -55,9 +49,9 @@ The installation will place a script in the system path
    $ rtv --help
 
 
--------------
+=============
 Configuration
--------------
+=============
 
 RTV will read a configuration file located at ``$XDG_CONFIG_HOME/rtv/rtv.cfg`` or ``~/.config/rtv/rtv.cfg`` if ``$XDG_CONFIG_HOME`` is not set.
 This can be used to avoid having to re-enter login credentials every time the program is launched.
@@ -92,13 +86,15 @@ Set the environment variable ``RTV_EDITOR`` to specify which editor the program 
    $ export RTV_EDITOR=gedit
 
 
------
+=====
 Usage 
------
+=====
 
 RTV currently supports browsing both subreddits and individual submissions. In each mode the controls are slightly different.
 
-**Global Commands**
+---------------
+Global Commands
+---------------
 
 :``▲``/``▼`` or ``j``/``k``: Scroll to the prev/next item
 :``a``/``z``: Upvote/downvote the selected item
@@ -108,7 +104,9 @@ RTV currently supports browsing both subreddits and individual submissions. In e
 :``?``: Show the help screen
 :``q``: Quit
 
-**Subreddit Mode**
+--------------
+Subreddit Mode
+--------------
 
 In subreddit mode you can browse through the top submissions on either the front page or a specific subreddit.
 
@@ -125,7 +123,9 @@ The ``/`` prompt accepts subreddits in the following formats
 * ``/r/front`` will redirect to the front page
 * ``/r/me`` will display your submissions
 
-**Submission Mode**
+---------------
+Submission Mode
+---------------
 
 In submission mode you can view the self text for a submission and browse comments.
 
@@ -137,35 +137,25 @@ In submission mode you can view the self text for a submission and browse commen
 =========
 Changelog
 =========
-.. _@michael-lazar: http://github.com/michael-lazar
-.. _@Brobin: http://github.com/Brobin
-.. _@yskmt: http://github.com/yskmt
-.. _@Ram-Z: http://github.com/Ram-Z
-.. _@a-tal: http://github.com/a-tal
+Please see `CHANGELOG.rst <https://github.com/michael-lazar/rtv/blob/master/CHANGELOG.rst>`_.
 
----
-1.2
----
-Features
 
-* Added user login / logout with the `u` key. `@yskmt`_
-* Added subreddit searching with the `f` key. `@Brobin`_
-* Added submission posting with the `p` key. `@Brobin`_
-* Added viewing of user submissions with `/r/me`. `@Brobin`_
-* Program title now displays in the terminal window. `@Brobin`_
-* Gold symbols now display on guilded comments and posts. `@Brobin`_
-* Moved default config location to XDG_CONFIG_HOME. `@Ram-Z`_
+============
+Contributors
+============
+Please see `CONTRIBUTORS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTRIBUTORS.rst>`_.
 
-Bugfixes
 
-* Improved error handling for submission / comment posts. `@michael-lazar`_
-* Fixed handling of unicode flairs. `@michael-lazar`_
-* Improved displaying of the help message and selfposts on small terminal windows. `@michael-lazar`_
-* The author's name now correctly highlights in submissions `@Brobin`_
-* Corrected user agent formatting. `@a-tal`_
-* Various minor bugfixes. `@michael-lazar`_
+=======
+License
+=======
+Please see `LICENSE <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_.
 
----
-1.1
----
-* Post comments using your text editor.
+
+.. |python| image:: https://pypip.in/py_versions/rtv/badge.svg?style=flat
+    :target: https://pypi.python.org/pypi/rtv/
+    :alt: Supported Python versions
+
+.. |pypi| image:: https://pypip.in/version/rtv/badge.svg?text=version&style=flat
+    :target: https://pypi.python.org/pypi/rtv/
+    :alt: Latest Version
