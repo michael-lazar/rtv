@@ -38,10 +38,10 @@ def show_notification(stdscr, message):
     box_width = max(map(len, message)) + 2
     box_height = len(message) + 2
 
-    # Make sure the window is large enough to fit the message
-    if (box_width > n_cols) or (box_height > n_rows):
-        curses.flash()
-        return
+    # Cut off the lines of the message that don't fit on the screen
+    box_width = min(box_width, n_cols)
+    box_height = min(box_height, n_rows)
+    message = message[:box_height-2]
 
     s_row = (n_rows - box_height) // 2
     s_col = (n_cols - box_width) // 2
@@ -51,7 +51,7 @@ def show_notification(stdscr, message):
     window.border()
 
     for index, line in enumerate(message, start=1):
-        window.addstr(index, 1, line)
+        window.addnstr(index, 1, line, box_width - 2)
     window.refresh()
     ch = stdscr.getch()
 
@@ -67,10 +67,8 @@ def show_help(stdscr):
     Overlay a message box with the help screen.
     """
 
-    curses.endwin()
-    print(HELP)
-    raw_input('Press Enter to continue')
-    curses.doupdate()
+    show_notification(stdscr, HELP.splitlines())
+
 
 class LoadScreen(object):
 

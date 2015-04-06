@@ -176,7 +176,7 @@ class BasePage(object):
 
     @BaseController.register('?')
     def help(self):
-        show_help(self.stdscr)
+        show_help(self._content_window)
 
     @BaseController.register(curses.KEY_UP, 'k')
     def move_cursor_up(self):
