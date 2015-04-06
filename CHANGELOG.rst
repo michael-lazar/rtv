@@ -2,15 +2,18 @@
 RTV Changelog
 =============
 
------
-1.2.1
------
+.. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
+.. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+------
+1.2.1_
+------
 Bugfixes
 * Fixed crashing on invalid subreddit names
 
----
-1.2
----
+----
+1.2_
+----
 Features
 
 * Added user login / logout with the `u` key.
