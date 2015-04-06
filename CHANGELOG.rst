@@ -9,6 +9,7 @@ RTV Changelog
 1.2.1_
 ------
 Bugfixes
+
 * Fixed crashing on invalid subreddit names
 
 ----
