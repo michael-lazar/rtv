@@ -57,6 +57,13 @@ COMMENT_FILE = """
 {content}
 """
 
+COMMENT_EDIT_FILE = """{content}
+# Please enter a comment. Lines starting with '#' will be ignored,
+# and an empty message aborts the comment.
+#
+# Editing your comment
+"""
+
 SUBMISSION_FILE = """
 # Please enter your submission. Lines starting with '#' will be ignored,
 # and an empty field aborts the submission.
