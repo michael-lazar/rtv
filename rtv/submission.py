@@ -120,7 +120,7 @@ class SubmissionPage(BasePage):
                 data['object'].add_comment(comment_text)
             else:
                 data['object'].reply(comment_text)
-        except praw.errors.APIException:
+        except praw.errors.APIException as e:
             message = ['Error: {}'.format(e.error_type), e.message]
             show_notification(self.stdscr, message)
             _logger.exception(e)
