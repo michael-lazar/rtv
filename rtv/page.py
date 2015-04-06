@@ -12,7 +12,6 @@ __all__ = ['Navigator']
 
 
 class Navigator(object):
-
     """
     Handles math behind cursor movement and screen paging.
     """
@@ -87,6 +86,7 @@ class Navigator(object):
 
     def flip(self, n_windows):
         "Flip the orientation of the page"
+
         self.page_index += (self.step * n_windows)
         self.cursor_index = n_windows
         self.inverted = not self.inverted
@@ -103,7 +103,6 @@ class Navigator(object):
 
 
 class BaseController(object):
-
     """
     Event handler for triggering functions with curses keypresses.
 
@@ -153,7 +152,6 @@ class BaseController(object):
 
 
 class BasePage(object):
-
     """
     Base terminal viewer incorperates a cursor to navigate content
     """
@@ -192,6 +190,7 @@ class BasePage(object):
 
     def clear_input_queue(self):
         "Clear excessive input caused by the scroll wheel or holding down a key"
+
         self.stdscr.nodelay(1)
         while self.stdscr.getch() != -1:
             continue
@@ -210,7 +209,7 @@ class BasePage(object):
                 data['object'].upvote()
                 data['likes'] = True
         except praw.errors.LoginOrScopeRequired:
-            show_notification(self.stdscr, ['Login to vote'])
+            show_notification(self.stdscr, ['Not logged in'])
 
     @BaseController.register('z')
     def downvote(self):
@@ -225,13 +224,13 @@ class BasePage(object):
                 data['object'].downvote()
                 data['likes'] = False
         except praw.errors.LoginOrScopeRequired:
-            show_notification(self.stdscr, ['Login to vote'])
+            show_notification(self.stdscr, ['Not logged in'])
 
     @BaseController.register('u')
     def login(self):
         """
-        Prompt to log into the user's account. Log out if the user is already
-        logged in.
+        Prompt to log into the user's account, or log out of the current
+        account.
         """
 
         if self.reddit.is_logged_in():
@@ -252,9 +251,7 @@ class BasePage(object):
             show_notification(self.stdscr, ['Logged in'])
 
     def logout(self):
-        """
-        Prompt to log out of the user's account.
-        """
+        "Prompt to log out of the user's account."
 
         ch = self.prompt_input("Log out? (y/n):")
         if ch == 'y':
@@ -264,7 +261,8 @@ class BasePage(object):
             curses.flash()
 
     def prompt_input(self, prompt, hide=False):
-        """Prompt the user for input"""
+        "Prompt the user for input"
+
         attr = curses.A_BOLD | Color.CYAN
         n_rows, n_cols = self.stdscr.getmaxyx()
 

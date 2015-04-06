@@ -61,7 +61,8 @@ RTV currently supports browsing both subreddits and individual submissions. In e
 :``a``/``z``: Upvote/downvote the selected item
 :``ENTER`` or ``o``: Open the selected item in the default web browser
 :``r``: Refresh the current page
-:``?``: Show the help message
+:``u``: Login and logout of your user account
+:``?``: Show the help screen
 :``q``: Quit
 
 **Subreddit Mode**
@@ -71,7 +72,7 @@ In subreddit mode you can browse through the top submissions on either the front
 :``►`` or ``l``: View comments for the selected submission
 :``/``: Open a prompt to switch subreddits
 :``f``: Open a prompt to search the current subreddit
-:``p``: Post a Submission to the current subreddit
+:``p``: Post a new submission to the current subreddit
 
 The ``/`` prompt accepts subreddits in the following formats
 
@@ -79,7 +80,7 @@ The ``/`` prompt accepts subreddits in the following formats
 * ``/r/python/new``
 * ``/r/python+linux`` supports multireddits
 * ``/r/front`` will redirect to the front page
-* ``/r/me`` will show you your submissions on all subs
+* ``/r/me`` will display your submissions
 
 **Submission Mode**
 
@@ -87,7 +88,7 @@ In submission mode you can view the self text for a submission and browse commen
 
 :``◄`` or ``h``: Return to subreddit mode
 :``►`` or ``l``: Fold the selected comment, or load additional comments
-:``c``: Comment/reply on the selected item
+:``c``: Post a new comment on the selected item
 
 -------------
 Configuration
@@ -104,9 +105,19 @@ Example config:
   [rtv]
   username=MyUsername
   password=MySecretPassword
-  
+
+  # Log file location
+  log=/tmp/rtv.log
+
   # Default subreddit
   subreddit=CollegeBasketball
+
+  # Default submission link - will be opened every time the program starts
+  # link=http://www.reddit.com/r/CollegeBasketball/comments/31irjq
+
+  # Enable unicode characters (experimental)
+  # This is known to be unstable with east asian wide character sets
+  # unicode=true
 
 RTV allows users to compose comments and replys using their preferred text editor (**vi**, **nano**, **gedit**, etc).
 Set the environment variable ``RTV_EDITOR`` to specify which editor the program should use.

@@ -3,7 +3,7 @@ import textwrap
 import praw
 import requests
 
-from .exceptions import SubmissionError, SubredditError
+from .exceptions import SubmissionError, SubredditError, AccountError
 from .helpers import humanize_timestamp, wrap_text, strip_subreddit_url
 
 __all__ = ['SubredditContent', 'SubmissionContent']
@@ -114,18 +114,12 @@ class BaseContent(object):
 
 
 class SubmissionContent(BaseContent):
-
     """
     Grab a submission from PRAW and lazily store comments to an internal
     list for repeat access.
     """
 
-    def __init__(
-            self,
-            submission,
-            loader,
-            indent_size=2,
-            max_indent_level=4):
+    def __init__(self, submission, loader, indent_size=2, max_indent_level=4):
 
         self.indent_size = indent_size
         self.max_indent_level = max_indent_level
@@ -138,13 +132,7 @@ class SubmissionContent(BaseContent):
         self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
     @classmethod
-    def from_url(
-            cls,
-            reddit,
-            url,
-            loader,
-            indent_size=2,
-            max_indent_level=4):
+    def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=4):
 
         try:
             with loader():
@@ -165,10 +153,9 @@ class SubmissionContent(BaseContent):
 
         elif index == -1:
             data = self._submission_data
-            data['split_title'] = textwrap.wrap(data['title'],
-                                                width=n_cols -2)
+            data['split_title'] = textwrap.wrap(data['title'], width=n_cols -2)
             data['split_text'] = wrap_text(data['text'], width=n_cols - 2)
-            data['n_rows'] = len(data['split_title']) + len(data['split_text']) + 5
+            data['n_rows'] = len(data['split_title'] + data['split_text']) + 5
             data['offset'] = 0
 
         else:
@@ -233,9 +220,8 @@ class SubmissionContent(BaseContent):
 
 
 class SubredditContent(BaseContent):
-
     """
-    Grabs a subreddit from PRAW and lazily stores submissions to an internal
+    Grab a subreddit from PRAW and lazily stores submissions to an internal
     list for repeat access.
     """
 
@@ -251,15 +237,13 @@ class SubredditContent(BaseContent):
         # there is is no other way to check things like multireddits that
         # don't have a real corresponding subreddit object.
         try:
-            content.get(0)
+            self.get(0)
         except (praw.errors.APIException, requests.HTTPError,
                 praw.errors.RedirectException):
             raise SubredditError(display_name)
 
     @classmethod
     def from_name(cls, reddit, name, loader, order='hot', query=None):
-
-        name = name if name else 'front'
 
         if order not in ['hot', 'top', 'rising', 'new', 'controversial']:
             raise SubredditError(display_name)
@@ -268,7 +252,7 @@ class SubredditContent(BaseContent):
         if name.startswith('r/'):
             name = name[2:]
 
-        # Grab the display type e.g. "python/new"
+        # Grab the display order e.g. "python/new"
         if '/' in name:
             name, order = name.split('/')
 
@@ -276,57 +260,50 @@ class SubredditContent(BaseContent):
         if order != 'hot':
             display_name += '/{}'.format(order)
 
-        if name == 'front':
-            dispatch = {
-                'hot': reddit.get_front_page,
-                'top': reddit.get_top,
-                'rising': reddit.get_rising,
-                'new': reddit.get_new,
-                'controversial': reddit.get_controversial
-            }
-        else:
-            subreddit = reddit.get_subreddit(name)
-            dispatch = {
-                'hot': subreddit.get_hot,
-                'top': subreddit.get_top,
-                'rising': subreddit.get_rising,
-                'new': subreddit.get_new,
-                'controversial': subreddit.get_controversial
-            }
+        if name == 'me':
+            if not self.reddit.is_logged_in():
+                raise AccountError
+            else:
+                submissions = reddit.user.get_submitted(sort=order)
 
-        if query:
+        elif query:
             if name == 'front':
                 submissions = reddit.search(query, subreddit=None, sort=order)
             else:
                 submissions = reddit.search(query, subreddit=name, sort=order)
+
         else:
+            if name == 'front':
+                dispatch = {
+                    'hot': reddit.get_front_page,
+                    'top': reddit.get_top,
+                    'rising': reddit.get_rising,
+                    'new': reddit.get_new,
+                    'controversial': reddit.get_controversial,
+                    }
+            else:
+                subreddit = reddit.get_subreddit(name)
+                dispatch = {
+                    'hot': subreddit.get_hot,
+                    'top': subreddit.get_top,
+                    'rising': subreddit.get_rising,
+                    'new': subreddit.get_new,
+                    'controversial': subreddit.get_controversial,
+                    }
             submissions = dispatch[order](limit=None)
 
         return cls(display_name, submissions, loader)
 
-    @classmethod
-    def from_redditor(cls, reddit, loader, order='new'):
-        submissions = reddit.user.get_submitted(sort=order)
-        display_name = '/r/me'
-        content = cls(display_name, submissions, loader)
-        try:
-            content.get(0)
-        except (praw.errors.APIException, requests.HTTPError,
-                praw.errors.RedirectException):
-            raise SubredditError(display_name)
-        return content
-
     def get(self, index, n_cols=70):
         """
         Grab the `i`th submission, with the title field formatted to fit inside
-        of a window of width `n`
+        of a window of width `n_cols`
         """
 
         if index < 0:
             raise IndexError
 
         while index >= len(self._submission_data):
-
             try:
                 with self._loader():
                     submission = next(self._submissions)

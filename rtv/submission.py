@@ -24,9 +24,9 @@ class SubmissionPage(BasePage):
 
         self.controller = SubmissionController(self)
         self.loader = LoadScreen(stdscr)
-        if url is not None:
+        if url:
             content = SubmissionContent.from_url(reddit, url, self.loader)
-        elif submission is not None:
+        elif submission:
             content = SubmissionContent(submission, self.loader)
         else:
             raise ValueError('Must specify url or submission')
@@ -35,6 +35,8 @@ class SubmissionPage(BasePage):
                                              content, page_index=-1)
 
     def loop(self):
+        "Main control loop"
+
         self.active = True
         while self.active:
             self.draw()
@@ -43,6 +45,8 @@ class SubmissionPage(BasePage):
 
     @SubmissionController.register(curses.KEY_RIGHT, 'l')
     def toggle_comment(self):
+        "Toggle the selected comment tree between visible and hidden"
+
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
         if self.nav.inverted:
@@ -53,20 +57,24 @@ class SubmissionPage(BasePage):
 
     @SubmissionController.register(curses.KEY_LEFT, 'h')
     def exit_submission(self):
+        "Close the submission and return to the subreddit page"
+
         self.active = False
 
     @SubmissionController.register(curses.KEY_F5, 'r')
     def refresh_content(self):
-        url = self.content.name
+        "Re-download comments reset the page index"
+
         self.content = SubmissionContent.from_url(
             self.reddit,
-            url,
+            self.content.name,
             self.loader)
         self.nav = Navigator(self.content.get, page_index=-1)
 
     @SubmissionController.register(curses.KEY_ENTER, 10, 'o')
     def open_link(self):
-        # Always open the page for the submission
+        "Open the current submission page with the webbrowser"
+
         # May want to expand at some point to open comment permalinks
         url = self.content.get(-1)['permalink']
         open_browser(url)
@@ -74,11 +82,12 @@ class SubmissionPage(BasePage):
     @SubmissionController.register('c')
     def add_comment(self):
         """
-        Add a comment on the submission if a header is selected.
-        Reply to a comment if the comment is selected.
+        Add a top-level comment if the submission is selected, or reply to the
+        selected comment.
         """
+
         if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ["Login to reply"])
+            show_notification(self.stdscr, ['Not logged in'])
             return
 
         data = self.content.get(self.nav.absolute_index)
@@ -100,19 +109,19 @@ class SubmissionPage(BasePage):
         curses.endwin()
         comment_text = open_editor(comment_info)
         curses.doupdate()
-
         if not comment_text:
             curses.flash()
             return
+
         try:
             if data['type'] == 'Submission':
                 data['object'].add_comment(comment_text)
             else:
                 data['object'].reply(comment_text)
-        except praw.errors.APIException as e:
-            show_notification(self.stdscr, [e.message])
+        except praw.errors.APIException:
+            curses.flash()
         else:
-            time.sleep(0.5)
+            time.sleep(2.0)
             self.refresh_content()
 
     def draw_item(self, win, data, inverted=False):

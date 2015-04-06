@@ -3,7 +3,7 @@ import time
 import requests
 import praw
 
-from .exceptions import SubredditError
+from .exceptions import SubredditError, AccountError
 from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
 from .content import SubredditContent
@@ -33,6 +33,8 @@ class SubredditPage(BasePage):
         super(SubredditPage, self).__init__(stdscr, reddit, content)
 
     def loop(self):
+        "Main control loop"
+
         while True:
             self.draw()
             cmd = self.stdscr.getch()
@@ -40,13 +42,14 @@ class SubredditPage(BasePage):
 
     @SubredditController.register(curses.KEY_F5, 'r')
     def refresh_content(self, name=None):
+        "Re-download all submissions and reset the page index"
+
         name = name or self.content.name
-        if name == 'me' or name == '/r/me':
-            self.redditor_profile()
-            return
         try:
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.loader)
+        except AccountError:
+            show_notification(self.stdscr, ['Not logged in'])
         except SubredditError:
             show_notification(self.stdscr, ['Invalid subreddit'])
         except requests.HTTPError:
@@ -56,35 +59,29 @@ class SubredditPage(BasePage):
 
     @SubredditController.register('f')
     def search_subreddit(self, name=None):
-        """Open a prompt to search the subreddit"""
+        "Open a prompt to search the given subreddit"
+
         name = name or self.content.name
-        prompt = 'Search this Subreddit: '
+        prompt = 'Search:'
         query = self.prompt_input(prompt)
-        if query is not None:
-            try:
-                self.nav.cursor_index = 0
-                self.content = SubredditContent.from_name(self.reddit, name,
-                                                   self.loader, query=query)
-            except IndexError: # if there are no submissions
-                show_notification(self.stdscr, ['No results found'])
+        if query is None:
+            return
+
+        try:
+            self.content = SubredditContent.from_name(
+                self.reddit, name, self.loader, query=query)
+        except IndexError: # if there are no submissions
+            show_notification(self.stdscr, ['No results found'])
+        else:
+            self.nav = Navigator(self.content.get)
 
     @SubredditController.register('/')
     def prompt_subreddit(self):
-        """Open a prompt to type in a new subreddit"""
+        "Open a prompt to navigate to a different subreddit"
         prompt = 'Enter Subreddit: /r/'
         name = self.prompt_input(prompt)
         if name is not None:
             self.refresh_content(name=name)
-
-    def redditor_profile(self):
-        if self.reddit.is_logged_in():
-            try:
-                self.content = SubredditContent.from_redditor(
-                     self.reddit, self.loader)
-            except requests.HTTPError:
-                show_notification(self.stdscr, ['Could not reach subreddit'])
-        else:
-            show_notification(self.stdscr, ['Log in to view your submissions'])
 
     @SubredditController.register(curses.KEY_RIGHT, 'l')
     def open_submission(self):
@@ -110,19 +107,18 @@ class SubredditPage(BasePage):
 
     @SubredditController.register('p')
     def post_submission(self):
-        # Abort if user isn't logged in
+        "Post a new submission to the given subreddit"
+
         if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ['Login to reply'])
+            show_notification(self.stdscr, ['Not logged in'])
             return
 
-        subreddit = self.reddit.get_subreddit(self.content.name)
-
-        # Make sure it is a valid subreddit for submission
         # Strips the subreddit to just the name
+        # Make sure it is a valid subreddit for submission
+        subreddit = self.reddit.get_subreddit(self.content.name)
         sub = str(subreddit).split('/')[2]
-        if '+' in sub or sub == 'all' or sub == 'front':
-            message = 'Can\'t post to /r/{0}'.format(sub)
-            show_notification(self.stdscr, [message])
+        if '+' in sub or sub in ('all', 'front', 'me'):
+            show_notification(self.stdscr, ['Invalid subreddit'])
             return
 
         # Open the submission window
@@ -131,19 +127,22 @@ class SubredditPage(BasePage):
         submission_text = open_editor(submission_info)
         curses.doupdate()
 
-        # Abort if there is no content
+        # Validate the submission content
         if not submission_text:
             curses.flash()
             return
+
+        if '\n' not in submission_text:
+            show_notification(self.stdscr, ['No content'])
+            return
+
         try:
             title, content = submission_text.split('\n', 1)
             self.reddit.submit(sub, title, text=content)
-        except praw.errors.APIException as e:
-            show_notification(self.stdscr, [e.message])
-        except ValueError:
-            show_notification(self.stdscr, ['No post content! Post aborted.'])
+        except praw.errors.APIException:
+            curses.flash()
         else:
-            time.sleep(0.5)
+            time.sleep(2.0)
             self.refresh_content()
 
     @staticmethod

@@ -45,6 +45,9 @@ def load_config():
     if config.has_section('rtv'):
         defaults = dict(config.items('rtv'))
 
+    if 'unicode' in defaults:
+        defaults['unicode'] = config.getboolean('rtv', 'unicode')
+
     return defaults
 
 
