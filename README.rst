@@ -10,7 +10,9 @@ RTV is an application that allows you to view and interact with reddit from your
 RTV is built in **python** using the **curses** library.
 
 ---------------
+
 |pypi| |python|
+
 ---------------
 
 * `Installation`_
