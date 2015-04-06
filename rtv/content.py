@@ -240,13 +240,10 @@ class SubredditContent(BaseContent):
             self.get(0)
         except (praw.errors.APIException, requests.HTTPError,
                 praw.errors.RedirectException):
-            raise SubredditError(display_name)
+            raise SubredditError(name)
 
     @classmethod
     def from_name(cls, reddit, name, loader, order='hot', query=None):
-
-        if order not in ['hot', 'top', 'rising', 'new', 'controversial']:
-            raise SubredditError(display_name)
 
         name = name.strip(' /')  # Strip leading and trailing backslashes
         if name.startswith('r/'):
@@ -259,6 +256,9 @@ class SubredditContent(BaseContent):
         display_name = display_name = '/r/{}'.format(name)
         if order != 'hot':
             display_name += '/{}'.format(order)
+
+        if order not in ['hot', 'top', 'rising', 'new', 'controversial']:
+            raise SubredditError(name)
 
         if name == 'me':
             if not reddit.is_logged_in():
