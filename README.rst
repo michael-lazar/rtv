@@ -6,23 +6,28 @@
     :target: https://pypi.python.org/pypi/rtv/
     :alt: Supported Python versions
 
+
 ======================
 Reddit Terminal Viewer
 ======================
 
 Browse Reddit from your terminal
 
+1. `Overview`_
+2. `Installation`_
+3. `Configuration`_
+4. `Usage`_
+5. `Changelog`_
+
+
+--------
+Overview
+--------
+
 .. image:: http://i.imgur.com/W1hxqCt.png
 
 RTV is built in **python** using the **curses** library, and is compatible with *most* terminal emulators on Linux and OS X.
 
--------------
-Update (v1.1)
--------------
-
-Users can now post comments!
-
-.. image:: http://i.imgur.com/twls7iM.png
 
 ------------
 Installation
@@ -48,6 +53,44 @@ The installation will place a script in the system path
 
    $ rtv
    $ rtv --help
+
+
+-------------
+Configuration
+-------------
+
+RTV will read a configuration file located at ``$XDG_CONFIG_HOME/rtv/rtv.cfg`` or ``~/.config/rtv/rtv.cfg`` if ``$XDG_CONFIG_HOME`` is not set.
+This can be used to avoid having to re-enter login credentials every time the program is launched.
+Each line in the file will replace the corresponding default argument in the launch script.
+
+Example config:
+
+.. code-block:: ini
+
+  [rtv]
+  username=MyUsername
+  password=MySecretPassword
+
+  # Log file location
+  log=/tmp/rtv.log
+
+  # Default subreddit
+  subreddit=CollegeBasketball
+
+  # Default submission link - will be opened every time the program starts
+  # link=http://www.reddit.com/r/CollegeBasketball/comments/31irjq
+
+  # Enable unicode characters (experimental)
+  # This is known to be unstable with east asian wide character sets
+  # unicode=true
+
+RTV allows users to compose comments and replys using their preferred text editor (**vi**, **nano**, **gedit**, etc).
+Set the environment variable ``RTV_EDITOR`` to specify which editor the program should use.
+
+.. code-block:: bash
+
+   $ export RTV_EDITOR=gedit
+
 
 -----
 Usage 
@@ -90,38 +133,22 @@ In submission mode you can view the self text for a submission and browse commen
 :``►`` or ``l``: Fold the selected comment, or load additional comments
 :``c``: Post a new comment on the selected item
 
--------------
-Configuration
--------------
 
-RTV will read a configuration file located at ``$XDG_CONFIG_HOME/rtv/rtv.cfg`` or ``~/.config/rtv/rtv.cfg`` if ``$XDG_CONFIG_HOME`` is not set.
-This can be used to avoid having to re-enter login credentials every time the program is launched.
-Each line in the file will replace the corresponding default argument in the launch script.
+=========
+Changelog
+=========
+---
+1.2
+---
+* Post submissions with the `p` command in subreddit mode.
+* View your submissions on `/r/me`.
+* Gilded comments and posts are denoted with ✪.
+* New config file location (`~/.config/rtv/rtv.cfg`).
+* Login and logout with the `u` key.
+* Search the subreddit with the `f` key
+* Links may be opened with `ENTER` or `o`.
 
-Example config:
-
-.. code-block:: ini
-
-  [rtv]
-  username=MyUsername
-  password=MySecretPassword
-
-  # Log file location
-  log=/tmp/rtv.log
-
-  # Default subreddit
-  subreddit=CollegeBasketball
-
-  # Default submission link - will be opened every time the program starts
-  # link=http://www.reddit.com/r/CollegeBasketball/comments/31irjq
-
-  # Enable unicode characters (experimental)
-  # This is known to be unstable with east asian wide character sets
-  # unicode=true
-
-RTV allows users to compose comments and replys using their preferred text editor (**vi**, **nano**, **gedit**, etc).
-Set the environment variable ``RTV_EDITOR`` to specify which editor the program should use.
-
-.. code-block:: bash
-
-   $ export RTV_EDITOR=gedit
+---
+1.1
+---
+* Post comments using your text editor.
