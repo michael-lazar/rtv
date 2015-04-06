@@ -261,7 +261,7 @@ class SubredditContent(BaseContent):
             display_name += '/{}'.format(order)
 
         if name == 'me':
-            if not self.reddit.is_logged_in():
+            if not reddit.is_logged_in():
                 raise AccountError
             else:
                 submissions = reddit.user.get_submitted(sort=order)

@@ -1,5 +1,7 @@
 import curses
 import time
+import logging
+
 import requests
 import praw
 
@@ -13,6 +15,8 @@ from .curses_helpers import (BULLET, UARROW, DARROW, GOLD, Color,
                              LoadScreen, show_notification)
 
 __all__ = ['opened_links', 'SubredditController', 'SubredditPage']
+
+_logger = logging.getLogger(__name__)
 
 # Used to keep track of browsing history across the current session
 opened_links = set()
@@ -62,7 +66,7 @@ class SubredditPage(BasePage):
         "Open a prompt to search the given subreddit"
 
         name = name or self.content.name
-        prompt = 'Search:'
+        prompt = 'Search {}:'.format(name)
         query = self.prompt_input(prompt)
         if query is None:
             return
@@ -110,7 +114,7 @@ class SubredditPage(BasePage):
         "Post a new submission to the given subreddit"
 
         if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ['Not logged in'])
+            show_notification(self.stdscr, ['Login to post'])
             return
 
         # Strips the subreddit to just the name
@@ -129,7 +133,7 @@ class SubredditPage(BasePage):
 
         # Validate the submission content
         if not submission_text:
-            curses.flash()
+            show_notification(self.stdscr, ['Post canceled'])
             return
 
         if '\n' not in submission_text:
@@ -139,10 +143,16 @@ class SubredditPage(BasePage):
         try:
             title, content = submission_text.split('\n', 1)
             self.reddit.submit(sub, title, text=content)
-        except praw.errors.APIException:
-            curses.flash()
+        except praw.errors.APIException as e:
+            message = ['Error: {}'.format(e.error_type), e.message]
+            show_notification(self.stdscr, message)
+            _logger.exception(e)
+        except requests.HTTPError as e:
+            show_notification(self.stdscr, ['Unexpected Error'])
+            _logger.exception(e)
         else:
-            time.sleep(2.0)
+            with self.loader(delay=0, message='Posting'):
+                time.sleep(2.0)
             self.refresh_content()
 
     @staticmethod

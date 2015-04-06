@@ -1,6 +1,7 @@
 import curses
 import sys
 import time
+import logging
 
 import praw.errors
 
@@ -13,6 +14,7 @@ from .docs import COMMENT_FILE
 
 __all__ = ['SubmissionController', 'SubmissionPage']
 
+_logger = logging.getLogger(__name__)
 
 class SubmissionController(BaseController):
     character_map = {}
@@ -87,7 +89,7 @@ class SubmissionPage(BasePage):
         """
 
         if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ['Not logged in'])
+            show_notification(self.stdscr, ['Login to post'])
             return
 
         data = self.content.get(self.nav.absolute_index)
@@ -110,7 +112,7 @@ class SubmissionPage(BasePage):
         comment_text = open_editor(comment_info)
         curses.doupdate()
         if not comment_text:
-            curses.flash()
+            show_notification(self.stdscr, ['Comment canceled'])
             return
 
         try:
@@ -119,9 +121,15 @@ class SubmissionPage(BasePage):
             else:
                 data['object'].reply(comment_text)
         except praw.errors.APIException:
-            curses.flash()
+            message = ['Error: {}'.format(e.error_type), e.message]
+            show_notification(self.stdscr, message)
+            _logger.exception(e)
+        except requests.HTTPError as e:
+            show_notification(self.stdscr, ['Unexpected Error'])
+            _logger.exception(e)
         else:
-            time.sleep(2.0)
+            with self.loader(delay=0, message='Posting'):
+                time.sleep(2.0)
             self.refresh_content()
 
     def draw_item(self, win, data, inverted=False):

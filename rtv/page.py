@@ -244,11 +244,12 @@ class BasePage(object):
             return
 
         try:
-            self.reddit.login(username, password)
+            with self.loader():
+                self.reddit.login(username, password)
         except praw.errors.InvalidUserPass:
             show_notification(self.stdscr, ['Invalid user/pass'])
         else:
-            show_notification(self.stdscr, ['Logged in'])
+            show_notification(self.stdscr, ['Welcome {}'.format(username)])
 
     def logout(self):
         "Prompt to log out of the user's account."
