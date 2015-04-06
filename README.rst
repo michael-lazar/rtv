@@ -137,27 +137,33 @@ In submission mode you can view the self text for a submission and browse commen
 =========
 Changelog
 =========
+.. _@michael-lazar: http://github.com/michael-lazar
+.. _@Brobin: http://github.com/Brobin
+.. _@yskmt: http://github.com/yskmt
+.. _@Ram-Z: http://github.com/Ram-Z
+.. _@a-tal: http://github.com/a-tal
+
 ---
 1.2
 ---
 Features
 
-* Added user login / logout with the `u` key. @yskmt
-* Added subreddit searching with the `f` key. @Brobin
-* Added submission posting with the `p` key. @Brobin
-* Added viewing of user submissions with `/r/me`. @Brobin
-* Program title now displays in the terminal window. @Brobin
-* Gold symbols now display on guilded comments and posts. @Brobin
-* Moved default config location to XDG_CONFIG_HOME. @Ram-Z
+* Added user login / logout with the `u` key. `@yskmt`_
+* Added subreddit searching with the `f` key. `@Brobin`_
+* Added submission posting with the `p` key. `@Brobin`_
+* Added viewing of user submissions with `/r/me`. `@Brobin`_
+* Program title now displays in the terminal window. `@Brobin`_
+* Gold symbols now display on guilded comments and posts. `@Brobin`_
+* Moved default config location to XDG_CONFIG_HOME. `@Ram-Z`_
 
 Bugfixes
 
-* Improved error handling for submission / comment posts.
-* Fixed handling of unicode flairs
-* Improved displaying of the help message and selfposts on small terminal windows.
-* The author's name now correctly highlights in submissions @Brobin
-* Corrected user agent formatting. @a-tal
-* Various minor bugfixes
+* Improved error handling for submission / comment posts. `@michael-lazar`_
+* Fixed handling of unicode flairs. `@michael-lazar`_
+* Improved displaying of the help message and selfposts on small terminal windows. `@michael-lazar`_
+* The author's name now correctly highlights in submissions `@Brobin`_
+* Corrected user agent formatting. `@a-tal`_
+* Various minor bugfixes. `@michael-lazar`_
 
 ---
 1.1
