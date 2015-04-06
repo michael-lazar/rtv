@@ -16,9 +16,6 @@ RTV is built in **python** using the **curses** library.
 * `Installation`_
 * `Configuration`_
 * `Usage`_
-   * `Global Commands`_
-   * `Subreddit Mode`_
-   * `Submission Mode`_
 * `Changelog`_
 * `Contributors`_
 * `License`_
