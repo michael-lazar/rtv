@@ -257,22 +257,24 @@ class BasePage(object):
         Delete a submission or comment.
         """
         data = self.content.get(self.nav.absolute_index)
-        if data['author'] == self.reddit.user.name:
-            prompt = 'Are you sure you want to delete this? (y/n):'
-            char = self.prompt_input(prompt)
-            if char == 'y':
-                try:
-                    data['object'].delete()
-                    show_notification(self.stdscr, ['Deleted'])
-                except praw.errors.APIException as e:
-                    show_notification(self.stdscr, [e.message])
-                else:
-                    time.sleep(0.5)
-                    self.refresh_content()
-            else:
-                show_notification(self.stdscr, ['Delete cancelled'])
-        else:
+        if data['author'] != self.reddit.user.name:
             show_notification(self.stdscr, ['You can\'t delete this'])
+            return
+
+        prompt = 'Are you sure you want to delete this? (y/n):'
+        char = self.prompt_input(prompt)
+        if char != 'y':
+            show_notification(self.stdscr, ['Delete cancelled'])
+            return
+
+        try:
+            data['object'].delete()
+            show_notification(self.stdscr, ['Deleted'])
+        except praw.errors.APIException as e:
+            show_notification(self.stdscr, [e.message])
+        else:
+            time.sleep(0.5)
+            self.refresh_content()
 
     def logout(self):
         "Prompt to log out of the user's account."
