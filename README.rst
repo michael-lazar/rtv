@@ -11,7 +11,7 @@ RTV is built in **python** using the **curses** library.
 
 ---------------
 
-|pypi| |python|
+|pypi| |python| |downloads|
 
 ---------------
 
@@ -151,10 +151,14 @@ License
 Please see `LICENSE <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_.
 
 
-.. |python| image:: https://pypip.in/py_versions/rtv/badge.svg?style=flat
+.. |python| image:: https://pypip.in/py_versions/rtv/badge.svg?style=flat-square
     :target: https://pypi.python.org/pypi/rtv/
     :alt: Supported Python versions
 
-.. |pypi| image:: https://pypip.in/version/rtv/badge.svg?text=version&style=flat
+.. |pypi| image:: https://pypip.in/version/rtv/badge.svg?text=version&style=flat-square
     :target: https://pypi.python.org/pypi/rtv/
     :alt: Latest Version
+    
+.. |downloads| image:: https://pypip.in/download/rtv/badge.svg?period=month&style=flat-square
+    :target: https://pypi.python.org/pypi/rtv/
+    :alt: Downloads
