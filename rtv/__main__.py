@@ -112,7 +112,8 @@ def main():
             if args.link:
                 page = SubmissionPage(stdscr, reddit, url=args.link)
                 page.loop()
-            page = SubredditPage(stdscr, reddit, args.subreddit)
+            subreddit = args.subreddit or 'front'
+            page = SubredditPage(stdscr, reddit, subreddit)
             page.loop()
     except praw.errors.InvalidUserPass:
         print('Invalid password for username: {}'.format(args.username))
