@@ -257,9 +257,15 @@ class BasePage(object):
         """
         Delete a submission or comment.
         """
-        data = self.content.get(self.nav.absolute_index)
-        if data['author'] != self.reddit.user.name:
-            show_notification(self.stdscr, ['You can\'t delete this'])
+        if not self.reddit.is_logged_in():
+            show_notification(self.stdscr, ['Login to delete'])
+            return
+
+        try:
+            data = self.content.get(self.nav.absolute_index)
+            if data['author'] != self.reddit.user.name:
+                return
+        except KeyError:
             return
 
         prompt = 'Are you sure you want to delete this? (y/n):'
@@ -282,9 +288,15 @@ class BasePage(object):
         """
         Edit a submission or comment.
         """
-        data = self.content.get(self.nav.absolute_index)
-        if data['author'] != self.reddit.user.name:
-            show_notification(self.stdscr, ['You can\'t edit this'])
+        if not self.reddit.is_logged_in():
+            show_notification(self.stdscr, ['Login to edit'])
+            return
+
+        try:
+            data = self.content.get(self.nav.absolute_index)
+            if data['author'] != self.reddit.user.name:
+                return
+        except KeyError:
             return
 
         if data['type'] == 'Submission':
