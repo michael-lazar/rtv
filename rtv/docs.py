@@ -64,7 +64,7 @@ COMMENT_EDIT_FILE = """{content}
 # Editing your comment
 """
 
-SUBMISSION_FILE = """
+SUBMISSION_FILE = """{content}
 # Please enter your submission. Lines starting with '#' will be ignored,
 # and an empty field aborts the submission.
 #

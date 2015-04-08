@@ -302,7 +302,7 @@ class BasePage(object):
         if data['type'] == 'Submission':
             subreddit = self.reddit.get_subreddit(self.content.name)
             sub = str(subreddit).split('/')[2]
-            sub_file = '{content}' + SUBMISSION_FILE
+            sub_file = SUBMISSION_FILE
             content = data['text']
             info = sub_file.format(content=content, name=sub)
 
