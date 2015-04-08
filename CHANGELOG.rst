@@ -2,8 +2,20 @@
 RTV Changelog
 =============
 
+.. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+------------------
+1.2.2_ (2015-04-07
+------------------
+Bugfixes
+
+* Fixed default subreddit not being set.
+
+Documentation
+
+* Added changelog and contributor links to the README.
 
 -------------------
 1.2.1_ (2015-04-06)
