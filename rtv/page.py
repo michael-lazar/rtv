@@ -1,12 +1,13 @@
 import curses
+import time
 import six
 import sys
 
 import praw.errors
 
-from .helpers import clean
+from .helpers import clean, open_editor
 from .curses_helpers import Color, show_notification, show_help, text_input
-from .docs import AGENT
+from .docs import AGENT, COMMENT_EDIT_FILE, SUBMISSION_FILE
 
 __all__ = ['Navigator']
 
@@ -250,6 +251,82 @@ class BasePage(object):
             show_notification(self.stdscr, ['Invalid user/pass'])
         else:
             show_notification(self.stdscr, ['Welcome {}'.format(username)])
+
+    @BaseController.register('d')
+    def delete(self):
+        """
+        Delete a submission or comment.
+        """
+        if not self.reddit.is_logged_in():
+            show_notification(self.stdscr, ['Login to delete'])
+            return
+
+        try:
+            data = self.content.get(self.nav.absolute_index)
+            if data['author'] != self.reddit.user.name:
+                return
+        except KeyError:
+            return
+
+        prompt = 'Are you sure you want to delete this? (y/n):'
+        char = self.prompt_input(prompt)
+        if char != 'y':
+            show_notification(self.stdscr, ['Delete cancelled'])
+            return
+
+        try:
+            data['object'].delete()
+            show_notification(self.stdscr, ['Deleted'])
+        except praw.errors.APIException as e:
+            show_notification(self.stdscr, [e.message])
+        else:
+            time.sleep(0.5)
+            self.refresh_content()
+
+    @BaseController.register('e')
+    def edit(self):
+        """
+        Edit a submission or comment.
+        """
+        if not self.reddit.is_logged_in():
+            show_notification(self.stdscr, ['Login to edit'])
+            return
+
+        try:
+            data = self.content.get(self.nav.absolute_index)
+            if data['author'] != self.reddit.user.name:
+                return
+        except KeyError:
+            return
+
+        if data['type'] == 'Submission':
+            subreddit = self.reddit.get_subreddit(self.content.name)
+            sub = str(subreddit).split('/')[2]
+            sub_file = SUBMISSION_FILE
+            content = data['text']
+            info = sub_file.format(content=content, name=sub)
+
+        elif data['type'] == 'Comment':
+            content = data['body']
+            info = COMMENT_EDIT_FILE.format(content=content)
+        else:
+            curses.flash()
+            return
+
+        curses.endwin()
+        text = open_editor(info)
+        curses.doupdate()
+
+        if text == content:
+            return
+
+        try:
+            data['object'].edit(text)
+        except praw.errors.APIException as e:
+            show_notification(self.stdscr, [e.message])
+        else:
+            time.sleep(0.5)
+            self.refresh_content()
 
     def logout(self):
         "Prompt to log out of the user's account."
