@@ -84,6 +84,35 @@ class Navigator(object):
 
         return valid, redraw
 
+    def move_page(self, direction, n_windows):
+        """Move the page and cursor down (positive direction) or up (negative
+        direction)"""
+
+        # top of submission page: act as normal move
+        if self.absolute_index < 0:
+            valid, redraw = self.move(direction, n_windows)
+        else:
+            # first page
+            if self.absolute_index < n_windows and direction < 0:
+                self.page_index = -1
+                self.cursor_index = 0
+                self.inverted = False
+
+                # not submission mode: starting index is 0
+                if not self._is_valid(self.absolute_index):
+                    self.page_index = 0
+                
+                valid = True
+            else:
+                self.page_index += n_windows*direction
+                valid = self._is_valid(self.absolute_index)
+                if not valid:
+                    self.page_index -= n_windows*direction
+
+            redraw = True
+
+        return valid, redraw
+            
     def flip(self, n_windows):
         "Flip the orientation of the page"
 
@@ -384,29 +413,8 @@ class BasePage(object):
         self._remove_cursor()
 
         if page_ud:
-
-            # top of submission page:  act as normal move
-            if self.nav.absolute_index < 0:
-                valid, redraw = self.nav.move(direction, len(self._subwindows))
-            # top of submission comment: go back to the title
-            elif self.nav.absolute_index == 0 and direction < 0:
-                valid, redraw = self.nav.move(direction, len(self._subwindows))
-            else:
-                # first page: goes up to the top
-                if self.nav.absolute_index < len(self._subwindows)\
-                   and direction < 0:
-                    self.nav.page_index = 0
-                    self.nav.cursor_index = 0
-                    self.nav.inverted = False
-                    valid = True
-                else:
-                    self.nav.page_index += len(self._subwindows)*direction
-                    valid = self.nav._is_valid(self.nav.absolute_index)
-                    if not valid:
-                        self.nav.page_index -= len(self._subwindows)*direction
-
-                redraw = True
-                
+            valid, redraw = self.nav.move_page(direction,
+                                               len(self._subwindows))
         else:
             valid, redraw = self.nav.move(direction, len(self._subwindows))
 
