@@ -2,15 +2,17 @@ import curses
 import time
 import six
 import sys
+import logging
 
 import praw.errors
 
 from .helpers import clean, open_editor
 from .curses_helpers import Color, show_notification, show_help, text_input
-from .docs import AGENT, COMMENT_EDIT_FILE, SUBMISSION_FILE
+from .docs import COMMENT_EDIT_FILE, SUBMISSION_FILE
 
-__all__ = ['Navigator']
+__all__ = ['Navigator', 'BaseController', 'BasePage']
 
+_logger = logging.getLogger(__name__)
 
 class Navigator(object):
     """
@@ -261,26 +263,29 @@ class BasePage(object):
             show_notification(self.stdscr, ['Login to delete'])
             return
 
-        try:
-            data = self.content.get(self.nav.absolute_index)
-            if data['author'] != self.reddit.user.name:
-                return
-        except KeyError:
+        data = self.content.get(self.nav.absolute_index)
+        if data.get('author') != self.reddit.user.name:
+            curses.flash()
             return
 
         prompt = 'Are you sure you want to delete this? (y/n):'
         char = self.prompt_input(prompt)
         if char != 'y':
-            show_notification(self.stdscr, ['Delete cancelled'])
+            show_notification(self.stdscr, ['Delete canceled'])
             return
 
         try:
             data['object'].delete()
-            show_notification(self.stdscr, ['Deleted'])
         except praw.errors.APIException as e:
-            show_notification(self.stdscr, [e.message])
+            message = ['Error: {}'.format(e.error_type), e.message]
+            show_notification(self.stdscr, message)
+            _logger.exception(e)
+        except requests.HTTPError as e:
+            show_notification(self.stdscr, ['Unexpected Error'])
+            _logger.exception(e)
         else:
-            time.sleep(0.5)
+            with self.loader(delay=0, message='Deleting'):
+                time.sleep(2.0)
             self.refresh_content()
 
     @BaseController.register('e')
@@ -292,20 +297,15 @@ class BasePage(object):
             show_notification(self.stdscr, ['Login to edit'])
             return
 
-        try:
-            data = self.content.get(self.nav.absolute_index)
-            if data['author'] != self.reddit.user.name:
-                return
-        except KeyError:
+        data = self.content.get(self.nav.absolute_index)
+        if data.get('author') != self.reddit.user.name:
+            curses.flash()
             return
 
         if data['type'] == 'Submission':
             subreddit = self.reddit.get_subreddit(self.content.name)
-            sub = str(subreddit).split('/')[2]
-            sub_file = SUBMISSION_FILE
             content = data['text']
-            info = sub_file.format(content=content, name=sub)
-
+            info = SUBMISSION_FILE.format(content=content, name=subreddit)
         elif data['type'] == 'Comment':
             content = data['body']
             info = COMMENT_EDIT_FILE.format(content=content)
@@ -318,14 +318,21 @@ class BasePage(object):
         curses.doupdate()
 
         if text == content:
+            show_notification(self.stdscr, ['Edit canceled'])
             return
 
         try:
             data['object'].edit(text)
         except praw.errors.APIException as e:
-            show_notification(self.stdscr, [e.message])
+            message = ['Error: {}'.format(e.error_type), e.message]
+            show_notification(self.stdscr, message)
+            _logger.exception(e)
+        except requests.HTTPError as e:
+            show_notification(self.stdscr, ['Unexpected Error'])
+            _logger.exception(e)
         else:
-            time.sleep(0.5)
+            with self.loader(delay=0, message='Posting'):
+                time.sleep(2.0)
             self.refresh_content()
 
     def logout(self):

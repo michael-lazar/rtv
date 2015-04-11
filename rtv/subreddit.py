@@ -126,7 +126,7 @@ class SubredditPage(BasePage):
             return
 
         # Open the submission window
-        submission_info = SUBMISSION_FILE.format(name=sub, content='')
+        submission_info = SUBMISSION_FILE.format(name=subreddit, content='')
         curses.endwin()
         submission_text = open_editor(submission_info)
         curses.doupdate()

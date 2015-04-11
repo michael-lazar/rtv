@@ -1,7 +1,7 @@
 from .__version__ import __version__
 
 __all__ = ['AGENT', 'SUMMARY', 'AUTH', 'CONTROLS', 'HELP', 'COMMENT_FILE',
-           'SUBMISSION_FILE']
+           'SUBMISSION_FILE', 'COMMENT_EDIT_FILE']
 
 AGENT = """\
 desktop:https://github.com/michael-lazar/rtv:{} (by /u/civilization_phaze_3)\
@@ -71,5 +71,5 @@ SUBMISSION_FILE = """{content}
 # The first line will be interpreted as the title
 # The following lines will be interpreted as the content
 #
-# Posting to /r/{name}
+# Posting to {name}
 """
