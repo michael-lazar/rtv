@@ -188,6 +188,16 @@ class BasePage(object):
         self._move_cursor(1)
         self.clear_input_queue()
 
+    @BaseController.register('m')
+    def move_cursor_page_down(self):
+        self._move_cursor(1, page_ud=True)
+        self.clear_input_queue()
+
+    @BaseController.register('n')
+    def move_cursor_page_up(self):
+        self._move_cursor(-1, page_ud=True)
+        self.clear_input_queue()
+        
     def clear_input_queue(self):
         "Clear excessive input caused by the scroll wheel or holding down a key"
 
@@ -369,11 +379,37 @@ class BasePage(object):
     def _remove_cursor(self):
         self._edit_cursor(curses.A_NORMAL)
 
-    def _move_cursor(self, direction):
+    def _move_cursor(self, direction, page_ud=False):
 
         self._remove_cursor()
 
-        valid, redraw = self.nav.move(direction, len(self._subwindows))
+        if page_ud:
+
+            # top of submission page:  act as normal move
+            if self.nav.absolute_index < 0:
+                valid, redraw = self.nav.move(direction, len(self._subwindows))
+            # top of submission comment: go back to the title
+            elif self.nav.absolute_index == 0 and direction < 0:
+                valid, redraw = self.nav.move(direction, len(self._subwindows))
+            else:
+                # first page: goes up to the top
+                if self.nav.absolute_index < len(self._subwindows)\
+                   and direction < 0:
+                    self.nav.page_index = 0
+                    self.nav.cursor_index = 0
+                    self.nav.inverted = False
+                    valid = True
+                else:
+                    self.nav.page_index += len(self._subwindows)*direction
+                    valid = self.nav._is_valid(self.nav.absolute_index)
+                    if not valid:
+                        self.nav.page_index -= len(self._subwindows)*direction
+
+                redraw = True
+                
+        else:
+            valid, redraw = self.nav.move(direction, len(self._subwindows))
+
         if not valid:
             curses.flash()
 
