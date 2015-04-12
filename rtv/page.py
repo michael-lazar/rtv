@@ -274,7 +274,7 @@ class BasePage(object):
         prompt = 'Are you sure you want to delete this? (y/n):'
         char = prompt_input(self.stdscr, prompt)
         if char != 'y':
-            show_notification(self.stdscr, ['Canceled'])
+            show_notification(self.stdscr, ['Aborted'])
             return
 
         with self.safe_call():
@@ -313,12 +313,12 @@ class BasePage(object):
         text = open_editor(info)
         curses.doupdate()
         if text == content:
-            show_notification(self.stdscr, ['Canceled'])
+            show_notification(self.stdscr, ['Aborted'])
             return
 
         with self.safe_call():
             with self.loader(message='Editing', delay=0):
-                data['object'].edit()
+                data['object'].edit(text)
                 time.sleep(2.0)
                 self.refresh_content()
 

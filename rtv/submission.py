@@ -112,7 +112,7 @@ class SubmissionPage(BasePage):
         comment_text = open_editor(comment_info)
         curses.doupdate()
         if not comment_text:
-            show_notification(self.stdscr, ['Canceled'])
+            show_notification(self.stdscr, ['Aborted'])
             return
 
         with self.safe_call():

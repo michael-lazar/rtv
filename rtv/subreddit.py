@@ -132,8 +132,11 @@ class SubredditPage(BasePage):
         curses.doupdate()
 
         # Validate the submission content
-        if not submission_text or '\n' not in submission_text:
-            show_notification(self.stdscr, ['Canceled'])
+        if not submission_text:
+            show_notification(self.stdscr, ['Aborted'])
+            return
+        if '\n' not in submission_text:
+            show_notification(self.stdscr, ['No content'])
             return
 
         title, content = submission_text.split('\n', 1)
