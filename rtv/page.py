@@ -85,7 +85,7 @@ class Navigator(object):
         return valid, redraw
 
     def move_page(self, direction, n_windows):
-        """Move the page and cursor down (positive direction) or up (negative
+        """Move the page down (positive direction) or up (negative
         direction)"""
 
         # top of submission page: act as normal move
@@ -101,18 +101,26 @@ class Navigator(object):
                 # not submission mode: starting index is 0
                 if not self._is_valid(self.absolute_index):
                     self.page_index = 0
-                
                 valid = True
             else:
-                self.page_index += n_windows*direction
-                valid = self._is_valid(self.absolute_index)
-                if not valid:
-                    self.page_index -= n_windows*direction
+                valid = False
+                adj = 0
+                # check if reached the bottom
+                while not valid:
+                    n_move = n_windows-adj
+                    if n_move == 0:
+                        break
+
+                    self.page_index += n_move*direction
+                    valid = self._is_valid(self.absolute_index)
+                    if not valid:
+                        self.page_index -= n_move*direction
+                        adj += 1
 
             redraw = True
 
         return valid, redraw
-            
+
     def flip(self, n_windows):
         "Flip the orientation of the page"
 
@@ -431,6 +439,10 @@ class BasePage(object):
         # Don't allow the cursor to go below page index 0
         if self.nav.absolute_index < 0:
             return
+
+        # Don't allow the cursor to go over the subwindow number
+        if self.nav.cursor_index >= len(self._subwindows):
+            self.nav.cursor_index = len(self._subwindows)-1
 
         window, attr = self._subwindows[self.nav.cursor_index]
         if attr is not None:
