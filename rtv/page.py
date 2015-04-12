@@ -3,11 +3,14 @@ import time
 import six
 import sys
 import logging
+from contextlib import contextmanager
 
 import praw.errors
+import requests
 
 from .helpers import clean, open_editor
-from .curses_helpers import Color, show_notification, show_help, text_input
+from .curses_helpers import (Color, show_notification, show_help, text_input,
+                             prompt_input)
 from .docs import COMMENT_EDIT_FILE, SUBMISSION_FILE
 
 __all__ = ['Navigator', 'BaseController', 'BasePage']
@@ -173,6 +176,13 @@ class BasePage(object):
         self._content_window = None
         self._subwindows = None
 
+    def refresh_content(self):
+        raise NotImplementedError
+
+    @staticmethod
+    def draw_item(window, data, inverted):
+        raise NotImplementedError
+
     @BaseController.register('q')
     def exit(self):
         sys.exit()
@@ -190,14 +200,6 @@ class BasePage(object):
     def move_cursor_down(self):
         self._move_cursor(1)
         self.clear_input_queue()
-
-    def clear_input_queue(self):
-        "Clear excessive input caused by the scroll wheel or holding down a key"
-
-        self.stdscr.nodelay(1)
-        while self.stdscr.getch() != -1:
-            continue
-        self.stdscr.nodelay(0)
 
     @BaseController.register('a')
     def upvote(self):
@@ -240,14 +242,14 @@ class BasePage(object):
             self.logout()
             return
 
-        username = self.prompt_input('Enter username:')
-        password = self.prompt_input('Enter password:', hide=True)
+        username = prompt_input(self.stdscr, 'Enter username:')
+        password = prompt_input(self.stdscr, 'Enter password:', hide=True)
         if not username or not password:
             curses.flash()
             return
 
         try:
-            with self.loader():
+            with self.loader(message='Logging in'):
                 self.reddit.login(username, password)
         except praw.errors.InvalidUserPass:
             show_notification(self.stdscr, ['Invalid user/pass'])
@@ -259,8 +261,9 @@ class BasePage(object):
         """
         Delete a submission or comment.
         """
+
         if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ['Login to delete'])
+            show_notification(self.stdscr, ['Not logged in'])
             return
 
         data = self.content.get(self.nav.absolute_index)
@@ -269,32 +272,25 @@ class BasePage(object):
             return
 
         prompt = 'Are you sure you want to delete this? (y/n):'
-        char = self.prompt_input(prompt)
+        char = prompt_input(self.stdscr, prompt)
         if char != 'y':
-            show_notification(self.stdscr, ['Delete canceled'])
+            show_notification(self.stdscr, ['Canceled'])
             return
 
-        try:
-            data['object'].delete()
-        except praw.errors.APIException as e:
-            message = ['Error: {}'.format(e.error_type), e.message]
-            show_notification(self.stdscr, message)
-            _logger.exception(e)
-        except requests.HTTPError as e:
-            show_notification(self.stdscr, ['Unexpected Error'])
-            _logger.exception(e)
-        else:
-            with self.loader(delay=0, message='Deleting'):
+        with self.safe_call():
+            with self.loader(message='Deleting', delay=0):
+                data['object'].delete()
                 time.sleep(2.0)
-            self.refresh_content()
+                self.refresh_content()
 
     @BaseController.register('e')
     def edit(self):
         """
         Edit a submission or comment.
         """
+
         if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ['Login to edit'])
+            show_notification(self.stdscr, ['Not logged in'])
             return
 
         data = self.content.get(self.nav.absolute_index)
@@ -316,54 +312,69 @@ class BasePage(object):
         curses.endwin()
         text = open_editor(info)
         curses.doupdate()
-
         if text == content:
-            show_notification(self.stdscr, ['Edit canceled'])
+            show_notification(self.stdscr, ['Canceled'])
             return
 
-        try:
-            data['object'].edit(text)
-        except praw.errors.APIException as e:
-            message = ['Error: {}'.format(e.error_type), e.message]
-            show_notification(self.stdscr, message)
-            _logger.exception(e)
-        except requests.HTTPError as e:
-            show_notification(self.stdscr, ['Unexpected Error'])
-            _logger.exception(e)
-        else:
-            with self.loader(delay=0, message='Posting'):
+        with self.safe_call():
+            with self.loader(message='Editing', delay=0):
+                data['object'].edit()
                 time.sleep(2.0)
-            self.refresh_content()
+                self.refresh_content()
+
+    def clear_input_queue(self):
+        "Clear excessive input caused by the scroll wheel or holding down a key"
+
+        self.stdscr.nodelay(1)
+        while self.stdscr.getch() != -1:
+            continue
+        self.stdscr.nodelay(0)
 
     def logout(self):
         "Prompt to log out of the user's account."
 
-        ch = self.prompt_input("Log out? (y/n):")
+        ch = prompt_input(self.stdscr, "Log out? (y/n):")
         if ch == 'y':
             self.reddit.clear_authentication()
             show_notification(self.stdscr, ['Logged out'])
         elif ch != 'n':
             curses.flash()
 
-    def prompt_input(self, prompt, hide=False):
-        "Prompt the user for input"
+    @contextmanager
+    def safe_call(self):
+        """
+        Wrap praw calls with extended error handling.
+        If a PRAW related error occurs inside of this context manager, a
+        notification will be displayed on the screen instead of the entire
+        application shutting down. This function will return a callback that
+        can be used to check the status of the call.
 
-        attr = curses.A_BOLD | Color.CYAN
-        n_rows, n_cols = self.stdscr.getmaxyx()
+        Usage:
+            #>>> with self.safe_call() as check_status:
+            #>>>     self.reddit.submit(...)
+            #>>> success = check_status()
+        """
 
-        if hide:
-            prompt += ' ' * (n_cols - len(prompt) - 1)
-            self.stdscr.addstr(n_rows-1, 0, prompt, attr)
-            out = self.stdscr.getstr(n_rows-1, 1)
+        success = None
+        check_status = lambda: success
+        try:
+            yield check_status
+        except praw.errors.APIException as e:
+            message = ['Error: {}'.format(e.error_type), e.message]
+            show_notification(self.stdscr, message)
+            _logger.exception(e)
+            success = False
+        except praw.errors.ClientException as e:
+            message = ['Error: Client Exception', e.message]
+            show_notification(self.stdscr, message)
+            _logger.exception(e)
+            success = False
+        except (requests.HTTPError, requests.ConnectionError) as e:
+            show_notification(self.stdscr, ['Unexpected Error'])
+            _logger.exception(e)
+            success = False
         else:
-            self.stdscr.addstr(n_rows - 1, 0, prompt, attr)
-            self.stdscr.refresh()
-            window = self.stdscr.derwin(1, n_cols - len(prompt),
-                                        n_rows - 1, len(prompt))
-            window.attrset(attr)
-            out = text_input(window)
-
-        return out
+            success = True
 
     def draw(self):
 
@@ -379,10 +390,6 @@ class BasePage(object):
         self._draw_header()
         self._draw_content()
         self._add_cursor()
-
-    @staticmethod
-    def draw_item(window, data, inverted):
-        raise NotImplementedError
 
     def _draw_header(self):
 

@@ -89,7 +89,7 @@ class SubmissionPage(BasePage):
         """
 
         if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ['Login to post'])
+            show_notification(self.stdscr, ['Not logged in'])
             return
 
         data = self.content.get(self.nav.absolute_index)
@@ -112,25 +112,26 @@ class SubmissionPage(BasePage):
         comment_text = open_editor(comment_info)
         curses.doupdate()
         if not comment_text:
-            show_notification(self.stdscr, ['Comment canceled'])
+            show_notification(self.stdscr, ['Canceled'])
             return
 
-        try:
-            if data['type'] == 'Submission':
-                data['object'].add_comment(comment_text)
-            else:
-                data['object'].reply(comment_text)
-        except praw.errors.APIException as e:
-            message = ['Error: {}'.format(e.error_type), e.message]
-            show_notification(self.stdscr, message)
-            _logger.exception(e)
-        except requests.HTTPError as e:
-            show_notification(self.stdscr, ['Unexpected Error'])
-            _logger.exception(e)
-        else:
-            with self.loader(delay=0, message='Posting'):
+        with self.safe_call():
+            with self.loader(message='Posting', delay=0):
+                if data['type'] == 'Submission':
+                    data['object'].add_comment(comment_text)
+                else:
+                    data['object'].reply(comment_text)
                 time.sleep(2.0)
-            self.refresh_content()
+                self.refresh_content()
+
+    @SubmissionController.register('d')
+    def delete_comment(self):
+        "Delete a comment as long as it is not the current submission"
+
+        if self.nav.absolute_index != -1:
+            self.delete()
+        else:
+            curses.flash()
 
     def draw_item(self, win, data, inverted=False):
 

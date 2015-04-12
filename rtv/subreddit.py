@@ -12,7 +12,7 @@ from .content import SubredditContent
 from .helpers import clean, open_browser, open_editor
 from .docs import SUBMISSION_FILE
 from .curses_helpers import (BULLET, UARROW, DARROW, GOLD, Color,
-                             LoadScreen, show_notification)
+                             LoadScreen, show_notification, prompt_input)
 
 __all__ = ['opened_links', 'SubredditController', 'SubredditPage']
 
@@ -67,7 +67,7 @@ class SubredditPage(BasePage):
 
         name = name or self.content.name
         prompt = 'Search {}:'.format(name)
-        query = self.prompt_input(prompt)
+        query = prompt_input(self.stdscr, prompt)
         if query is None:
             return
 
@@ -83,7 +83,7 @@ class SubredditPage(BasePage):
     def prompt_subreddit(self):
         "Open a prompt to navigate to a different subreddit"
         prompt = 'Enter Subreddit: /r/'
-        name = self.prompt_input(prompt)
+        name = prompt_input(self.stdscr, prompt)
         if name is not None:
             self.refresh_content(name=name)
 
@@ -114,7 +114,7 @@ class SubredditPage(BasePage):
         "Post a new submission to the given subreddit"
 
         if not self.reddit.is_logged_in():
-            show_notification(self.stdscr, ['Login to post'])
+            show_notification(self.stdscr, ['Not logged in'])
             return
 
         # Strips the subreddit to just the name
@@ -132,27 +132,20 @@ class SubredditPage(BasePage):
         curses.doupdate()
 
         # Validate the submission content
-        if not submission_text:
-            show_notification(self.stdscr, ['Post canceled'])
+        if not submission_text or '\n' not in submission_text:
+            show_notification(self.stdscr, ['Canceled'])
             return
 
-        if '\n' not in submission_text:
-            show_notification(self.stdscr, ['No content'])
-            return
-
-        try:
-            title, content = submission_text.split('\n', 1)
-            self.reddit.submit(sub, title, text=content)
-        except praw.errors.APIException as e:
-            message = ['Error: {}'.format(e.error_type), e.message]
-            show_notification(self.stdscr, message)
-            _logger.exception(e)
-        except requests.HTTPError as e:
-            show_notification(self.stdscr, ['Unexpected Error'])
-            _logger.exception(e)
-        else:
-            with self.loader(delay=0, message='Posting'):
+        title, content = submission_text.split('\n', 1)
+        with self.safe_call() as check_status:
+            with self.loader(message='Posting', delay=0):
+                post = self.reddit.submit(sub, title, text=content)
                 time.sleep(2.0)
+
+        if check_status():
+            # Open the newly created post
+            page = SubmissionPage(self.stdscr, self.reddit, submission=post)
+            page.loop()
             self.refresh_content()
 
     @staticmethod

@@ -10,7 +10,8 @@ from .helpers import strip_textpad
 from .exceptions import EscapeInterrupt
 
 __all__ = ['ESCAPE', 'UARROW', 'DARROW', 'BULLET', 'show_notification',
-           'show_help', 'LoadScreen', 'Color', 'text_input', 'curses_session']
+           'show_help', 'LoadScreen', 'Color', 'text_input', 'curses_session',
+           'prompt_input']
 
 ESCAPE = 27
 
@@ -233,6 +234,31 @@ def text_input(window, allow_resize=True):
 
     curses.curs_set(0)
     return strip_textpad(out)
+
+
+def prompt_input(window, prompt, hide=False):
+    """
+    Display a prompt where the user can enter text at the bottom of the screen
+
+    Set hide to True to make the input text invisible.
+    """
+
+    attr = curses.A_BOLD | Color.CYAN
+    n_rows, n_cols = window.getmaxyx()
+
+    if hide:
+        prompt += ' ' * (n_cols - len(prompt) - 1)
+        window.addstr(n_rows-1, 0, prompt, attr)
+        out = window.getstr(n_rows-1, 1)
+    else:
+        window.addstr(n_rows - 1, 0, prompt, attr)
+        window.refresh()
+        subwin = window.derwin(1, n_cols - len(prompt),
+                                   n_rows - 1, len(prompt))
+        subwin.attrset(attr)
+        out = text_input(subwin)
+
+    return out
 
 
 @contextmanager
