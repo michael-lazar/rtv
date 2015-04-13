@@ -115,14 +115,15 @@ class SubmissionPage(BasePage):
             show_notification(self.stdscr, ['Aborted'])
             return
 
-        with self.safe_call():
+        with self.safe_call as s:
             with self.loader(message='Posting', delay=0):
                 if data['type'] == 'Submission':
                     data['object'].add_comment(comment_text)
                 else:
                     data['object'].reply(comment_text)
                 time.sleep(2.0)
-                self.refresh_content()
+            s.catch = False
+            self.refresh_content()
 
     @SubmissionController.register('d')
     def delete_comment(self):

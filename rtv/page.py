@@ -107,6 +107,32 @@ class Navigator(object):
         else:
             return True
 
+class SafeCaller(object):
+
+    def __init__(self, window):
+        self.window = window
+        self.catch = True
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, e, exc_tb):
+
+        if self.catch:
+            if exc_type is praw.errors.APIException:
+                message = ['Error: {}'.format(e.error_type), e.message]
+                show_notification(self.window, message)
+                _logger.exception(e)
+                return True
+            elif exc_type is praw.errors.ClientException:
+                message = ['Error: Client Exception', e.message]
+                show_notification(self.window, message)
+                _logger.exception(e)
+                return True
+            elif exc_type in (requests.HTTPError, requests.ConnectionError):
+                show_notification(self.window, ['Unexpected Error'])
+                _logger.exception(e)
+                return True
 
 class BaseController(object):
     """
@@ -277,11 +303,12 @@ class BasePage(object):
             show_notification(self.stdscr, ['Aborted'])
             return
 
-        with self.safe_call():
+        with self.safe_call as s:
             with self.loader(message='Deleting', delay=0):
                 data['object'].delete()
                 time.sleep(2.0)
-                self.refresh_content()
+            s.catch = False
+            self.refresh_content()
 
     @BaseController.register('e')
     def edit(self):
@@ -316,11 +343,12 @@ class BasePage(object):
             show_notification(self.stdscr, ['Aborted'])
             return
 
-        with self.safe_call():
+        with self.safe_call as s:
             with self.loader(message='Editing', delay=0):
                 data['object'].edit(text)
                 time.sleep(2.0)
-                self.refresh_content()
+            s.catch = False
+            self.refresh_content()
 
     def clear_input_queue(self):
         "Clear excessive input caused by the scroll wheel or holding down a key"
@@ -340,7 +368,7 @@ class BasePage(object):
         elif ch != 'n':
             curses.flash()
 
-    @contextmanager
+    @property
     def safe_call(self):
         """
         Wrap praw calls with extended error handling.
@@ -350,31 +378,12 @@ class BasePage(object):
         can be used to check the status of the call.
 
         Usage:
-            #>>> with self.safe_call() as check_status:
+            #>>> with self.safe_call as s:
             #>>>     self.reddit.submit(...)
-            #>>> success = check_status()
+            #>>>     s.catch = False
+            #>>>     on_success()
         """
-
-        success = None
-        check_status = lambda: success
-        try:
-            yield check_status
-        except praw.errors.APIException as e:
-            message = ['Error: {}'.format(e.error_type), e.message]
-            show_notification(self.stdscr, message)
-            _logger.exception(e)
-            success = False
-        except praw.errors.ClientException as e:
-            message = ['Error: Client Exception', e.message]
-            show_notification(self.stdscr, message)
-            _logger.exception(e)
-            success = False
-        except (requests.HTTPError, requests.ConnectionError) as e:
-            show_notification(self.stdscr, ['Unexpected Error'])
-            _logger.exception(e)
-            success = False
-        else:
-            success = True
+        return SafeCaller(self.stdscr)
 
     def draw(self):
 

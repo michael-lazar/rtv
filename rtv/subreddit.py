@@ -140,13 +140,12 @@ class SubredditPage(BasePage):
             return
 
         title, content = submission_text.split('\n', 1)
-        with self.safe_call() as check_status:
+        with self.safe_call as s:
             with self.loader(message='Posting', delay=0):
                 post = self.reddit.submit(sub, title, text=content)
                 time.sleep(2.0)
-
-        if check_status():
             # Open the newly created post
+            s.catch = False
             page = SubmissionPage(self.stdscr, self.reddit, submission=post)
             page.loop()
             self.refresh_content()
