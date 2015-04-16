@@ -119,17 +119,21 @@ class SafeCaller(object):
     def __exit__(self, exc_type, e, exc_tb):
 
         if self.catch:
-            if exc_type is praw.errors.APIException:
+            if isinstance(e, praw.errors.APIException):
                 message = ['Error: {}'.format(e.error_type), e.message]
                 show_notification(self.window, message)
                 _logger.exception(e)
                 return True
-            elif exc_type is praw.errors.ClientException:
+            elif isinstance(e, praw.errors.ClientException):
                 message = ['Error: Client Exception', e.message]
                 show_notification(self.window, message)
                 _logger.exception(e)
                 return True
-            elif exc_type in (requests.HTTPError, requests.ConnectionError):
+            elif isinstance(e, requests.HTTPError):
+                show_notification(self.window, ['Unexpected Error'])
+                _logger.exception(e)
+                return True
+            elif isinstance(e, requests.ConnectionError):
                 show_notification(self.window, ['Unexpected Error'])
                 _logger.exception(e)
                 return True
