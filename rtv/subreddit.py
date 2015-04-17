@@ -194,6 +194,10 @@ class SubredditPage(BasePage):
                 text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
                 win.addnstr(text, n_cols - win.getyx()[1], attr)
 
+            if data['nsfw']:
+                text, attr = 'NSFW', (curses.A_BOLD | Color.RED)
+                win.addnstr(text, n_cols - win.getyx()[1], attr)
+
         row = n_title + offset + 2
         if row in valid_rows:
             text = clean(u'{author}'.format(**data))
