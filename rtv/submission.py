@@ -259,8 +259,19 @@ class SubmissionPage(BasePage):
             win.addnstr(row, 1, text, n_cols)
 
         row = len(data['split_title']) + len(split_text) + 3
-        text = clean(u'{score} {comments} '.format(**data))
-        win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
+        text = clean(u'{score} '.format(**data))
+        win.addnstr(row, 1, text, n_cols - 1)
+
+        if data['likes'] is None:
+            text, attr = BULLET, curses.A_BOLD
+        elif data['likes']:
+            text, attr = UARROW, curses.A_BOLD | Color.GREEN
+        else:
+            text, attr = DARROW, curses.A_BOLD | Color.RED
+        win.addnstr(text, n_cols - win.getyx()[1], attr)
+
+        text = clean(u' {created} {comments} '.format(**data))
+        win.addnstr(text, n_cols - win.getyx()[1])
 
         if data['gold']:
             text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
