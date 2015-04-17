@@ -19,7 +19,6 @@ from .__version__ import __version__
 
 __all__ = []
 
-
 def load_config():
     """
     Search for a configuration file at the location ~/.rtv and attempt to load
@@ -100,6 +99,7 @@ def main():
 
     if args.log:
         logging.basicConfig(level=logging.DEBUG, filename=args.log)
+    logging.captureWarnings(True)
 
     try:
         print('Connecting...')

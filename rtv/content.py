@@ -1,4 +1,5 @@
 import textwrap
+import logging
 
 import praw
 import requests
@@ -8,6 +9,7 @@ from .helpers import humanize_timestamp, wrap_text, strip_subreddit_url
 
 __all__ = ['SubredditContent', 'SubmissionContent']
 
+_logger = logging.getLogger(__name__)
 
 class BaseContent(object):
 
@@ -41,14 +43,14 @@ class BaseContent(object):
         retval = []
         while stack:
             item = stack.pop(0)
-            if isinstance(item, praw.objects.MoreComments) and (
-                    item.count == 0):
-                continue
-            nested = getattr(item, 'replies', None)
-            if nested:
-                for n in nested:
-                    n.nested_level = item.nested_level + 1
-                stack[0:0] = nested
+            if not isinstance(item, praw.objects.MoreComments):
+                if item._replies is None:
+                    item._replies = [stack.pop(0)]
+                nested = getattr(item, 'replies', None)
+                if nested:
+                    for n in nested:
+                        n.nested_level = item.nested_level + 1
+                    stack[0:0] = nested
             retval.append(item)
         return retval
 
@@ -210,7 +212,7 @@ class SubmissionContent(BaseContent):
 
         elif data['type'] == 'MoreComments':
             with self._loader():
-                comments = data['object'].comments(update=False)
+                comments = data['object'].comments(update=True)
                 comments = self.flatten_comments(comments,
                                                  root_level=data['level'])
                 comment_data = [self.strip_praw_comment(c) for c in comments]
