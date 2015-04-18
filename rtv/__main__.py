@@ -19,7 +19,6 @@ from .__version__ import __version__
 
 __all__ = []
 
-
 def load_config():
     """
     Search for a configuration file at the location ~/.rtv and attempt to load
@@ -98,13 +97,15 @@ def main():
 
     config.unicode = args.unicode
 
+    # Squelch SSL warnings for Ubuntu
+    logging.captureWarnings(True)
     if args.log:
         logging.basicConfig(level=logging.DEBUG, filename=args.log)
 
     try:
         print('Connecting...')
         reddit = praw.Reddit(user_agent=AGENT)
-        reddit.config.decode_html_entities = True
+        reddit.config.decode_html_entities = False
         if args.username:
             # PRAW will prompt for password if it is None
             reddit.login(args.username, args.password)
