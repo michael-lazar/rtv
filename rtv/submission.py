@@ -270,7 +270,7 @@ class SubmissionPage(BasePage):
             text, attr = DARROW, curses.A_BOLD | Color.RED
         win.addnstr(text, n_cols - win.getyx()[1], attr)
 
-        text = clean(u' {created} {comments} '.format(**data))
+        text = clean(u' {comments} '.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1])
 
         if data['gold']:
