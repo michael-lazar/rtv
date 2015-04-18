@@ -43,8 +43,16 @@ class BaseContent(object):
         retval = []
         while stack:
             item = stack.pop(0)
-            if not isinstance(item, praw.objects.MoreComments):
+            if isinstance(item, praw.objects.MoreComments):
+                if item.count == 0:
+                    # MoreComments item count should never be zero, but if it
+                    # is then discard the MoreComment object. Need to look into
+                    # this further.
+                    continue
+            else:
                 if item._replies is None:
+                    # Attach children MoreComment replies to parents
+                    # https://github.com/praw-dev/praw/issues/391
                     item._replies = [stack.pop(0)]
                 nested = getattr(item, 'replies', None)
                 if nested:
@@ -122,7 +130,7 @@ class SubmissionContent(BaseContent):
     list for repeat access.
     """
 
-    def __init__(self, submission, loader, indent_size=2, max_indent_level=4):
+    def __init__(self, submission, loader, indent_size=2, max_indent_level=8):
 
         self.indent_size = indent_size
         self.max_indent_level = max_indent_level
@@ -135,7 +143,7 @@ class SubmissionContent(BaseContent):
         self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
     @classmethod
-    def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=4):
+    def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=8):
 
         try:
             with loader():
