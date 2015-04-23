@@ -42,11 +42,16 @@ Subreddit Mode
   `/`                 : Open a prompt to switch subreddits
   `f`                 : Open a prompt to search the current subreddit
   `p`                 : Post a new submission to the current subreddit
+  `e`                 : Edit the selected submission
+  `d`                 : Delete the selected submission
 
 Submission Mode
   `LEFT` or `h`       : Return to subreddit mode
   `RIGHT` or `l`      : Fold the selected comment, or load additional comments
   `c`                 : Post a new comment on the selected item
+  `e`                 : Edit the selected comment
+  `d`                 : Delete the selected comment
+
 """
 
 COMMENT_FILE = """

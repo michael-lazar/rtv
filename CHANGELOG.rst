@@ -2,13 +2,28 @@
 RTV Changelog
 =============
 
+.. _1.3: http://github.com/michael-lazar/rtv/releases/tag/v1.3
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
 
-------------------
-1.2.2_ (2015-04-07
-------------------
+-----------------
+1.3_ (2015-04-22)
+-----------------
+Features
+
+* Added edit `e` and delete `d` for comments and submissions.
+* Added *nsfw* tags.
+
+Bugfixes
+
+* Upvote/downvote icon now displays in the submission selfpost.
+* Loading large *MoreComment* blocks no longer hangs the program.
+* Improved logging and error handling with praw interactions.
+
+-------------------
+1.2.2_ (2015-04-07)
+-------------------
 Bugfixes
 
 * Fixed default subreddit not being set.

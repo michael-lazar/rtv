@@ -113,6 +113,9 @@ In subreddit mode you can browse through the top submissions on either the front
 :``/``: Open a prompt to switch subreddits
 :``f``: Open a prompt to search the current subreddit
 :``p``: Post a new submission to the current subreddit
+:``e``: Edit the selected submission
+:``d``: Delete the selected submission
+
 
 The ``/`` prompt accepts subreddits in the following formats
 
@@ -131,7 +134,8 @@ In submission mode you can view the self text for a submission and browse commen
 :``◄`` or ``h``: Return to subreddit mode
 :``►`` or ``l``: Fold the selected comment, or load additional comments
 :``c``: Post a new comment on the selected item
-
+:``e``: Edit the selected comment
+:``d``: Delete the selected comment
 
 =========
 Changelog
