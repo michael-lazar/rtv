@@ -90,6 +90,53 @@ class Navigator(object):
 
         return valid, redraw
 
+    def move_page(self, direction, n_windows):
+        """
+        Move page down (positive direction) or up (negative direction).
+        """
+
+        # top of subreddit/submission page or only one
+        # submission/reply on the screen: act as normal move
+        if (self.absolute_index < 0) | (n_windows == 0):
+            valid, redraw = self.move(direction, n_windows)
+        else:
+            # first page
+            if self.absolute_index < n_windows and direction < 0:
+                self.page_index = -1
+                self.cursor_index = 0
+                self.inverted = False
+
+                # not submission mode: starting index is 0
+                if not self._is_valid(self.absolute_index):
+                    self.page_index = 0
+                valid = True
+            else:
+                # flip to the direction of movement
+                if ((direction > 0) & (self.inverted is True))\
+                   | ((direction < 0) & (self.inverted is False)):
+                    self.page_index += (self.step * (n_windows-1))
+                    self.inverted = not self.inverted
+                    self.cursor_index \
+                        = (n_windows-(direction<0)) - self.cursor_index
+
+                valid = False
+                adj = 0
+                # check if reached the bottom
+                while not valid:
+                    n_move = n_windows - adj
+                    if n_move == 0:
+                        break
+
+                    self.page_index += n_move * direction
+                    valid = self._is_valid(self.absolute_index)
+                    if not valid:
+                        self.page_index -= n_move * direction
+                        adj += 1
+
+            redraw = True
+
+        return valid, redraw
+
     def flip(self, n_windows):
         "Flip the orientation of the page"
 
@@ -229,6 +276,16 @@ class BasePage(object):
     @BaseController.register(curses.KEY_DOWN, 'j')
     def move_cursor_down(self):
         self._move_cursor(1)
+        self.clear_input_queue()
+
+    @BaseController.register('n')
+    def move_page_down(self):
+        self._move_page(1)
+        self.clear_input_queue()
+
+    @BaseController.register('m')
+    def move_page_up(self):
+        self._move_page(-1)
         self.clear_input_queue()
 
     @BaseController.register('a')
@@ -474,16 +531,28 @@ class BasePage(object):
         self._edit_cursor(curses.A_NORMAL)
 
     def _move_cursor(self, direction):
-
         self._remove_cursor()
-
         valid, redraw = self.nav.move(direction, len(self._subwindows))
+
         if not valid:
             curses.flash()
 
         # Note: ACS_VLINE doesn't like changing the attribute, so always redraw.
         # if redraw: self._draw_content()
         self._draw_content()
+        self._add_cursor()
+
+    def _move_page(self, direction):
+        self._remove_cursor()
+        valid, redraw = self.nav.move_page(direction,
+                                           len(self._subwindows)-1)
+        if not valid:
+            curses.flash()
+
+        self._draw_content()
+        # Don't allow the cursor to go over the subwindow number
+        if self.nav.cursor_index >= len(self._subwindows):
+            self.nav.cursor_index = len(self._subwindows)-1
         self._add_cursor()
 
     def _edit_cursor(self, attribute=None):
