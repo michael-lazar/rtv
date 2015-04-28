@@ -10,8 +10,10 @@ def history_path():
     """
     HOME = os.path.expanduser('~')
     XDG_CONFIG_HOME = os.getenv('XDG_CACHE_HOME', os.path.join(HOME, '.config'))
-    path = os.path.join(XDG_CONFIG_HOME, 'rtv', 'history.log')
-    return path
+    path = os.path.join(XDG_CONFIG_HOME, 'rtv')
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return os.path.join(path, 'history.log')
 
 
 def load_history():
@@ -21,8 +23,9 @@ def load_history():
     path = history_path()
     if os.path.exists(path):
         with open(path) as history_file:
-            return set([line.replace('\n', '') for line in history_file])
-    return set()
+            history = [line.strip() for line in history_file]
+            return OrderedSet(history)
+    return OrderedSet()
 
 
 def save_history(history):
@@ -35,3 +38,27 @@ def save_history(history):
             if not history:
                 break
             history_file.write(history.pop() + '\n')
+
+
+class OrderedSet(object):
+    """
+    A simple implementation of an ordered set. A set is used to check
+    for membership, and a list is used to maintain ordering.
+    """
+
+    def __init__(self, elements=[]):
+        self._set = set(elements)
+        self._list = elements
+
+    def __contains__(self, item):
+        return item in self._set
+
+    def __len__(self):
+        return len(self._list)
+
+    def add(self, item):
+        self._set.add(item)
+        self._list.append(item)
+
+    def pop(self):
+        return self._list.pop()
