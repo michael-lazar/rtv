@@ -176,8 +176,11 @@ class SubmissionPage(BasePage):
                 text, attr = DARROW, (curses.A_BOLD | Color.LikesDArrow)
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
-            text = clean(u' {score} {created} '.format(**data))
-            win.addnstr(text, n_cols - win.getyx()[1])
+            text = clean(u' {score}'.format(**data))
+            win.addnstr(text, n_cols - win.getyx()[1], Color.Score)
+
+            text = clean(u' {created} '.format(**data))
+            win.addnstr(text, n_cols - win.getyx()[1], Color.Created)
 
             if data['gold']:
                 text, attr = GOLD, (curses.A_BOLD | Color.Gold)
@@ -187,7 +190,7 @@ class SubmissionPage(BasePage):
         for row, text in enumerate(data['split_body'], start=offset + 1):
             if row in valid_rows:
                 text = clean(text)
-                win.addnstr(row, 1, text, n_cols - 1)
+                win.addnstr(row, 1, text, n_cols - 1, Color.CommentsText)
 
         # Unfortunately vline() doesn't support custom color so we have to
         # build it one segment at a time.
@@ -211,9 +214,9 @@ class SubmissionPage(BasePage):
         n_cols -= 1
 
         text = clean(u'{body}'.format(**data))
-        win.addnstr(0, 1, text, n_cols - 1)
+        win.addnstr(0, 1, text, n_cols - 1, Color.MoreComments)
         text = clean(u' [{count}]'.format(**data))
-        win.addnstr(text, n_cols - win.getyx()[1], curses.A_BOLD)
+        win.addnstr(text, n_cols - win.getyx()[1], curses.A_BOLD | Color.MoreCommentsCount)
 
         # Unfortunately vline() doesn't support custom color so we have to
         # build it one segment at a time.
@@ -261,7 +264,7 @@ class SubmissionPage(BasePage):
 
         row = len(data['split_title']) + len(split_text) + 3
         text = clean(u'{score} '.format(**data))
-        win.addnstr(row, 1, text, n_cols - 1)
+        win.addnstr(row, 1, text, n_cols - 1, Color.Score)
 
         if data['likes'] is None:
             text, attr = BULLET, curses.A_BOLD | Color.LikesBullet
@@ -272,7 +275,7 @@ class SubmissionPage(BasePage):
         win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         text = clean(u' {comments} '.format(**data))
-        win.addnstr(text, n_cols - win.getyx()[1])
+        win.addnstr(text, n_cols - win.getyx()[1], Color.Comments)
 
         if data['gold']:
             text, attr = GOLD, (curses.A_BOLD | Color.Gold)

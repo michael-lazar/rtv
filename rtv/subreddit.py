@@ -177,7 +177,7 @@ class SubredditPage(BasePage):
         row = n_title + offset + 1
         if row in valid_rows:
             text = clean(u'{score} '.format(**data))
-            win.addnstr(row, 1, text, n_cols - 1)
+            win.addnstr(row, 1, text, n_cols - 1, Color.Score)
 
             if data['likes'] is None:
                 text, attr = BULLET, curses.A_BOLD | Color.LikesBullet
@@ -187,8 +187,11 @@ class SubredditPage(BasePage):
                 text, attr = DARROW, curses.A_BOLD | Color.LikesDArrow
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
-            text = clean(u' {created} {comments} '.format(**data))
-            win.addnstr(text, n_cols - win.getyx()[1])
+            text = clean(u' {created}'.format(**data))
+            win.addnstr(text, n_cols - win.getyx()[1], Color.Created)
+
+            text = clean(u' {comments} '.format(**data))
+            win.addnstr(text, n_cols - win.getyx()[1], Color.Comments)
 
             if data['gold']:
                 text, attr = GOLD, (curses.A_BOLD | Color.Gold)
