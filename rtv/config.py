@@ -1,10 +1,9 @@
 """
 Global configuration settings
 """
-
 unicode = False
 
-_config_colors = {
+default_colors = {
     'Header':      ( -1,  0 ),
     'Title':       ( -1,  0 ),
     'Link':        ( -1,  0 ),
@@ -18,3 +17,4 @@ _config_colors = {
     'LikesUArrow': ( -1,  0 ),
     'LikesDArrow': ( -1,  0 ),
 }
+
