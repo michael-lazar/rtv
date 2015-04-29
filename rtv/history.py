@@ -23,7 +23,8 @@ def load_history():
     path = history_path()
     if os.path.exists(path):
         with open(path) as history_file:
-            history = [line.strip() for line in history_file]
+            # reverse the list so the newest ones are first
+            history = [line.strip() for line in history_file][::-1]
             return OrderedSet(history)
     return OrderedSet()
 
