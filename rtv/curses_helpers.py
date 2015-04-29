@@ -8,6 +8,7 @@ from contextlib import contextmanager
 from .docs import HELP
 from .helpers import strip_textpad
 from .exceptions import EscapeInterrupt
+from .config import _config_colors
 
 __all__ = ['ESCAPE', 'UARROW', 'DARROW', 'BULLET', 'show_notification',
            'show_help', 'LoadScreen', 'Color', 'text_input', 'curses_session',
@@ -161,15 +162,17 @@ class Color(object):
     Color attributes for curses.
     """
 
-    _colors = {
+    _default_colors = {
         'RED': (curses.COLOR_RED, -1),
         'GREEN': (curses.COLOR_GREEN, -1),
         'YELLOW': (curses.COLOR_YELLOW, -1),
         'BLUE': (curses.COLOR_BLUE, -1),
         'MAGENTA': (curses.COLOR_MAGENTA, -1),
         'CYAN': (curses.COLOR_CYAN, -1),
-        'WHITE': (curses.COLOR_WHITE, -1),
+        'WHITE': (curses.COLOR_WHITE, -1)
     }
+    _colors = _default_colors.copy()
+    _colors.update( _config_colors )
 
     @classmethod
     def init(cls):
