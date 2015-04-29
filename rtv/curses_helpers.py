@@ -4,11 +4,12 @@ import threading
 import curses
 from curses import textpad, ascii
 from contextlib import contextmanager
+from six.moves import configparser
 
 from .docs import HELP
 from .helpers import strip_textpad
 from .exceptions import EscapeInterrupt
-from .config import _config_colors
+from .config import default_colors
 
 __all__ = ['ESCAPE', 'UARROW', 'DARROW', 'BULLET', 'show_notification',
            'show_help', 'LoadScreen', 'Color', 'text_input', 'curses_session',
@@ -162,7 +163,7 @@ class Color(object):
     Color attributes for curses.
     """
 
-    _default_colors = {
+    _colors = {
         'RED': (curses.COLOR_RED, -1),
         'GREEN': (curses.COLOR_GREEN, -1),
         'YELLOW': (curses.COLOR_YELLOW, -1),
@@ -171,8 +172,6 @@ class Color(object):
         'CYAN': (curses.COLOR_CYAN, -1),
         'WHITE': (curses.COLOR_WHITE, -1)
     }
-    _colors = _default_colors.copy()
-    _colors.update( _config_colors )
 
     @classmethod
     def init(cls):
@@ -186,9 +185,43 @@ class Color(object):
         # Assign the terminal's default (background) color to code -1
         curses.use_default_colors()
 
+        # Set default colors
+        cls._colors.update( default_colors )
+        # Override default colors by template
+        cls._colors.update( cls.load_colors() )
+
         for index, (attr, code) in enumerate(cls._colors.items(), start=1):
             curses.init_pair(index, code[0], code[1])
             setattr(cls, attr, curses.color_pair(index))
+
+    @classmethod
+    def load_colors(cls):
+        config = configparser.ConfigParser()
+        # preserves upcase
+        config.optionxform = str
+
+        HOME = os.path.expanduser('~')
+        XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
+        config_paths = [
+            os.path.join(XDG_CONFIG_HOME, 'rtv', 'rtv-colors.cfg'),
+            os.path.join(HOME, '.rtv')
+        ]
+
+        # read only the first existing config file
+        for config_path in config_paths:
+            if os.path.exists(config_path):
+                config.read(config_path)
+                break
+
+        params = {}
+        if config.has_section('rtv-colors'):
+            params = dict(config.items('rtv-colors'))
+
+        colors = {}
+        for key in params:
+            colors[ key ] = tuple( [ int( v ) for v in params[ key ].strip().split(',') ] )
+
+        return colors
 
     @classmethod
     def get_level(cls, level):
