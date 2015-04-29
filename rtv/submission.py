@@ -160,27 +160,27 @@ class SubmissionPage(BasePage):
 
             text = clean(u'{author} '.format(**data))
             attr = curses.A_BOLD
-            attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
+            attr |= (Color.Author if not data['is_author'] else Color.IsAuthor)
             win.addnstr(row, 1, text, n_cols - 1, attr)
 
             if data['flair']:
                 text = clean(u'{flair} '.format(**data))
-                attr = curses.A_BOLD | Color.YELLOW
+                attr = curses.A_BOLD | Color.Flair
                 win.addnstr(text, n_cols - win.getyx()[1], attr)
 
             if data['likes'] is None:
-                text, attr = BULLET, curses.A_BOLD
+                text, attr = BULLET, (curses.A_BOLD | Color.LikesBullet)
             elif data['likes']:
-                text, attr = UARROW, (curses.A_BOLD | Color.GREEN)
+                text, attr = UARROW, (curses.A_BOLD | Color.LikesUArrow)
             else:
-                text, attr = DARROW, (curses.A_BOLD | Color.RED)
+                text, attr = DARROW, (curses.A_BOLD | Color.LikesDArrow)
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
             text = clean(u' {score} {created} '.format(**data))
             win.addnstr(text, n_cols - win.getyx()[1])
 
             if data['gold']:
-                text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
+                text, attr = GOLD, (curses.A_BOLD | Color.Gold)
                 win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         n_body = len(data['split_body'])
@@ -233,17 +233,17 @@ class SubmissionPage(BasePage):
             win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
 
         row = len(data['split_title']) + 1
-        attr = curses.A_BOLD | Color.GREEN
+        attr = curses.A_BOLD | Color.Author
         text = clean(u'{author}'.format(**data))
         win.addnstr(row, 1, text, n_cols, attr)
-        attr = curses.A_BOLD | Color.YELLOW
+        attr = curses.A_BOLD | Color.Flair
         text = clean(u' {flair}'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1], attr)
         text = clean(u' {created} {subreddit}'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1])
 
         row = len(data['split_title']) + 2
-        attr = curses.A_UNDERLINE | Color.BLUE
+        attr = curses.A_UNDERLINE | Color.Link
         text = clean(u'{url}'.format(**data))
         win.addnstr(row, 1, text, n_cols, attr)
         offset = len(data['split_title']) + 3
@@ -264,22 +264,22 @@ class SubmissionPage(BasePage):
         win.addnstr(row, 1, text, n_cols - 1)
 
         if data['likes'] is None:
-            text, attr = BULLET, curses.A_BOLD
+            text, attr = BULLET, curses.A_BOLD | Color.LikesBullet
         elif data['likes']:
-            text, attr = UARROW, curses.A_BOLD | Color.GREEN
+            text, attr = UARROW, curses.A_BOLD | Color.LikesUArrow
         else:
-            text, attr = DARROW, curses.A_BOLD | Color.RED
+            text, attr = DARROW, curses.A_BOLD | Color.LikesDArrow
         win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         text = clean(u' {comments} '.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1])
 
         if data['gold']:
-            text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
+            text, attr = GOLD, (curses.A_BOLD | Color.Gold)
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         if data['nsfw']:
-            text, attr = 'NSFW', (curses.A_BOLD | Color.RED)
+            text, attr = 'NSFW', (curses.A_BOLD | Color.Nsfw)
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         win.border()
