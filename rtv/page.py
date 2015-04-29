@@ -466,11 +466,11 @@ class BasePage(object):
         n_rows, n_cols = self._header_window.getmaxyx()
 
         self._header_window.erase()
-        attr = curses.A_REVERSE | curses.A_BOLD | Color.CYAN
+        attr = curses.A_BOLD | Color.HeaderBg
         self._header_window.bkgd(' ', attr)
 
         sub_name = self.content.name.replace('/r/front', 'Front Page ')
-        self._header_window.addnstr(0, 0, clean(sub_name), n_cols - 1)
+        self._header_window.addnstr(0, 0, clean(sub_name), n_cols - 1, Color.HeaderFg)
 
         if self.reddit.user is not None:
             username = self.reddit.user.name
@@ -479,7 +479,7 @@ class BasePage(object):
             # right
             if (s_col - 1) >= len(sub_name):
                 n = (n_cols - s_col - 1)
-                self._header_window.addnstr(0, s_col, clean(username), n)
+                self._header_window.addnstr(0, s_col, clean(username), n, Color.UserName)
 
         self._header_window.refresh()
 

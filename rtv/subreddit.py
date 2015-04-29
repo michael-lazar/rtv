@@ -164,12 +164,12 @@ class SubredditPage(BasePage):
         for row, text in enumerate(data['split_title'], start=offset):
             if row in valid_rows:
                 text = clean(text)
-                win.addnstr(row, 1, text, n_cols - 1, curses.A_BOLD)
+                win.addnstr(row, 1, text, n_cols - 1, curses.A_BOLD | Color.Title)
 
         row = n_title + offset
         if row in valid_rows:
             seen = (data['url_full'] in opened_links)
-            link_color = Color.MAGENTA if seen else Color.BLUE
+            link_color = Color.LinkSeen if seen else Color.Link
             attr = curses.A_UNDERLINE | link_color
             text = clean(u'{url}'.format(**data))
             win.addnstr(row, 1, text, n_cols - 1, attr)
@@ -177,32 +177,35 @@ class SubredditPage(BasePage):
         row = n_title + offset + 1
         if row in valid_rows:
             text = clean(u'{score} '.format(**data))
-            win.addnstr(row, 1, text, n_cols - 1)
+            win.addnstr(row, 1, text, n_cols - 1, Color.Score)
 
             if data['likes'] is None:
-                text, attr = BULLET, curses.A_BOLD
+                text, attr = BULLET, curses.A_BOLD | Color.LikesBullet
             elif data['likes']:
-                text, attr = UARROW, curses.A_BOLD | Color.GREEN
+                text, attr = UARROW, curses.A_BOLD | Color.LikesUArrow
             else:
-                text, attr = DARROW, curses.A_BOLD | Color.RED
+                text, attr = DARROW, curses.A_BOLD | Color.LikesDArrow
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
-            text = clean(u' {created} {comments} '.format(**data))
-            win.addnstr(text, n_cols - win.getyx()[1])
+            text = clean(u' {created}'.format(**data))
+            win.addnstr(text, n_cols - win.getyx()[1], Color.Created)
+
+            text = clean(u' {comments} '.format(**data))
+            win.addnstr(text, n_cols - win.getyx()[1], Color.Comments)
 
             if data['gold']:
-                text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
+                text, attr = GOLD, (curses.A_BOLD | Color.Gold)
                 win.addnstr(text, n_cols - win.getyx()[1], attr)
 
             if data['nsfw']:
-                text, attr = 'NSFW', (curses.A_BOLD | Color.RED)
+                text, attr = 'NSFW', (curses.A_BOLD | Color.Nsfw)
                 win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         row = n_title + offset + 2
         if row in valid_rows:
             text = clean(u'{author}'.format(**data))
-            win.addnstr(row, 1, text, n_cols - 1, curses.A_BOLD)
+            win.addnstr(row, 1, text, n_cols - 1, curses.A_BOLD | Color.Author)
             text = clean(u' {subreddit}'.format(**data))
-            win.addnstr(text, n_cols - win.getyx()[1], Color.YELLOW)
+            win.addnstr(text, n_cols - win.getyx()[1], Color.Subreddit)
             text = clean(u' {flair}'.format(**data))
-            win.addnstr(text, n_cols - win.getyx()[1], Color.RED)
+            win.addnstr(text, n_cols - win.getyx()[1], Color.Flair)
