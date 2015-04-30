@@ -160,7 +160,7 @@ class SubmissionPage(BasePage):
 
             text = clean(u'{author} '.format(**data))
             attr = curses.A_BOLD
-            attr |= (Color.Author if not data['is_author'] else Color.IsAuthor)
+            attr |= (Color.CommentAuthor if not data['is_author'] else Color.IsAuthor)
             win.addnstr(row, 1, text, n_cols - 1, attr)
 
             if data['flair']:
