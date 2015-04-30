@@ -232,7 +232,7 @@ class SubmissionPage(BasePage):
 
         for row, text in enumerate(data['split_title'], start=1):
             text = clean(text)
-            win.addnstr(row, 1, text, n_cols)
+            win.addnstr(row, 1, text, n_cols, Color.SubmissionText)
 
         row = len(data['split_title']) + 1
         attr = Color.Author
