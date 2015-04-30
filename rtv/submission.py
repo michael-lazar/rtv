@@ -159,21 +159,20 @@ class SubmissionPage(BasePage):
         if row in valid_rows:
 
             text = clean(u'{author} '.format(**data))
-            attr = curses.A_BOLD
-            attr |= (Color.CommentAuthor if not data['is_author'] else Color.IsAuthor)
+            attr = (Color.CommentAuthor if not data['is_author'] else Color.IsAuthor)
             win.addnstr(row, 1, text, n_cols - 1, attr)
 
             if data['flair']:
                 text = clean(u'{flair} '.format(**data))
-                attr = curses.A_BOLD | Color.Flair
+                attr = Color.Flair
                 win.addnstr(text, n_cols - win.getyx()[1], attr)
 
             if data['likes'] is None:
-                text, attr = BULLET, (curses.A_BOLD | Color.LikesBullet)
+                text, attr = BULLET, Color.LikesBullet
             elif data['likes']:
-                text, attr = UARROW, (curses.A_BOLD | Color.LikesUArrow)
+                text, attr = UARROW, Color.LikesUArrow
             else:
-                text, attr = DARROW, (curses.A_BOLD | Color.LikesDArrow)
+                text, attr = DARROW, Color.LikesDArrow
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
             text = clean(u' {score}'.format(**data))
@@ -183,7 +182,7 @@ class SubmissionPage(BasePage):
             win.addnstr(text, n_cols - win.getyx()[1], Color.Created)
 
             if data['gold']:
-                text, attr = GOLD, (curses.A_BOLD | Color.Gold)
+                text, attr = GOLD, Color.Gold
                 win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         n_body = len(data['split_body'])
@@ -216,7 +215,7 @@ class SubmissionPage(BasePage):
         text = clean(u'{body}'.format(**data))
         win.addnstr(0, 1, text, n_cols - 1, Color.MoreComments)
         text = clean(u' [{count}]'.format(**data))
-        win.addnstr(text, n_cols - win.getyx()[1], curses.A_BOLD | Color.MoreCommentsCount)
+        win.addnstr(text, n_cols - win.getyx()[1], Color.MoreCommentsCount)
 
         # Unfortunately vline() doesn't support custom color so we have to
         # build it one segment at a time.
@@ -233,20 +232,20 @@ class SubmissionPage(BasePage):
 
         for row, text in enumerate(data['split_title'], start=1):
             text = clean(text)
-            win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
+            win.addnstr(row, 1, text, n_cols)
 
         row = len(data['split_title']) + 1
-        attr = curses.A_BOLD | Color.Author
+        attr = Color.Author
         text = clean(u'{author}'.format(**data))
         win.addnstr(row, 1, text, n_cols, attr)
-        attr = curses.A_BOLD | Color.Flair
+        attr = Color.Flair
         text = clean(u' {flair}'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1], attr)
         text = clean(u' {created} {subreddit}'.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1])
 
         row = len(data['split_title']) + 2
-        attr = curses.A_UNDERLINE | Color.Link
+        attr = Color.Link
         text = clean(u'{url}'.format(**data))
         win.addnstr(row, 1, text, n_cols, attr)
         offset = len(data['split_title']) + 3
@@ -267,22 +266,22 @@ class SubmissionPage(BasePage):
         win.addnstr(row, 1, text, n_cols - 1, Color.Score)
 
         if data['likes'] is None:
-            text, attr = BULLET, curses.A_BOLD | Color.LikesBullet
+            text, attr = BULLET, Color.LikesBullet
         elif data['likes']:
-            text, attr = UARROW, curses.A_BOLD | Color.LikesUArrow
+            text, attr = UARROW, Color.LikesUArrow
         else:
-            text, attr = DARROW, curses.A_BOLD | Color.LikesDArrow
+            text, attr = DARROW, Color.LikesDArrow
         win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         text = clean(u' {comments} '.format(**data))
         win.addnstr(text, n_cols - win.getyx()[1], Color.Comments)
 
         if data['gold']:
-            text, attr = GOLD, (curses.A_BOLD | Color.Gold)
+            text, attr = GOLD, Color.Gold
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         if data['nsfw']:
-            text, attr = 'NSFW', (curses.A_BOLD | Color.Nsfw)
+            text, attr = 'NSFW', Color.Nsfw
             win.addnstr(text, n_cols - win.getyx()[1], attr)
 
         win.border()

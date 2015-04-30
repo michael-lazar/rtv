@@ -466,7 +466,7 @@ class BasePage(object):
         n_rows, n_cols = self._header_window.getmaxyx()
 
         self._header_window.erase()
-        attr = curses.A_BOLD | Color.HeaderBg
+        attr = Color.HeaderBg
         self._header_window.bkgd(' ', attr)
 
         sub_name = self.content.name.replace('/r/front', 'Front Page ')
