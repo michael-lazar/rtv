@@ -9,7 +9,7 @@ from six.moves import configparser
 from .docs import HELP
 from .helpers import strip_textpad
 from .exceptions import EscapeInterrupt
-import config
+from . import config
 
 __all__ = ['ESCAPE', 'UARROW', 'DARROW', 'BULLET', 'show_notification',
            'show_help', 'LoadScreen', 'Color', 'text_input', 'curses_session',
