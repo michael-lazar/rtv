@@ -192,7 +192,10 @@ class Color(object):
 
         for index, (attr, code) in enumerate(cls._colors.items(), start=1):
             curses.init_pair(index, code[0], code[1])
-            setattr(cls, attr, curses.color_pair(index))
+            color = curses.color_pair(index)
+            # add format to color
+            for f in code[2:4]: color |= f
+            setattr(cls, attr, color)
 
     @classmethod
     def load_colors(cls, theme):
