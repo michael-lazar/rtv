@@ -4,6 +4,9 @@ Global configuration settings
 unicode = False
 
 default_colors = {
+    'HeaderFg':          ( -1, 0 ),
+    'HeaderBg':          ( -1, 0 ),
+    'UserName':          ( -1, 0 ),
     'CommentsText':      ( -1, 0 ),
     'Header':            ( -1, 0 ),
     'Title':             ( -1, 0 ),
@@ -14,6 +17,7 @@ default_colors = {
     'Subreddit':         ( -1, 0 ),
     'Flair':             ( -1, 0 ),
     'Gold':              ( -1, 0 ),
+    'Nsfw':              ( -1, 0 ),
     'LikesBullet':       ( -1, 0 ),
     'LikesUArrow':       ( -1, 0 ),
     'LikesDArrow':       ( -1, 0 ),
