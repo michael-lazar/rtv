@@ -59,8 +59,7 @@ def command_line():
 
     parser.add_argument('-s', dest='subreddit', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
-    parser.add_argument('--unicode', action='store_true',
-                        help='enable unicode (experimental)')
+    parser.add_argument('--unicode', help='enable unicode (experimental)')
     parser.add_argument('--log', metavar='FILE', action='store',
                         help='Log HTTP requests')
 
@@ -95,7 +94,7 @@ def main():
         if getattr(args, key, None) is None:
             setattr(args, key, val)
 
-    config.unicode = args.unicode
+    config.unicode = False if args.unicode is None else args.unicode
 
     # Squelch SSL warnings for Ubuntu
     logging.captureWarnings(True)

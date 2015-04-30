@@ -1,4 +1,3 @@
-import textwrap
 import logging
 
 import praw
@@ -164,8 +163,8 @@ class SubmissionContent(BaseContent):
 
         elif index == -1:
             data = self._submission_data
-            data['split_title'] = textwrap.wrap(data['title'], width=n_cols -2)
-            data['split_text'] = wrap_text(data['text'], width=n_cols - 2)
+            data['split_title'] = wrap_text(data['title'], width=n_cols-2)
+            data['split_text'] = wrap_text(data['text'], width=n_cols-2)
             data['n_rows'] = len(data['split_title'] + data['split_text']) + 5
             data['offset'] = 0
 
@@ -326,7 +325,7 @@ class SubredditContent(BaseContent):
 
         # Modifies the original dict, faster than copying
         data = self._submission_data[index]
-        data['split_title'] = textwrap.wrap(data['title'], width=n_cols)
+        data['split_title'] = wrap_text(data['title'], width=n_cols)
         data['n_rows'] = len(data['split_title']) + 3
         data['offset'] = 0
 

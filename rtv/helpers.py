@@ -1,16 +1,17 @@
 import sys
 import os
-import textwrap
 import subprocess
 from datetime import datetime
 from tempfile import NamedTemporaryFile
+
+# kitchen solves deficiencies in textwrap's handling of unicode characters
+from kitchen.text.display import wrap
 
 from . import config
 from .exceptions import ProgramError
 
 __all__ = ['open_browser', 'clean', 'wrap_text', 'strip_textpad',
            'strip_subreddit_url', 'humanize_timestamp', 'open_editor']
-
 
 def open_editor(data=''):
     """
@@ -74,10 +75,9 @@ def clean(string):
     If utf-8 is passed in, addnstr will treat each 'byte' as a single character.
     """
 
-    encoding = 'utf-8' if config.unicode else 'ascii'
-    string = string.encode(encoding, 'replace')
+    if not config.unicode:
+        string = string.encode('ascii', 'replace')
     return string
-
 
 def wrap_text(text, width):
     """
@@ -87,7 +87,7 @@ def wrap_text(text, width):
     for paragraph in text.splitlines():
         # Wrap returns an empty list when paragraph is a newline. In order to
         # preserve newlines we substitute a list containing an empty string.
-        lines = textwrap.wrap(paragraph, width=width) or ['']
+        lines = wrap(paragraph, width=width) or ['']
         out.extend(lines)
     return out
 

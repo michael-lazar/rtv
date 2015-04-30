@@ -13,7 +13,7 @@ setup(
     keywords='reddit terminal praw curses',
     packages=['rtv'],
     include_package_data=True,
-    install_requires=['praw>=2.1.6', 'six', 'requests'],
+    install_requires=['praw>=2.1.6', 'six', 'requests', 'kitchen'],
     entry_points={'console_scripts': ['rtv=rtv.__main__:main']},
     classifiers=[
         'Intended Audience :: End Users/Desktop',

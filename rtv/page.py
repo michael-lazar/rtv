@@ -470,6 +470,7 @@ class BasePage(object):
         self._header_window.bkgd(' ', attr)
 
         sub_name = self.content.name.replace('/r/front', 'Front Page ')
+        sub_name = 'blank'
         self._header_window.addnstr(0, 0, clean(sub_name), n_cols - 1)
 
         if self.reddit.user is not None:
