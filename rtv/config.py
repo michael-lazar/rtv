@@ -28,4 +28,8 @@ default_colors = {
     'MoreComments':      ( -1, -1 ),
     'MoreCommentsCount': ( -1, -1 )
 }
+color_aliases = {
+    "BOLD":      2097152,
+    "UNDERLINE": 131072
+}
 
