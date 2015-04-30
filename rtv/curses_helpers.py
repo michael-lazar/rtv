@@ -203,11 +203,24 @@ class Color(object):
         themes = cls.load_themes()
         # get theme to use if exists
         theme  = themes[theme] if theme in themes.keys() else {}
-        # format colors hash
-        colors = {}
-        for key in theme:
-            colors[key] = tuple( [ int( v ) for v in theme[ key ].strip().split(',') ] )
 
+        # compute colors hash
+        colors = {}
+        # loop in theme entries
+        for key in theme:
+            values = []
+            for value in theme[ key ].strip().split(','):
+                # check for aliases
+                if value in config.color_aliases.keys():
+                    values.append( config.color_aliases[ value ] )
+                else:
+                    # integer is required
+                    try:
+                        values.append( int( value ) )
+                    except:
+                        pass
+
+            colors[ key ] = values
         return colors
 
     @classmethod
