@@ -9,7 +9,7 @@ import praw
 import praw.errors
 from six.moves import configparser
 
-from . import config
+from . import config as rtvconfig
 from .exceptions import SubmissionError, SubredditError, ProgramError
 from .curses_helpers import curses_session
 from .submission import SubmissionPage
@@ -24,7 +24,6 @@ def load_config():
     Search for a configuration file at the location ~/.rtv and attempt to load
     saved settings for things like the username and password.
     """
-
     config = configparser.ConfigParser()
 
     HOME = os.path.expanduser('~')
@@ -46,6 +45,8 @@ def load_config():
 
     if 'unicode' in defaults:
         defaults['unicode'] = config.getboolean('rtv', 'unicode')
+
+    rtvconfig.theme = defaults['theme']
 
     return defaults
 
@@ -95,7 +96,7 @@ def main():
         if getattr(args, key, None) is None:
             setattr(args, key, val)
 
-    config.unicode = args.unicode
+    rtvconfig.unicode = args.unicode
 
     # Squelch SSL warnings for Ubuntu
     logging.captureWarnings(True)
