@@ -9,7 +9,7 @@ from six.moves import configparser
 from .docs import HELP
 from .helpers import strip_textpad
 from .exceptions import EscapeInterrupt
-from .config import default_colors
+import config
 
 __all__ = ['ESCAPE', 'UARROW', 'DARROW', 'BULLET', 'show_notification',
            'show_help', 'LoadScreen', 'Color', 'text_input', 'curses_session',
@@ -186,42 +186,60 @@ class Color(object):
         curses.use_default_colors()
 
         # Set default colors
-        cls._colors.update( default_colors )
-        # Override default colors by template
-        cls._colors.update( cls.load_colors() )
+        cls._colors.update( config.default_colors )
+        # Override default colors by theme colors
+        cls._colors.update( cls.load_colors(config.theme) )
 
         for index, (attr, code) in enumerate(cls._colors.items(), start=1):
             curses.init_pair(index, code[0], code[1])
             setattr(cls, attr, curses.color_pair(index))
 
     @classmethod
-    def load_colors(cls):
-        config = configparser.ConfigParser()
-        # preserves upcase
-        config.optionxform = str
-
-        HOME = os.path.expanduser('~')
-        XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
-        config_paths = [
-            os.path.join(XDG_CONFIG_HOME, 'rtv', 'rtv-colors.cfg'),
-            os.path.join(HOME, '.rtv')
-        ]
-
-        # read only the first existing config file
-        for config_path in config_paths:
-            if os.path.exists(config_path):
-                config.read(config_path)
-                break
-
-        params = {}
-        if config.has_section('rtv-colors'):
-            params = dict(config.items('rtv-colors'))
-
+    def load_colors(cls, theme):
+        # get all available themes
+        themes = cls.load_themes()
+        # get theme to use if exists
+        theme  = themes[theme] if theme in themes.keys() else {}
+        # format colors hash
         colors = {}
-        for key in params:
-            colors[ key ] = tuple( [ int( v ) for v in params[ key ].strip().split(',') ] )
+        for key in theme:
+            colors[key] = tuple( [ int( v ) for v in theme[ key ].strip().split(',') ] )
 
         return colors
+
+    @classmethod
+    def load_themes(cls):
+        """ Load all themes in config paths, return theme indexed hash of colors  """
+
+        # compute color config paths
+        # should be located in ~/.config/rtv/colors or ~/.rtv/colors
+        HOME = os.path.expanduser('~')
+        XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
+        color_config_paths = [
+            os.path.join(XDG_CONFIG_HOME, 'rtv', 'colors'),
+            os.path.join(HOME, '.rtv', 'colors')
+        ]
+
+        themes = {}
+
+        # loop in each config path
+        # loads every themes found, override when duplicate
+        for path in color_config_paths:
+            if os.path.exists(path):
+                for file_name in os.listdir(path):
+                    if file_name.endswith(".cfg"):
+                        # init configparser instance
+                        config = configparser.ConfigParser()
+                        config.optionxform = str
+
+                        # get sections defined in current file
+                        file_path = "%s/%s" % (path, file_name)
+                        config.read( file_path )
+                        # index themes by section id
+                        for section in config.sections():
+                            themes[ section ] = dict( config.items(section) )
+
+        return themes
 
     @classmethod
     def get_level(cls, level):
