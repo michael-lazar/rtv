@@ -209,7 +209,7 @@ class Color(object):
         # loop in theme entries
         for key in theme:
             values = []
-            for value in theme[ key ].strip().split(','):
+            for value in "".join( theme[ key ].split() ).split(','):
                 # check for aliases
                 if value in config.color_aliases.keys():
                     values.append( config.color_aliases[ value ] )
