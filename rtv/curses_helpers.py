@@ -6,12 +6,12 @@ from curses import textpad, ascii
 from contextlib import contextmanager
 
 from .docs import HELP
-from .helpers import strip_textpad
+from .helpers import strip_textpad, clean
 from .exceptions import EscapeInterrupt
 
 __all__ = ['ESCAPE', 'UARROW', 'DARROW', 'BULLET', 'show_notification',
            'show_help', 'LoadScreen', 'Color', 'text_input', 'curses_session',
-           'prompt_input']
+           'prompt_input', 'add_line']
 
 ESCAPE = 27
 
@@ -24,6 +24,49 @@ UARROW = u'\u25b2'.encode('utf-8')
 DARROW = u'\u25bc'.encode('utf-8')
 BULLET = u'\u2022'.encode('utf-8')
 GOLD = u'\u272A'.encode('utf-8')
+
+def add_line(window, text, row=None, col=None, attr=None):
+    """
+    Unicode aware version of curses's built-in addnstr method.
+
+    Safely draws a line of text on the window starting at position (row, col).
+    Checks the boundaries of the window and cuts off the text if it exceeds
+    the length of the window.
+    """
+
+    # The following arg combinations must be supported to conform with addnstr
+    # (window, text)
+    # (window, text, attr)
+    # (window, text, row, col)
+    # (window, text, row, col, attr)
+
+    # Text must be unicode or ascii. Can't be UTF-8!
+    text = clean(text)
+
+    cursor_row, cursor_col = window.getyx()
+    row = row if row is not None else cursor_row
+    col = col if col is not None else cursor_col
+
+    max_rows, max_cols = window.getmaxyx()
+    n_cols = max_cols - col - 1
+    if n_cols <= 0:
+        # Trying to draw outside of the screen bounds
+        return
+
+    # We have n_cols available to draw the text. Add characters to a text buffer
+    # until we reach the end of the screen
+    buffer, space_left = [], n_cols
+    for char in text:
+        space_left -= unicode_width(char)
+        if space_left < 0:
+            break
+        buffer.append(char)
+
+    trimmed_text = ''.join(buffer)
+    if attr is None:
+        window.addnstr(row, col, trimmed_text, n_cols)
+    else:
+        window.addnstr(row, col, trimmed_text, n_cols, attr)
 
 
 def show_notification(stdscr, message):
@@ -52,7 +95,7 @@ def show_notification(stdscr, message):
     window.border()
 
     for index, line in enumerate(message, start=1):
-        window.addnstr(index, 1, line, box_width - 2)
+        add_line(window, line, index, 1)
     window.refresh()
     ch = stdscr.getch()
 

@@ -8,9 +8,9 @@ from contextlib import contextmanager
 import praw.errors
 import requests
 
-from .helpers import clean, open_editor
+from .helpers import open_editor
 from .curses_helpers import (Color, show_notification, show_help, text_input,
-                             prompt_input)
+                             prompt_input, add_line)
 from .docs import COMMENT_EDIT_FILE, SUBMISSION_FILE
 
 __all__ = ['Navigator', 'BaseController', 'BasePage']
@@ -470,17 +470,16 @@ class BasePage(object):
         self._header_window.bkgd(' ', attr)
 
         sub_name = self.content.name.replace('/r/front', 'Front Page ')
-        sub_name = 'blank'
-        self._header_window.addnstr(0, 0, clean(sub_name), n_cols - 1)
+        add_line(self._header_window, sub_name, 0, 0)
 
         if self.reddit.user is not None:
             username = self.reddit.user.name
+            # TODO: use unicode width here instead of length
             s_col = (n_cols - len(username) - 1)
-            # Only print the username if it fits in the empty space on the
-            # right
+            # Only print username if it fits in the empty space on the right
             if (s_col - 1) >= len(sub_name):
                 n = (n_cols - s_col - 1)
-                self._header_window.addnstr(0, s_col, clean(username), n)
+                add_line(self._header_window, username, 0, s_col)
 
         self._header_window.refresh()
 

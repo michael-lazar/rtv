@@ -7,9 +7,9 @@ import praw.errors
 
 from .content import SubmissionContent
 from .page import BasePage, Navigator, BaseController
-from .helpers import clean, open_browser, open_editor
+from .helpers import open_browser, open_editor
 from .curses_helpers import (BULLET, UARROW, DARROW, GOLD, Color, LoadScreen,
-                             show_notification, text_input)
+                             show_notification, text_input, add_line)
 from .docs import COMMENT_FILE
 
 __all__ = ['SubmissionController', 'SubmissionPage']
@@ -158,15 +158,13 @@ class SubmissionPage(BasePage):
         row = offset
         if row in valid_rows:
 
-            text = clean(u'{author} '.format(**data))
             attr = curses.A_BOLD
             attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
-            win.addnstr(row, 1, text, n_cols - 1, attr)
+            add_line(win, u'{author} '.format(**data), row, 1, attr)
 
             if data['flair']:
-                text = clean(u'{flair} '.format(**data))
                 attr = curses.A_BOLD | Color.YELLOW
-                win.addnstr(text, n_cols - win.getyx()[1], attr)
+                add_line(win, u'{flair} '.format(**data), attr=attr)
 
             if data['likes'] is None:
                 text, attr = BULLET, curses.A_BOLD
@@ -174,20 +172,18 @@ class SubmissionPage(BasePage):
                 text, attr = UARROW, (curses.A_BOLD | Color.GREEN)
             else:
                 text, attr = DARROW, (curses.A_BOLD | Color.RED)
-            win.addnstr(text, n_cols - win.getyx()[1], attr)
+            add_line(win, text, attr=attr)
 
-            text = clean(u' {score} {created} '.format(**data))
-            win.addnstr(text, n_cols - win.getyx()[1])
+            add_line(win, u' {score} {created} '.format(**data))
 
             if data['gold']:
                 text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
-                win.addnstr(text, n_cols - win.getyx()[1], attr)
+                add_line(win, text, attr=attr)
 
         n_body = len(data['split_body'])
         for row, text in enumerate(data['split_body'], start=offset + 1):
             if row in valid_rows:
-                text = clean(text)
-                win.addnstr(row, 1, text, n_cols - 1)
+                add_line(win, text, row, 1)
 
         # Unfortunately vline() doesn't support custom color so we have to
         # build it one segment at a time.
@@ -210,13 +206,9 @@ class SubmissionPage(BasePage):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
 
-        text = clean(u'{body}'.format(**data))
-        win.addnstr(0, 1, text, n_cols - 1)
-        text = clean(u' [{count}]'.format(**data))
-        win.addnstr(text, n_cols - win.getyx()[1], curses.A_BOLD)
+        add_line(win, u'{body}'.format(**data), 0, 1)
+        add_line(win, u' [{count}]'.format(**data), attr=curses.A_BOLD)
 
-        # Unfortunately vline() doesn't support custom color so we have to
-        # build it one segment at a time.
         attr = Color.get_level(data['level'])
         win.addch(0, 0, curses.ACS_VLINE, attr)
 
@@ -229,23 +221,18 @@ class SubmissionPage(BasePage):
         n_cols -= 3  # one for each side of the border + one for offset
 
         for row, text in enumerate(data['split_title'], start=1):
-            text = clean(text)
-            win.addnstr(row, 1, text, n_cols, curses.A_BOLD)
+            add_line(win, text, row, 1, curses.A_BOLD)
 
         row = len(data['split_title']) + 1
         attr = curses.A_BOLD | Color.GREEN
-        text = clean(u'{author}'.format(**data))
-        win.addnstr(row, 1, text, n_cols, attr)
+        add_line(win, u'{author}'.format(**data), row, 1, attr)
         attr = curses.A_BOLD | Color.YELLOW
-        text = clean(u' {flair}'.format(**data))
-        win.addnstr(text, n_cols - win.getyx()[1], attr)
-        text = clean(u' {created} {subreddit}'.format(**data))
-        win.addnstr(text, n_cols - win.getyx()[1])
+        add_line(win, u' {flair}'.format(**data), attr=attr)
+        add_line(win, u' {created} {subreddit}'.format(**data))
 
         row = len(data['split_title']) + 2
         attr = curses.A_UNDERLINE | Color.BLUE
-        text = clean(u'{url}'.format(**data))
-        win.addnstr(row, 1, text, n_cols, attr)
+        add_line(win, u'{url}'.format(**data), row, 1, attr)
         offset = len(data['split_title']) + 3
 
         # Cut off text if there is not enough room to display the whole post
@@ -256,12 +243,10 @@ class SubmissionPage(BasePage):
             split_text.append('(Not enough space to display)')
 
         for row, text in enumerate(split_text, start=offset):
-            text = clean(text)
-            win.addnstr(row, 1, text, n_cols)
+            add_line(win, text, row, 1)
 
         row = len(data['split_title']) + len(split_text) + 3
-        text = clean(u'{score} '.format(**data))
-        win.addnstr(row, 1, text, n_cols - 1)
+        add_line(win, u'{score} '.format(**data), row, 1)
 
         if data['likes'] is None:
             text, attr = BULLET, curses.A_BOLD
@@ -269,17 +254,15 @@ class SubmissionPage(BasePage):
             text, attr = UARROW, curses.A_BOLD | Color.GREEN
         else:
             text, attr = DARROW, curses.A_BOLD | Color.RED
-        win.addnstr(text, n_cols - win.getyx()[1], attr)
-
-        text = clean(u' {comments} '.format(**data))
-        win.addnstr(text, n_cols - win.getyx()[1])
+        add_line(win, text, attr=attr)
+        add_line(win, u' {comments} '.format(**data))
 
         if data['gold']:
             text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
-            win.addnstr(text, n_cols - win.getyx()[1], attr)
+            add_line(win, text, attr=attr)
 
         if data['nsfw']:
             text, attr = 'NSFW', (curses.A_BOLD | Color.RED)
-            win.addnstr(text, n_cols - win.getyx()[1], attr)
+            add_line(win, text, attr=attr)
 
         win.border()

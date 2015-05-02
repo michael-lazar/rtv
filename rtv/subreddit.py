@@ -9,9 +9,9 @@ from .exceptions import SubredditError, AccountError
 from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .helpers import clean, open_browser, open_editor
+from .helpers import open_browser, open_editor
 from .docs import SUBMISSION_FILE
-from .curses_helpers import (BULLET, UARROW, DARROW, GOLD, Color,
+from .curses_helpers import (BULLET, UARROW, DARROW, GOLD, Color, add_line,
                              LoadScreen, show_notification, prompt_input)
 
 __all__ = ['opened_links', 'SubredditController', 'SubredditPage']
@@ -163,21 +163,18 @@ class SubredditPage(BasePage):
         n_title = len(data['split_title'])
         for row, text in enumerate(data['split_title'], start=offset):
             if row in valid_rows:
-                text = clean(text)
-                win.addnstr(row, 1, text, n_cols - 1, curses.A_BOLD)
+                add_line(win, text, row, 1, curses.A_BOLD)
 
         row = n_title + offset
         if row in valid_rows:
             seen = (data['url_full'] in opened_links)
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
-            text = clean(u'{url}'.format(**data))
-            win.addnstr(row, 1, text, n_cols - 1, attr)
+            add_line(win, u'{url}'.format(**data), row, 1, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
-            text = clean(u'{score} '.format(**data))
-            win.addnstr(row, 1, text, n_cols - 1)
+            add_line(win, u'{score} '.format(**data), row, 1)
 
             if data['likes'] is None:
                 text, attr = BULLET, curses.A_BOLD
@@ -185,24 +182,19 @@ class SubredditPage(BasePage):
                 text, attr = UARROW, curses.A_BOLD | Color.GREEN
             else:
                 text, attr = DARROW, curses.A_BOLD | Color.RED
-            win.addnstr(text, n_cols - win.getyx()[1], attr)
-
-            text = clean(u' {created} {comments} '.format(**data))
-            win.addnstr(text, n_cols - win.getyx()[1])
+            add_line(win, text, attr=attr)
+            add_line(win, u' {created} {comments} '.format(**data))
 
             if data['gold']:
                 text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
-                win.addnstr(text, n_cols - win.getyx()[1], attr)
+                add_line(win, text, attr=attr)
 
             if data['nsfw']:
                 text, attr = 'NSFW', (curses.A_BOLD | Color.RED)
-                win.addnstr(text, n_cols - win.getyx()[1], attr)
+                add_line(win, text, attr=attr)
 
         row = n_title + offset + 2
         if row in valid_rows:
-            text = clean(u'{author}'.format(**data))
-            win.addnstr(row, 1, text, n_cols - 1, curses.A_BOLD)
-            text = clean(u' {subreddit}'.format(**data))
-            win.addnstr(text, n_cols - win.getyx()[1], Color.YELLOW)
-            text = clean(u' {flair}'.format(**data))
-            win.addnstr(text, n_cols - win.getyx()[1], Color.RED)
+            add_line(win, u'{author}'.format(**data), row, 1, curses.A_BOLD)
+            add_line(win, u' {subreddit}'.format(**data), attr=Color.YELLOW)
+            add_line(Win, u' {flair}'.format(**data), attr=Color.RED)
