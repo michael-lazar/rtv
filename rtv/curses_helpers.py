@@ -186,9 +186,9 @@ class Color(object):
         curses.use_default_colors()
 
         # Set default colors
-        cls._colors.update( config.default_colors )
+        cls._colors.update(config.default_colors)
         # Override default colors by theme colors
-        cls._colors.update( cls.load_colors(config.theme) )
+        cls._colors.update(cls.load_colors(config.theme))
 
         for index, (attr, code) in enumerate(cls._colors.items(), start=1):
             curses.init_pair(index, code[0], code[1])
@@ -202,25 +202,28 @@ class Color(object):
         # get all available themes
         themes = cls.load_themes()
         # get theme to use if exists
-        theme  = themes[theme] if theme in themes.keys() else {}
+        if theme in themes.keys():
+            theme  = themes[theme]
+        else:
+            theme = {}
 
         # compute colors hash
         colors = {}
         # loop in theme entries
         for key in theme:
             values = []
-            for value in "".join( theme[ key ].split() ).split(','):
+            for value in "".join(theme[key].split()).split(','):
                 # check for aliases
                 if value in config.color_aliases.keys():
-                    values.append( config.color_aliases[ value ] )
+                    values.append(config.color_aliases[value])
                 else:
                     # integer is required
                     try:
-                        values.append( int( value ) )
+                        values.append(int(value))
                     except:
                         pass
 
-            colors[ key ] = values
+            colors[key] = values
         return colors
 
     @classmethod
@@ -250,10 +253,10 @@ class Color(object):
 
                         # get sections defined in current file
                         file_path = "%s/%s" % (path, file_name)
-                        config.read( file_path )
+                        config.read(file_path)
                         # index themes by section id
                         for section in config.sections():
-                            themes[ section ] = dict( config.items(section) )
+                            themes[section] = dict(config.items(section))
 
         return themes
 
