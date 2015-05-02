@@ -9,7 +9,7 @@ import praw
 import praw.errors
 from six.moves import configparser
 
-from . import config as rtvconfig
+from . import config
 from .exceptions import SubmissionError, SubredditError, ProgramError
 from .curses_helpers import curses_session
 from .submission import SubmissionPage
@@ -24,7 +24,7 @@ def load_config():
     Search for a configuration file at the location ~/.rtv and attempt to load
     saved settings for things like the username and password.
     """
-    config = configparser.ConfigParser()
+    parser = configparser.ConfigParser()
 
     HOME = os.path.expanduser('~')
     XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
@@ -36,20 +36,20 @@ def load_config():
     # read only the first existing config file
     for config_path in config_paths:
         if os.path.exists(config_path):
-            config.read(config_path)
+            parser.read(config_path)
             break
 
     defaults = {}
-    if config.has_section('rtv'):
-        defaults = dict(config.items('rtv'))
+    if parser.has_section('rtv'):
+        defaults = dict(parser.items('rtv'))
 
     if 'unicode' in defaults:
-        defaults['unicode'] = config.getboolean('rtv', 'unicode')
+        defaults['unicode'] = parser.getboolean('rtv', 'unicode')
 
     if 'theme' in defaults:
-        rtvconfig.theme = defaults['theme']
+        config.theme = defaults['theme']
     else:
-        rtvconfig.theme = None
+        config.theme = None
 
     return defaults
 
@@ -99,7 +99,7 @@ def main():
         if getattr(args, key, None) is None:
             setattr(args, key, val)
 
-    rtvconfig.unicode = args.unicode
+    config.unicode = args.unicode
 
     # Squelch SSL warnings for Ubuntu
     logging.captureWarnings(True)
