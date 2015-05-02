@@ -8,8 +8,8 @@ import praw.errors
 from .content import SubmissionContent
 from .page import BasePage, Navigator, BaseController
 from .helpers import open_browser, open_editor
-from .curses_helpers import (BULLET, UARROW, DARROW, GOLD, Color, LoadScreen,
-                             show_notification, text_input, add_line)
+from .curses_helpers import (GOLD, Color, LoadScreen, get_arrow, add_line,
+                             show_notification, text_input)
 from .docs import COMMENT_FILE
 
 __all__ = ['SubmissionController', 'SubmissionPage']
@@ -166,14 +166,8 @@ class SubmissionPage(BasePage):
                 attr = curses.A_BOLD | Color.YELLOW
                 add_line(win, u'{flair} '.format(**data), attr=attr)
 
-            if data['likes'] is None:
-                text, attr = BULLET, curses.A_BOLD
-            elif data['likes']:
-                text, attr = UARROW, (curses.A_BOLD | Color.GREEN)
-            else:
-                text, attr = DARROW, (curses.A_BOLD | Color.RED)
+            text, attr = get_arrow(likes)
             add_line(win, text, attr=attr)
-
             add_line(win, u' {score} {created} '.format(**data))
 
             if data['gold']:
@@ -247,13 +241,7 @@ class SubmissionPage(BasePage):
 
         row = len(data['split_title']) + len(split_text) + 3
         add_line(win, u'{score} '.format(**data), row, 1)
-
-        if data['likes'] is None:
-            text, attr = BULLET, curses.A_BOLD
-        elif data['likes']:
-            text, attr = UARROW, curses.A_BOLD | Color.GREEN
-        else:
-            text, attr = DARROW, curses.A_BOLD | Color.RED
+        text, attr = get_arrow(data['likes'])
         add_line(win, text, attr=attr)
         add_line(win, u' {comments} '.format(**data))
 

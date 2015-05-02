@@ -11,8 +11,8 @@ from .submission import SubmissionPage
 from .content import SubredditContent
 from .helpers import open_browser, open_editor
 from .docs import SUBMISSION_FILE
-from .curses_helpers import (BULLET, UARROW, DARROW, GOLD, Color, add_line,
-                             LoadScreen, show_notification, prompt_input)
+from .curses_helpers import (GOLD, Color, LoadScreen, add_line, get_arrow,
+                             show_notification, prompt_input)
 
 __all__ = ['opened_links', 'SubredditController', 'SubredditPage']
 
@@ -175,13 +175,7 @@ class SubredditPage(BasePage):
         row = n_title + offset + 1
         if row in valid_rows:
             add_line(win, u'{score} '.format(**data), row, 1)
-
-            if data['likes'] is None:
-                text, attr = BULLET, curses.A_BOLD
-            elif data['likes']:
-                text, attr = UARROW, curses.A_BOLD | Color.GREEN
-            else:
-                text, attr = DARROW, curses.A_BOLD | Color.RED
+            text, attr = get_arrow(data['likes'])
             add_line(win, text, attr=attr)
             add_line(win, u' {created} {comments} '.format(**data))
 

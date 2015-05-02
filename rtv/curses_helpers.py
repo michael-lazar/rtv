@@ -11,7 +11,7 @@ from .exceptions import EscapeInterrupt
 
 __all__ = ['ESCAPE', 'UARROW', 'DARROW', 'BULLET', 'show_notification',
            'show_help', 'LoadScreen', 'Color', 'text_input', 'curses_session',
-           'prompt_input', 'add_line']
+           'prompt_input', 'add_line', 'get_arrow']
 
 ESCAPE = 27
 
@@ -24,6 +24,20 @@ UARROW = u'\u25b2'.encode('utf-8')
 DARROW = u'\u25bc'.encode('utf-8')
 BULLET = u'\u2022'.encode('utf-8')
 GOLD = u'\u272A'.encode('utf-8')
+
+def get_arrow(likes):
+    """
+    Return the vote symbol to display, based on the `likes` paramater.
+    """
+
+    if likes is None:
+        symbol, attr = BULLET, curses.A_BOLD
+    elif likes:
+        symbol, attr = UARROW, curses.A_BOLD | Color.GREEN
+    else:
+        symbol, attr = DARROW, curses.A_BOLD | Color.RED
+    return symbol, attr
+
 
 def add_line(window, text, row=None, col=None, attr=None):
     """
