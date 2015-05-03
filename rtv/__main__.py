@@ -46,10 +46,7 @@ def load_config():
     if 'unicode' in defaults:
         defaults['unicode'] = parser.getboolean('rtv', 'unicode')
 
-    if 'theme' in defaults:
-        config.theme = defaults['theme']
-    else:
-        config.theme = None
+    config.theme = defaults.get("theme")
 
     return defaults
 
