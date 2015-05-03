@@ -79,6 +79,7 @@ def clean(string):
         string = string.encode('ascii', 'replace')
     return string
 
+
 def wrap_text(text, width):
     """
     Wrap text paragraphs to the given character width while preserving newlines.

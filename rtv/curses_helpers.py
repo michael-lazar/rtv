@@ -5,6 +5,8 @@ import curses
 from curses import textpad, ascii
 from contextlib import contextmanager
 
+from kitchen.text.display import textual_width, textual_width_chop
+
 from .docs import HELP
 from .helpers import strip_textpad, clean
 from .exceptions import EscapeInterrupt
@@ -54,7 +56,6 @@ def add_line(window, text, row=None, col=None, attr=None):
     # (window, text, row, col)
     # (window, text, row, col, attr)
 
-    # Text must be unicode or ascii. Can't be UTF-8!
     text = clean(text)
 
     cursor_row, cursor_col = window.getyx()
@@ -67,20 +68,12 @@ def add_line(window, text, row=None, col=None, attr=None):
         # Trying to draw outside of the screen bounds
         return
 
-    # We have n_cols available to draw the text. Add characters to a text buffer
-    # until we reach the end of the screen
-    buffer, space_left = [], n_cols
-    for char in text:
-        space_left -= unicode_width(char)
-        if space_left < 0:
-            break
-        buffer.append(char)
+    text = textual_width_chop(text, n_cols)
 
-    trimmed_text = ''.join(buffer)
     if attr is None:
-        window.addnstr(row, col, trimmed_text, n_cols)
+        window.addnstr(row, col, text, n_cols)
     else:
-        window.addnstr(row, col, trimmed_text, n_cols, attr)
+        window.addnstr(row, col, text, n_cols, attr)
 
 
 def show_notification(stdscr, message):

@@ -7,6 +7,7 @@ from contextlib import contextmanager
 
 import praw.errors
 import requests
+from kitchen.text.display import textual_width
 
 from .helpers import open_editor
 from .curses_helpers import (Color, show_notification, show_help, text_input,
@@ -474,8 +475,7 @@ class BasePage(object):
 
         if self.reddit.user is not None:
             username = self.reddit.user.name
-            # TODO: use unicode width here instead of length
-            s_col = (n_cols - len(username) - 1)
+            s_col = (n_cols - textual_width(username) - 1)
             # Only print username if it fits in the empty space on the right
             if (s_col - 1) >= len(sub_name):
                 n = (n_cols - s_col - 1)
