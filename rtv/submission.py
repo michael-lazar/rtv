@@ -166,7 +166,7 @@ class SubmissionPage(BasePage):
                 attr = curses.A_BOLD | Color.YELLOW
                 add_line(win, u'{flair} '.format(**data), attr=attr)
 
-            text, attr = get_arrow(likes)
+            text, attr = get_arrow(data['likes'])
             add_line(win, text, attr=attr)
             add_line(win, u' {score} {created} '.format(**data))
 

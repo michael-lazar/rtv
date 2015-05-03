@@ -22,10 +22,10 @@ ESCAPE = 27
 # found to be buggy and a PITA to work with. By defining them as unicode
 # points they can be added via the more reliable curses.addstr().
 # http://bugs.python.org/issue21088
-UARROW = u'\u25b2'.encode('utf-8')
-DARROW = u'\u25bc'.encode('utf-8')
-BULLET = u'\u2022'.encode('utf-8')
-GOLD = u'\u272A'.encode('utf-8')
+UARROW = u'\u25b2'
+DARROW = u'\u25bc'
+BULLET = u'\u2022'
+GOLD = u'\u272A'
 
 def get_arrow(likes):
     """
@@ -56,8 +56,6 @@ def add_line(window, text, row=None, col=None, attr=None):
     # (window, text, row, col)
     # (window, text, row, col, attr)
 
-    text = clean(text)
-
     cursor_row, cursor_col = window.getyx()
     row = row if row is not None else cursor_row
     col = col if col is not None else cursor_col
@@ -68,6 +66,7 @@ def add_line(window, text, row=None, col=None, attr=None):
         # Trying to draw outside of the screen bounds
         return
 
+    text = clean(text)
     text = textual_width_chop(text, n_cols)
 
     if attr is None:

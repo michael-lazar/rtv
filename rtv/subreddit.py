@@ -191,4 +191,4 @@ class SubredditPage(BasePage):
         if row in valid_rows:
             add_line(win, u'{author}'.format(**data), row, 1, curses.A_BOLD)
             add_line(win, u' {subreddit}'.format(**data), attr=Color.YELLOW)
-            add_line(Win, u' {flair}'.format(**data), attr=Color.RED)
+            add_line(win, u' {flair}'.format(**data), attr=Color.RED)
