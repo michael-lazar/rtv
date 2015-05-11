@@ -59,7 +59,8 @@ def command_line():
 
     parser.add_argument('-s', dest='subreddit', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
-    parser.add_argument('--unicode', help='enable unicode (experimental)')
+    parser.add_argument('--unicode', action='store_const', const=False,
+                        help='enable unicode (experimental)')
     parser.add_argument('--log', metavar='FILE', action='store',
                         help='Log HTTP requests')
 

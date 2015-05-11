@@ -5,7 +5,8 @@ from datetime import datetime
 from tempfile import NamedTemporaryFile
 
 # kitchen solves deficiencies in textwrap's handling of unicode characters
-from kitchen.text.display import wrap
+from kitchen.text.display import wrap, textual_width_chop
+import six
 
 from . import config
 from .exceptions import ProgramError
@@ -56,7 +57,7 @@ def open_browser(url):
         subprocess.check_call(args, stdout=null, stderr=null)
 
 
-def clean(string):
+def clean(string, n_cols=None):
     """
     Required reading!
         http://nedbatchelder.com/text/unipain.html
@@ -75,9 +76,19 @@ def clean(string):
     If utf-8 is passed in, addnstr will treat each 'byte' as a single character.
     """
 
+    if n_cols is not None and n_cols <= 0:
+        return ''
+
     if not config.unicode:
-        string = string.encode('ascii', 'replace')
-    return string
+        if six.PY3 or isinstance(string, unicode):
+            string = string.encode('ascii', 'replace')
+        return string[:n_cols] if n_cols else string
+    else:
+        if n_cols:
+            string = textual_width_chop(string, n_cols)
+        if six.PY3 or isinstance(string, unicode):
+            string = string.encode('utf-8')
+        return string
 
 
 def wrap_text(text, width):

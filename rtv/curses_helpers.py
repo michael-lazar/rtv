@@ -5,8 +5,6 @@ import curses
 from curses import textpad, ascii
 from contextlib import contextmanager
 
-from kitchen.text.display import textual_width, textual_width_chop
-
 from .docs import HELP
 from .helpers import strip_textpad, clean
 from .exceptions import EscapeInterrupt
@@ -66,13 +64,9 @@ def add_line(window, text, row=None, col=None, attr=None):
         # Trying to draw outside of the screen bounds
         return
 
-    text = clean(text)
-    text = textual_width_chop(text, n_cols)
-
-    if attr is None:
-        window.addnstr(row, col, text, n_cols)
-    else:
-        window.addnstr(row, col, text, n_cols, attr)
+    text = clean(text, n_cols)
+    params = [] if attr is None else [attr]
+    window.addstr(row, col, text, *params)
 
 
 def show_notification(stdscr, message):
