@@ -77,16 +77,19 @@ class BaseContent(object):
             data['count'] = comment.count
             data['body'] = 'More comments'.format(comment.count)
         else:
+            author = getattr(comment, 'author', '[deleted]')
+            name = getattr(author, 'name', '[deleted]')
+            sub = getattr(comment, 'submission', '[deleted]')
+            sub_author = getattr(sub, 'author', '[deleted]')
+            sub_name = getattr(sub_author, 'name', '[deleted]')
+            flair = getattr(comment, 'author_flair_text', '')
             data['type'] = 'Comment'
             data['body'] = comment.body
             data['created'] = humanize_timestamp(comment.created_utc)
             data['score'] = '{} pts'.format(comment.score)
-            author = getattr(comment, 'author')
-            data['author'] = (author.name if author else '[deleted]')
-            sub_author = getattr(comment.submission.author, 'name')
-            data['is_author'] = (data['author'] == sub_author)
-            flair = comment.author_flair_text
-            data['flair'] = (flair if flair else '')
+            data['author'] = name
+            data['is_author'] = (name == sub_name)
+            data['flair'] = flair
             data['likes'] = comment.likes
             data['gold'] = comment.gilded > 0
 
@@ -100,6 +103,9 @@ class BaseContent(object):
         """
 
         is_selfpost = lambda s: s.startswith('http://www.reddit.com/r/')
+        author = getattr(sub, 'author', '[deleted]')
+        name = getattr(author, 'name', '[deleted]')
+        flair = getattr(sub, 'link_flair_text', '')
 
         data = {}
         data['object'] = sub
@@ -109,11 +115,10 @@ class BaseContent(object):
         data['created'] = humanize_timestamp(sub.created_utc)
         data['comments'] = '{} comments'.format(sub.num_comments)
         data['score'] = '{} pts'.format(sub.score)
-        author = getattr(sub, 'author')
-        data['author'] = (author.name if author else '[deleted]')
+        data['author'] = name
         data['permalink'] = sub.permalink
         data['subreddit'] = strip_subreddit_url(sub.permalink)
-        data['flair'] = (sub.link_flair_text if sub.link_flair_text else '')
+        data['flair'] = flair
         data['url_full'] = sub.url
         data['url'] = ('selfpost' if is_selfpost(sub.url) else sub.url)
         data['likes'] = sub.likes
