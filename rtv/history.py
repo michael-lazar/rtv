@@ -38,8 +38,11 @@ def save_history(history):
         for i in range(200):
             if not history:
                 break
-            history_file.write(history.pop() + '\n')
-
+            try:
+                history_file.write(history.pop() + '\n')
+            except UnicodeEncodeError:
+                # Ignore unicode URLS, may want to handle this at some point
+                continue
 
 class OrderedSet(object):
     """
