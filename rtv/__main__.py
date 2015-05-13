@@ -44,8 +44,8 @@ def load_config():
     if config.has_section('rtv'):
         defaults = dict(config.items('rtv'))
 
-    if 'unicode' in defaults:
-        defaults['unicode'] = config.getboolean('rtv', 'unicode')
+    if 'ascii' in defaults:
+        defaults['ascii'] = config.getboolean('rtv', 'ascii')
 
     return defaults
 
@@ -59,8 +59,8 @@ def command_line():
 
     parser.add_argument('-s', dest='subreddit', help='subreddit name')
     parser.add_argument('-l', dest='link', help='full link to a submission')
-    parser.add_argument('--unicode', action='store_const', const=False,
-                        help='enable unicode (experimental)')
+    parser.add_argument('--ascii', action='store_true',
+                        help='enable ascii-only mode')
     parser.add_argument('--log', metavar='FILE', action='store',
                         help='Log HTTP requests')
 
@@ -95,7 +95,7 @@ def main():
         if getattr(args, key, None) is None:
             setattr(args, key, val)
 
-    config.unicode = False if args.unicode is None else args.unicode
+    config.unicode = (not args.ascii)
 
     # Squelch SSL warnings for Ubuntu
     logging.captureWarnings(True)

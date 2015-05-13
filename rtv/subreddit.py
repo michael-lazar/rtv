@@ -12,6 +12,7 @@ from .submission import SubmissionPage
 from .content import SubredditContent
 from .helpers import open_browser, open_editor
 from .docs import SUBMISSION_FILE
+from .history import load_history, save_history
 from .curses_helpers import (GOLD, Color, LoadScreen, add_line, get_arrow,
                              show_notification, prompt_input)
 
@@ -20,7 +21,6 @@ __all__ = ['history', 'SubredditController', 'SubredditPage']
 _logger = logging.getLogger(__name__)
 
 history = load_history()
-
 
 @atexit.register
 def save_links():

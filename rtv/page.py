@@ -477,8 +477,7 @@ class BasePage(object):
             username = self.reddit.user.name
             s_col = (n_cols - textual_width(username) - 1)
             # Only print username if it fits in the empty space on the right
-            if (s_col - 1) >= len(sub_name):
-                n = (n_cols - s_col - 1)
+            if (s_col - 1) >= textual_width(sub_name):
                 add_line(self._header_window, username, 0, s_col)
 
         self._header_window.refresh()

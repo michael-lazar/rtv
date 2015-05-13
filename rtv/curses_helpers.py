@@ -5,6 +5,7 @@ import curses
 from curses import textpad, ascii
 from contextlib import contextmanager
 
+from . import config
 from .docs import HELP
 from .helpers import strip_textpad, clean
 from .exceptions import EscapeInterrupt
@@ -20,10 +21,10 @@ ESCAPE = 27
 # found to be buggy and a PITA to work with. By defining them as unicode
 # points they can be added via the more reliable curses.addstr().
 # http://bugs.python.org/issue21088
-UARROW = u'\u25b2'
-DARROW = u'\u25bc'
-BULLET = u'\u2022'
-GOLD = u'\u272A'
+UARROW = u'\u25b2' if config.unicode else '^'
+DARROW = u'\u25bc' if config.unicode else 'v'
+BULLET = u'\u2022' if config.unicode else 'o'
+GOLD = u'\u272A' if config.unicode else '*'
 
 def get_arrow(likes):
     """

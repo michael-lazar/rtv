@@ -73,9 +73,9 @@ Example config:
   # Default submission link - will be opened every time the program starts
   # link=http://www.reddit.com/r/CollegeBasketball/comments/31irjq
 
-  # Enable unicode characters (experimental)
-  # This is known to be unstable with east asian wide character sets
-  # unicode=true
+  # Enable ascii-only mode and disable unicode characters
+  # This may be necessary for compatability with some terminal browsers
+  # ascii=True
 
 RTV allows users to compose comments and replys using their preferred text editor (**vi**, **nano**, **gedit**, etc).
 Set the environment variable ``RTV_EDITOR`` to specify which editor the program should use.
