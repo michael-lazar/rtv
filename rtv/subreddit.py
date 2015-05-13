@@ -1,6 +1,7 @@
 import curses
 import time
 import logging
+import atexit
 
 import requests
 import praw
@@ -14,12 +15,17 @@ from .docs import SUBMISSION_FILE
 from .curses_helpers import (GOLD, Color, LoadScreen, add_line, get_arrow,
                              show_notification, prompt_input)
 
-__all__ = ['opened_links', 'SubredditController', 'SubredditPage']
+__all__ = ['history', 'SubredditController', 'SubredditPage']
 
 _logger = logging.getLogger(__name__)
 
-# Used to keep track of browsing history across the current session
-opened_links = set()
+history = load_history()
+
+
+@atexit.register
+def save_links():
+    global history
+    save_history(history)
 
 
 class SubredditController(BaseController):
@@ -96,8 +102,8 @@ class SubredditPage(BasePage):
         page.loop()
 
         if data['url'] == 'selfpost':
-            global opened_links
-            opened_links.add(data['url_full'])
+            global history
+            history.add(data['url_full'])
 
     @SubredditController.register(curses.KEY_ENTER, 10, 'o')
     def open_link(self):
@@ -106,8 +112,8 @@ class SubredditPage(BasePage):
         url = self.content.get(self.nav.absolute_index)['url_full']
         open_browser(url)
 
-        global opened_links
-        opened_links.add(url)
+        global history
+        history.add(url)
 
     @SubredditController.register('p')
     def post_submission(self):
@@ -167,7 +173,7 @@ class SubredditPage(BasePage):
 
         row = n_title + offset
         if row in valid_rows:
-            seen = (data['url_full'] in opened_links)
+            seen = (data['url_full'] in history)
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
             add_line(win, u'{url}'.format(**data), row, 1, attr)

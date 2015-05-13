@@ -533,26 +533,21 @@ class BasePage(object):
     def _move_cursor(self, direction):
         self._remove_cursor()
         valid, redraw = self.nav.move(direction, len(self._subwindows))
-
         if not valid:
             curses.flash()
 
         # Note: ACS_VLINE doesn't like changing the attribute, so always redraw.
-        # if redraw: self._draw_content()
         self._draw_content()
         self._add_cursor()
 
     def _move_page(self, direction):
         self._remove_cursor()
-        valid, redraw = self.nav.move_page(direction,
-                                           len(self._subwindows)-1)
+        valid, redraw = self.nav.move_page(direction, len(self._subwindows)-1)
         if not valid:
             curses.flash()
 
+        # Note: ACS_VLINE doesn't like changing the attribute, so always redraw.
         self._draw_content()
-        # Don't allow the cursor to go over the subwindow number
-        if self.nav.cursor_index >= len(self._subwindows):
-            self.nav.cursor_index = len(self._subwindows)-1
         self._add_cursor()
 
     def _edit_cursor(self, attribute=None):
@@ -560,6 +555,12 @@ class BasePage(object):
         # Don't allow the cursor to go below page index 0
         if self.nav.absolute_index < 0:
             return
+
+        # Don't allow the cursor to go over the number of subwindows
+        # This could happen if the window is resized and the cursor index is
+        # pushed out of bounds
+        if self.nav.cursor_index >= len(self._subwindows):
+            self.nav.cursor_index = len(self._subwindows)-1
 
         window, attr = self._subwindows[self.nav.cursor_index]
         if attr is not None:
