@@ -8,7 +8,7 @@ import praw.errors
 from .content import SubmissionContent
 from .page import BasePage, Navigator, BaseController
 from .helpers import open_browser, open_editor
-from .curses_helpers import (GOLD, Color, LoadScreen, get_arrow, add_line,
+from .curses_helpers import (Color, LoadScreen, get_arrow, get_gold, add_line,
                              show_notification, text_input)
 from .docs import COMMENT_FILE
 
@@ -171,7 +171,7 @@ class SubmissionPage(BasePage):
             add_line(win, u' {score} {created} '.format(**data))
 
             if data['gold']:
-                text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
+                text, attr = get_gold()
                 add_line(win, text, attr=attr)
 
         n_body = len(data['split_body'])
@@ -246,7 +246,7 @@ class SubmissionPage(BasePage):
         add_line(win, u' {comments} '.format(**data))
 
         if data['gold']:
-            text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
+            text, attr = get_gold()
             add_line(win, text, attr=attr)
 
         if data['nsfw']:

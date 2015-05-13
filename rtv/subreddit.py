@@ -13,7 +13,7 @@ from .content import SubredditContent
 from .helpers import open_browser, open_editor
 from .docs import SUBMISSION_FILE
 from .history import load_history, save_history
-from .curses_helpers import (GOLD, Color, LoadScreen, add_line, get_arrow,
+from .curses_helpers import (Color, LoadScreen, add_line, get_arrow, get_gold,
                              show_notification, prompt_input)
 
 __all__ = ['history', 'SubredditController', 'SubredditPage']
@@ -186,7 +186,7 @@ class SubredditPage(BasePage):
             add_line(win, u' {created} {comments} '.format(**data))
 
             if data['gold']:
-                text, attr = GOLD, (curses.A_BOLD | Color.YELLOW)
+                text, attr = get_gold()
                 add_line(win, text, attr=attr)
 
             if data['nsfw']:

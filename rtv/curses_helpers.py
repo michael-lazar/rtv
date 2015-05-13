@@ -10,21 +10,25 @@ from .docs import HELP
 from .helpers import strip_textpad, clean
 from .exceptions import EscapeInterrupt
 
-__all__ = ['ESCAPE', 'UARROW', 'DARROW', 'BULLET', 'show_notification',
-           'show_help', 'LoadScreen', 'Color', 'text_input', 'curses_session',
+__all__ = ['ESCAPE', 'get_gold', 'show_notification', 'show_help',
+           'LoadScreen', 'Color', 'text_input', 'curses_session',
            'prompt_input', 'add_line', 'get_arrow']
 
-ESCAPE = 27
-
-# Curses does define constants for these (e.g. curses.ACS_BULLET)
+# Curses does define constants for symbols (e.g. curses.ACS_BULLET)
 # However, they rely on using the curses.addch() function, which has been
 # found to be buggy and a PITA to work with. By defining them as unicode
 # points they can be added via the more reliable curses.addstr().
 # http://bugs.python.org/issue21088
-UARROW = u'\u25b2' if config.unicode else '^'
-DARROW = u'\u25bc' if config.unicode else 'v'
-BULLET = u'\u2022' if config.unicode else 'o'
-GOLD = u'\u272A' if config.unicode else '*'
+ESCAPE = 27
+
+def get_gold():
+    """
+    Return the guilded symbol.
+    """
+
+    symbol = u'\u272A' if config.unicode else '*'
+    attr = curses.A_BOLD | Color.YELLOW
+    return symbol, attr
 
 def get_arrow(likes):
     """
@@ -32,11 +36,14 @@ def get_arrow(likes):
     """
 
     if likes is None:
-        symbol, attr = BULLET, curses.A_BOLD
+        symbol = u'\u2022' if config.unicode else 'o'
+        attr = curses.A_BOLD
     elif likes:
-        symbol, attr = UARROW, curses.A_BOLD | Color.GREEN
+        symbol = u'\u25b2' if config.unicode else '^'
+        attr = curses.A_BOLD | Color.GREEN
     else:
-        symbol, attr = DARROW, curses.A_BOLD | Color.RED
+        symbol = u'\u25bc' if config.unicode else 'v'
+        attr = curses.A_BOLD | Color.RED
     return symbol, attr
 
 

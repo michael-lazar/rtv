@@ -2,4 +2,4 @@
 Global configuration settings
 """
 
-unicode = False
+unicode = True
