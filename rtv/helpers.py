@@ -1,5 +1,7 @@
 import sys
 import os
+import curses
+import webbrowser
 import subprocess
 from datetime import datetime
 from tempfile import NamedTemporaryFile
@@ -28,10 +30,12 @@ def open_editor(data=''):
         fp.flush()
         editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
 
+        curses.endwin()
         try:
             subprocess.Popen([editor, fp.name]).wait()
         except OSError as e:
             raise ProgramError(editor)
+        curses.doupdate()
 
         # Open a second file object to read. This appears to be necessary in
         # order to read the changes made by some editors (gedit). w+ mode does
@@ -45,16 +49,44 @@ def open_editor(data=''):
 
 def open_browser(url):
     """
-    Call webbrowser.open_new_tab(url) and redirect stdout/stderr to devnull.
+    Open the given url using the default webbrowser. The preferred browser can
+    specified with the $BROWSER environment variable. If not specified, python
+    webbrowser will try to determine the default to use based on your system.
 
-    This is a workaround to stop firefox from spewing warning messages to the
-    console. See http://bugs.python.org/issue22277 for a better description
-    of the problem.
+    For browsers requiring an X display, we call webbrowser.open_new_tab(url)
+    and redirect stdout/stderr to devnull. This is a workaround to stop firefox
+    from spewing warning messages to the console. See
+    http://bugs.python.org/issue22277 for a better description of the problem.
+
+    For console browsers (e.g. w3m), RTV will suspend and display the browser
+    window within the same terminal. This mode is triggered either when
+    1. $BROWSER is set to a known console browser, or
+    2. $DISPLAY is undefined, indicating that the terminal is running headless
+
+    There may be other cases where console browsers are opened (xdg-open?) but
+    are not detected here.
     """
-    command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
-    args = [sys.executable, '-c', command]
-    with open(os.devnull, 'ab+', 0) as null:
-        subprocess.check_call(args, stdout=null, stderr=null)
+
+    console_browsers = ['www-browser', 'links', 'links2', 'elinks', 'lynx', 'w3m']
+
+    display = bool(os.environ.get("DISPLAY"))
+
+    # Use the convention defined here to parse $BROWSER
+    # https://docs.python.org/2/library/webbrowser.html
+    if "BROWSER" in os.environ:
+        user_browser = os.environ["BROWSER"].split(os.pathsep)[0]
+        if user_browser in console_browsers:
+            display = False
+
+    if display:
+        command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
+        args = [sys.executable, '-c', command]
+        with open(os.devnull, 'ab+', 0) as null:
+            subprocess.check_call(args, stdout=null, stderr=null)
+    else:
+        curses.endwin()
+        webbrowser.open_new_tab(url)
+        curses.doupdate()
 
 
 def clean(string, n_cols=None):

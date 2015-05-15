@@ -398,9 +398,7 @@ class BasePage(object):
             curses.flash()
             return
 
-        curses.endwin()
         text = open_editor(info)
-        curses.doupdate()
         if text == content:
             show_notification(self.stdscr, ['Aborted'])
             return

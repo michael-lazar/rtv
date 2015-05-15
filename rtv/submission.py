@@ -108,9 +108,7 @@ class SubmissionPage(BasePage):
             type=data['type'].lower(),
             content=content)
 
-        curses.endwin()
         comment_text = open_editor(comment_info)
-        curses.doupdate()
         if not comment_text:
             show_notification(self.stdscr, ['Aborted'])
             return
