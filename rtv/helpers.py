@@ -78,6 +78,9 @@ def open_browser(url):
         if user_browser in console_browsers:
             display = False
 
+    if webbrowser._tryorder and webbrowser._tryorder[0] in console_browsers:
+        display = False
+
     if display:
         command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
         args = [sys.executable, '-c', command]
