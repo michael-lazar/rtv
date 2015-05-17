@@ -58,7 +58,7 @@ def open_editor(data=''):
     read and and lines starting with '#' will be stripped.
     """
 
-    with NamedTemporaryFile(prefix='rtv-', suffix='.txt', mode='w') as fp:
+    with NamedTemporaryFile(prefix='rtv-', suffix='.txt', mode='wb') as fp:
         fp.write(clean(data))
         fp.flush()
         editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
