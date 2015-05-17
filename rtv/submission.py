@@ -77,9 +77,12 @@ class SubmissionPage(BasePage):
     def open_link(self):
         "Open the current submission page with the webbrowser"
 
-        # May want to expand at some point to open comment permalinks
-        url = self.content.get(-1)['permalink']
-        open_browser(url)
+        data = self.content.get(self.nav.absolute_index)
+        url = data.get('permalink')
+        if url:
+            open_browser(url)
+        else:
+            curses.flash()
 
     @SubmissionController.register('c')
     def add_comment(self):

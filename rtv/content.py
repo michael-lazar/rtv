@@ -83,6 +83,8 @@ class BaseContent(object):
             sub_author = getattr(sub, 'author', '[deleted]')
             sub_name = getattr(sub_author, 'name', '[deleted]')
             flair = getattr(comment, 'author_flair_text', '')
+            permalink = getattr(comment, 'permalink', None)
+
             data['type'] = 'Comment'
             data['body'] = comment.body
             data['created'] = humanize_timestamp(comment.created_utc)
@@ -92,6 +94,7 @@ class BaseContent(object):
             data['flair'] = flair
             data['likes'] = comment.likes
             data['gold'] = comment.gilded > 0
+            data['permalink'] = permalink
 
         return data
 
