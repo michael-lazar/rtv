@@ -54,7 +54,7 @@ Submission Mode
 
 """
 
-COMMENT_FILE = """
+COMMENT_FILE = u"""
 # Please enter a comment. Lines starting with '#' will be ignored,
 # and an empty message aborts the comment.
 #
@@ -62,14 +62,14 @@ COMMENT_FILE = """
 {content}
 """
 
-COMMENT_EDIT_FILE = """{content}
+COMMENT_EDIT_FILE = u"""{content}
 # Please enter a comment. Lines starting with '#' will be ignored,
 # and an empty message aborts the comment.
 #
 # Editing your comment
 """
 
-SUBMISSION_FILE = """{content}
+SUBMISSION_FILE = u"""{content}
 # Please enter your submission. Lines starting with '#' will be ignored,
 # and an empty field aborts the submission.
 #
