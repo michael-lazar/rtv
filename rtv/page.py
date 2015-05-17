@@ -279,12 +279,12 @@ class BasePage(object):
         self._move_cursor(1)
         self.clear_input_queue()
 
-    @BaseController.register('n')
+    @BaseController.register('n', curses.KEY_NPAGE)
     def move_page_down(self):
         self._move_page(1)
         self.clear_input_queue()
 
-    @BaseController.register('m')
+    @BaseController.register('m', curses.KEY_PPAGE)
     def move_page_up(self):
         self._move_page(-1)
         self.clear_input_queue()
