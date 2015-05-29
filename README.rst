@@ -135,7 +135,7 @@ Web Browser
 
 RTV has the capability to open links inside of your web browser.
 By default RTV will use the system's browser.
-On most systems this corresponds to a graphical browser such as Firefox of Chrome.
+On most systems this corresponds to a graphical browser such as Firefox or Chrome.
 If you prefer to stay in the terminal, use ``$BROWSER`` to specify a console-based web browser.
 `w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices.
 
