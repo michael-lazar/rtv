@@ -1,4 +1,3 @@
-
 ===========================
 RTV: Reddit Terminal Viewer
 ===========================
@@ -16,8 +15,8 @@ RTV is built in **python** using the **curses** library.
 ---------------
 
 * `Installation`_
-* `Configuration`_
 * `Usage`_
+* `Configuration`_
 * `Changelog`_
 * `Contributors`_
 * `License`_
@@ -47,14 +46,110 @@ The installation will place a script in the system path
    $ rtv
    $ rtv --help
 
+=====
+Usage 
+=====
+
+RTV supports browsing both subreddits and submission comments.
+
+Navigating is simple and intuitive. 
+Move the cursor using either the arrow keys or *Vim* style movement.
+Move **up** and **down** to scroll through the page.
+Move **right** to view the selected submission, and **left** to exit the submission.
+
+--------------
+Basic Commands
+--------------
+
+:``j``/``k`` or ``▲``/``▼``: Move the cursor up/down
+:``m``/``n`` or ``PgUp``/``PgDn``: Jump to the previous/next page
+:``o`` or ``ENTER``: Open the selected item as a webpage
+:``r`` or ``F5``: Refresh page content
+:``u``: Log in or switch accounts
+:``?``: Show the help screen
+:``q``: Quit
+
+----------------------
+Authenticated Commands
+----------------------
+
+Some actions require that you be logged in to your reddit account. To log in you can either:
+
+1. provide your username as a command line argument ``-u`` (your password will be securely prompted), or
+2. press ``u`` while inside of the program
+
+Once you are logged in your username will appear in the top-right corner of the screen.
+
+:``a``/``z``: Upvote/downvote
+:``c``: Compose a new post or comment
+:``e``: Edit an existing post or comment
+:``d``: Delete an existing post or comment
+
+--------------
+Subreddit Mode
+--------------
+
+In subreddit mode you can browse through the top submissions on either the front page or a specific subreddit.
+
+:``l`` or ``►``: Enter the selected submission
+:``/``: Open a prompt to switch subreddits
+:``f``: Open a prompt to search the current subreddit
+
+The ``/`` prompt accepts subreddits in the following formats
+   
+* ``/r/python``
+* ``/r/python/new``
+* ``/r/python+linux`` supports multireddits
+* ``/r/front`` will redirect to the front page
+* ``/r/me`` will display your submissions
+
+---------------
+Submission Mode
+---------------
+
+In submission mode you can view the self text for a submission and browse comments.
+
+:``h`` or ``◄``: Return to the subreddit
+:``SPACE``: Fold the selected comment, or load additional comments
 
 =============
 Configuration
 =============
 
-RTV will read a configuration file located at ``$XDG_CONFIG_HOME/rtv/rtv.cfg`` or ``~/.config/rtv/rtv.cfg`` if ``$XDG_CONFIG_HOME`` is not set.
-This can be used to avoid having to re-enter login credentials every time the program is launched.
+------
+Editor
+------
+
+RTV allows users to compose comments and replies using their preferred text editor (**vi**, **nano**, **gedit**, etc).
+You can specify which text editor you would like to use by setting the ``$RTV_EDITOR`` environment variable.
+
+.. code-block:: bash
+
+   $ export RTV_EDITOR=gedit
+   
+If no editor is specified, RTV will fallback to the system's default ``$EDITOR``, and finally to ``nano``.
+
+-----------
+Web Browser
+-----------
+
+RTV has the capability to open links inside of your web browser.
+By default RTV will use the system's browser.
+On most systems this corresponds to a graphical browser such as Firefox of Chrome.
+If you prefer to stay in the terminal, use ``$BROWSER`` to specify a console-based web browser.
+`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices.
+
+.. code-block:: bash
+
+   $ export BROWSER=w3m
+
+-----------
+Config File
+-----------
+
+RTV will read a configuration placed at ``~/.config/rtv/rtv.cfg`` (or ``$XDG_CONFIG_HOME``).
 Each line in the file will replace the corresponding default argument in the launch script.
+This can be used to avoid having to re-enter login credentials every time the program is launched.
 
 Example config:
 
@@ -73,69 +168,10 @@ Example config:
   # Default submission link - will be opened every time the program starts
   # link=http://www.reddit.com/r/CollegeBasketball/comments/31irjq
 
-  # Enable ascii-only mode and disable unicode characters
-  # This may be necessary for compatability with some terminal browsers
+  # Turn on ascii-only mode and disable all unicode characters
+  # This may be necessary for compatibility with some terminal browsers
   # ascii=True
 
-RTV allows users to compose comments and replys using their preferred text editor (**vi**, **nano**, **gedit**, etc).
-Set the environment variable ``RTV_EDITOR`` to specify which editor the program should use.
-
-.. code-block:: bash
-
-   $ export RTV_EDITOR=gedit
-
-
-=====
-Usage 
-=====
-
-RTV currently supports browsing both subreddits and individual submissions. In each mode the controls are slightly different.
-
----------------
-Global Commands
----------------
-
-:``▲``/``▼`` or ``j``/``k``: Scroll to the prev/next item
-:``a``/``z``: Upvote/downvote the selected item
-:``ENTER`` or ``o``: Open the selected item in the default web browser
-:``r``: Refresh the current page
-:``u``: Login and logout of your user account
-:``?``: Show the help screen
-:``q``: Quit
-
---------------
-Subreddit Mode
---------------
-
-In subreddit mode you can browse through the top submissions on either the front page or a specific subreddit.
-
-:``►`` or ``l``: View comments for the selected submission
-:``/``: Open a prompt to switch subreddits
-:``f``: Open a prompt to search the current subreddit
-:``p``: Post a new submission to the current subreddit
-:``e``: Edit the selected submission
-:``d``: Delete the selected submission
-
-
-The ``/`` prompt accepts subreddits in the following formats
-
-* ``/r/python``
-* ``/r/python/new``
-* ``/r/python+linux`` supports multireddits
-* ``/r/front`` will redirect to the front page
-* ``/r/me`` will display your submissions
-
----------------
-Submission Mode
----------------
-
-In submission mode you can view the self text for a submission and browse comments.
-
-:``◄`` or ``h``: Return to subreddit mode
-:``►`` or ``l``: Fold the selected comment, or load additional comments
-:``c``: Post a new comment on the selected item
-:``e``: Edit the selected comment
-:``d``: Delete the selected comment
 
 =========
 Changelog
@@ -155,14 +191,14 @@ License
 Please see `LICENSE <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_.
 
 
-.. |python| image:: https://pypip.in/py_versions/rtv/badge.svg?style=flat-square
+.. |python| image:: https://img.shields.io/badge/python-2.7%2C%203.4-blue.svg?style=flat-square
     :target: https://pypi.python.org/pypi/rtv/
     :alt: Supported Python versions
 
-.. |pypi| image:: https://pypip.in/version/rtv/badge.svg?text=version&style=flat-square
+.. |pypi| image:: https://img.shields.io/pypi/v/rtv.svg?label=version&style=flat-square
     :target: https://pypi.python.org/pypi/rtv/
     :alt: Latest Version
-    
-.. |downloads| image:: https://pypip.in/download/rtv/badge.svg?period=month&style=flat-square
+
+.. |downloads| image:: https://img.shields.io/pypi/dm/rtv.svg?period=month&style=flat-square
     :target: https://pypi.python.org/pypi/rtv/
     :alt: Downloads

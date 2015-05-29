@@ -115,7 +115,7 @@ class SubredditPage(BasePage):
         global history
         history.add(url)
 
-    @SubredditController.register('p')
+    @SubredditController.register('c')
     def post_submission(self):
         "Post a new submission to the given subreddit"
 

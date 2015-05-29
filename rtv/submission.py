@@ -45,7 +45,7 @@ class SubmissionPage(BasePage):
             cmd = self.stdscr.getch()
             self.controller.trigger(cmd)
 
-    @SubmissionController.register(curses.KEY_RIGHT, 'l')
+    @SubmissionController.register(curses.KEY_RIGHT, 'l', ' ')
     def toggle_comment(self):
         "Toggle the selected comment tree between visible and hidden"
 

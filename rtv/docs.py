@@ -28,30 +28,29 @@ browse comments.
 """
 
 HELP = """
-Global Commands
-  `UP/DOWN` or `j/k`  : Scroll to the prev/next item
-  `a/z`               : Upvote/downvote the selected item
-  `ENTER` or `o`      : Open the selected item in the default web browser
-  `r`                 : Refresh the current page
-  `u`                 : Login/logout of your user account
-  `?`                 : Show this help message
-  `q`                 : Quit the program
+Basic Commands
+  `j/k` or `UP/DOWN`  : Move the cursor up/down
+  `m/n` or `PgUp/PgDn`: Jump to the previous/next page
+  `o` or `ENTER`      : Open the selected item as a webpage
+  `r` or `F5`         : Refresh page content
+  `u`                 : Log in or switch accounts
+  `?`                 : Show the help screen
+  `q`                 : Quit
+
+Authenticated Commands
+  `a/z`               : Upvote/downvote
+  `c`                 : Compose a new post or comment
+  `e`                 : Edit an existing post or comment
+  `d`                 : Delete an existing post or comment
 
 Subreddit Mode
-  `RIGHT` or `l`      : View comments for the selected submission
+  `l` or `RIGHT`      : Enter the selected submission
   `/`                 : Open a prompt to switch subreddits
   `f`                 : Open a prompt to search the current subreddit
-  `p`                 : Post a new submission to the current subreddit
-  `e`                 : Edit the selected submission
-  `d`                 : Delete the selected submission
 
 Submission Mode
-  `LEFT` or `h`       : Return to subreddit mode
-  `RIGHT` or `l`      : Fold the selected comment, or load additional comments
-  `c`                 : Post a new comment on the selected item
-  `e`                 : Edit the selected comment
-  `d`                 : Delete the selected comment
-
+  `h` or `LEFT`       : Return to subreddit mode
+  `SPACE`             : Fold the selected comment, or load additional comments
 """
 
 COMMENT_FILE = u"""
