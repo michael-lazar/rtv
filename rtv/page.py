@@ -310,7 +310,7 @@ class BasePage(object):
         try:
             if 'likes' not in data:
                 pass
-            if data['likes'] is False:
+            elif not data['likes']:
                 data['object'].clear_vote()
                 data['likes'] = None
             else:
