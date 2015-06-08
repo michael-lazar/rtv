@@ -16,6 +16,7 @@ from .exceptions import ProgramError
 __all__ = ['open_browser', 'clean', 'wrap_text', 'strip_textpad',
            'strip_subreddit_url', 'humanize_timestamp', 'open_editor']
 
+
 def clean(string, n_cols=None):
     """
     Required reading!
@@ -48,6 +49,7 @@ def clean(string, n_cols=None):
         if six.PY3 or isinstance(string, unicode):
             string = string.encode('utf-8')
         return string
+
 
 def open_editor(data=''):
     """
@@ -123,6 +125,7 @@ def open_browser(url):
         curses.endwin()
         webbrowser.open_new_tab(url)
         curses.doupdate()
+
 
 def wrap_text(text, width):
     """
