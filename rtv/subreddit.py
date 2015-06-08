@@ -17,10 +17,9 @@ from .curses_helpers import (Color, LoadScreen, add_line, get_arrow, get_gold,
                              show_notification, prompt_input)
 
 __all__ = ['history', 'SubredditController', 'SubredditPage']
-
 _logger = logging.getLogger(__name__)
-
 history = load_history()
+
 
 @atexit.register
 def save_links():
@@ -80,7 +79,7 @@ class SubredditPage(BasePage):
         try:
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.loader, query=query)
-        except IndexError: # if there are no submissions
+        except IndexError:  # if there are no submissions
             show_notification(self.stdscr, ['No results found'])
         else:
             self.nav = Navigator(self.content.get)

@@ -7,8 +7,8 @@ from .exceptions import SubmissionError, SubredditError, AccountError
 from .helpers import humanize_timestamp, wrap_text, strip_subreddit_url
 
 __all__ = ['SubredditContent', 'SubmissionContent']
-
 _logger = logging.getLogger(__name__)
+
 
 class BaseContent(object):
 
