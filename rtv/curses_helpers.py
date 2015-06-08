@@ -21,6 +21,7 @@ __all__ = ['ESCAPE', 'get_gold', 'show_notification', 'show_help',
 # http://bugs.python.org/issue21088
 ESCAPE = 27
 
+
 def get_gold():
     """
     Return the guilded symbol.
@@ -29,6 +30,7 @@ def get_gold():
     symbol = u'\u272A' if config.unicode else '*'
     attr = curses.A_BOLD | Color.YELLOW
     return symbol, attr
+
 
 def get_arrow(likes):
     """
@@ -305,7 +307,7 @@ def prompt_input(window, prompt, hide=False):
         window.addstr(n_rows - 1, 0, prompt, attr)
         window.refresh()
         subwin = window.derwin(1, n_cols - len(prompt),
-                                   n_rows - 1, len(prompt))
+                               n_rows - 1, len(prompt))
         subwin.attrset(attr)
         out = text_input(subwin)
 

@@ -15,8 +15,8 @@ from .curses_helpers import (Color, show_notification, show_help, text_input,
 from .docs import COMMENT_EDIT_FILE, SUBMISSION_FILE
 
 __all__ = ['Navigator', 'BaseController', 'BasePage']
-
 _logger = logging.getLogger(__name__)
+
 
 class Navigator(object):
     """
@@ -155,6 +155,7 @@ class Navigator(object):
         else:
             return True
 
+
 class SafeCaller(object):
 
     def __init__(self, window):
@@ -185,6 +186,7 @@ class SafeCaller(object):
                 show_notification(self.window, ['Unexpected Error'])
                 _logger.exception(e)
                 return True
+
 
 class BaseController(object):
     """

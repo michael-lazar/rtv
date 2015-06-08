@@ -44,6 +44,7 @@ def save_history(history):
                 # Ignore unicode URLS, may want to handle this at some point
                 continue
 
+
 class OrderedSet(object):
     """
     A simple implementation of an ordered set. A set is used to check

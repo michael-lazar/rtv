@@ -13,8 +13,8 @@ from .curses_helpers import (Color, LoadScreen, get_arrow, get_gold, add_line,
 from .docs import COMMENT_FILE
 
 __all__ = ['SubmissionController', 'SubmissionPage']
-
 _logger = logging.getLogger(__name__)
+
 
 class SubmissionController(BaseController):
     character_map = {}
