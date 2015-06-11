@@ -417,10 +417,11 @@ class BasePage(object):
         """
         Checks the inbox for unread messages and displays a notification.
         """
+        inbox = len(list(self.reddit.get_unread(limit=1)))
         try:
-            if len(list(self.reddit.get_unread(limit=1))) > 0:
+            if inbox > 0:
                 show_notification(self.stdscr, ['New Messages'])
-            elif len(list(self.reddit.get_unread(limit=1))) == 0:
+            elif inbox == 0:
                 show_notification(self.stdscr, ['No New Messages'])
         except praw.errors.LoginOrScopeRequired:
             show_notification(self.stdscr, ['Not Logged In'])
