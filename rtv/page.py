@@ -312,12 +312,13 @@ class BasePage(object):
         try:
             if 'likes' not in data:
                 pass
-            elif not data['likes']:
-                data['object'].clear_vote()
-                data['likes'] = None
-            else:
+            elif data['likes'] or data['likes'] is None:
                 data['object'].downvote()
                 data['likes'] = False
+            else:
+                data['object'].clear_vote()
+                data['likes'] = None
+
         except praw.errors.LoginOrScopeRequired:
             show_notification(self.stdscr, ['Not logged in'])
 
