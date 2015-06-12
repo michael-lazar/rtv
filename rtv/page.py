@@ -412,8 +412,24 @@ class BasePage(object):
             s.catch = False
             self.refresh_content()
 
+    @BaseController.register('i')
+    def get_inbox(self):
+        """
+        Checks the inbox for unread messages and displays a notification.
+        """
+        inbox = len(list(self.reddit.get_unread(limit=1)))
+        try:
+            if inbox > 0:
+                show_notification(self.stdscr, ['New Messages'])
+            elif inbox == 0:
+                show_notification(self.stdscr, ['No New Messages'])
+        except praw.errors.LoginOrScopeRequired:
+            show_notification(self.stdscr, ['Not Logged In'])
+
     def clear_input_queue(self):
-        "Clear excessive input caused by the scroll wheel or holding down a key"
+        """
+        Clear excessive input caused by the scroll wheel or holding down a key
+        """
 
         self.stdscr.nodelay(1)
         while self.stdscr.getch() != -1:
@@ -421,7 +437,9 @@ class BasePage(object):
         self.stdscr.nodelay(0)
 
     def logout(self):
-        "Prompt to log out of the user's account."
+        """
+        Prompt to log out of the user's account.
+        """
 
         ch = prompt_input(self.stdscr, "Log out? (y/n):")
         if ch == 'y':
