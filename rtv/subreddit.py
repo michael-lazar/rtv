@@ -4,7 +4,6 @@ import logging
 import atexit
 
 import requests
-import praw
 
 from .exceptions import SubredditError, AccountError
 from .page import BasePage, Navigator, BaseController
