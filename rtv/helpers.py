@@ -68,7 +68,7 @@ def open_editor(data=''):
         curses.endwin()
         try:
             subprocess.Popen([editor, fp.name]).wait()
-        except OSError as e:
+        except OSError:
             raise ProgramError(editor)
         curses.doupdate()
 

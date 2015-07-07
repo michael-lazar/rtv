@@ -3,15 +3,14 @@ import time
 import six
 import sys
 import logging
-from contextlib import contextmanager
 
 import praw.errors
 import requests
 from kitchen.text.display import textual_width
 
 from .helpers import open_editor
-from .curses_helpers import (Color, show_notification, show_help, text_input,
-                             prompt_input, add_line)
+from .curses_helpers import (Color, show_notification, show_help, prompt_input,
+                             add_line)
 from .docs import COMMENT_EDIT_FILE, SUBMISSION_FILE
 
 __all__ = ['Navigator', 'BaseController', 'BasePage']
