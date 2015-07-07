@@ -219,7 +219,8 @@ class SubmissionPage(BasePage):
         attr = curses.A_BOLD | Color.GREEN
         add_line(win, u'{author}'.format(**data), row, 1, attr)
         attr = curses.A_BOLD | Color.YELLOW
-        add_line(win, u' {flair}'.format(**data), attr=attr)
+        if data['flair']:
+            add_line(win, u' {flair}'.format(**data), attr=attr)
         add_line(win, u' {created} {subreddit}'.format(**data))
 
         row = len(data['split_title']) + 2
