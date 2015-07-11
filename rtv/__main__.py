@@ -130,6 +130,9 @@ def main():
         print('Error: could not open file with program "{}", '
               'try setting RTV_EDITOR'.format(e.name))
     except KeyboardInterrupt:
-        return
+        pass
+    finally:
+        # Ensure sockets are closed to prevent a ResourceWarning
+        reddit.handler.http.close()
 
 sys.exit(main())
