@@ -2,11 +2,26 @@
 RTV Changelog
 =============
 
+.. _1.4.1: http://github.com/michael-lazar/rtv/releases/tag/v1.4.1
 .. _1.4: http://github.com/michael-lazar/rtv/releases/tag/v1.4
 .. _1.3: http://github.com/michael-lazar/rtv/releases/tag/v1.3
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+-------------------
+1.4.1_ (2015-07-11)
+-------------------
+Features
+
+* Added the ability to check for unread messages with the `i` key.
+* Upped required PRAW version to 3
+
+Bugfixes
+
+* Fixed crash caused by downvoting.
+* Missing flairs now display properly.
+* Fixed ResourceWarning on Python 3.2+.
 
 -----------------
 1.4_ (2015-05-16)
