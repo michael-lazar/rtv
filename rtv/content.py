@@ -257,7 +257,8 @@ class SubredditContent(BaseContent):
         try:
             self.get(0)
         except (praw.errors.APIException, requests.HTTPError,
-                praw.errors.RedirectException):
+                praw.errors.RedirectException, praw.errors.Forbidden,
+                praw.errors.InvalidSubreddit):
             raise SubredditError(name)
 
     @classmethod
