@@ -106,12 +106,15 @@ class SubredditPage(BasePage):
     @SubredditController.register(curses.KEY_ENTER, 10, 'o')
     def open_link(self):
         "Open a link with the webbrowser"
+        data = self.content.get(self.nav.absolute_index)
 
-        url = self.content.get(self.nav.absolute_index)['url_full']
-        open_browser(url)
-
-        global history
-        history.add(url)
+        if data['url'] == 'selfpost':
+            self.open_submission()
+        else:
+            url = data['url_full']
+            open_browser(url)
+            global history
+            history.add(url)
 
     @SubredditController.register('c')
     def post_submission(self):
