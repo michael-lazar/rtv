@@ -2,6 +2,7 @@ import logging
 
 import praw
 import requests
+import re
 
 from .exceptions import SubmissionError, SubredditError, AccountError
 from .helpers import humanize_timestamp, wrap_text, strip_subreddit_url
@@ -105,7 +106,8 @@ class BaseContent(object):
         displayed through the terminal.
         """
 
-        is_selfpost = lambda s: s.startswith('http://www.reddit.com/r/')
+        reddit_link = re.compile("https?://(np.)?redd(it.com|.it)/r/.*")
+        reddit_link_no_host = re.compile("/r/.*")
         author = getattr(sub, 'author', '[deleted]')
         name = getattr(author, 'name', '[deleted]')
         flair = getattr(sub, 'link_flair_text', '')
@@ -123,7 +125,14 @@ class BaseContent(object):
         data['subreddit'] = strip_subreddit_url(sub.permalink)
         data['flair'] = flair
         data['url_full'] = sub.url
-        data['url'] = ('selfpost' if is_selfpost(sub.url) else sub.url)
+
+        if reddit_link.match(sub.url):
+            stripped_url = reddit_link_no_host.search(sub.url).group()
+            stripped_comments = reddit_link_no_host.search(sub.permalink).group()
+            data['url'] = ('selfpost' if stripped_url == stripped_comments
+                    else 'x-post via {}'.format(strip_subreddit_url(sub.url)) )
+        else:
+            data['url'] = sub.url
         data['likes'] = sub.likes
         data['gold'] = sub.gilded > 0
         data['nsfw'] = sub.over_18
