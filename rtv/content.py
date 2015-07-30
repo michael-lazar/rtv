@@ -106,7 +106,7 @@ class BaseContent(object):
         displayed through the terminal.
         """
 
-        reddit_link = re.compile("https?://(www.)?(np.)?redd(it.com|.it)/r/.*")
+        reddit_link = re.compile("https?://(www\.)?(np\.)?redd(it\.com|\.it)/r/.*")
         reddit_link_no_host = re.compile("/r/.*")
         author = getattr(sub, 'author', '[deleted]')
         name = getattr(author, 'name', '[deleted]')
