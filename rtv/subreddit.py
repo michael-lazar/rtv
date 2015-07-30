@@ -198,6 +198,6 @@ class SubredditPage(BasePage):
         row = n_title + offset + 2
         if row in valid_rows:
             add_line(win, u'{author}'.format(**data), row, 1, curses.A_BOLD)
-            add_line(win, u' {subreddit}'.format(**data), attr=Color.YELLOW)
+            add_line(win, u' /r/{subreddit}'.format(**data), attr=Color.YELLOW)
             if data['flair']:
                 add_line(win, u' {flair}'.format(**data), attr=Color.RED)
