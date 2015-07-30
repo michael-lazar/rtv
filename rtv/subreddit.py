@@ -108,10 +108,11 @@ class SubredditPage(BasePage):
         "Open a link with the webbrowser"
         data = self.content.get(self.nav.absolute_index)
 
-        if data['url'] == 'selfpost':
-            self.open_submission()
+        url = data['url_full']
+        if data['url'] != url:
+            page = SubmissionPage(self.stdscr, self.reddit, url=url)
+            page.loop()
         else:
-            url = data['url_full']
             open_browser(url)
             global history
             history.add(url)
@@ -197,6 +198,6 @@ class SubredditPage(BasePage):
         row = n_title + offset + 2
         if row in valid_rows:
             add_line(win, u'{author}'.format(**data), row, 1, curses.A_BOLD)
-            add_line(win, u' {subreddit}'.format(**data), attr=Color.YELLOW)
+            add_line(win, u' /r/{subreddit}'.format(**data), attr=Color.YELLOW)
             if data['flair']:
                 add_line(win, u' {flair}'.format(**data), attr=Color.RED)
