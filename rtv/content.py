@@ -130,7 +130,7 @@ class BaseContent(object):
             stripped_url = reddit_link_no_host.search(sub.url).group()
             stripped_comments = reddit_link_no_host.search(sub.permalink).group()
             data['url'] = ('selfpost' if stripped_url == stripped_comments
-                    else 'x-post via {}'.format(strip_subreddit_url(sub.url)) )
+                    else 'x-post')
         else:
             data['url'] = sub.url
         data['likes'] = sub.likes

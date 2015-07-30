@@ -9,7 +9,7 @@ from .exceptions import SubredditError, AccountError
 from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .helpers import open_browser, open_editor
+from .helpers import open_browser, open_editor, strip_subreddit_url
 from .docs import SUBMISSION_FILE
 from .history import load_history, save_history
 from .curses_helpers import (Color, LoadScreen, add_line, get_arrow, get_gold,
@@ -109,7 +109,7 @@ class SubredditPage(BasePage):
         data = self.content.get(self.nav.absolute_index)
 
         url = data['url_full']
-        if data['url'] != url:
+        if data['url'] in ['x-post', 'selfpost']:
             page = SubmissionPage(self.stdscr, self.reddit, url=url)
             page.loop()
         else:
@@ -178,7 +178,10 @@ class SubredditPage(BasePage):
             seen = (data['url_full'] in history)
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
-            add_line(win, u'{url}'.format(**data), row, 1, attr)
+            if data['url'] == 'x-post':
+                add_line(win, u'x-post via {}'.format(strip_subreddit_url(data['url_full'])), row, 1, attr)
+            else:
+                add_line(win, u'{url}'.format(**data), row, 1, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
