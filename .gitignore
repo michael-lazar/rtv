@@ -1,3 +1,6 @@
 .*
 *.pyc
-scripts/*
+scripts
+build
+dist
+rtv.egg-info
