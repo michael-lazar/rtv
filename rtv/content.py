@@ -163,7 +163,7 @@ class SubmissionContent(BaseContent):
 
         try:
             with loader():
-                submission = reddit.get_submission(url, comment_sort='hot')
+                submission = reddit.get_submission(url.replace("http:","https:"), comment_sort='hot')
         except praw.errors.APIException:
             raise SubmissionError(url)
 
