@@ -107,7 +107,6 @@ class BaseContent(object):
         """
 
         reddit_link = re.compile("https?://(www\.)?(np\.)?redd(it\.com|\.it)/r/.*")
-        reddit_link_no_host = re.compile("/r/.*")
         author = getattr(sub, 'author', '[deleted]')
         name = getattr(author, 'name', '[deleted]')
         flair = getattr(sub, 'link_flair_text', '')
@@ -126,13 +125,18 @@ class BaseContent(object):
         data['flair'] = flair
         data['url_full'] = sub.url
 
-        if reddit_link.match(sub.url):
-            stripped_url = reddit_link_no_host.search(sub.url).group()
-            stripped_comments = reddit_link_no_host.search(sub.permalink).group()
-            data['url'] = ('selfpost' if stripped_url == stripped_comments
-                    else 'x-post')
+        if data['permalink'].split('/r/')[-1] == data['url_full'].split('/r/')[-1]:
+            data['url_type'] = 'selfpost'
+            data['url'] = 'selfpost'
+
+        elif reddit_link.match(data['url_full']):
+            data['url_type'] = 'x-post'
+            data['url'] = 'x-post via {}'.format(strip_subreddit_url(data['url_full']))
+
         else:
-            data['url'] = sub.url
+            data['url_type'] = 'external'
+            data['url'] = data['url_full']
+
         data['likes'] = sub.likes
         data['gold'] = sub.gilded > 0
         data['nsfw'] = sub.over_18

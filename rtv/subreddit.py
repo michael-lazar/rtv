@@ -109,7 +109,7 @@ class SubredditPage(BasePage):
         data = self.content.get(self.nav.absolute_index)
 
         url = data['url_full']
-        if data['url'] in ['x-post', 'selfpost']:
+        if data['url_type'] in ['x-post', 'selfpost']:
             page = SubmissionPage(self.stdscr, self.reddit, url=url)
             page.loop()
         else:
@@ -178,10 +178,7 @@ class SubredditPage(BasePage):
             seen = (data['url_full'] in history)
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
-            if data['url'] == 'x-post':
-                add_line(win, u'x-post via {}'.format(strip_subreddit_url(data['url_full'])), row, 1, attr)
-            else:
-                add_line(win, u'{url}'.format(**data), row, 1, attr)
+            add_line(win, u'{url}'.format(**data), row, 1, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
