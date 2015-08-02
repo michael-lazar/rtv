@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.4.2: http://github.com/michael-lazar/rtv/releases/tag/v1.4.2
 .. _1.4.1: http://github.com/michael-lazar/rtv/releases/tag/v1.4.1
 .. _1.4: http://github.com/michael-lazar/rtv/releases/tag/v1.4
 .. _1.3: http://github.com/michael-lazar/rtv/releases/tag/v1.3
@@ -10,12 +11,23 @@ RTV Changelog
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
 
 -------------------
+1.4.2_ (2015-08-01)
+-------------------
+Features
+
+* Pressing the `o` key now opens selfposts directly inside of rtv.
+
+Bugfixes
+
+* Fixed invalid subreddits from throwing unexpected errors.
+
+-------------------
 1.4.1_ (2015-07-11)
 -------------------
 Features
 
 * Added the ability to check for unread messages with the `i` key.
-* Upped required PRAW version to 3
+* Upped required PRAW version to 3.
 
 Bugfixes
 
