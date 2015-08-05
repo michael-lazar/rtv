@@ -2,6 +2,7 @@ import logging
 
 import praw
 import requests
+import re
 
 from .exceptions import SubmissionError, SubredditError, AccountError
 from .helpers import humanize_timestamp, wrap_text, strip_subreddit_url
@@ -105,7 +106,7 @@ class BaseContent(object):
         displayed through the terminal.
         """
 
-        is_selfpost = lambda s: s.startswith('http://www.reddit.com/r/')
+        reddit_link = re.compile("https?://(www\.)?(np\.)?redd(it\.com|\.it)/r/.*")
         author = getattr(sub, 'author', '[deleted]')
         name = getattr(author, 'name', '[deleted]')
         flair = getattr(sub, 'link_flair_text', '')
@@ -123,7 +124,19 @@ class BaseContent(object):
         data['subreddit'] = strip_subreddit_url(sub.permalink)
         data['flair'] = flair
         data['url_full'] = sub.url
-        data['url'] = ('selfpost' if is_selfpost(sub.url) else sub.url)
+
+        if data['permalink'].split('/r/')[-1] == data['url_full'].split('/r/')[-1]:
+            data['url_type'] = 'selfpost'
+            data['url'] = 'selfpost'
+
+        elif reddit_link.match(data['url_full']):
+            data['url_type'] = 'x-post'
+            data['url'] = 'x-post via {}'.format(strip_subreddit_url(data['url_full']))
+
+        else:
+            data['url_type'] = 'external'
+            data['url'] = data['url_full']
+
         data['likes'] = sub.likes
         data['gold'] = sub.gilded > 0
         data['nsfw'] = sub.over_18
@@ -154,7 +167,7 @@ class SubmissionContent(BaseContent):
 
         try:
             with loader():
-                submission = reddit.get_submission(url, comment_sort='hot')
+                submission = reddit.get_submission(url.replace("http:","https:"), comment_sort='hot')
         except praw.errors.APIException:
             raise SubmissionError(url)
 
