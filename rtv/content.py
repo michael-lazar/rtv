@@ -137,7 +137,8 @@ class SubmissionContent(BaseContent):
     list for repeat access.
     """
 
-    def __init__(self, submission, loader, indent_size=2, max_indent_level=8):
+    def __init__(self, submission, loader, indent_size=2,
+                 max_indent_level=8, order='hot'):
 
         self.indent_size = indent_size
         self.max_indent_level = max_indent_level
@@ -145,20 +146,22 @@ class SubmissionContent(BaseContent):
         self._submission = submission
 
         self._submission_data = self.strip_praw_submission(self._submission)
-        self.name = self._submission_data['permalink']
+        self.name = self._submission_data['permalink'] + ': ' + order
         comments = self.flatten_comments(self._submission.comments)
         self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
     @classmethod
-    def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=8):
+    def from_url(cls, reddit, url, loader, order='hot', indent_size=2,
+                 max_indent_level=8):
 
         try:
             with loader():
-                submission = reddit.get_submission(url, comment_sort='hot')
+                submission = reddit.get_submission(url, comment_sort=order)
         except praw.errors.APIException:
             raise SubmissionError(url)
 
-        return cls(submission, loader, indent_size, max_indent_level)
+        return cls(submission, loader, indent_size, max_indent_level,
+                   order=order)
 
     def get(self, index, n_cols=70):
         """
@@ -243,7 +246,7 @@ class SubredditContent(BaseContent):
     list for repeat access.
     """
 
-    def __init__(self, name, submissions, loader):
+    def __init__(self, name, submissions, loader, order='hot'):
 
         self.name = name
         self._loader = loader
@@ -258,12 +261,13 @@ class SubredditContent(BaseContent):
             self.get(0)
         except (praw.errors.APIException, requests.HTTPError,
                 praw.errors.RedirectException, praw.errors.Forbidden,
-                praw.errors.InvalidSubreddit):
+                praw.errors.InvalidSubreddit, praw.errors.NotFound):
             raise SubredditError(name)
 
     @classmethod
     def from_name(cls, reddit, name, loader, order='hot', query=None):
 
+        name = name.split(':')[0]  # remove order specification
         name = name.strip(' /')  # Strip leading and trailing backslashes
         if name.startswith('r/'):
             name = name[2:]
@@ -272,9 +276,7 @@ class SubredditContent(BaseContent):
         if '/' in name:
             name, order = name.split('/')
 
-        display_name = display_name = '/r/{}'.format(name)
-        if order != 'hot':
-            display_name += '/{}'.format(order)
+        display_name = '/r/{0:s} : {1:s}'.format(name, order)
 
         if order not in ['hot', 'top', 'rising', 'new', 'controversial']:
             raise SubredditError(name)
@@ -311,7 +313,7 @@ class SubredditContent(BaseContent):
                     }
             submissions = dispatch[order](limit=None)
 
-        return cls(display_name, submissions, loader)
+        return cls(display_name, submissions, loader, order=order)
 
     def get(self, index, n_cols=70):
         """

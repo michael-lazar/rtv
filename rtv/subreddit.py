@@ -49,13 +49,13 @@ class SubredditPage(BasePage):
             self.controller.trigger(cmd)
 
     @SubredditController.register(curses.KEY_F5, 'r')
-    def refresh_content(self, name=None):
+    def refresh_content(self, name=None, order='hot'):
         "Re-download all submissions and reset the page index"
 
         name = name or self.content.name
         try:
             self.content = SubredditContent.from_name(
-                self.reddit, name, self.loader)
+                self.reddit, name, self.loader, order=order)
         except AccountError:
             show_notification(self.stdscr, ['Not logged in'])
         except SubredditError:
@@ -64,6 +64,26 @@ class SubredditPage(BasePage):
             show_notification(self.stdscr, ['Could not reach subreddit'])
         else:
             self.nav = Navigator(self.content.get)
+
+    @SubredditController.register('1')
+    def refresh_content_hot(self):
+        self.refresh_content(order='hot')
+
+    @SubredditController.register('2')
+    def refresh_content_top(self):
+        self.refresh_content(order='top')
+
+    @SubredditController.register('3')
+    def refresh_content_rising(self):
+        self.refresh_content(order='rising')
+
+    @SubredditController.register('4')
+    def refresh_content_new(self):
+        self.refresh_content(order='new')
+
+    @SubredditController.register('5')
+    def refresh_content_controversial(self):
+        self.refresh_content(order='controversial')
 
     @SubredditController.register('f')
     def search_subreddit(self, name=None):
