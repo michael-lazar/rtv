@@ -144,9 +144,9 @@ class SubmissionContent(BaseContent):
         self.max_indent_level = max_indent_level
         self._loader = loader
         self._submission = submission
-
+        
         self._submission_data = self.strip_praw_submission(self._submission)
-        self.name = self._submission_data['permalink'] + ': ' + order
+        self.name = self._submission_data['permalink'] + '/' + order
         comments = self.flatten_comments(self._submission.comments)
         self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
@@ -157,7 +157,7 @@ class SubmissionContent(BaseContent):
         try:
             with loader():
                 submission = reddit.get_submission(url, comment_sort=order)
-        except praw.errors.APIException:
+        except (praw.errors.APIException, praw.errors.NotFound):
             raise SubmissionError(url)
 
         return cls(submission, loader, indent_size, max_indent_level,
@@ -261,13 +261,17 @@ class SubredditContent(BaseContent):
             self.get(0)
         except (praw.errors.APIException, requests.HTTPError,
                 praw.errors.RedirectException, praw.errors.Forbidden,
-                praw.errors.InvalidSubreddit, praw.errors.NotFound):
+                praw.errors.InvalidSubreddit, praw.errors.NotFound,
+                IndexError):
             raise SubredditError(name)
 
     @classmethod
     def from_name(cls, reddit, name, loader, order='hot', query=None):
 
-        name = name.split(':')[0]  # remove order specification
+        # replace the order
+        if name.count('/') == 3:
+            name = '/'.join(name.split('/')[:-1]+[order])
+
         name = name.strip(' /')  # Strip leading and trailing backslashes
         if name.startswith('r/'):
             name = name[2:]
@@ -276,7 +280,7 @@ class SubredditContent(BaseContent):
         if '/' in name:
             name, order = name.split('/')
 
-        display_name = '/r/{0:s} : {1:s}'.format(name, order)
+        display_name = '/r/{0:s}/{1:s}'.format(name, order)
 
         if order not in ['hot', 'top', 'rising', 'new', 'controversial']:
             raise SubredditError(name)
