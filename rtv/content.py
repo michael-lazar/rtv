@@ -146,7 +146,7 @@ class SubmissionContent(BaseContent):
         self._submission = submission
         
         self._submission_data = self.strip_praw_submission(self._submission)
-        self.name = self._submission_data['permalink'] + '/' + order
+        self.name = self._submission_data['permalink']+' : '+order
         comments = self.flatten_comments(self._submission.comments)
         self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
@@ -154,6 +154,8 @@ class SubmissionContent(BaseContent):
     def from_url(cls, reddit, url, loader, order='hot', indent_size=2,
                  max_indent_level=8):
 
+        # remove order specification at the end
+        url = url.split(' : ')[0]
         try:
             with loader():
                 submission = reddit.get_submission(url, comment_sort=order)
