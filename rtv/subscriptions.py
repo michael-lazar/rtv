@@ -37,16 +37,23 @@ class SubscriptionPage(BasePage):
     def refresh_content(self):
         "Re-download all subscriptions and reset the page index"
 
-        try:
-            self.content = SubscriptionContent.get_list(self.reddit, self.loader)
-        except AccountError:
-            show_notification(self.stdscr, ['Not logged in'])
-        except SubredditError:
-            show_notification(self.stdscr, ['Invalid subreddit'])
-        except requests.HTTPError:
-            show_notification(self.stdscr, ['Could not reach subreddit'])
-        else:
-            self.nav = Navigator(self.content.get)
+        self.content = SubscriptionContent.get_list(self.reddit, self.loader)
+        self.nav = Navigator(self.content.get)
+
+    @SubscriptionController.register(curses.KEY_ENTER, 10)
+    def open_selected_subreddit(self):
+        "Open the selected subreddit"
+
+        from .subreddit import SubredditPage
+        data = self.content.get(self.nav.absolute_index)
+        page = SubredditPage(self.stdscr, self.reddit, data['name'][2:]) # Strip the leading /r
+        page.loop()
+
+    @SubscriptionController.register(curses.KEY_LEFT)
+    def close_subscriptions(self):
+        "Close subscriptions and return to the subreddit page"
+
+        self.active = False
 
     @staticmethod
     def draw_item(win, data, inverted=False):

@@ -169,7 +169,6 @@ class SubredditPage(BasePage):
 
         page = SubscriptionPage(self.stdscr, self.reddit)
         page.loop()
-        self.refresh_content()
 
     @staticmethod
     def draw_item(win, data, inverted=False):
