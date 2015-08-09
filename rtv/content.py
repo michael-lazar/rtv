@@ -368,22 +368,21 @@ class SubredditContent(BaseContent):
         return data
 
 class SubscriptionContent(BaseContent):
-    def __init__(self, name, subscriptions, loader):
-        self.name = name
+    def __init__(self, subscriptions, loader):
+        self.name = "Subscriptions"
         self._loader = loader
         self._subscriptions = subscriptions
         self._subscription_data = []
 
     @classmethod
     def get_list(cls, reddit, loader):
-        display_name = "Subscriptions"
         try:
             with loader():
                 subscriptions = reddit.get_my_subreddits(limit=None)
         except praw.errors.APIException:
             raise SubscriptionError()
 
-        return cls(display_name, subscriptions, loader)
+        return cls(subscriptions, loader)
 
     def get(self, index, n_cols=70):
         """

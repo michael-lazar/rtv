@@ -5,10 +5,7 @@ import logging
 
 from .content import SubscriptionContent
 from .page import BasePage, Navigator, BaseController
-from .helpers import open_browser, open_editor
-from .curses_helpers import (Color, LoadScreen, get_arrow, get_gold, add_line,
-                             show_notification)
-from .docs import COMMENT_FILE
+from .curses_helpers import (Color, LoadScreen, add_line)
 
 __all__ = ['SubscriptionController', 'SubscriptionPage']
 _logger = logging.getLogger(__name__)
