@@ -10,10 +10,11 @@ import praw.errors
 from six.moves import configparser
 
 from . import config
-from .exceptions import SubmissionError, SubredditError, ProgramError
+from .exceptions import SubmissionError, SubredditError, SubscriptionError, ProgramError
 from .curses_helpers import curses_session
 from .submission import SubmissionPage
 from .subreddit import SubredditPage
+from .subscriptions import SubscriptionPage
 from .docs import *
 from .__version__ import __version__
 
