@@ -14,7 +14,6 @@ from .exceptions import SubmissionError, SubredditError, SubscriptionError, Prog
 from .curses_helpers import curses_session
 from .submission import SubmissionPage
 from .subreddit import SubredditPage
-from .subscriptions import SubscriptionPage
 from .docs import *
 from .__version__ import __version__
 
