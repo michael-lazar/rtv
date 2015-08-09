@@ -167,10 +167,9 @@ class SubredditPage(BasePage):
             show_notification(self.stdscr, ['Not logged in'])
             return
 
-        with self.safe_call as s:
-            page = SubscriptionPage(self.stdscr, self.reddit)
-            page.loop()
-            self.refresh_content()
+        page = SubscriptionPage(self.stdscr, self.reddit)
+        page.loop()
+        self.refresh_content()
 
     @staticmethod
     def draw_item(win, data, inverted=False):
