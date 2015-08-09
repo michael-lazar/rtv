@@ -406,7 +406,7 @@ class SubscriptionContent(BaseContent):
         data = self._subscription_data[index]
         subreddit_info = "/r/" + data['name'] + " - " + data['title']
         data['split_title'] = wrap_text(subreddit_info, width=n_cols)
-        data['n_rows'] = len(data['split_title']) + 3
+        data['n_rows'] = len(data['split_title'])
         data['offset'] = 0
 
         return data
