@@ -8,6 +8,7 @@ import requests
 from .exceptions import SubredditError, AccountError
 from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
+from .subscriptions import SubscriptionPage
 from .content import SubredditContent
 from .helpers import open_browser, open_editor, strip_subreddit_url
 from .docs import SUBMISSION_FILE
@@ -155,6 +156,19 @@ class SubredditPage(BasePage):
             # Open the newly created post
             s.catch = False
             page = SubmissionPage(self.stdscr, self.reddit, submission=post)
+            page.loop()
+            self.refresh_content()
+
+    @SubredditController.register('s')
+    def open_subscriptions(self):
+        "Open user subscriptions page"
+
+        if not self.reddit.is_logged_in():
+            show_notification(self.stdscr, ['Not logged in'])
+            return
+
+        with self.safe_call as s:
+            page = SubscriptionPage(self.stdscr, self.reddit)
             page.loop()
             self.refresh_content()
 

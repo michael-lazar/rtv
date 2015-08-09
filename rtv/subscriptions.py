@@ -60,4 +60,9 @@ class SubscriptionPage(BasePage):
         n_title = len(data['split_title'])
         for row, text in enumerate(data['split_title'], start=offset):
             if row in valid_rows:
-                add_line(win, text, row, 1, curses.A_BOLD)
+                attr = curses.A_BOLD | Color.YELLOW
+                add_line(win, u'{name}'.format(**data), row, 1, attr)
+
+        row = n_title + offset
+        if row in valid_rows:
+            add_line(win, u'{title}'.format(**data), row, 1)
