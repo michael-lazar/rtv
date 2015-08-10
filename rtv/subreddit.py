@@ -9,7 +9,7 @@ from .exceptions import SubredditError, AccountError
 from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
 from .content import SubredditContent
-from .helpers import open_browser, open_editor
+from .helpers import open_browser, open_editor, strip_subreddit_url
 from .docs import SUBMISSION_FILE
 from .history import load_history, save_history
 from .curses_helpers import (Color, LoadScreen, add_line, get_arrow, get_gold,
@@ -115,10 +115,11 @@ class SubredditPage(BasePage):
         "Open a link with the webbrowser"
         data = self.content.get(self.nav.absolute_index)
 
-        if data['url'] == 'selfpost':
-            self.open_submission()
+        url = data['url_full']
+        if data['url_type'] in ['x-post', 'selfpost']:
+            page = SubmissionPage(self.stdscr, self.reddit, url=url)
+            page.loop()
         else:
-            url = data['url_full']
             open_browser(url)
             global history
             history.add(url)
