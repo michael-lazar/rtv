@@ -106,23 +106,19 @@ class SubredditPage(BasePage):
         page = SubmissionPage(self.stdscr, self.reddit, url=data['permalink'])
         page.loop()
 
-        if data['url'] == 'selfpost':
-            global history
-            history.add(data['url_full'])
-
     @SubredditController.register(curses.KEY_ENTER, 10, 'o')
     def open_link(self):
         "Open a link with the webbrowser"
         data = self.content.get(self.nav.absolute_index)
 
         url = data['url_full']
+        global history
+        history.add(url)
         if data['url_type'] in ['x-post', 'selfpost']:
             page = SubmissionPage(self.stdscr, self.reddit, url=url)
             page.loop()
         else:
             open_browser(url)
-            global history
-            history.add(url)
 
     @SubredditController.register('c')
     def post_submission(self):
