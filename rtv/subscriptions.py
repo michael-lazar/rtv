@@ -37,7 +37,7 @@ class SubscriptionPage(BasePage):
         self.content = SubscriptionContent.get_list(self.reddit, self.loader)
         self.nav = Navigator(self.content.get)
 
-    @SubscriptionController.register(curses.KEY_ENTER, 10)
+    @SubscriptionController.register(curses.KEY_ENTER, 10, curses.KEY_RIGHT)
     def open_selected_subreddit(self):
         "Open the selected subreddit"
 
@@ -46,7 +46,7 @@ class SubscriptionPage(BasePage):
         page = SubredditPage(self.stdscr, self.reddit, data['name'][2:]) # Strip the leading /r
         page.loop()
 
-    @SubscriptionController.register(curses.KEY_LEFT)
+    @SubscriptionController.register(curses.KEY_LEFT, 's')
     def close_subscriptions(self):
         "Close subscriptions and return to the subreddit page"
 

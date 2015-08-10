@@ -84,7 +84,7 @@ Once you are logged in your username will appear in the top-right corner of the 
 :``c``: Compose a new post or comment
 :``e``: Edit an existing post or comment
 :``d``: Delete an existing post or comment
-:``s``: Open subscribed subreddits list
+:``s``: Open/close subscribed subreddits list
 
 --------------
 Subreddit Mode

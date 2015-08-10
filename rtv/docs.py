@@ -42,7 +42,7 @@ Authenticated Commands
   `c`                 : Compose a new post or comment
   `e`                 : Edit an existing post or comment
   `d`                 : Delete an existing post or comment
-  `s`                 : Open subscribed subreddits list
+  `s`                 : Open/close subscribed subreddits list
 
 Subreddit Mode
   `l` or `RIGHT`      : Enter the selected submission
