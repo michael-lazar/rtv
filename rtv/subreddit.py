@@ -105,6 +105,9 @@ class SubredditPage(BasePage):
         data = self.content.get(self.nav.absolute_index)
         page = SubmissionPage(self.stdscr, self.reddit, url=data['permalink'])
         page.loop()
+        if data['url_type'] == 'selfpost':
+            global history
+            history.add(data['url_full'])
 
     @SubredditController.register(curses.KEY_ENTER, 10, 'o')
     def open_link(self):
