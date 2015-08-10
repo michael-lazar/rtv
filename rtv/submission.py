@@ -62,36 +62,13 @@ class SubmissionPage(BasePage):
         self.active = False
 
     @SubmissionController.register(curses.KEY_F5, 'r')
-    def refresh_content(self, order='hot'):
+    def refresh_content(self, order=None):
         "Re-download comments reset the page index"
 
+        order = order or self.content.order
         self.content = SubmissionContent.from_url(
-            self.reddit,
-            self.content.name,
-            self.loader,
-            order=order)
-
+            self.reddit, self.content.name, self.loader, order=order)
         self.nav = Navigator(self.content.get, page_index=-1)
-
-    @SubmissionController.register('1')
-    def sort_content_hot(self):
-        self.refresh_content(order='hot')
-
-    @SubmissionController.register('2')
-    def sort_content_top(self):
-        self.refresh_content(order='top')
-
-    @SubmissionController.register('3')
-    def sort_content_rising(self):
-        self.refresh_content(order='rising')
-
-    @SubmissionController.register('4')
-    def sort_content_new(self):
-        self.refresh_content(order='new')
-
-    @SubmissionController.register('5')
-    def sort_content_controversial(self):
-        self.refresh_content(order='controversial')
 
     @SubmissionController.register(curses.KEY_ENTER, 10, 'o')
     def open_link(self):

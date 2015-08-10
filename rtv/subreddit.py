@@ -49,10 +49,17 @@ class SubredditPage(BasePage):
             self.controller.trigger(cmd)
 
     @SubredditController.register(curses.KEY_F5, 'r')
-    def refresh_content(self, name=None, order='hot'):
+    def refresh_content(self, name=None, order=None):
         "Re-download all submissions and reset the page index"
 
         name = name or self.content.name
+        order = order or self.content.order
+
+        # Hack to allow an order specified in the name by prompt_subreddit() to
+        # override the current default
+        if order == 'ignore':
+            order = None
+
         try:
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.loader, order=order)
@@ -64,26 +71,6 @@ class SubredditPage(BasePage):
             show_notification(self.stdscr, ['Could not reach subreddit'])
         else:
             self.nav = Navigator(self.content.get)
-
-    @SubredditController.register('1')
-    def refresh_content_hot(self):
-        self.refresh_content(order='hot')
-
-    @SubredditController.register('2')
-    def refresh_content_top(self):
-        self.refresh_content(order='top')
-
-    @SubredditController.register('3')
-    def refresh_content_rising(self):
-        self.refresh_content(order='rising')
-
-    @SubredditController.register('4')
-    def refresh_content_new(self):
-        self.refresh_content(order='new')
-
-    @SubredditController.register('5')
-    def refresh_content_controversial(self):
-        self.refresh_content(order='controversial')
 
     @SubredditController.register('f')
     def search_subreddit(self, name=None):
@@ -98,7 +85,7 @@ class SubredditPage(BasePage):
         try:
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.loader, query=query)
-        except IndexError:  # if there are no submissions
+        except (IndexError, SubredditError):  # if there are no submissions
             show_notification(self.stdscr, ['No results found'])
         else:
             self.nav = Navigator(self.content.get)
@@ -109,7 +96,7 @@ class SubredditPage(BasePage):
         prompt = 'Enter Subreddit: /r/'
         name = prompt_input(self.stdscr, prompt)
         if name is not None:
-            self.refresh_content(name=name)
+            self.refresh_content(name=name, order='ignore')
 
     @SubredditController.register(curses.KEY_RIGHT, 'l')
     def open_submission(self):

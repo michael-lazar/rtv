@@ -255,7 +255,7 @@ class BasePage(object):
         self._content_window = None
         self._subwindows = None
 
-    def refresh_content(self):
+    def refresh_content(self, order=None):
         raise NotImplementedError
 
     @staticmethod
@@ -269,6 +269,26 @@ class BasePage(object):
     @BaseController.register('?')
     def help(self):
         show_help(self._content_window)
+
+    @BaseController.register('1')
+    def sort_content_hot(self):
+        self.refresh_content(order='hot')
+
+    @BaseController.register('2')
+    def sort_content_top(self):
+        self.refresh_content(order='top')
+
+    @BaseController.register('3')
+    def sort_content_rising(self):
+        self.refresh_content(order='rising')
+
+    @BaseController.register('4')
+    def sort_content_new(self):
+        self.refresh_content(order='new')
+
+    @BaseController.register('5')
+    def sort_content_controversial(self):
+        self.refresh_content(order='controversial')
 
     @BaseController.register(curses.KEY_UP, 'k')
     def move_cursor_up(self):
@@ -488,8 +508,10 @@ class BasePage(object):
         attr = curses.A_REVERSE | curses.A_BOLD | Color.CYAN
         self._header_window.bkgd(' ', attr)
 
-        sub_name = self.content.name.replace('/r/front', 'Front Page ')
+        sub_name = self.content.name.replace('/r/front', 'Front Page')
         add_line(self._header_window, sub_name, 0, 0)
+        if self.content.order is not None:
+            add_line(self._header_window, ' [{}]'.format(self.content.order))
 
         if self.reddit.user is not None:
             username = self.reddit.user.name

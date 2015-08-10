@@ -103,6 +103,12 @@ class BaseContent(object):
         """
         Parse through a submission and return a dict with data ready to be
         displayed through the terminal.
+
+        Definitions:
+            permalink - Full URL to the submission comments.
+            url_full - Link that the submission points to.
+            url - URL that is displayed on the subreddit page, may be
+                  "selfpost" or "x-post" or a link.
         """
 
         is_selfpost = lambda s: s.startswith('http://www.reddit.com/r/')
@@ -137,33 +143,32 @@ class SubmissionContent(BaseContent):
     list for repeat access.
     """
 
-    def __init__(self, submission, loader, indent_size=2,
-                 max_indent_level=8, order='hot'):
+    def __init__(self, submission, loader, indent_size=2, max_indent_level=8,
+                 order=None):
+
+        submission_data = self.strip_praw_submission(submission)
+        comments = self.flatten_comments(submission.comments)
 
         self.indent_size = indent_size
         self.max_indent_level = max_indent_level
+        self.name = submission_data['permalink']
+        self.order = order
         self._loader = loader
         self._submission = submission
-        
-        self._submission_data = self.strip_praw_submission(self._submission)
-        self.name = self._submission_data['permalink']+' : '+order
-        comments = self.flatten_comments(self._submission.comments)
+        self._submission_data = submission_data
         self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
     @classmethod
-    def from_url(cls, reddit, url, loader, order='hot', indent_size=2,
-                 max_indent_level=8):
+    def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=8,
+                 order=None):
 
-        # remove order specification at the end
-        url = url.split(' : ')[0]
         try:
             with loader():
                 submission = reddit.get_submission(url, comment_sort=order)
         except (praw.errors.APIException, praw.errors.NotFound):
             raise SubmissionError(url)
 
-        return cls(submission, loader, indent_size, max_indent_level,
-                   order=order)
+        return cls(submission, loader, indent_size, max_indent_level, order)
 
     def get(self, index, n_cols=70):
         """
@@ -248,9 +253,10 @@ class SubredditContent(BaseContent):
     list for repeat access.
     """
 
-    def __init__(self, name, submissions, loader, order='hot'):
+    def __init__(self, name, submissions, loader, order=None):
 
         self.name = name
+        self.order = order
         self._loader = loader
         self._submissions = submissions
         self._submission_data = []
@@ -268,30 +274,30 @@ class SubredditContent(BaseContent):
             raise SubredditError(name)
 
     @classmethod
-    def from_name(cls, reddit, name, loader, order='hot', query=None):
+    def from_name(cls, reddit, name, loader, order=None, query=None):
 
-        # replace the order
-        if name.count('/') == 3:
-            name = '/'.join(name.split('/')[:-1]+[order])
-
-        name = name.strip(' /')  # Strip leading and trailing backslashes
+        # Strip leading and trailing backslashes
+        name = name.strip(' /')
         if name.startswith('r/'):
             name = name[2:]
 
-        # Grab the display order e.g. "python/new"
+        # If the order is not given explicitly, it will be searched for and
+        # stripped out of the subreddit name e.g. python/new.
         if '/' in name:
-            name, order = name.split('/')
+            name, name_order = name.split('/')
+            order = order or name_order
+        display_name = '/r/{}'.format(name)
 
-        display_name = '/r/{0:s}/{1:s}'.format(name, order)
-
-        if order not in ['hot', 'top', 'rising', 'new', 'controversial']:
+        if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
             raise SubredditError(name)
 
         if name == 'me':
             if not reddit.is_logged_in():
                 raise AccountError
-            else:
+            elif order:
                 submissions = reddit.user.get_submitted(sort=order)
+            else:
+                submissions = reddit.user.get_submitted()
 
         elif query:
             if name == 'front':
@@ -302,6 +308,7 @@ class SubredditContent(BaseContent):
         else:
             if name == 'front':
                 dispatch = {
+                    None: reddit.get_front_page,
                     'hot': reddit.get_front_page,
                     'top': reddit.get_top,
                     'rising': reddit.get_rising,
@@ -311,6 +318,7 @@ class SubredditContent(BaseContent):
             else:
                 subreddit = reddit.get_subreddit(name)
                 dispatch = {
+                    None: subreddit.get_hot,
                     'hot': subreddit.get_hot,
                     'top': subreddit.get_top,
                     'rising': subreddit.get_rising,
