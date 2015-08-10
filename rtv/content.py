@@ -4,10 +4,10 @@ import praw
 import requests
 import re
 
-from .exceptions import SubmissionError, SubredditError, AccountError
+from .exceptions import SubmissionError, SubredditError, SubscriptionError, AccountError
 from .helpers import humanize_timestamp, wrap_text, strip_subreddit_url
 
-__all__ = ['SubredditContent', 'SubmissionContent']
+__all__ = ['SubredditContent', 'SubmissionContent', 'SubscriptionContent']
 _logger = logging.getLogger(__name__)
 
 
@@ -149,6 +149,20 @@ class BaseContent(object):
 
         return data
 
+    @staticmethod
+    def strip_praw_subscription(subscription):
+        """
+        Parse through a subscription and return a dict with data ready to be
+        displayed through the terminal.
+        """
+
+        data = {}
+        data['object'] = subscription
+        data['type'] = 'Subscription'
+        data['name'] = "/r/" + subscription._case_name
+        data['title'] = subscription.title
+
+        return data
 
 class SubmissionContent(BaseContent):
     """
@@ -366,6 +380,49 @@ class SubredditContent(BaseContent):
         data = self._submission_data[index]
         data['split_title'] = wrap_text(data['title'], width=n_cols)
         data['n_rows'] = len(data['split_title']) + 3
+        data['offset'] = 0
+
+        return data
+
+class SubscriptionContent(BaseContent):
+    def __init__(self, subscriptions, loader):
+        self.name = "Subscriptions"
+        self._loader = loader
+        self._subscriptions = subscriptions
+        self._subscription_data = []
+
+    @classmethod
+    def get_list(cls, reddit, loader):
+        try:
+            with loader():
+                subscriptions = reddit.get_my_subreddits(limit=None)
+        except praw.errors.APIException:
+            raise SubscriptionError()
+
+        return cls(subscriptions, loader)
+
+    def get(self, index, n_cols=70):
+        """
+        Grab the `i`th subscription, with the title field formatted to fit inside
+        of a window of width `n_cols`
+        """
+
+        if index < 0:
+            raise IndexError
+
+        while index >= len(self._subscription_data):
+            try:
+                with self._loader():
+                    subscription = next(self._subscriptions)
+            except StopIteration:
+                raise IndexError
+            else:
+                data = self.strip_praw_subscription(subscription)
+                self._subscription_data.append(data)
+
+        data = self._subscription_data[index]
+        data['split_title'] = wrap_text(data['name'], width=n_cols)
+        data['n_rows'] = len(data['split_title']) + 1
         data['offset'] = 0
 
         return data

@@ -24,6 +24,10 @@ class SubredditError(RTVError):
         self.name = name
 
 
+class SubscriptionError(RTVError):
+    "Subscriptions could not be fetched"
+
+
 class ProgramError(RTVError):
     "Problem executing an external program"
 

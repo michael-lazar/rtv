@@ -432,6 +432,22 @@ class BasePage(object):
             s.catch = False
             self.refresh_content()
 
+    @BaseController.register('s')
+    def get_subscriptions(self):
+        """
+        Displays subscribed subreddits
+        """
+
+        if not self.reddit.is_logged_in():
+            show_notification(self.stdscr, ['Not logged in'])
+            return
+
+        data = self.content.get(self.nav.absolute_index)
+        with self.safe_call as s:
+            subscriptions = SubscriptionPage(self.stdscr, self.reddit)
+            subscriptions.loop()
+            self.refresh_content()
+
     @BaseController.register('i')
     def get_inbox(self):
         """
