@@ -127,7 +127,7 @@ class BaseContent(object):
         data['score'] = '{} pts'.format(sub.score)
         data['author'] = name
         data['permalink'] = sub.permalink
-        data['subreddit'] = strip_subreddit_url(sub.permalink)
+        data['subreddit'] = str(sub.subreddit)
         data['flair'] = flair
         data['url_full'] = sub.url
 
