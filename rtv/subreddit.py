@@ -167,8 +167,14 @@ class SubredditPage(BasePage):
             show_notification(self.stdscr, ['Not logged in'])
             return
 
+        # Open subscriptions page
         page = SubscriptionPage(self.stdscr, self.reddit)
         page.loop()
+
+        # When user has chosen a subreddit in the subscriptions list, refresh content with the selected subreddit
+        chosen_subreddit = page.get_selected_subreddit_data()
+        if chosen_subreddit is not None:
+            self.refresh_content(name=chosen_subreddit['name'])
 
     @staticmethod
     def draw_item(win, data, inverted=False):

@@ -17,6 +17,7 @@ class SubscriptionPage(BasePage):
     def __init__(self, stdscr, reddit):
         self.controller = SubscriptionController(self)
         self.loader = LoadScreen(stdscr)
+        self.selected_subreddit_data = None
 
         content = SubscriptionContent.get_list(reddit, self.loader)
         super(SubscriptionPage, self).__init__(stdscr, reddit, content)
@@ -30,6 +31,9 @@ class SubscriptionPage(BasePage):
             cmd = self.stdscr.getch()
             self.controller.trigger(cmd)
 
+    def get_selected_subreddit_data(self):
+        return self.selected_subreddit_data
+
     @SubscriptionController.register(curses.KEY_F5, 'r')
     def refresh_content(self):
         "Re-download all subscriptions and reset the page index"
@@ -38,13 +42,11 @@ class SubscriptionPage(BasePage):
         self.nav = Navigator(self.content.get)
 
     @SubscriptionController.register(curses.KEY_ENTER, 10, curses.KEY_RIGHT)
-    def open_selected_subreddit(self):
-        "Open the selected subreddit"
+    def store_selected_subreddit(self):
+        "Store the selected subreddit and return to the subreddit page"
 
-        from .subreddit import SubredditPage
-        data = self.content.get(self.nav.absolute_index)
-        page = SubredditPage(self.stdscr, self.reddit, data['name'][2:]) # Strip the leading /r
-        page.loop()
+        self.selected_subreddit_data = self.content.get(self.nav.absolute_index)
+        self.active = False
 
     @SubscriptionController.register(curses.KEY_LEFT, 's')
     def close_subscriptions(self):

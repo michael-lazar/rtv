@@ -153,7 +153,7 @@ class BaseContent(object):
         data = {}
         data['object'] = subscription
         data['type'] = 'Subscription'
-        data['name'] = "/r/" + subscription._case_name
+        data['name'] = "/r/" + subscription.display_name
         data['title'] = subscription.title
 
         return data
