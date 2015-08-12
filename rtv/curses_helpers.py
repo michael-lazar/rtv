@@ -24,7 +24,7 @@ ESCAPE = 27
 
 def get_gold():
     """
-    Return the guilded symbol.
+    Return the gilded symbol.
     """
 
     symbol = u'\u272A' if config.unicode else '*'
