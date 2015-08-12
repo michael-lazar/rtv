@@ -177,10 +177,10 @@ class SubredditPage(BasePage):
         page = SubscriptionPage(self.stdscr, self.reddit)
         page.loop()
 
-        # When user has chosen a subreddit in the subscriptions list, refresh content with the selected subreddit
-        chosen_subreddit = page.get_selected_subreddit_data()
-        if chosen_subreddit is not None:
-            self.refresh_content(name=chosen_subreddit['name'])
+        # When user has chosen a subreddit in the subscriptions list,
+        # refresh content with the selected subreddit
+        if page.selected_subreddit_data is not None:
+            self.refresh_content(name=page.selected_subreddit_data['name'])
 
     @staticmethod
     def draw_item(win, data, inverted=False):

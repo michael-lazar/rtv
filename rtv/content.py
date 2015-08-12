@@ -385,14 +385,17 @@ class SubredditContent(BaseContent):
         return data
 
 class SubscriptionContent(BaseContent):
+
     def __init__(self, subscriptions, loader):
+
         self.name = "Subscriptions"
+        self.order = None
         self._loader = loader
         self._subscriptions = subscriptions
         self._subscription_data = []
 
     @classmethod
-    def get_list(cls, reddit, loader):
+    def from_user(cls, reddit, loader):
         try:
             with loader():
                 subscriptions = reddit.get_my_subreddits(limit=None)

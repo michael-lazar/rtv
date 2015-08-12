@@ -14,12 +14,14 @@ class SubscriptionController(BaseController):
     character_map = {}
 
 class SubscriptionPage(BasePage):
+
     def __init__(self, stdscr, reddit):
+
         self.controller = SubscriptionController(self)
         self.loader = LoadScreen(stdscr)
         self.selected_subreddit_data = None
 
-        content = SubscriptionContent.get_list(reddit, self.loader)
+        content = SubscriptionContent.from_user(reddit, self.loader)
         super(SubscriptionPage, self).__init__(stdscr, reddit, content)
 
     def loop(self):
@@ -30,9 +32,6 @@ class SubscriptionPage(BasePage):
             self.draw()
             cmd = self.stdscr.getch()
             self.controller.trigger(cmd)
-
-    def get_selected_subreddit_data(self):
-        return self.selected_subreddit_data
 
     @SubscriptionController.register(curses.KEY_F5, 'r')
     def refresh_content(self):
@@ -48,7 +47,7 @@ class SubscriptionPage(BasePage):
         self.selected_subreddit_data = self.content.get(self.nav.absolute_index)
         self.active = False
 
-    @SubscriptionController.register(curses.KEY_LEFT, 's')
+    @SubscriptionController.register(curses.KEY_LEFT, 'h', 's')
     def close_subscriptions(self):
         "Close subscriptions and return to the subreddit page"
 
@@ -63,12 +62,12 @@ class SubscriptionPage(BasePage):
         valid_rows = range(0, n_rows)
         offset = 0 if not inverted else -(data['n_rows'] - n_rows)
 
-        n_title = len(data['split_title'])
-        for row, text in enumerate(data['split_title'], start=offset):
-            if row in valid_rows:
-                add_line(win, text, row, 1)
-
-        row = n_title + offset
+        row = offset
         if row in valid_rows:
             attr = curses.A_BOLD | Color.YELLOW
             add_line(win, u'{name}'.format(**data), row, 1, attr)
+
+        row = offset + 1
+        for row, text in enumerate(data['split_title'], start=row):
+            if row in valid_rows:
+                add_line(win, text, row, 1)
