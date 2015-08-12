@@ -404,7 +404,7 @@ class SubscriptionContent(BaseContent):
                 self._subscription_data.append(data)
 
         data = self._subscription_data[index]
-        data['split_title'] = wrap_text(data['name'], width=n_cols)
+        data['split_title'] = wrap_text(data['title'], width=n_cols)
         data['n_rows'] = len(data['split_title']) + 1
         data['offset'] = 0
 
