@@ -8,6 +8,7 @@ import requests
 from .exceptions import SubredditError, AccountError
 from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
+from .subscriptions import SubscriptionPage
 from .content import SubredditContent
 from .helpers import open_browser, open_editor, strip_subreddit_url
 from .docs import SUBMISSION_FILE
@@ -163,6 +164,23 @@ class SubredditPage(BasePage):
             page = SubmissionPage(self.stdscr, self.reddit, submission=post)
             page.loop()
             self.refresh_content()
+
+    @SubredditController.register('s')
+    def open_subscriptions(self):
+        "Open user subscriptions page"
+
+        if not self.reddit.is_logged_in():
+            show_notification(self.stdscr, ['Not logged in'])
+            return
+
+        # Open subscriptions page
+        page = SubscriptionPage(self.stdscr, self.reddit)
+        page.loop()
+
+        # When user has chosen a subreddit in the subscriptions list, refresh content with the selected subreddit
+        chosen_subreddit = page.get_selected_subreddit_data()
+        if chosen_subreddit is not None:
+            self.refresh_content(name=chosen_subreddit['name'])
 
     @staticmethod
     def draw_item(win, data, inverted=False):

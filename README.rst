@@ -28,7 +28,7 @@ Installation
 Install using pip
 
 .. code-block:: bash
-   
+
    $ sudo pip install rtv
 
 Or clone the repository
@@ -47,12 +47,12 @@ The installation will place a script in the system path
    $ rtv --help
 
 =====
-Usage 
+Usage
 =====
 
 RTV supports browsing both subreddits and submission comments.
 
-Navigating is simple and intuitive. 
+Navigating is simple and intuitive.
 Move the cursor using either the arrow keys or *Vim* style movement.
 Move **up** and **down** to scroll through the page.
 Move **right** to view the selected submission, and **left** to exit the submission.
@@ -84,6 +84,7 @@ Once you are logged in your username will appear in the top-right corner of the 
 :``c``: Compose a new post or comment
 :``e``: Edit an existing post or comment
 :``d``: Delete an existing post or comment
+:``s``: Open/close subscribed subreddits list
 
 --------------
 Subreddit Mode
@@ -96,7 +97,7 @@ In subreddit mode you can browse through the top submissions on either the front
 :``f``: Open a prompt to search the current subreddit
 
 The ``/`` prompt accepts subreddits in the following formats
-   
+
 * ``/r/python``
 * ``/r/python/new``
 * ``/r/python+linux`` supports multireddits
@@ -126,7 +127,7 @@ You can specify which text editor you would like to use by setting the ``$RTV_ED
 .. code-block:: bash
 
    $ export RTV_EDITOR=gedit
-   
+
 If no editor is specified, RTV will fallback to the system's default ``$EDITOR``, and finally to ``nano``.
 
 -----------
