@@ -169,7 +169,7 @@ class SubredditPage(BasePage):
     def open_subscriptions(self):
         "Open user subscriptions page"
 
-        if not self.reddit.is_logged_in():
+        if not self.reddit.is_logged_in() and not self.reddit.is_oauth_session():
             show_notification(self.stdscr, ['Not logged in'])
             return
 

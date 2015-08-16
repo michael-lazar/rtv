@@ -7,7 +7,7 @@ import logging
 import requests
 import praw
 import praw.errors
-from six.moves import configparser
+import configparser
 
 from . import config
 from .exceptions import SubmissionError, SubredditError, SubscriptionError, ProgramError
@@ -15,6 +15,7 @@ from .curses_helpers import curses_session
 from .submission import SubmissionPage
 from .subreddit import SubredditPage
 from .docs import *
+from .oauth import load_oauth_config, read_setting, write_setting, authorize
 from .__version__ import __version__
 
 __all__ = []
@@ -106,9 +107,25 @@ def main():
         print('Connecting...')
         reddit = praw.Reddit(user_agent=AGENT)
         reddit.config.decode_html_entities = False
-        if args.username:
+        if read_setting(key="authorization_token") is None:
+            print('Hello OAuth login helper!')
+            authorize(reddit)
+        else:
+            oauth_config = load_oauth_config()
+            oauth_data = {}
+            if oauth_config.has_section('oauth'):
+                oauth_data = dict(oauth_config.items('oauth'))
+
+            reddit.set_oauth_app_info(oauth_data['client_id'],
+                                      oauth_data['client_secret'],
+                                      oauth_data['redirect_uri'])
+
+            reddit.set_access_credentials(scope=set(oauth_data['scope'].split('-')),
+                                          access_token=oauth_data['authorization_token'],
+                                          refresh_token=oauth_data['refresh_token'])
+        """if args.username:
             # PRAW will prompt for password if it is None
-            reddit.login(args.username, args.password)
+            reddit.login(args.username, args.password)"""
         with curses_session() as stdscr:
             if args.link:
                 page = SubmissionPage(stdscr, reddit, url=args.link)
@@ -133,6 +150,7 @@ def main():
         pass
     finally:
         # Ensure sockets are closed to prevent a ResourceWarning
+        print(reddit.is_oauth_session())
         reddit.handler.http.close()
 
 sys.exit(main())
