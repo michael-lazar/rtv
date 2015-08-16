@@ -11,16 +11,16 @@ import configparser
 
 from . import config
 from .exceptions import SubmissionError, SubredditError, SubscriptionError, ProgramError
-from .curses_helpers import curses_session
+from .curses_helpers import curses_session, LoadScreen
 from .submission import SubmissionPage
 from .subreddit import SubredditPage
 from .docs import *
-from .oauth import load_oauth_config, read_setting, write_setting, authorize
+from .oauth import OAuthTool
 from .__version__ import __version__
 
 __all__ = []
 
-def load_config():
+def open_config():
     """
     Search for a configuration file at the location ~/.rtv and attempt to load
     saved settings for things like the username and password.
@@ -41,6 +41,15 @@ def load_config():
             config.read(config_path)
             break
 
+    return config
+
+def load_rtv_config():
+    """
+    Attempt to load saved settings for things like the username and password.
+    """
+
+    config = open_config()
+
     defaults = {}
     if config.has_section('rtv'):
         defaults = dict(config.items('rtv'))
@@ -50,6 +59,18 @@ def load_config():
 
     return defaults
 
+def load_oauth_config():
+    """
+    Attempt to load saved OAuth settings
+    """
+
+    config = open_config()
+
+    defaults = {}
+    if config.has_section('oauth'):
+        defaults = dict(config.items('oauth'))
+
+    return defaults
 
 def command_line():
 
@@ -69,6 +90,13 @@ def command_line():
     group.add_argument('-u', dest='username', help='reddit username')
     group.add_argument('-p', dest='password', help='reddit password')
 
+    oauth_group = parser.add_argument_group('OAuth data (optional)', OAUTH)
+    oauth_group.add_argument('--client-id', dest='client_id', help='OAuth app ID')
+    oauth_group.add_argument('--redurect-uri', dest='redirect_uri', help='OAuth app redirect URI')
+    oauth_group.add_argument('--auth-token', dest='authorization_token', help='OAuth authorization token')
+    oauth_group.add_argument('--refresh-token', dest='refresh_token', help='OAuth refresh token')
+    oauth_group.add_argument('--scope', dest='scope', help='OAuth app scope')
+
     args = parser.parse_args()
 
     return args
@@ -81,7 +109,8 @@ def main():
     locale.setlocale(locale.LC_ALL, '')
 
     args = command_line()
-    local_config = load_config()
+    local_rtv_config = load_rtv_config()
+    local_oauth_config = load_oauth_config()
 
     # set the terminal title
     title = 'rtv {0}'.format(__version__)
@@ -92,9 +121,13 @@ def main():
 
     # Fill in empty arguments with config file values. Paramaters explicitly
     # typed on the command line will take priority over config file params.
-    for key, val in local_config.items():
+    for key, val in local_rtv_config.items():
         if getattr(args, key, None) is None:
             setattr(args, key, val)
+
+    for k, v in local_oauth_config.items():
+        if getattr(args, k, None) is None:
+            setattr(args, k, v)
 
     config.unicode = (not args.ascii)
 
@@ -107,34 +140,19 @@ def main():
         print('Connecting...')
         reddit = praw.Reddit(user_agent=AGENT)
         reddit.config.decode_html_entities = False
-        if read_setting(key="authorization_token") is None:
-            print('Hello OAuth login helper!')
-            authorize(reddit)
-        else:
-            oauth_config = load_oauth_config()
-            oauth_data = {}
-            if oauth_config.has_section('oauth'):
-                oauth_data = dict(oauth_config.items('oauth'))
-
-            reddit.set_oauth_app_info(oauth_data['client_id'],
-                                      oauth_data['client_secret'],
-                                      oauth_data['redirect_uri'])
-
-            reddit.set_access_credentials(scope=set(oauth_data['scope'].split('-')),
-                                          access_token=oauth_data['authorization_token'],
-                                          refresh_token=oauth_data['refresh_token'])
-        """if args.username:
-            # PRAW will prompt for password if it is None
-            reddit.login(args.username, args.password)"""
         with curses_session() as stdscr:
+            oauth = OAuthTool(reddit, stdscr, LoadScreen(stdscr))
+            oauth.authorize()
             if args.link:
-                page = SubmissionPage(stdscr, reddit, url=args.link)
+                page = SubmissionPage(stdscr, reddit, oauth, url=args.link)
                 page.loop()
             subreddit = args.subreddit or 'front'
-            page = SubredditPage(stdscr, reddit, subreddit)
+            page = SubredditPage(stdscr, reddit, oauth, subreddit)
             page.loop()
     except praw.errors.InvalidUserPass:
         print('Invalid password for username: {}'.format(args.username))
+    except praw.errors.OAuthAppRequired:
+        print('Invalid OAuth app config parameters')
     except requests.ConnectionError:
         print('Connection timeout')
     except requests.HTTPError:
@@ -150,7 +168,6 @@ def main():
         pass
     finally:
         # Ensure sockets are closed to prevent a ResourceWarning
-        print(reddit.is_oauth_session())
         reddit.handler.http.close()
 
 sys.exit(main())

@@ -20,10 +20,11 @@ class SubmissionController(BaseController):
 
 class SubmissionPage(BasePage):
 
-    def __init__(self, stdscr, reddit, url=None, submission=None):
+    def __init__(self, stdscr, reddit, oauth, url=None, submission=None):
 
         self.controller = SubmissionController(self)
         self.loader = LoadScreen(stdscr)
+        self.oauth = oauth
         if url:
             content = SubmissionContent.from_url(reddit, url, self.loader)
         elif submission:
@@ -32,7 +33,7 @@ class SubmissionPage(BasePage):
             raise ValueError('Must specify url or submission')
 
         super(SubmissionPage, self).__init__(stdscr, reddit,
-                                             content, page_index=-1)
+                                             content, oauth, page_index=-1)
 
     def loop(self):
         "Main control loop"
@@ -88,9 +89,12 @@ class SubmissionPage(BasePage):
         selected comment.
         """
 
-        if not self.reddit.is_logged_in():
+        if not self.reddit.is_oauth_session():
             show_notification(self.stdscr, ['Not logged in'])
             return
+
+        # Refresh access token if expired
+        self.oauth.refresh()
 
         data = self.content.get(self.nav.absolute_index)
         if data['type'] == 'Submission':
@@ -126,6 +130,9 @@ class SubmissionPage(BasePage):
     @SubmissionController.register('d')
     def delete_comment(self):
         "Delete a comment as long as it is not the current submission"
+
+        # Refresh access token if expired
+        self.oauth.refresh()
 
         if self.nav.absolute_index != -1:
             self.delete()
