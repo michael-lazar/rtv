@@ -91,11 +91,8 @@ def command_line():
     group.add_argument('-p', dest='password', help='reddit password')
 
     oauth_group = parser.add_argument_group('OAuth data (optional)', OAUTH)
-    oauth_group.add_argument('--client-id', dest='client_id', help='OAuth app ID')
-    oauth_group.add_argument('--redurect-uri', dest='redirect_uri', help='OAuth app redirect URI')
     oauth_group.add_argument('--auth-token', dest='authorization_token', help='OAuth authorization token')
     oauth_group.add_argument('--refresh-token', dest='refresh_token', help='OAuth refresh token')
-    oauth_group.add_argument('--scope', dest='scope', help='OAuth app scope')
 
     args = parser.parse_args()
 
