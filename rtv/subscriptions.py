@@ -37,7 +37,7 @@ class SubscriptionPage(BasePage):
     def refresh_content(self):
         "Re-download all subscriptions and reset the page index"
 
-        self.content = SubscriptionContent.get_list(self.reddit, self.loader)
+        self.content = SubscriptionContent.from_user(self.reddit, self.loader)
         self.nav = Navigator(self.content.get)
 
     @SubscriptionController.register(curses.KEY_ENTER, 10, curses.KEY_RIGHT)
