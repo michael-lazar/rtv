@@ -91,7 +91,8 @@ def command_line():
     group.add_argument('-p', dest='password', help='reddit password')
 
     oauth_group = parser.add_argument_group('OAuth data (optional)', OAUTH)
-    oauth_group.add_argument('--auth-token', dest='authorization_token', help='OAuth authorization token')
+    oauth_group.add_argument('--auto-login', dest='auto_login', help='OAuth auto-login setting')
+    oauth_group.add_argument('--auth-token', dest='access_token', help='OAuth authorization token')
     oauth_group.add_argument('--refresh-token', dest='refresh_token', help='OAuth refresh token')
 
     args = parser.parse_args()
@@ -139,7 +140,8 @@ def main():
         reddit.config.decode_html_entities = False
         with curses_session() as stdscr:
             oauth = OAuthTool(reddit, stdscr, LoadScreen(stdscr))
-            oauth.authorize()
+            if args.auto_login == 'True':
+                oauth.authorize()
             if args.link:
                 page = SubmissionPage(stdscr, reddit, oauth, url=args.link)
                 page.loop()
