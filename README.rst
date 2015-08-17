@@ -152,14 +152,18 @@ RTV will read a configuration placed at ``~/.config/rtv/rtv.cfg`` (or ``$XDG_CON
 Each line in the file will replace the corresponding default argument in the launch script.
 This can be used to avoid having to re-enter login credentials every time the program is launched.
 
-Example config:
+The OAuth section contains a boolean to trigger auto-login (defaults to False).
+When authenticated, two additional fields are written : **access_token** and **refresh_token**.
+Those are basically like username and password : they are used to authenticate you on Reddit servers.
+
+Example initial config:
 
 .. code-block:: ini
 
-  [rtv]
-  username=MyUsername
-  password=MySecretPassword
+  [oauth]
+  auto_login=False
 
+  [rtv]
   # Log file location
   log=/tmp/rtv.log
 
