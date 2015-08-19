@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<title>RTV OAuth</title>
+{% if error == 'access_denied' %}
+	<h3 style="color: red">Declined rtv access</h3>
+	<p>You chose to stop <span style="font-weight: bold">Reddit Terminal Viewer</span> from accessing your account, it will continue in unauthenticated mode.<br>
+	You can close this page.</p>
+{% elif error != 'error_placeholder' %}
+	<h3 style="color: red">Error : {{ error }}</h3>
+{% elif (state == 'state_placeholder' or code == 'code_placeholder') and error == 'error_placeholder' %}
+	<h3>Wait...</h3>
+	<p>This page is supposed to be a Reddit OAuth callback. You can't just come here hands in the pocket!</p>
+{% else %}
+	<h3 style="color: green">Allowed rtv access</h3>
+	<p><span style="font-weight: bold">Reddit Terminal Viewer</span> will now log in. You can close this page.</p>
+{% end %}
