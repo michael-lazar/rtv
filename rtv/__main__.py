@@ -7,7 +7,7 @@ import logging
 import requests
 import praw
 import praw.errors
-import configparser
+from six.moves import configparser
 
 from . import config
 from .exceptions import SubmissionError, SubredditError, SubscriptionError, ProgramError
@@ -164,6 +164,8 @@ def main():
         print('Invalid password for username: {}'.format(args.username))
     except praw.errors.OAuthAppRequired:
         print('Invalid OAuth app config parameters')
+    except praw.errors.OAuthInvalidToken:
+        print('Invalid OAuth token')
     except requests.ConnectionError:
         print('Connection timeout')
     except requests.HTTPError:
