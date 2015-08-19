@@ -152,7 +152,7 @@ def main():
         reddit.config.decode_html_entities = False
         with curses_session() as stdscr:
             oauth = OAuthTool(reddit, stdscr, LoadScreen(stdscr))
-            if args.auto_login == 'True':
+            if args.auto_login == 'True': # Ew!
                 oauth.authorize()
             if args.link:
                 page = SubmissionPage(stdscr, reddit, oauth, url=args.link)
@@ -160,8 +160,6 @@ def main():
             subreddit = args.subreddit or 'front'
             page = SubredditPage(stdscr, reddit, oauth, subreddit)
             page.loop()
-    except praw.errors.InvalidUserPass:
-        print('Invalid password for username: {}'.format(args.username))
     except praw.errors.OAuthAppRequired:
         print('Invalid OAuth app config parameters')
     except praw.errors.OAuthInvalidToken:
