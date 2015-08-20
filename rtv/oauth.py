@@ -141,7 +141,6 @@ class OAuthTool(object):
 
             with self.loader(message='Waiting for authorization'):
                 webbrowser.open(permission_ask_page_link)
-
                 ioloop.IOLoop.current().start()
 
             global oauth_state

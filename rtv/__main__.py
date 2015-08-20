@@ -18,6 +18,8 @@ from .docs import *
 from .oauth import OAuthTool
 from .__version__ import __version__
 
+from tornado import ioloop
+
 __all__ = []
 
 def get_config_fp():
@@ -179,5 +181,7 @@ def main():
     finally:
         # Ensure sockets are closed to prevent a ResourceWarning
         reddit.handler.http.close()
+        # Explicitly close file descriptors opened by Tornado's IOLoop
+        ioloop.IOLoop.current().close(all_fds=True)
 
 sys.exit(main())
