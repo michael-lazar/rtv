@@ -158,9 +158,10 @@ class OAuthTool(object):
             elif self.final_error != 'error_placeholder':
                 show_notification(self.stdscr, ['Authentication error'])
                 return
+
             # Check if UUID matches obtained state
             # (if not, authorization process is compromised, and I'm giving up)
-            elif hex_uuid != self.final_state:
+            if hex_uuid != self.final_state:
                 show_notification(self.stdscr, ['UUID mismatch, stopping.'])
                 return
 
