@@ -160,10 +160,9 @@ def main():
             subreddit = args.subreddit or 'front'
             page = SubredditPage(stdscr, reddit, oauth, subreddit)
             page.loop()
-    except praw.errors.OAuthAppRequired:
-        print('Invalid OAuth app config parameters')
-    except praw.errors.OAuthInvalidToken:
-        print('Invalid OAuth token')
+    except (praw.errors.OAuthAppRequired, praw.errors.OAuthInvalidToken,
+            praw.errors.HTTPException) as e:
+        print('Invalid OAuth data')
     except requests.ConnectionError:
         print('Connection timeout')
     except requests.HTTPError:

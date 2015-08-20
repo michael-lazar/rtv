@@ -117,7 +117,8 @@ class OAuthTool(object):
                         access_token=self.access_info['access_token'],
                         refresh_token=self.access_info['refresh_token'])
                     self.set_token_expiration()
-            except (praw.errors.OAuthAppRequired, praw.errors.OAuthInvalidToken) as e:
+            except (praw.errors.OAuthAppRequired, praw.errors.OAuthInvalidToken,
+                    praw.errors.HTTPException) as e:
                 show_notification(self.stdscr, ['Invalid OAuth data'])
             else:
                 self.config['oauth']['access_token'] = self.access_info['access_token']
