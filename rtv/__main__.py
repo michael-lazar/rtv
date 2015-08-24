@@ -108,7 +108,7 @@ def main():
         reddit = praw.Reddit(user_agent=AGENT)
         reddit.config.decode_html_entities = False
         if args.username:
-            # Get the password from the passwordcmd if present
+            # Get the password from the passwordcommand if present
             if not args.password and "passwordcommand" in local_config.keys():
                 args.password = get_password(local_config["passwordcommand"])
             # PRAW will prompt for password if it is None
