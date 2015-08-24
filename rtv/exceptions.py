@@ -33,3 +33,9 @@ class ProgramError(RTVError):
 
     def __init__(self, name):
         self.name = name
+
+class PasswordCmdError(RTVError):
+    "Problem getting password from external program"
+
+    def __init__(self, name):
+        self.name = name

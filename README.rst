@@ -159,6 +159,7 @@ Example config:
   [rtv]
   username=MyUsername
   password=MySecretPassword
+  passwordcommand=MyPasswordCommand
 
   # Log file location
   log=/tmp/rtv.log

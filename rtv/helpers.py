@@ -14,7 +14,7 @@ from . import config
 from .exceptions import ProgramError
 
 __all__ = ['open_browser', 'clean', 'wrap_text', 'strip_textpad',
-           'strip_subreddit_url', 'humanize_timestamp', 'open_editor']
+           'strip_subreddit_url', 'humanize_timestamp', 'open_editor', 'get_password']
 
 
 def clean(string, n_cols=None):
@@ -210,3 +210,14 @@ def humanize_timestamp(utc_timestamp, verbose=False):
         return ('%d months ago' % months) if verbose else ('%dmonth' % months)
     years = months // 12
     return ('%d years ago' % years) if verbose else ('%dyr' % years)
+
+def get_password(password_cmd):
+    """
+    Execute an external command and return the password
+    """
+
+    try:
+        passwd = subprocess.check_output(password_cmd, shell=True).rstrip()
+    except subprocess.CalledProcessError:
+        raise exceptions.PasswordCmdError(password_cmd)
+    return passwd
