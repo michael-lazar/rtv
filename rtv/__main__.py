@@ -10,11 +10,12 @@ import praw.errors
 from six.moves import configparser
 
 from . import config
-from .exceptions import SubmissionError, SubredditError, SubscriptionError, ProgramError
+from .exceptions import SubmissionError, SubredditError, SubscriptionError, ProgramError, PasswordCmdError
 from .curses_helpers import curses_session
 from .submission import SubmissionPage
 from .subreddit import SubredditPage
 from .docs import *
+from .helpers import get_password
 from .__version__ import __version__
 
 __all__ = []
@@ -107,6 +108,9 @@ def main():
         reddit = praw.Reddit(user_agent=AGENT)
         reddit.config.decode_html_entities = False
         if args.username:
+            # Get the password from the passwordcommand if present
+            if not args.password and "passwordcommand" in local_config.keys():
+                args.password = get_password(local_config["passwordcommand"])
             # PRAW will prompt for password if it is None
             reddit.login(args.username, args.password)
         with curses_session() as stdscr:
@@ -129,6 +133,8 @@ def main():
     except ProgramError as e:
         print('Error: could not open file with program "{}", '
               'try setting RTV_EDITOR'.format(e.name))
+    except PasswordCmdError as e:
+        print('Error: password command failed')
     except KeyboardInterrupt:
         pass
     finally:
