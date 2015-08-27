@@ -34,6 +34,7 @@ Basic Commands
   `o` or `ENTER`      : Open the selected item as a webpage
   `r` or `F5`         : Refresh page content
   `u`                 : Log in or switch accounts
+  `i`                 : Display new messages prompt
   `?`                 : Show the help screen
   `q`                 : Quit
 
