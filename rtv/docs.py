@@ -1,6 +1,6 @@
 from .__version__ import __version__
 
-__all__ = ['AGENT', 'SUMMARY', 'AUTH', 'CONTROLS', 'HELP', 'COMMENT_FILE',
+__all__ = ['AGENT', 'SUMMARY', 'AUTH', 'OAUTH', 'CONTROLS', 'HELP', 'COMMENT_FILE',
            'SUBMISSION_FILE', 'COMMENT_EDIT_FILE']
 
 AGENT = """\
@@ -15,6 +15,11 @@ terminal window.
 AUTH = """\
 Authenticating is required to vote and leave comments. If only a username is
 given, the program will display a secure prompt to enter a password.
+"""
+
+OAUTH = """\
+Authentication is now done by OAuth, since PRAW will stop supporting login with
+username and password soon.
 """
 
 CONTROLS = """
@@ -42,7 +47,7 @@ Authenticated Commands
   `c`                 : Compose a new post or comment
   `e`                 : Edit an existing post or comment
   `d`                 : Delete an existing post or comment
-  `s`                 : Open subscribed subreddits list
+  `s`                 : Open/close subscribed subreddits list
 
 Subreddit Mode
   `l` or `RIGHT`      : Enter the selected submission

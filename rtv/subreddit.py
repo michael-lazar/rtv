@@ -33,13 +33,14 @@ class SubredditController(BaseController):
 
 class SubredditPage(BasePage):
 
-    def __init__(self, stdscr, reddit, name):
+    def __init__(self, stdscr, reddit, oauth, name):
 
         self.controller = SubredditController(self)
         self.loader = LoadScreen(stdscr)
+        self.oauth = oauth
 
         content = SubredditContent.from_name(reddit, name, self.loader)
-        super(SubredditPage, self).__init__(stdscr, reddit, content)
+        super(SubredditPage, self).__init__(stdscr, reddit, content, oauth)
 
     def loop(self):
         "Main control loop"
@@ -52,6 +53,9 @@ class SubredditPage(BasePage):
     @SubredditController.register(curses.KEY_F5, 'r')
     def refresh_content(self, name=None, order=None):
         "Re-download all submissions and reset the page index"
+
+        # Refresh access token if expired
+        self.oauth.refresh()
 
         name = name or self.content.name
         order = order or self.content.order
@@ -104,10 +108,9 @@ class SubredditPage(BasePage):
         "Select the current submission to view posts"
 
         data = self.content.get(self.nav.absolute_index)
-        page = SubmissionPage(self.stdscr, self.reddit, url=data['permalink'])
+        page = SubmissionPage(self.stdscr, self.reddit, self.oauth, url=data['permalink'])
         page.loop()
-
-        if data['url'] == 'selfpost':
+        if data['url_type'] == 'selfpost':
             global history
             history.add(data['url_full'])
 
@@ -117,21 +120,24 @@ class SubredditPage(BasePage):
         data = self.content.get(self.nav.absolute_index)
 
         url = data['url_full']
+        global history
+        history.add(url)
         if data['url_type'] in ['x-post', 'selfpost']:
-            page = SubmissionPage(self.stdscr, self.reddit, url=url)
+            page = SubmissionPage(self.stdscr, self.reddit, self.oauth, url=url)
             page.loop()
         else:
             open_browser(url)
-            global history
-            history.add(url)
 
     @SubredditController.register('c')
     def post_submission(self):
         "Post a new submission to the given subreddit"
 
-        if not self.reddit.is_logged_in():
+        if not self.reddit.is_oauth_session():
             show_notification(self.stdscr, ['Not logged in'])
             return
+
+        # Refresh access token if expired
+        self.oauth.refresh()
 
         # Strips the subreddit to just the name
         # Make sure it is a valid subreddit for submission
@@ -162,7 +168,7 @@ class SubredditPage(BasePage):
                 time.sleep(2.0)
             # Open the newly created post
             s.catch = False
-            page = SubmissionPage(self.stdscr, self.reddit, submission=post)
+            page = SubmissionPage(self.stdscr, self.reddit, self.oauth, submission=post)
             page.loop()
             self.refresh_content()
 
@@ -170,12 +176,21 @@ class SubredditPage(BasePage):
     def open_subscriptions(self):
         "Open user subscriptions page"
 
-        if not self.reddit.is_logged_in():
+        if not self.reddit.is_oauth_session():
             show_notification(self.stdscr, ['Not logged in'])
             return
 
-        page = SubscriptionPage(self.stdscr, self.reddit)
+        # Refresh access token if expired
+        self.oauth.refresh()
+
+        # Open subscriptions page
+        page = SubscriptionPage(self.stdscr, self.reddit, self.oauth)
         page.loop()
+
+        # When user has chosen a subreddit in the subscriptions list,
+        # refresh content with the selected subreddit
+        if page.selected_subreddit_data is not None:
+            self.refresh_content(name=page.selected_subreddit_data['name'])
 
     @staticmethod
     def draw_item(win, data, inverted=False):

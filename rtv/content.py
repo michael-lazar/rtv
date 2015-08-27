@@ -159,7 +159,7 @@ class BaseContent(object):
         data = {}
         data['object'] = subscription
         data['type'] = 'Subscription'
-        data['name'] = "/r/" + subscription._case_name
+        data['name'] = "/r/" + subscription.display_name
         data['title'] = subscription.title
 
         return data
@@ -385,14 +385,17 @@ class SubredditContent(BaseContent):
         return data
 
 class SubscriptionContent(BaseContent):
+
     def __init__(self, subscriptions, loader):
+
         self.name = "Subscriptions"
+        self.order = None
         self._loader = loader
         self._subscriptions = subscriptions
         self._subscription_data = []
 
     @classmethod
-    def get_list(cls, reddit, loader):
+    def from_user(cls, reddit, loader):
         try:
             with loader():
                 subscriptions = reddit.get_my_subreddits(limit=None)
@@ -421,7 +424,7 @@ class SubscriptionContent(BaseContent):
                 self._subscription_data.append(data)
 
         data = self._subscription_data[index]
-        data['split_title'] = wrap_text(data['name'], width=n_cols)
+        data['split_title'] = wrap_text(data['title'], width=n_cols)
         data['n_rows'] = len(data['split_title']) + 1
         data['offset'] = 0
 
