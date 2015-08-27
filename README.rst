@@ -66,6 +66,7 @@ Basic Commands
 :``1-5``: Toggle post order (*hot*, *top*, *rising*, *new*, *controversial*)
 :``r`` or ``F5``: Refresh page content
 :``u``: Log in or switch accounts
+:``i``: Display new messages prompt
 :``?``: Show the help screen
 :``q``: Quit
 
