@@ -77,8 +77,8 @@ class OAuthTool(object):
             os.path.join(HOME, '.config'))
 
         config_paths = [
-            os.path.join(XDG_CONFIG_HOME, 'rtv', 'rtv.cfg'),
-            os.path.join(HOME, '.rtv')
+            os.path.join(XDG_CONFIG_HOME, 'rtv', 'oauth.cfg'),
+            os.path.join(HOME, '.rtv-oauth')
         ]
 
         # get the first existing config file

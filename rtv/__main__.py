@@ -22,7 +22,13 @@ from tornado import ioloop
 
 __all__ = []
 
-def get_config_fp():
+def load_rtv_config():
+    """
+    Attempt to load saved settings for things like the username and password.
+    """
+
+    config = configparser.ConfigParser()
+
     HOME = os.path.expanduser('~')
     XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME',
         os.path.join(HOME, '.config'))
@@ -35,29 +41,8 @@ def get_config_fp():
     # get the first existing config file
     for config_path in config_paths:
         if os.path.exists(config_path):
+            config.read(config_path)
             break
-
-    return config_path
-
-def open_config():
-    """
-    Search for a configuration file at the location ~/.rtv and attempt to load
-    saved settings for things like the username and password.
-    """
-
-    config = configparser.ConfigParser()
-
-    config_path = get_config_fp()
-    config.read(config_path)
-
-    return config
-
-def load_rtv_config():
-    """
-    Attempt to load saved settings for things like the username and password.
-    """
-
-    config = open_config()
 
     defaults = {}
     if config.has_section('rtv'):
@@ -73,7 +58,22 @@ def load_oauth_config():
     Attempt to load saved OAuth settings
     """
 
-    config = open_config()
+    config = configparser.ConfigParser()
+
+    HOME = os.path.expanduser('~')
+    XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME',
+        os.path.join(HOME, '.config'))
+
+    config_paths = [
+        os.path.join(XDG_CONFIG_HOME, 'rtv', 'oauth.cfg'),
+        os.path.join(HOME, '.rtv-oauth')
+    ]
+
+    # get the first existing config file
+    for config_path in config_paths:
+        if os.path.exists(config_path):
+            config.read(config_path)
+            break
 
     if config.has_section('oauth'):
         defaults = dict(config.items('oauth'))
@@ -81,7 +81,7 @@ def load_oauth_config():
         # Populate OAuth section
         config.add_section('oauth')
         config.set('oauth', 'auto_login', 'false')
-        with open(get_config_fp(), 'w') as cfg:
+        with open(config_path, 'w') as cfg:
             config.write(cfg)
         defaults = dict(config.items('oauth'))
 
