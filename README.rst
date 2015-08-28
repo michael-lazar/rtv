@@ -66,7 +66,6 @@ Basic Commands
 :``1-5``: Toggle post order (*hot*, *top*, *rising*, *new*, *controversial*)
 :``r`` or ``F5``: Refresh page content
 :``u``: Log in or switch accounts
-:``i``: Display new messages prompt
 :``?``: Show the help screen
 :``q``: Quit
 
@@ -85,6 +84,7 @@ Once you are logged in your username will appear in the top-right corner of the 
 :``c``: Compose a new post or comment
 :``e``: Edit an existing post or comment
 :``d``: Delete an existing post or comment
+:``i``: Display new messages prompt
 :``s``: View a list of subscribed subreddits
 
 --------------
