@@ -34,7 +34,6 @@ Basic Commands
   `o` or `ENTER`      : Open the selected item as a webpage
   `r` or `F5`         : Refresh page content
   `u`                 : Log in or switch accounts
-  `i`                 : Display new messages prompt
   `?`                 : Show the help screen
   `q`                 : Quit
 
@@ -43,6 +42,7 @@ Authenticated Commands
   `c`                 : Compose a new post or comment
   `e`                 : Edit an existing post or comment
   `d`                 : Delete an existing post or comment
+  `i`                 : Display new messages prompt
   `s`                 : Open/close subscribed subreddits list
 
 Subreddit Mode
