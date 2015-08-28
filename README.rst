@@ -156,8 +156,10 @@ Config File
 -----------
 
 RTV will read two configuration files:
+
 * ``~/.config/rtv/rtv.cfg`` (or ``$XDG_CONFIG_HOME/.rtv``)
 * ``~/.config/rtv/oauth.cfg`` (or ``$XDG_CONFIG_HOME/.rtv-oauth``)
+
 Each line in the files will replace the corresponding default argument in the launch script.
 This can be used to avoid having to re-enter login credentials every time the program is launched.
 
