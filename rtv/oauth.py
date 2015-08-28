@@ -1,4 +1,3 @@
-from six.moves import configparser
 import curses
 import logging
 import os
@@ -7,6 +6,7 @@ import uuid
 import webbrowser
 
 import praw
+from six.moves import configparser
 
 from . import config
 from .curses_helpers import show_notification, prompt_input
@@ -111,7 +111,7 @@ class OAuthTool(object):
             try:
                 with self.loader(message='Refreshing token'):
                     new_access_info = self.reddit.refresh_access_information(
-                        self.config['oauth']['refresh_token'])
+                        self.config.get('oauth', 'refresh_token'))
                     self.access_info = new_access_info
                     self.reddit.set_access_credentials(scope=set(self.access_info['scope']),
                         access_token=self.access_info['access_token'],
@@ -121,8 +121,8 @@ class OAuthTool(object):
                     praw.errors.HTTPException) as e:
                 show_notification(self.stdscr, ['Invalid OAuth data'])
             else:
-                self.config['oauth']['access_token'] = self.access_info['access_token']
-                self.config['oauth']['refresh_token'] = self.access_info['refresh_token']
+                self.config.set('oauth', 'access_token', self.access_info['access_token'])
+                self.config.set('oauth', 'refresh_token', self.access_info['refresh_token'])
                 self.save_config()
 
     def authorize(self):
@@ -132,7 +132,7 @@ class OAuthTool(object):
 
         self.open_config(update=True)
         # If no previous OAuth data found, starting from scratch
-        if 'oauth' not in self.config or 'access_token' not in self.config['oauth']:
+        if not self.config.has_section('oauth') or not self.config.has_option('oauth', 'access_token'):
             # Generate a random UUID
             hex_uuid = uuid.uuid4().hex
 
@@ -178,11 +178,11 @@ class OAuthTool(object):
             except (praw.errors.OAuthAppRequired, praw.errors.OAuthInvalidToken) as e:
                 show_notification(self.stdscr, ['Invalid OAuth data'])
             else:
-                if 'oauth' not in self.config:
-                    self.config['oauth'] = {}
+                if not self.config.has_section('oauth'):
+                    self.config.add_section('oauth')
 
-                self.config['oauth']['access_token'] = self.access_info['access_token']
-                self.config['oauth']['refresh_token'] = self.access_info['refresh_token']
+                self.config.set('oauth', 'access_token', self.access_info['access_token'])
+                self.config.set('oauth', 'refresh_token', self.access_info['refresh_token'])
                 self.save_config()
         # Otherwise, fetch new access token
         else:

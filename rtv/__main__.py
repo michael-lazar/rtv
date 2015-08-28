@@ -79,7 +79,8 @@ def load_oauth_config():
         defaults = dict(config.items('oauth'))
     else:
         # Populate OAuth section
-        config['oauth'] = {'auto_login': False}
+        config.add_section('oauth')
+        config.set('oauth', 'auto_login', 'false')
         with open(get_config_fp(), 'w') as cfg:
             config.write(cfg)
         defaults = dict(config.items('oauth'))
@@ -154,7 +155,7 @@ def main():
         reddit.config.decode_html_entities = False
         with curses_session() as stdscr:
             oauth = OAuthTool(reddit, stdscr, LoadScreen(stdscr))
-            if args.auto_login == 'True': # Ew!
+            if args.auto_login == 'true': # Ew!
                 oauth.authorize()
             if args.link:
                 page = SubmissionPage(stdscr, reddit, oauth, url=args.link)
