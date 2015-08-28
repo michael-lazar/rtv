@@ -42,6 +42,7 @@ Authenticated Commands
   `c`                 : Compose a new post or comment
   `e`                 : Edit an existing post or comment
   `d`                 : Delete an existing post or comment
+  `i`                 : Display new messages prompt
   `s`                 : Open/close subscribed subreddits list
 
 Subreddit Mode
