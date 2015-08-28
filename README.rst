@@ -46,6 +46,13 @@ The installation will place a script in the system path
    $ rtv
    $ rtv --help
 
+If you're having issues running RTV with Python 2, run RTV as module :
+
+.. code-block:: bash
+
+  $ cd /path/to/rtv
+  $ python2 -m rtv
+
 =====
 Usage
 =====
