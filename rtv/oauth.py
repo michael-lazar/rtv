@@ -76,17 +76,12 @@ class OAuthTool(object):
         XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME',
             os.path.join(HOME, '.config'))
 
-        config_paths = [
-            os.path.join(XDG_CONFIG_HOME, 'rtv', 'oauth.cfg'),
-            os.path.join(HOME, '.rtv-oauth')
-        ]
+        if os.path.exists(os.path.join(XDG_CONFIG_HOME, 'rtv')):
+            file_path = os.path.join(XDG_CONFIG_HOME, 'rtv', 'oauth.cfg')
+        else:
+            file_path = os.path.join(HOME, '.rtv-oauth')
 
-        # get the first existing config file
-        for config_path in config_paths:
-            if os.path.exists(config_path):
-                break
-
-        return config_path
+        return file_path
 
     def open_config(self, update=False):
         if self.config_fp is None:

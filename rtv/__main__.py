@@ -64,16 +64,12 @@ def load_oauth_config():
     XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME',
         os.path.join(HOME, '.config'))
 
-    config_paths = [
-        os.path.join(XDG_CONFIG_HOME, 'rtv', 'oauth.cfg'),
-        os.path.join(HOME, '.rtv-oauth')
-    ]
+    if os.path.exists(os.path.join(XDG_CONFIG_HOME, 'rtv')):
+        config_path = os.path.join(XDG_CONFIG_HOME, 'rtv', 'oauth.cfg')
+    else:
+        config_path = os.path.join(HOME, '.rtv-oauth')
 
-    # get the first existing config file
-    for config_path in config_paths:
-        if os.path.exists(config_path):
-            config.read(config_path)
-            break
+    config.read(config_path)
 
     if config.has_section('oauth'):
         defaults = dict(config.items('oauth'))
