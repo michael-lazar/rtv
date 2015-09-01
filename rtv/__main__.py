@@ -103,7 +103,6 @@ def command_line():
 
     oauth_group = parser.add_argument_group('OAuth data (optional)', OAUTH)
     oauth_group.add_argument('--auto-login', dest='auto_login', help='OAuth auto-login setting')
-    oauth_group.add_argument('--auth-token', dest='access_token', help='OAuth authorization token')
     oauth_group.add_argument('--refresh-token', dest='refresh_token', help='OAuth refresh token')
 
     args = parser.parse_args()
