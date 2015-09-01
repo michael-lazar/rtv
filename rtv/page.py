@@ -314,9 +314,6 @@ class BasePage(object):
 
     @BaseController.register('a')
     def upvote(self):
-        # Refresh access token if expired
-        self.oauth.refresh()
-        
         data = self.content.get(self.nav.absolute_index)
         try:
             if 'likes' not in data:
@@ -332,9 +329,6 @@ class BasePage(object):
 
     @BaseController.register('z')
     def downvote(self):
-        # Refresh access token if expired
-        self.oauth.refresh()
-
         data = self.content.get(self.nav.absolute_index)
         try:
             if 'likes' not in data:
@@ -372,9 +366,6 @@ class BasePage(object):
             show_notification(self.stdscr, ['Not logged in'])
             return
 
-        # Refresh access token if expired
-        self.oauth.refresh()
-
         data = self.content.get(self.nav.absolute_index)
         if data.get('author') != self.reddit.user.name:
             curses.flash()
@@ -402,9 +393,6 @@ class BasePage(object):
         if not self.reddit.is_oauth_session():
             show_notification(self.stdscr, ['Not logged in'])
             return
-
-        # Refresh access token if expired
-        self.oauth.refresh()
 
         data = self.content.get(self.nav.absolute_index)
         if data.get('author') != self.reddit.user.name:
@@ -439,9 +427,6 @@ class BasePage(object):
         """
         Checks the inbox for unread messages and displays a notification.
         """
-
-        # Refresh access token if expired
-        self.oauth.refresh()
 
         inbox = len(list(self.reddit.get_unread(limit=1)))
         try:
