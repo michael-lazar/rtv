@@ -163,9 +163,10 @@ RTV will read two configuration files:
 Each line in the files will replace the corresponding default argument in the launch script.
 This can be used to avoid having to re-enter login credentials every time the program is launched.
 
-The OAuth section contains a boolean to trigger auto-login (defaults to false).
-When authenticated, two additional fields are written : **access_token** and **refresh_token**.
-Those are basically like username and password : they are used to authenticate you on Reddit servers.
+**The OAuth configuration file is created automatically if it doesn't exist.**
+It contains a boolean to trigger auto-login (defaults to false).
+When authenticated, an additional field is written : **refresh_token**.
+This is username and password replacement : it is used to authenticate you on Reddit servers.
 
 Example initial config:
 
