@@ -33,14 +33,13 @@ class SubredditController(BaseController):
 
 class SubredditPage(BasePage):
 
-    def __init__(self, stdscr, reddit, oauth, name):
+    def __init__(self, stdscr, reddit, name):
 
         self.controller = SubredditController(self)
         self.loader = LoadScreen(stdscr)
-        self.oauth = oauth
 
         content = SubredditContent.from_name(reddit, name, self.loader)
-        super(SubredditPage, self).__init__(stdscr, reddit, content, oauth)
+        super(SubredditPage, self).__init__(stdscr, reddit, content)
 
     def loop(self):
         "Main control loop"
@@ -105,7 +104,7 @@ class SubredditPage(BasePage):
         "Select the current submission to view posts"
 
         data = self.content.get(self.nav.absolute_index)
-        page = SubmissionPage(self.stdscr, self.reddit, self.oauth, url=data['permalink'])
+        page = SubmissionPage(self.stdscr, self.reddit, url=data['permalink'])
         page.loop()
         if data['url_type'] == 'selfpost':
             global history
@@ -120,7 +119,7 @@ class SubredditPage(BasePage):
         global history
         history.add(url)
         if data['url_type'] in ['x-post', 'selfpost']:
-            page = SubmissionPage(self.stdscr, self.reddit, self.oauth, url=url)
+            page = SubmissionPage(self.stdscr, self.reddit, url=url)
             page.loop()
         else:
             open_browser(url)
@@ -162,7 +161,7 @@ class SubredditPage(BasePage):
                 time.sleep(2.0)
             # Open the newly created post
             s.catch = False
-            page = SubmissionPage(self.stdscr, self.reddit, self.oauth, submission=post)
+            page = SubmissionPage(self.stdscr, self.reddit, submission=post)
             page.loop()
             self.refresh_content()
 

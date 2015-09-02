@@ -12,7 +12,6 @@ from .helpers import open_editor
 from .curses_helpers import (Color, show_notification, show_help, prompt_input,
                              add_line)
 from .docs import COMMENT_EDIT_FILE, SUBMISSION_FILE
-from .oauth import OAuthTool
 
 __all__ = ['Navigator', 'BaseController', 'BasePage']
 _logger = logging.getLogger(__name__)
@@ -245,12 +244,11 @@ class BasePage(object):
     MIN_HEIGHT = 10
     MIN_WIDTH = 20
 
-    def __init__(self, stdscr, reddit, content, oauth, **kwargs):
+    def __init__(self, stdscr, reddit, content, **kwargs):
 
         self.stdscr = stdscr
         self.reddit = reddit
         self.content = content
-        self.oauth = oauth
         self.nav = Navigator(self.content.get, **kwargs)
 
         self._header_window = None

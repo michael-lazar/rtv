@@ -15,7 +15,7 @@ from .curses_helpers import curses_session, LoadScreen
 from .submission import SubmissionPage
 from .subreddit import SubredditPage
 from .docs import *
-from .oauth import OAuthTool
+from .oauth import OAuthToolCompact, OAuthTool
 from .__version__ import __version__
 
 from tornado import ioloop
@@ -148,15 +148,32 @@ def main():
         print('Connecting...')
         reddit = praw.Reddit(user_agent=AGENT)
         reddit.config.decode_html_entities = False
-        with curses_session() as stdscr:
-            oauth = OAuthTool(reddit, stdscr, LoadScreen(stdscr))
-            if args.auto_login == 'true': # Ew!
+
+        # If no saved refresh token found, starting from scratch
+        if args.refresh_token is None or args.refresh_token == '':
+            # Terminal-based web browsers
+            if os.environ.get('BROWSER') in ['w3m', 'links', 'elinks', 'lynx']:
+                reddit.config.API_PATHS['authorize'] += '.compact'
+                oauth = OAuthToolCompact(reddit)
                 oauth.authorize()
+            else:
+                with curses_session() as stdscr:
+                    oauth = OAuthTool(reddit, stdscr, LoadScreen(stdscr))
+                    oauth.authorize()
+
+        with curses_session() as stdscr:
+            if args.refresh_token is not None:
+                loader = LoadScreen(stdscr)
+                with loader(message='Logging in'):
+                    reddit.set_oauth_app_info(config.oauth_client_id,
+                        config.oauth_client_secret,
+                        config.oauth_redirect_uri)
+                    reddit.refresh_access_information(args.refresh_token)
             if args.link:
-                page = SubmissionPage(stdscr, reddit, oauth, url=args.link)
+                page = SubmissionPage(stdscr, reddit, url=args.link)
                 page.loop()
             subreddit = args.subreddit or 'front'
-            page = SubredditPage(stdscr, reddit, oauth, subreddit)
+            page = SubredditPage(stdscr, reddit, subreddit)
             page.loop()
     except (praw.errors.OAuthAppRequired, praw.errors.OAuthInvalidToken,
             praw.errors.HTTPException) as e:
