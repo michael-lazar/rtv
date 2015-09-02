@@ -28,17 +28,18 @@ class HomeHandler(web.RequestHandler):
 class AuthHandler(web.RequestHandler):
 
     def get(self):
-        global oauth_state
-        global oauth_code
-        global oauth_error
+        try:
+            global oauth_state
+            global oauth_code
+            global oauth_error
 
-        oauth_state = self.get_argument('state', default='state_placeholder')
-        oauth_code = self.get_argument('code', default='code_placeholder')
-        oauth_error = self.get_argument('error', default='error_placeholder')
+            oauth_state = self.get_argument('state', default='state_placeholder')
+            oauth_code = self.get_argument('code', default='code_placeholder')
+            oauth_error = self.get_argument('error', default='error_placeholder')
 
-        self.render('auth.html', state=oauth_state, code=oauth_code, error=oauth_error)
-
-        ioloop.IOLoop.current().stop()
+            self.render('auth.html', state=oauth_state, code=oauth_code, error=oauth_error)
+        finally:
+            ioloop.IOLoop.current().stop()
 
 class OAuthToolCompact(object):
 
