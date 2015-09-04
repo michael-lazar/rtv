@@ -58,8 +58,10 @@ class OAuthTool(object):
         self.redirect_uri = redirect_uri or config.oauth_redirect_uri
 
         self.scope = scope or config.oauth_scope.split('-')
-
         self.access_info = {}
+
+        # Terminal web browser
+        self.compact = os.environ.get('BROWSER') in ['w3m', 'links', 'elinks', 'lynx']
 
         # Initialize Tornado webapp and listen on port 65000
         self.callback_app = web.Application([
@@ -93,6 +95,9 @@ class OAuthTool(object):
             self.config.write(cfg)
 
     def authorize(self):
+        if self.compact and not '.compact' in self.reddit.config.API_PATHS['authorize']:
+            self.reddit.config.API_PATHS['authorize'] += '.compact'
+
         self.reddit.set_oauth_app_info(self.client_id,
             self.client_secret,
             self.redirect_uri)
@@ -106,9 +111,16 @@ class OAuthTool(object):
             permission_ask_page_link = self.reddit.get_authorize_url(str(hex_uuid),
                 scope=self.scope, refreshable=True)
 
-            with self.loader(message='Waiting for authorization'):
-                webbrowser.open(permission_ask_page_link)
+            if self.compact:
+                show_notification(self.stdscr, ['Opening ' + os.environ.get('BROWSER')])
+                curses.endwin()
+                webbrowser.open_new_tab(permission_ask_page_link)
                 ioloop.IOLoop.current().start()
+                curses.doupdate()
+            else:
+                with self.loader(message='Waiting for authorization'):
+                    webbrowser.open(permission_ask_page_link)
+                    ioloop.IOLoop.current().start()
 
             global oauth_state
             global oauth_code
