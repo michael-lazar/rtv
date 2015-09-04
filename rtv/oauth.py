@@ -63,12 +63,11 @@ class OAuthTool(object):
         # Terminal web browser
         self.compact = os.environ.get('BROWSER') in ['w3m', 'links', 'elinks', 'lynx']
 
-        # Initialize Tornado webapp and listen on port 65000
+        # Initialize Tornado webapp
         self.callback_app = web.Application([
             (r'/', HomeHandler),
             (r'/auth', AuthHandler),
         ], template_path='rtv/templates')
-        self.callback_app.listen(65000)
 
     def get_config_fp(self):
         HOME = os.path.expanduser('~')
@@ -111,6 +110,9 @@ class OAuthTool(object):
         self.open_config(update=True)
         # If no previous OAuth data found, starting from scratch
         if not self.config.has_section('oauth') or not self.config.has_option('oauth', 'refresh_token'):
+            # Start HTTP server and listen on port 65000
+            self.callback_app.listen(65000)
+            
             # Generate a random UUID
             hex_uuid = uuid.uuid4().hex
 
