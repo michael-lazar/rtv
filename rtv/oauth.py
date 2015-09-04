@@ -94,6 +94,12 @@ class OAuthTool(object):
         with open(self.config_fp, 'w') as cfg:
             self.config.write(cfg)
 
+    def clear_oauth_data(self):
+        self.open_config(update=True)
+        if self.config.has_section('oauth') and self.config.has_option('oauth', 'refresh_token'):
+            self.config.remove_option('oauth', 'refresh_token')
+            self.save_config()
+
     def authorize(self):
         if self.compact and not '.compact' in self.reddit.config.API_PATHS['authorize']:
             self.reddit.config.API_PATHS['authorize'] += '.compact'

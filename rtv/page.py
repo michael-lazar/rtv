@@ -352,6 +352,7 @@ class BasePage(object):
 
         if self.reddit.is_oauth_session():
             self.reddit.clear_authentication()
+            self.oauth.clear_oauth_data()
             return
 
         self.oauth.authorize()
