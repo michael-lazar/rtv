@@ -155,17 +155,9 @@ If you prefer to stay in the terminal, use ``$BROWSER`` to specify a console-bas
 Config File
 -----------
 
-RTV will read two configuration files:
-
-* ``~/.config/rtv/rtv.cfg`` (or ``$XDG_CONFIG_HOME/.rtv``)
-* ``~/.config/rtv/oauth.cfg`` (or ``$XDG_CONFIG_HOME/.rtv-oauth``)
-
+RTV will read a configuration placed at ``~/.config/rtv/rtv.cfg`` (or ``$XDG_CONFIG_HOME``).
 Each line in the files will replace the corresponding default argument in the launch script.
 This can be used to avoid having to re-enter login credentials every time the program is launched.
-
-The OAuth section contains a boolean to trigger auto-login (defaults to false).
-When authenticated, two additional fields are written : **access_token** and **refresh_token**.
-Those are basically like username and password : they are used to authenticate you on Reddit servers.
 
 Example initial config:
 
@@ -187,7 +179,19 @@ Example initial config:
   # This may be necessary for compatibility with some terminal browsers
   # ascii=True
 
-**oauth.cfg**
+-----
+OAuth
+-----
+
+OAuth is an authentication standard, that replaces authentication with login and password.
+
+RTV implements OAuth. It stores OAuth configuration at ``~/.config/rtv/oauth.cfg``(or ``$XDG_CONFIG_HOME``).
+**The OAuth configuration file must be writable, and is created automatically if it doesn't exist.**
+It contains a boolean to trigger auto-login (defaults to false).
+When authenticated, an additional field is written : **refresh_token**.
+This acts as a replacement to username and password : it is used to authenticate you on Reddit servers.
+
+Example **oauth.cfg**:
 
 .. code-block:: ini
 
