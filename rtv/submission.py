@@ -93,9 +93,6 @@ class SubmissionPage(BasePage):
             show_notification(self.stdscr, ['Not logged in'])
             return
 
-        # Refresh access token if expired
-        self.oauth.refresh()
-
         data = self.content.get(self.nav.absolute_index)
         if data['type'] == 'Submission':
             content = data['text']
@@ -130,9 +127,6 @@ class SubmissionPage(BasePage):
     @SubmissionController.register('d')
     def delete_comment(self):
         "Delete a comment as long as it is not the current submission"
-
-        # Refresh access token if expired
-        self.oauth.refresh()
 
         if self.nav.absolute_index != -1:
             self.delete()

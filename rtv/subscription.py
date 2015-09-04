@@ -38,9 +38,6 @@ class SubscriptionPage(BasePage):
     def refresh_content(self):
         "Re-download all subscriptions and reset the page index"
 
-        # Refresh access token if expired
-        self.oauth.refresh()
-
         self.content = SubscriptionContent.from_user(self.reddit, self.loader)
         self.nav = Navigator(self.content.get)
 

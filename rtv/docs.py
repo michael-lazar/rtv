@@ -18,8 +18,8 @@ given, the program will display a secure prompt to enter a password.
 """
 
 OAUTH = """\
-Authentication is now done by OAuth, since PRAW will stop supporting login with
-username and password soon.
+Authentication is now done by OAuth, since PRAW will drop
+password authentication soon.
 """
 
 CONTROLS = """
