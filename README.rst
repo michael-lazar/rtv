@@ -63,7 +63,7 @@ Basic Commands
 
 :``j``/``k`` or ``▲``/``▼``: Move the cursor up/down
 :``m``/``n`` or ``PgUp``/``PgDn``: Jump to the previous/next page
-:``o`` or ``ENTER``: Open the selected item as a webpage
+:``1-5``: Toggle post order (*hot*, *top*, *rising*, *new*, *controversial*)
 :``r`` or ``F5``: Refresh page content
 :``u``: Log in or switch accounts
 :``?``: Show the help screen
@@ -84,7 +84,8 @@ Once you are logged in your username will appear in the top-right corner of the 
 :``c``: Compose a new post or comment
 :``e``: Edit an existing post or comment
 :``d``: Delete an existing post or comment
-:``s``: Open/close subscribed subreddits list
+:``i``: Display new messages prompt
+:``s``: View a list of subscribed subreddits
 
 --------------
 Subreddit Mode
@@ -93,6 +94,7 @@ Subreddit Mode
 In subreddit mode you can browse through the top submissions on either the front page or a specific subreddit.
 
 :``l`` or ``►``: Enter the selected submission
+:``o`` or ``ENTER``:  Open the submission link with your web browser
 :``/``: Open a prompt to switch subreddits
 :``f``: Open a prompt to search the current subreddit
 
@@ -111,6 +113,7 @@ Submission Mode
 In submission mode you can view the self text for a submission and browse comments.
 
 :``h`` or ``◄``: Return to the subreddit
+:``o`` or ``ENTER``: Open the comment permalink with your web browser
 :``SPACE``: Fold the selected comment, or load additional comments
 
 =============

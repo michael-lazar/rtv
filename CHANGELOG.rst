@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.5: http://github.com/michael-lazar/rtv/releases/tag/v1.5
 .. _1.4.2: http://github.com/michael-lazar/rtv/releases/tag/v1.4.2
 .. _1.4.1: http://github.com/michael-lazar/rtv/releases/tag/v1.4.1
 .. _1.4: http://github.com/michael-lazar/rtv/releases/tag/v1.4
@@ -9,6 +10,19 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+-----------------
+1.5_ (2015-08-26)
+-----------------
+Features
+
+* New page to view and open subscribed subreddits with `s`.
+* Sorting method can now be toggled with the `1` - `5` keys.
+* Links to x-posts are now opened inside of RTV.
+
+Bugfixes
+
+* Added */r/* to subreddit names in the subreddit view.
 
 -------------------
 1.4.2_ (2015-08-01)
