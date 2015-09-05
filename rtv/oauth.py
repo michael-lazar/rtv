@@ -11,7 +11,8 @@ from six.moves import configparser
 from . import config
 from .curses_helpers import show_notification, prompt_input
 
-from tornado import ioloop, web
+from tornado import gen, ioloop, web
+from concurrent.futures import ThreadPoolExecutor
 
 __all__ = ['token_validity', 'OAuthTool']
 _logger = logging.getLogger(__name__)
@@ -28,18 +29,15 @@ class HomeHandler(web.RequestHandler):
 class AuthHandler(web.RequestHandler):
 
     def get(self):
-        try:
-            global oauth_state
-            global oauth_code
-            global oauth_error
+        global oauth_state
+        global oauth_code
+        global oauth_error
 
-            oauth_state = self.get_argument('state', default='state_placeholder')
-            oauth_code = self.get_argument('code', default='code_placeholder')
-            oauth_error = self.get_argument('error', default='error_placeholder')
+        oauth_state = self.get_argument('state', default='state_placeholder')
+        oauth_code = self.get_argument('code', default='code_placeholder')
+        oauth_error = self.get_argument('error', default='error_placeholder')
 
-            self.render('auth.html', state=oauth_state, code=oauth_code, error=oauth_error)
-        finally:
-            ioloop.IOLoop.current().stop()
+        self.render('auth.html', state=oauth_state, code=oauth_code, error=oauth_error)
 
 class OAuthTool(object):
 
@@ -99,6 +97,13 @@ class OAuthTool(object):
             self.config.remove_option('oauth', 'refresh_token')
             self.save_config()
 
+    @gen.coroutine
+    def open_terminal_browser(self, url):
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            yield executor.submit(webbrowser.open_new_tab, url)
+
+        ioloop.IOLoop.current().stop()
+
     def authorize(self):
         if self.compact and not '.compact' in self.reddit.config.API_PATHS['authorize']:
             self.reddit.config.API_PATHS['authorize'] += '.compact'
@@ -112,7 +117,7 @@ class OAuthTool(object):
         if not self.config.has_section('oauth') or not self.config.has_option('oauth', 'refresh_token'):
             # Start HTTP server and listen on port 65000
             self.callback_app.listen(65000)
-            
+
             # Generate a random UUID
             hex_uuid = uuid.uuid4().hex
 
@@ -122,7 +127,7 @@ class OAuthTool(object):
             if self.compact:
                 show_notification(self.stdscr, ['Opening ' + os.environ.get('BROWSER')])
                 curses.endwin()
-                webbrowser.open_new_tab(permission_ask_page_link)
+                ioloop.IOLoop.current().add_callback(self.open_terminal_browser, permission_ask_page_link)
                 ioloop.IOLoop.current().start()
                 curses.doupdate()
             else:
