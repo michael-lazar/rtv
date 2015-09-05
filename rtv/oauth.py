@@ -28,6 +28,9 @@ class HomeHandler(web.RequestHandler):
 
 class AuthHandler(web.RequestHandler):
 
+    def initialize(self):
+        self.compact = os.environ.get('BROWSER') in ['w3m', 'links', 'elinks', 'lynx']
+
     def get(self):
         global oauth_state
         global oauth_code
@@ -38,6 +41,10 @@ class AuthHandler(web.RequestHandler):
         oauth_error = self.get_argument('error', default='error_placeholder')
 
         self.render('auth.html', state=oauth_state, code=oauth_code, error=oauth_error)
+
+        # Stop IOLoop if using BackgroundBrowser (or GUI browser)
+        if not self.compact:
+            ioloop.IOLoop.current().stop()
 
 class OAuthTool(object):
 
