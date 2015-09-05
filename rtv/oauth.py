@@ -11,7 +11,7 @@ from six.moves import configparser
 from . import config
 from .curses_helpers import show_notification, prompt_input
 
-from tornado import gen, ioloop, web
+from tornado import gen, ioloop, web, httpserver
 from concurrent.futures import ThreadPoolExecutor
 
 __all__ = ['token_validity', 'OAuthTool']
@@ -67,6 +67,8 @@ class OAuthTool(object):
             (r'/auth', AuthHandler),
         ], template_path='rtv/templates')
 
+        self.http_server = None
+
     def get_config_fp(self):
         HOME = os.path.expanduser('~')
         XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME',
@@ -115,8 +117,9 @@ class OAuthTool(object):
         self.open_config(update=True)
         # If no previous OAuth data found, starting from scratch
         if not self.config.has_section('oauth') or not self.config.has_option('oauth', 'refresh_token'):
-            # Start HTTP server and listen on port 65000
-            self.callback_app.listen(65000)
+            if self.http_server is None:
+                self.http_server = httpserver.HTTPServer(self.callback_app)
+                self.http_server.listen(65000)
 
             # Generate a random UUID
             hex_uuid = uuid.uuid4().hex
