@@ -1,6 +1,14 @@
 from setuptools import setup
 from version import __version__ as version
 
+import sys
+
+requirements = ['tornado', 'praw>=3.1.0', 'six', 'requests', 'kitchen']
+
+# Python 2: add required concurrent.futures backport from Python 3.2
+if sys.version_info.major <= 2:
+    requirements.append('futures')
+
 setup(
     name='rtv',
     version=version,
@@ -13,7 +21,7 @@ setup(
     keywords='reddit terminal praw curses',
     packages=['rtv'],
     include_package_data=True,
-    install_requires=['tornado', 'praw>=3.1.0', 'six', 'requests', 'kitchen'],
+    install_requires=requirements,
     entry_points={'console_scripts': ['rtv=rtv.__main__:main']},
     classifiers=[
         'Intended Audience :: End Users/Desktop',
