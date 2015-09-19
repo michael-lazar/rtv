@@ -46,6 +46,13 @@ The installation will place a script in the system path
    $ rtv
    $ rtv --help
 
+If you're having issues running RTV with Python 2, run RTV as module :
+
+.. code-block:: bash
+
+  $ cd /path/to/rtv
+  $ python2 -m rtv
+
 =====
 Usage
 =====
@@ -63,7 +70,7 @@ Basic Commands
 
 :``j``/``k`` or ``▲``/``▼``: Move the cursor up/down
 :``m``/``n`` or ``PgUp``/``PgDn``: Jump to the previous/next page
-:``o`` or ``ENTER``: Open the selected item as a webpage
+:``1-5``: Toggle post order (*hot*, *top*, *rising*, *new*, *controversial*)
 :``r`` or ``F5``: Refresh page content
 :``u``: Log in or switch accounts
 :``?``: Show the help screen
@@ -84,7 +91,8 @@ Once you are logged in your username will appear in the top-right corner of the 
 :``c``: Compose a new post or comment
 :``e``: Edit an existing post or comment
 :``d``: Delete an existing post or comment
-:``s``: Open/close subscribed subreddits list
+:``i``: Display new messages prompt
+:``s``: View a list of subscribed subreddits
 
 --------------
 Subreddit Mode
@@ -93,6 +101,7 @@ Subreddit Mode
 In subreddit mode you can browse through the top submissions on either the front page or a specific subreddit.
 
 :``l`` or ``►``: Enter the selected submission
+:``o`` or ``ENTER``:  Open the submission link with your web browser
 :``/``: Open a prompt to switch subreddits
 :``f``: Open a prompt to search the current subreddit
 
@@ -111,6 +120,7 @@ Submission Mode
 In submission mode you can view the self text for a submission and browse comments.
 
 :``h`` or ``◄``: Return to the subreddit
+:``o`` or ``ENTER``: Open the comment permalink with your web browser
 :``SPACE``: Fold the selected comment, or load additional comments
 
 =============
@@ -149,19 +159,14 @@ Config File
 -----------
 
 RTV will read a configuration placed at ``~/.config/rtv/rtv.cfg`` (or ``$XDG_CONFIG_HOME``).
-Each line in the file will replace the corresponding default argument in the launch script.
+Each line in the files will replace the corresponding default argument in the launch script.
 This can be used to avoid having to re-enter login credentials every time the program is launched.
-
-The OAuth section contains a boolean to trigger auto-login (defaults to False).
-When authenticated, two additional fields are written : **access_token** and **refresh_token**.
-Those are basically like username and password : they are used to authenticate you on Reddit servers.
 
 Example initial config:
 
-.. code-block:: ini
+**rtv.cfg**
 
-  [oauth]
-  auto_login=False
+.. code-block:: ini
 
   [rtv]
   # Log file location
@@ -177,6 +182,24 @@ Example initial config:
   # This may be necessary for compatibility with some terminal browsers
   # ascii=True
 
+-----
+OAuth
+-----
+
+OAuth is an authentication standard, that replaces authentication with login and password.
+
+RTV implements OAuth. It stores OAuth configuration at ``~/.config/rtv/oauth.cfg``(or ``$XDG_CONFIG_HOME``).
+**The OAuth configuration file must be writable, and is created automatically if it doesn't exist.**
+It contains a boolean to trigger auto-login (defaults to false).
+When authenticated, an additional field is written : **refresh_token**.
+This acts as a replacement to username and password : it is used to authenticate you on Reddit servers.
+
+Example **oauth.cfg**:
+
+.. code-block:: ini
+
+  [oauth]
+  auto_login=false
 
 =========
 Changelog

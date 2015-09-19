@@ -8,7 +8,7 @@ import requests
 from .exceptions import SubredditError, AccountError
 from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
-from .subscriptions import SubscriptionPage
+from .subscription import SubscriptionPage
 from .content import SubredditContent
 from .helpers import open_browser, open_editor, strip_subreddit_url
 from .docs import SUBMISSION_FILE
@@ -53,9 +53,6 @@ class SubredditPage(BasePage):
     @SubredditController.register(curses.KEY_F5, 'r')
     def refresh_content(self, name=None, order=None):
         "Re-download all submissions and reset the page index"
-
-        # Refresh access token if expired
-        self.oauth.refresh()
 
         name = name or self.content.name
         order = order or self.content.order
@@ -136,9 +133,6 @@ class SubredditPage(BasePage):
             show_notification(self.stdscr, ['Not logged in'])
             return
 
-        # Refresh access token if expired
-        self.oauth.refresh()
-
         # Strips the subreddit to just the name
         # Make sure it is a valid subreddit for submission
         subreddit = self.reddit.get_subreddit(self.content.name)
@@ -179,9 +173,6 @@ class SubredditPage(BasePage):
         if not self.reddit.is_oauth_session():
             show_notification(self.stdscr, ['Not logged in'])
             return
-
-        # Refresh access token if expired
-        self.oauth.refresh()
 
         # Open subscriptions page
         page = SubscriptionPage(self.stdscr, self.reddit, self.oauth)

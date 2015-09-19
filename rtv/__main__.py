@@ -22,7 +22,13 @@ from tornado import ioloop
 
 __all__ = []
 
-def get_config_fp():
+def load_rtv_config():
+    """
+    Attempt to load saved settings for things like the username and password.
+    """
+
+    config = configparser.ConfigParser()
+
     HOME = os.path.expanduser('~')
     XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME',
         os.path.join(HOME, '.config'))
@@ -35,29 +41,8 @@ def get_config_fp():
     # get the first existing config file
     for config_path in config_paths:
         if os.path.exists(config_path):
+            config.read(config_path)
             break
-
-    return config_path
-
-def open_config():
-    """
-    Search for a configuration file at the location ~/.rtv and attempt to load
-    saved settings for things like the username and password.
-    """
-
-    config = configparser.ConfigParser()
-
-    config_path = get_config_fp()
-    config.read(config_path)
-
-    return config
-
-def load_rtv_config():
-    """
-    Attempt to load saved settings for things like the username and password.
-    """
-
-    config = open_config()
 
     defaults = {}
     if config.has_section('rtv'):
@@ -73,14 +58,26 @@ def load_oauth_config():
     Attempt to load saved OAuth settings
     """
 
-    config = open_config()
+    config = configparser.ConfigParser()
+
+    HOME = os.path.expanduser('~')
+    XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME',
+        os.path.join(HOME, '.config'))
+
+    if os.path.exists(os.path.join(XDG_CONFIG_HOME, 'rtv')):
+        config_path = os.path.join(XDG_CONFIG_HOME, 'rtv', 'oauth.cfg')
+    else:
+        config_path = os.path.join(HOME, '.rtv-oauth')
+
+    config.read(config_path)
 
     if config.has_section('oauth'):
         defaults = dict(config.items('oauth'))
     else:
         # Populate OAuth section
-        config['oauth'] = {'auto_login': False}
-        with open(get_config_fp(), 'w') as cfg:
+        config.add_section('oauth')
+        config.set('oauth', 'auto_login', 'false')
+        with open(config_path, 'w') as cfg:
             config.write(cfg)
         defaults = dict(config.items('oauth'))
 
@@ -106,7 +103,6 @@ def command_line():
 
     oauth_group = parser.add_argument_group('OAuth data (optional)', OAUTH)
     oauth_group.add_argument('--auto-login', dest='auto_login', help='OAuth auto-login setting')
-    oauth_group.add_argument('--auth-token', dest='access_token', help='OAuth authorization token')
     oauth_group.add_argument('--refresh-token', dest='refresh_token', help='OAuth refresh token')
 
     args = parser.parse_args()
@@ -154,7 +150,7 @@ def main():
         reddit.config.decode_html_entities = False
         with curses_session() as stdscr:
             oauth = OAuthTool(reddit, stdscr, LoadScreen(stdscr))
-            if args.auto_login == 'True': # Ew!
+            if args.auto_login == 'true': # Ew!
                 oauth.authorize()
             if args.link:
                 page = SubmissionPage(stdscr, reddit, oauth, url=args.link)

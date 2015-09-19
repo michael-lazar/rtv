@@ -18,8 +18,8 @@ given, the program will display a secure prompt to enter a password.
 """
 
 OAUTH = """\
-Authentication is now done by OAuth, since PRAW will stop supporting login with
-username and password soon.
+Authentication is now done by OAuth, since PRAW will drop
+password authentication soon.
 """
 
 CONTROLS = """
@@ -47,6 +47,7 @@ Authenticated Commands
   `c`                 : Compose a new post or comment
   `e`                 : Edit an existing post or comment
   `d`                 : Delete an existing post or comment
+  `i`                 : Display new messages prompt
   `s`                 : Open/close subscribed subreddits list
 
 Subreddit Mode
