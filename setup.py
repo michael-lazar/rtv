@@ -7,15 +7,13 @@ setup(
     description='A simple terminal viewer for Reddit (Reddit Terminal Viewer)',
     long_description=open('README.rst').read(),
     url='https://github.com/michael-lazar/rtv',
-    data_files=[
-        ("share/man/man1", ["rtv.1"])
-        ],
     author='Michael Lazar',
     author_email='lazar.michael22@gmail.com',
     license='MIT',
     keywords='reddit terminal praw curses',
     packages=['rtv'],
     include_package_data=True,
+    data_files=[("share/man/man1", ["rtv.1"])],
     install_requires=['praw>=3.1.0', 'six', 'requests', 'kitchen'],
     entry_points={'console_scripts': ['rtv=rtv.__main__:main']},
     classifiers=[
