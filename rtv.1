@@ -1,0 +1,113 @@
+.TH "rtv" "1" "September 2015" "Version 20150919" "Usage and Commands"
+.SH NAME
+rtv - Browse Reddit from your terminal
+.SH SYNOPSIS
+rtv [-h] [-s SUBREDDIT] [-l LINK] [--ascii] [--log FILE] [-u USERNAME]
+.SH DESCRIPTION
+.B Reddit Terminal Viewer
+is a lightweight browser for www.reddit.com built into a
+terminal window.
+.SH OPTIONS
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+show this help message and exit
+.TP
+\fB\-s\fR SUBREDDIT
+subreddit name
+.TP
+\fB\-l\fR LINK
+full link to a submission
+.TP
+\fB\-\-ascii\fR
+enable ascii\-only mode
+.TP
+\fB\-\-log\fR FILE
+Log HTTP requests
+.SS "authentication (optional):"
+.IP
+Authenticating is required to vote and leave comments. If only a username is
+given, the program will display a secure prompt to enter a password.
+.TP
+\fB\-u\fR USERNAME
+reddit username
+.TP
+\fB\-p\fR PASSWORD
+reddit password
+.PP
+.SS "Controls"
+RTV currently supports browsing both subreddits and individual submissions.
+In each mode the controls are slightly different. In subreddit mode you can
+browse through the top submissions on either the front page or a specific
+subreddit. In submission mode you can view the self text for a submission and
+browse comments.
+.PP
+Basic Commands
+.TP
+\fBj\fR/\fBk\fR or \fBUP\fR/\fBDOWN\fR
+: Move the cursor up/down
+.TP
+\fBm\fR/\fBn\fR or \fBPgUp\fR/\fBPgDn\fR
+: Jump to the previous/next page
+.TP
+\fBo\fR or \fBENTER\fR
+: Open the selected item as a webpage
+.TP
+\fBr\fR or \fBF5\fR
+: Refresh page content
+.TP
+\fBu\fR
+: Log in or switch accounts
+.TP
+\fB?\fR
+: Show the help screen
+.TP
+\fBq\fR
+: Quit
+.PP
+Authenticated Commands
+.TP
+\fBa\fR/\fBz\fR
+: Upvote/downvote
+.TP
+\fBc\fR
+: Compose a new post or comment
+.TP
+\fBe\fR
+: Edit an existing post or comment
+.TP
+\fBd\fR
+: Delete an existing post or comment
+.TP
+\fBi\fR
+: Display new messages prompt
+.TP
+\fBs\fR
+: Open/close subscribed subreddits list
+.PP
+Subreddit Mode
+.TP
+\fBl\fR or \fBRIGHT\fR
+: Enter the selected submission
+.TP
+\fB/\fR
+: Open a prompt to switch subreddits
+.TP
+\fBf\fR
+: Open a prompt to search the current subreddit
+.PP
+Submission Mode
+.TP
+\fBh\fR or \fBLEFT\fR
+: Return to subreddit mode
+.TP
+\fBSPACE\fR
+: Fold the selected comment, or load additional comments
+.SH AUTHOR
+Written by Johnathan "ShaggyTwoDope" Jenkins <twodopeshaggy@gmail.com> (2015).
+.SH REPORTING BUGS
+Report bugs to
+.I https://github.com/michael-lazar/rtv/issues
+.SH COPYRIGHT
+Copyright \(co 2015 michael-lazar
+License MIT.
+.PP
