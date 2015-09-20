@@ -7,6 +7,9 @@ setup(
     description='A simple terminal viewer for Reddit (Reddit Terminal Viewer)',
     long_description=open('README.rst').read(),
     url='https://github.com/michael-lazar/rtv',
+    data_files=[
+        ("share/man/man1", ["rtv.1"])
+        ],
     author='Michael Lazar',
     author_email='lazar.michael22@gmail.com',
     license='MIT',
