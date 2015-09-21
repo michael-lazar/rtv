@@ -15,14 +15,14 @@ class SubscriptionController(BaseController):
 
 class SubscriptionPage(BasePage):
 
-    def __init__(self, stdscr, reddit):
+    def __init__(self, stdscr, reddit, oauth):
 
         self.controller = SubscriptionController(self)
         self.loader = LoadScreen(stdscr)
         self.selected_subreddit_data = None
 
         content = SubscriptionContent.from_user(reddit, self.loader)
-        super(SubscriptionPage, self).__init__(stdscr, reddit, content)
+        super(SubscriptionPage, self).__init__(stdscr, reddit, content, oauth)
 
     def loop(self):
         "Main control loop"
@@ -37,7 +37,7 @@ class SubscriptionPage(BasePage):
     def refresh_content(self):
         "Re-download all subscriptions and reset the page index"
 
-        self.content = SubscriptionContent.get_list(self.reddit, self.loader)
+        self.content = SubscriptionContent.from_user(self.reddit, self.loader)
         self.nav = Navigator(self.content.get)
 
     @SubscriptionController.register(curses.KEY_ENTER, 10, curses.KEY_RIGHT)

@@ -1,2 +1,3 @@
 include version.py
 include CHANGELOG.rst CONTRIBUTORS.rst LICENSE
+include rtv/templates/*

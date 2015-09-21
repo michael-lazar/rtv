@@ -8,7 +8,7 @@ import requests
 from .exceptions import SubredditError, AccountError
 from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
-from .subscriptions import SubscriptionPage
+from .subscription import SubscriptionPage
 from .content import SubredditContent
 from .helpers import open_browser, open_editor, strip_subreddit_url
 from .docs import SUBMISSION_FILE
@@ -33,13 +33,14 @@ class SubredditController(BaseController):
 
 class SubredditPage(BasePage):
 
-    def __init__(self, stdscr, reddit, name):
+    def __init__(self, stdscr, reddit, oauth, name):
 
         self.controller = SubredditController(self)
         self.loader = LoadScreen(stdscr)
+        self.oauth = oauth
 
         content = SubredditContent.from_name(reddit, name, self.loader)
-        super(SubredditPage, self).__init__(stdscr, reddit, content)
+        super(SubredditPage, self).__init__(stdscr, reddit, content, oauth)
 
     def loop(self):
         "Main control loop"
@@ -104,7 +105,7 @@ class SubredditPage(BasePage):
         "Select the current submission to view posts"
 
         data = self.content.get(self.nav.absolute_index)
-        page = SubmissionPage(self.stdscr, self.reddit, url=data['permalink'])
+        page = SubmissionPage(self.stdscr, self.reddit, self.oauth, url=data['permalink'])
         page.loop()
         if data['url_type'] == 'selfpost':
             global history
@@ -119,7 +120,7 @@ class SubredditPage(BasePage):
         global history
         history.add(url)
         if data['url_type'] in ['x-post', 'selfpost']:
-            page = SubmissionPage(self.stdscr, self.reddit, url=url)
+            page = SubmissionPage(self.stdscr, self.reddit, self.oauth, url=url)
             page.loop()
         else:
             open_browser(url)
@@ -128,7 +129,7 @@ class SubredditPage(BasePage):
     def post_submission(self):
         "Post a new submission to the given subreddit"
 
-        if not self.reddit.is_logged_in():
+        if not self.reddit.is_oauth_session():
             show_notification(self.stdscr, ['Not logged in'])
             return
 
@@ -161,7 +162,7 @@ class SubredditPage(BasePage):
                 time.sleep(2.0)
             # Open the newly created post
             s.catch = False
-            page = SubmissionPage(self.stdscr, self.reddit, submission=post)
+            page = SubmissionPage(self.stdscr, self.reddit, self.oauth, submission=post)
             page.loop()
             self.refresh_content()
 
@@ -169,12 +170,12 @@ class SubredditPage(BasePage):
     def open_subscriptions(self):
         "Open user subscriptions page"
 
-        if not self.reddit.is_logged_in():
+        if not self.reddit.is_oauth_session():
             show_notification(self.stdscr, ['Not logged in'])
             return
 
         # Open subscriptions page
-        page = SubscriptionPage(self.stdscr, self.reddit)
+        page = SubscriptionPage(self.stdscr, self.reddit, self.oauth)
         page.loop()
 
         # When user has chosen a subreddit in the subscriptions list,
