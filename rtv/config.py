@@ -37,10 +37,11 @@ def load_config():
     # Convert 'true'/'false' to boolean True/False
     if 'ascii' in config_dict:
         config_dict['ascii'] = config.getboolean('rtv', 'ascii')
-    if 'clear_session' in config_dict:
-        config_dict['clear_session'] = config.getboolean('rtv', 'clear_session')
-    if 'oauth_scope' in config_dict:
-        config_dict['oauth_scope'] = config.oauth_scope.split('-')
+    if 'clear_auth' in config_dict:
+        config_dict['clear_auth'] = config.getboolean('rtv', 'clear_auth')
+    if 'persistent' in config_dict:
+        config_dict['persistent'] = config.getboolean('rtv', 'persistent')
+
     return config_dict
 
 def load_refresh_token(filename=TOKEN):
