@@ -12,7 +12,6 @@ from .helpers import open_editor
 from .curses_helpers import (Color, show_notification, show_help, prompt_input,
                              add_line)
 from .docs import COMMENT_EDIT_FILE, SUBMISSION_FILE
-from .oauth import OAuthTool
 
 __all__ = ['Navigator', 'BaseController', 'BasePage']
 _logger = logging.getLogger(__name__)
