@@ -155,7 +155,7 @@ RTV's login process follows the steps below:
 1. You initiate a login by pressing the ``u`` key.
 2. You're redirected to a webbrowser where reddit will ask you to login and authorize RTV.
 3. RTV uses the generated token to login on your behalf.
-4. The token is stored on your computer at ``~/.config/rtv/refresh-token`` for future sessions.   You can disable this by setting ``persistant=False`` in your RTV config.
+4. The token is stored on your computer at ``~/.config/rtv/refresh-token`` for future sessions.   You can disable this by setting ``persistent=False`` in your RTV config.
 
 .. [#] `<https://github.com/reddit/reddit/wiki/OAuth2>`_
 
@@ -187,9 +187,9 @@ Example initial config:
   # This may be necessary for compatibility with some terminal browsers
   # ascii=True
 
-  # Enable persistant storage of your authentication token
+  # Enable persistent storage of your authentication token
   # This allows you to remain logged in when you restart the program
-  persistant=True
+  persistent=True
 
 
 ===
