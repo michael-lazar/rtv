@@ -38,8 +38,8 @@ def command_line():
     parser.add_argument('-l', dest='link', help='full URL of a submission that will be opened on start')
     parser.add_argument('--ascii', action='store_true', help='enable ascii-only mode')
     parser.add_argument('--log', metavar='FILE', action='store', help='log HTTP requests to a file')
-    parser.add_argument('--refresh-token', dest='refresh_token', help='OAuth refresh token')
-    parser.add_argument('--clear-session', dest='clear_session', action='store_true', help='Remove any saved OAuth tokens before starting')
+    parser.add_argument('--non-persistant', dest='persistant', action='store_false', help='Forget all authenticated users when the program exits')
+    parser.add_argument('--clear-auth', dest='clear_auth', action='store_true', help='Remove any saved OAuth tokens before starting')
     args = parser.parse_args()
 
     return args
@@ -68,12 +68,12 @@ def main():
 
     if args.ascii:
         config.unicode = False
+    if not args.persistant:
+        config.persistant = False
     if args.log:
         logging.basicConfig(level=logging.DEBUG, filename=args.log)
-    if args.clear_session:
+    if args.clear_auth:
         config.clear_refresh_token()
-    if args.refresh_token:
-        config.save_refresh_token(args.refresh_token)
 
     try:
         print('Connecting...')

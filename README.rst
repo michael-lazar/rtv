@@ -73,11 +73,8 @@ Basic Commands
 Authenticated Commands
 ----------------------
 
-Some actions require that you be logged in to your reddit account. To log in you can either:
-
-1. provide your username as a command line argument ``-u`` (your password will be securely prompted), or
-2. press ``u`` while inside of the program
-
+Some actions require that you be logged in to your reddit account.
+You can log in by pressing ``u`` while inside of the program.
 Once you are logged in your username will appear in the top-right corner of the screen.
 
 :``a``/``z``: Upvote/downvote
@@ -147,12 +144,27 @@ If you prefer to stay in the terminal, use ``$BROWSER`` to specify a console-bas
 
    $ export BROWSER=w3m
 
+-----
+OAuth
+-----
+
+OAuth support allows you to use reddit to authenticate on non-reddit websites and applications [#]_. OAuth replaces the deprecated cookie-based username/password authentication.
+
+RTV's login process follows the steps below:
+
+1. You initiate a login by pressing the ``u`` key.
+2. You're redirected to a webbrowser where reddit will ask you to login and authorize RTV.
+3. RTV uses the generated token to login on your behalf.
+4. The token is stored on your computer at ``~/.config/rtv/refresh-token`` for future sessions.   You can disable this by setting ``persistant=False`` in your RTV config.
+
+.. [#] `<https://github.com/reddit/reddit/wiki/OAuth2>`_
+
 -----------
 Config File
 -----------
 
 RTV will read a configuration placed at ``~/.config/rtv/rtv.cfg`` (or ``$XDG_CONFIG_HOME``).
-Each line in the files will replace the corresponding default argument in the launch script.
+Each line in the file will replace the corresponding default argument in the launch script.
 This can be used to avoid having to re-enter login credentials every time the program is launched.
 
 Example initial config:
@@ -175,24 +187,9 @@ Example initial config:
   # This may be necessary for compatibility with some terminal browsers
   # ascii=True
 
------
-OAuth
------
-
-OAuth is an authentication standard, that replaces authentication with login and password.
-
-RTV implements OAuth. It stores OAuth configuration at ``~/.config/rtv/oauth.cfg``(or ``$XDG_CONFIG_HOME``).
-**The OAuth configuration file must be writable, and is created automatically if it doesn't exist.**
-It contains a boolean to trigger auto-login (defaults to false).
-When authenticated, an additional field is written : **refresh_token**.
-This acts as a replacement to username and password : it is used to authenticate you on Reddit servers.
-
-Example **oauth.cfg**:
-
-.. code-block:: ini
-
-  [oauth]
-  auto_login=false
+  # Enable persistant storage of your authentication token
+  # This allows you to remain logged in when you restart the program
+  persistant=True
 
 
 ===

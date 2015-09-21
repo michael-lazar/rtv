@@ -100,8 +100,9 @@ class OAuthTool(object):
         try:
             with self.loader(message='Logging in'):
                 access_info = self.reddit.get_access_information(oauth_code)
-                config.save_refresh_token(access_info['refresh_token'])
                 self.refresh_token = access_info['refresh_token']
+                if config.persistant:
+                    config.save_refresh_token(access_info['refresh_token'])
         except (praw.errors.OAuthAppRequired, praw.errors.OAuthInvalidToken):
             show_notification(self.stdscr, ['Invalid OAuth data'])
         else:

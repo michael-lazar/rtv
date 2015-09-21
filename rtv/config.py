@@ -10,6 +10,7 @@ CONFIG = os.path.join(XDG_HOME, 'rtv', 'rtv.cfg')
 TOKEN = os.path.join(XDG_HOME, 'rtv', 'refresh-token')
 
 unicode = True
+persistant = True
 
 # https://github.com/reddit/reddit/wiki/OAuth2
 # Client ID is of type "installed app" and the secret should be left empty
