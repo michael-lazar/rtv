@@ -144,20 +144,23 @@ If you prefer to stay in the terminal, use ``$BROWSER`` to specify a console-bas
 
    $ export BROWSER=w3m
 
------
-OAuth
------
+--------------
+Authentication
+--------------
 
-OAuth support allows you to use reddit to authenticate on non-reddit websites and applications [#]_. OAuth replaces the deprecated cookie-based username/password authentication.
+RTV use OAuth [#]_. to facilitate logging into your reddit user account. This means that you never have to give your username and password directly to RTV.
 
-RTV's login process follows the steps below:
+RTV's login process follows these steps:
 
 1. You initiate a login by pressing the ``u`` key.
 2. You're redirected to a webbrowser where reddit will ask you to login and authorize RTV.
 3. RTV uses the generated token to login on your behalf.
-4. The token is stored on your computer at ``~/.config/rtv/refresh-token`` for future sessions.   You can disable this by setting ``persistent=False`` in your RTV config.
+4. The token is stored on your computer at ``~/.config/rtv/refresh-token`` for future sessions.   You can disable this behavior by setting ``persistent=False`` in your RTV config.
+
+Note that RTV no longer allows you to input your username/password directly. This method of cookie based authentication has been deprecated by reddit and will not be supported in future releases [#]_.
 
 .. [#] `<https://github.com/reddit/reddit/wiki/OAuth2>`_
+.. [#] `<https://www.reddit.com/r/redditdev/comments/2ujhkr/important_api_licensing_terms_clarified/>`_
 
 -----------
 Config File
