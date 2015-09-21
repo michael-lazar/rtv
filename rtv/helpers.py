@@ -14,7 +14,8 @@ from . import config
 from .exceptions import ProgramError
 
 __all__ = ['open_browser', 'clean', 'wrap_text', 'strip_textpad',
-           'strip_subreddit_url', 'humanize_timestamp', 'open_editor']
+           'strip_subreddit_url', 'humanize_timestamp', 'open_editor',
+           'check_browser_display']
 
 
 def clean(string, n_cols=None):
