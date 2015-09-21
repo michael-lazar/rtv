@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RTV OAuth2 Helper</title>
+    <!-- style borrowed from http://bettermotherfuckingwebsite.com/ -->
+    <style type="text/css">
+    body {
+        margin:40px auto;
+        max-width:650px;
+        line-height:1.6;
+        font-size:18px;
+        font-family:Arial, Helvetica, sans-serif;
+        color:#444;
+        padding:0 10px;
+    }
+    h1, h2, h3 {
+        line-height:1.2
+    }
+    #footer {
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
+        font-size:14px;
+    }
+    </style>
+</head>
+<body>
+    {% if error == 'access_denied' %}
+        <h1 style="color: red">Access Denied</h1><hr>
+        <p><span style="font-weight: bold">Reddit Terminal Viewer</span> was denied access and will continue to operate in unauthenticated mode, you can close this window.
+    {% elif error != 'placeholder' %}
+        <h1 style="color: red">Error : {{ error }}</h1>
+    {% elif (state == 'placeholder' or code == 'placeholder') %}
+        <h1>Wait...</h1><hr>
+        <p>This page is supposed to be a Reddit OAuth callback. You can't just come here hands in your pocket!</p>
+    {% else %}
+        <h1 style="color: green">Access Granted</h1><hr>
+        <p><span style="font-weight: bold">Reddit Terminal Viewer</span> will now log in, you can close this window.</p>
+    {% end %}
+
+    <div id="footer">View the <a href="http://www.github.com/michael-lazar/rtv">Documentation</a></div>
+</body>
+</html>

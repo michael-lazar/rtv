@@ -239,7 +239,7 @@ class BaseController(object):
 
 class BasePage(object):
     """
-    Base terminal viewer incorperates a cursor to navigate content
+    Base terminal viewer incorporates a cursor to navigate content
     """
 
     MIN_HEIGHT = 10
@@ -351,11 +351,10 @@ class BasePage(object):
         """
 
         if self.reddit.is_oauth_session():
-            self.reddit.clear_authentication()
             self.oauth.clear_oauth_data()
-            return
-
-        self.oauth.authorize()
+            show_notification(self.stdscr, ['Logged out'])
+        else:
+            self.oauth.authorize()
 
     @BaseController.register('d')
     def delete(self):

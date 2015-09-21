@@ -24,7 +24,6 @@ class SubmissionPage(BasePage):
 
         self.controller = SubmissionController(self)
         self.loader = LoadScreen(stdscr)
-        self.oauth = oauth
         if url:
             content = SubmissionContent.from_url(reddit, url, self.loader)
         elif submission:
@@ -32,8 +31,8 @@ class SubmissionPage(BasePage):
         else:
             raise ValueError('Must specify url or submission')
 
-        super(SubmissionPage, self).__init__(stdscr, reddit,
-                                             content, oauth, page_index=-1)
+        super(SubmissionPage, self).__init__(stdscr, reddit, content, oauth,
+                                             page_index=-1)
 
     def loop(self):
         "Main control loop"

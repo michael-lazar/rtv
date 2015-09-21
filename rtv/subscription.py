@@ -19,7 +19,6 @@ class SubscriptionPage(BasePage):
 
         self.controller = SubscriptionController(self)
         self.loader = LoadScreen(stdscr)
-        self.oauth = oauth
         self.selected_subreddit_data = None
 
         content = SubscriptionContent.from_user(reddit, self.loader)
