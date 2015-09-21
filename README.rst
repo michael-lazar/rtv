@@ -46,13 +46,6 @@ The installation will place a script in the system path
    $ rtv
    $ rtv --help
 
-If you're having issues running RTV with Python 2, run RTV as module :
-
-.. code-block:: bash
-
-  $ cd /path/to/rtv
-  $ python2 -m rtv
-
 =====
 Usage
 =====
@@ -200,6 +193,21 @@ Example **oauth.cfg**:
 
   [oauth]
   auto_login=false
+
+
+===
+FAQ
+===
+
+How do I run the code directly using python?
+  This project is structured to be run as a python *module*. This means that in order to resolve imports you need to launch using python's ``-m`` flag. This method works for all versions of python. Follow the example below, which assumes that you have cloned the repository into the directory **~/rtv_project**.
+
+  .. code-block:: bash
+   
+    $ cd ~/rtv_project
+    $ python2 -m rtv
+    $ python3 -m rtv
+
 
 =========
 Changelog
