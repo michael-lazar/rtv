@@ -1,6 +1,6 @@
 from .__version__ import __version__
 
-__all__ = ['AGENT', 'SUMMARY', 'AUTH', 'CONTROLS', 'HELP', 'COMMENT_FILE',
+__all__ = ['AGENT', 'SUMMARY', 'CONTROLS', 'HELP', 'COMMENT_FILE',
            'SUBMISSION_FILE', 'COMMENT_EDIT_FILE']
 
 AGENT = """\
@@ -10,11 +10,6 @@ desktop:https://github.com/michael-lazar/rtv:{} (by /u/civilization_phaze_3)\
 SUMMARY = """
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
 terminal window.
-"""
-
-AUTH = """\
-Authenticating is required to vote and leave comments. If only a username is
-given, the program will display a secure prompt to enter a password.
 """
 
 CONTROLS = """

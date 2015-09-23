@@ -20,7 +20,7 @@ class SubmissionController(BaseController):
 
 class SubmissionPage(BasePage):
 
-    def __init__(self, stdscr, reddit, url=None, submission=None):
+    def __init__(self, stdscr, reddit, oauth, url=None, submission=None):
 
         self.controller = SubmissionController(self)
         self.loader = LoadScreen(stdscr)
@@ -31,8 +31,8 @@ class SubmissionPage(BasePage):
         else:
             raise ValueError('Must specify url or submission')
 
-        super(SubmissionPage, self).__init__(stdscr, reddit,
-                                             content, page_index=-1)
+        super(SubmissionPage, self).__init__(stdscr, reddit, content, oauth,
+                                             page_index=-1)
 
     def loop(self):
         "Main control loop"
@@ -88,7 +88,7 @@ class SubmissionPage(BasePage):
         selected comment.
         """
 
-        if not self.reddit.is_logged_in():
+        if not self.reddit.is_oauth_session():
             show_notification(self.stdscr, ['Not logged in'])
             return
 

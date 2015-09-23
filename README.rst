@@ -73,11 +73,8 @@ Basic Commands
 Authenticated Commands
 ----------------------
 
-Some actions require that you be logged in to your reddit account. To log in you can either:
-
-1. provide your username as a command line argument ``-u`` (your password will be securely prompted), or
-2. press ``u`` while inside of the program
-
+Some actions require that you be logged in to your reddit account.
+You can log in by pressing ``u`` while inside of the program.
 Once you are logged in your username will appear in the top-right corner of the screen.
 
 :``a``/``z``: Upvote/downvote
@@ -147,6 +144,22 @@ If you prefer to stay in the terminal, use ``$BROWSER`` to specify a console-bas
 
    $ export BROWSER=w3m
 
+--------------
+Authentication
+--------------
+
+RTV use OAuth to facilitate logging into your reddit user account [#]_. The login process follows these steps:
+
+1. You initiate a login by pressing the ``u`` key.
+2. You're redirected to a webbrowser where reddit will ask you to login and authorize RTV.
+3. RTV uses the generated token to login on your behalf.
+4. The token is stored on your computer at ``~/.config/rtv/refresh-token`` for future sessions.   You can disable this behavior by setting ``persistent=False`` in your RTV config.
+
+Note that RTV no longer allows you to input your username/password directly. This method of cookie based authentication has been deprecated by reddit and will not be supported in future releases [#]_.
+
+.. [#] `<https://github.com/reddit/reddit/wiki/OAuth2>`_
+.. [#] `<https://www.reddit.com/r/redditdev/comments/2ujhkr/important_api_licensing_terms_clarified/>`_
+
 -----------
 Config File
 -----------
@@ -155,14 +168,13 @@ RTV will read a configuration placed at ``~/.config/rtv/rtv.cfg`` (or ``$XDG_CON
 Each line in the file will replace the corresponding default argument in the launch script.
 This can be used to avoid having to re-enter login credentials every time the program is launched.
 
-Example config:
+Example initial config:
+
+**rtv.cfg**
 
 .. code-block:: ini
 
   [rtv]
-  username=MyUsername
-  password=MySecretPassword
-
   # Log file location
   log=/tmp/rtv.log
 
@@ -175,6 +187,24 @@ Example config:
   # Turn on ascii-only mode and disable all unicode characters
   # This may be necessary for compatibility with some terminal browsers
   # ascii=True
+
+  # Enable persistent storage of your authentication token
+  # This allows you to remain logged in when you restart the program
+  persistent=True
+
+
+===
+FAQ
+===
+
+How do I run the code directly using python?
+  This project is structured to be run as a python *module*. This means that in order to resolve imports you need to launch using python's ``-m`` flag. This method works for all versions of python. Follow the example below, which assumes that you have cloned the repository into the directory **~/rtv_project**.
+
+  .. code-block:: bash
+   
+    $ cd ~/rtv_project
+    $ python2 -m rtv
+    $ python3 -m rtv
 
 
 =========

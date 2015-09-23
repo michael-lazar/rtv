@@ -14,7 +14,8 @@ from . import config
 from .exceptions import ProgramError
 
 __all__ = ['open_browser', 'clean', 'wrap_text', 'strip_textpad',
-           'strip_subreddit_url', 'humanize_timestamp', 'open_editor']
+           'strip_subreddit_url', 'humanize_timestamp', 'open_editor',
+           'check_browser_display']
 
 
 def clean(string, n_cols=None):
@@ -102,21 +103,7 @@ def open_browser(url):
     are not detected here.
     """
 
-    console_browsers = ['www-browser', 'links', 'links2', 'elinks', 'lynx', 'w3m']
-
-    display = bool(os.environ.get("DISPLAY"))
-
-    # Use the convention defined here to parse $BROWSER
-    # https://docs.python.org/2/library/webbrowser.html
-    if "BROWSER" in os.environ:
-        user_browser = os.environ["BROWSER"].split(os.pathsep)[0]
-        if user_browser in console_browsers:
-            display = False
-
-    if webbrowser._tryorder and webbrowser._tryorder[0] in console_browsers:
-        display = False
-
-    if display:
+    if check_browser_display():
         command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
         args = [sys.executable, '-c', command]
         with open(os.devnull, 'ab+', 0) as null:
@@ -125,6 +112,28 @@ def open_browser(url):
         curses.endwin()
         webbrowser.open_new_tab(url)
         curses.doupdate()
+
+
+def check_browser_display():
+    """
+    Use a number of methods to guess if the default webbrowser will open in
+    the background as opposed to opening directly in the terminal.
+    """
+
+    display = bool(os.environ.get("DISPLAY"))
+
+    # Use the convention defined here to parse $BROWSER
+    # https://docs.python.org/2/library/webbrowser.html
+    console_browsers = ['www-browser', 'links', 'links2', 'elinks', 'lynx', 'w3m']
+    if "BROWSER" in os.environ:
+        user_browser = os.environ["BROWSER"].split(os.pathsep)[0]
+        if user_browser in console_browsers:
+            display = False
+
+    if webbrowser._tryorder and webbrowser._tryorder[0] in console_browsers:
+        display = False
+
+    return display
 
 
 def wrap_text(text, width):

@@ -238,17 +238,18 @@ class BaseController(object):
 
 class BasePage(object):
     """
-    Base terminal viewer incorperates a cursor to navigate content
+    Base terminal viewer incorporates a cursor to navigate content
     """
 
     MIN_HEIGHT = 10
     MIN_WIDTH = 20
 
-    def __init__(self, stdscr, reddit, content, **kwargs):
+    def __init__(self, stdscr, reddit, content, oauth, **kwargs):
 
         self.stdscr = stdscr
         self.reddit = reddit
         self.content = content
+        self.oauth = oauth
         self.nav = Navigator(self.content.get, **kwargs)
 
         self._header_window = None
@@ -348,23 +349,11 @@ class BasePage(object):
         account.
         """
 
-        if self.reddit.is_logged_in():
-            self.logout()
-            return
-
-        username = prompt_input(self.stdscr, 'Enter username:')
-        password = prompt_input(self.stdscr, 'Enter password:', hide=True)
-        if not username or not password:
-            curses.flash()
-            return
-
-        try:
-            with self.loader(message='Logging in'):
-                self.reddit.login(username, password)
-        except praw.errors.InvalidUserPass:
-            show_notification(self.stdscr, ['Invalid user/pass'])
+        if self.reddit.is_oauth_session():
+            self.oauth.clear_oauth_data()
+            show_notification(self.stdscr, ['Logged out'])
         else:
-            show_notification(self.stdscr, ['Welcome {}'.format(username)])
+            self.oauth.authorize()
 
     @BaseController.register('d')
     def delete(self):
@@ -372,7 +361,7 @@ class BasePage(object):
         Delete a submission or comment.
         """
 
-        if not self.reddit.is_logged_in():
+        if not self.reddit.is_oauth_session():
             show_notification(self.stdscr, ['Not logged in'])
             return
 
@@ -400,7 +389,7 @@ class BasePage(object):
         Edit a submission or comment.
         """
 
-        if not self.reddit.is_logged_in():
+        if not self.reddit.is_oauth_session():
             show_notification(self.stdscr, ['Not logged in'])
             return
 
@@ -437,6 +426,7 @@ class BasePage(object):
         """
         Checks the inbox for unread messages and displays a notification.
         """
+
         inbox = len(list(self.reddit.get_unread(limit=1)))
         try:
             if inbox > 0:
