@@ -1,7 +1,4 @@
 include version.py
 include CHANGELOG.rst CONTRIBUTORS.rst LICENSE
-<<<<<<< HEAD
 include rtv.1
-=======
 include rtv/templates/*
->>>>>>> 28d17b28d0840f75386586686897e9316378150e
