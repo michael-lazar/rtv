@@ -102,6 +102,70 @@ Submission Mode
 .TP
 \fBSPACE\fR
 : Fold the selected comment, or load additional comments
+.SH FILES
+.TP
+All config files can make use of $XDG_CONFIG_HOME which allows you to place them in other places then the given example paths.
+.TP
+~/.config/rtv/rtv.cfg
+Personal configuration file.
+.TP
+~/.config/rtv/refresh-token
+Session token for OAuth login, if you do not wish to have a persisent login you can set the option \fBpersistent=False\fR in the config file. But some features will not be available.
+
+.SH CONFIG FILE EXAMPLE
+.B RTV
+has many options that can be set in a configuration file. Here is a simple example configuration.
+
+.nf
+[rtv]
+# Log file location
+log=/tmp/rtv.log
+
+# Default subreddit
+subreddit=CollegeBasketball
+
+# Default submission link - will be opened every time the program starts
+link=http://www.reddit.com/r/CollegeBasketball/comments/31irjq
+
+# Turn on ascii-only mode and disable all unicode characters
+# This may be necessary for compatibility with some terminal browsers
+ascii=True
+
+# Enable persistent storage of your authentication token
+# This allows you to remain logged in when you restart the program
+persistent=True
+
+.SH ENVIROMENT VARIABLES 
+.B RTV
+Supports enviroment variables that can help improve your experience. These options can be set in the current shell. Or placed in your configuration file for your shell of choice. Such as
+.IR ~/.bashrc
+or
+.IR ~/.zshrc
+, restarting your session will make these settings persisent for future use of
+.B RTV.
+.TP
+.BR RTV_EDITOR
+Setting
+.IR export
+.IR RTV_EDITOR=gedit 
+will open gedit as your editor when composing comments and replies.
+If no editor is set,
+.B RTV
+will fall back to the enviroments default
+.IR $EDITOR
+, and as an extra fall back nano.
+
+.TP
+.BR BROWSER 
+.B RTV
+can open links in any browser you wish to use. Most system's will open the default such as Firefox or Chrome. But if you prefer to enjoy a terminal only experience, you can use
+.IR $BROWSER
+to set a browser such as w3m, lynx, and elinks. For example w3m would be
+.IR export
+.IR BROWSER=w3m
+
+
+.PP
 .SH AUTHOR
 Written by Johnathan "ShaggyTwoDope" Jenkins <twodopeshaggy@gmail.com> (2015).
 .SH REPORTING BUGS
