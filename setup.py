@@ -1,7 +1,7 @@
-from setuptools import setup
-from version import __version__ as version
-
 import sys
+import setuptools
+
+from version import __version__ as version
 
 requirements = ['tornado', 'praw>=3.1.0', 'six', 'requests', 'kitchen']
 
@@ -9,7 +9,7 @@ requirements = ['tornado', 'praw>=3.1.0', 'six', 'requests', 'kitchen']
 if sys.version_info.major <= 2:
     requirements.append('futures')
 
-setup(
+setuptools.setup(
     name='rtv',
     version=version,
     description='A simple terminal viewer for Reddit (Reddit Terminal Viewer)',

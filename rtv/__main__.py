@@ -1,6 +1,5 @@
 import os
 import sys
-import argparse
 import locale
 import logging
 
@@ -14,7 +13,7 @@ from .exceptions import SubmissionError, SubredditError, SubscriptionError, Prog
 from .curses_helpers import curses_session, LoadScreen
 from .submission import SubmissionPage
 from .subreddit import SubredditPage
-from .docs import *
+from .docs import AGENT
 from .oauth import OAuthTool
 from .__version__ import __version__
 
@@ -26,23 +25,6 @@ __all__ = []
 # process. On Ubuntu, you may need to allow ptrace permissions by setting
 # ptrace_scope to 0 in /etc/sysctl.d/10-ptrace.conf.
 # http://blog.mellenthin.de/archives/2010/10/18/gdb-attach-fails
-
-def command_line():
-
-    parser = argparse.ArgumentParser(
-        prog='rtv', description=SUMMARY,
-        epilog=CONTROLS + HELP,
-        formatter_class=argparse.RawDescriptionHelpFormatter)
-
-    parser.add_argument('-s', dest='subreddit', help='name of the subreddit that will be opened on start')
-    parser.add_argument('-l', dest='link', help='full URL of a submission that will be opened on start')
-    parser.add_argument('--ascii', action='store_true', help='enable ascii-only mode')
-    parser.add_argument('--log', metavar='FILE', action='store', help='log HTTP requests to a file')
-    parser.add_argument('--non-persistent', dest='persistent', action='store_false', help='Forget all authenticated users when the program exits')
-    parser.add_argument('--clear-auth', dest='clear_auth', action='store_true', help='Remove any saved OAuth tokens before starting')
-    args = parser.parse_args()
-
-    return args
 
 def main():
     "Main entry point"
@@ -60,7 +42,9 @@ def main():
 
     # Fill in empty arguments with config file values. Parameters explicitly
     # typed on the command line will take priority over config file params.
-    args = command_line()
+    parser = config.build_parser()
+    args = parser.parse_args()
+
     local_config = config.load_config()
     for key, val in local_config.items():
         if getattr(args, key, None) is None:

@@ -2,7 +2,10 @@
 Global configuration settings
 """
 import os
+import argparse
 from six.moves import configparser
+
+from . import docs
 
 HOME = os.path.expanduser('~')
 XDG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
@@ -20,6 +23,34 @@ oauth_redirect_uri = 'http://127.0.0.1:65000/'
 oauth_redirect_port = 65000
 oauth_scope = ['edit', 'history', 'identity', 'mysubreddits', 'privatemessages',
                'read', 'report', 'save', 'submit', 'subscribe', 'vote']
+
+def build_parser():
+
+    parser = argparse.ArgumentParser(
+        prog='rtv', description=docs.SUMMARY, epilog=docs.CONTROLS+docs.HELP,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument(
+        '-V', '--version', action='version', version='rtv '+docs.__version__,
+    )
+    parser.add_argument(
+        '-s', dest='subreddit',
+        help='name of the subreddit that will be opened on start')
+    parser.add_argument(
+        '-l', dest='link',
+        help='full URL of a submission that will be opened on start')
+    parser.add_argument(
+        '--ascii', action='store_true',
+        help='enable ascii-only mode')
+    parser.add_argument(
+        '--log', metavar='FILE', action='store',
+        help='log HTTP requests to a file')
+    parser.add_argument(
+        '--non-persistent', dest='persistent', action='store_false',
+        help='Forget all authenticated users when the program exits')
+    parser.add_argument(
+        '--clear-auth', dest='clear_auth', action='store_true',
+        help='Remove any saved OAuth tokens before starting')
+    return parser
 
 def load_config():
     """
