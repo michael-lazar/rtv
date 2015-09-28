@@ -5,7 +5,7 @@ import os
 import argparse
 from six.moves import configparser
 
-from . import docs
+from . import docs, __version__
 
 HOME = os.path.expanduser('~')
 XDG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
@@ -25,12 +25,11 @@ oauth_scope = ['edit', 'history', 'identity', 'mysubreddits', 'privatemessages',
                'read', 'report', 'save', 'submit', 'subscribe', 'vote']
 
 def build_parser():
-
     parser = argparse.ArgumentParser(
         prog='rtv', description=docs.SUMMARY, epilog=docs.CONTROLS+docs.HELP,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(
-        '-V', '--version', action='version', version='rtv '+docs.__version__,
+        '-V', '--version', action='version', version='rtv '+__version__,
     )
     parser.add_argument(
         '-s', dest='subreddit',

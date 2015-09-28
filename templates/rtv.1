@@ -6,95 +6,35 @@ RTV - Reddit Terminal Viewer
 .SH DESCRIPTION
 {description}
 .SH OPTIONS
-.TP
-\fB\-h\fR, \fB\-\-help\fR
-show this help message and exit
-.TP
-\fB\-s\fR SUBREDDIT
-subreddit name
-.TP
-\fB\-l\fR LINK
-full link to a submission
-.TP
-\fB\-\-ascii\fR
-enable ascii\-only mode
-.TP
-\fB\-\-log\fR FILE
-Log HTTP requests
-.PP
+{options}
 .SH CONTROLS
-RTV has different commands to easily navigate through subreddits and individual submissions. These can all be viewed along with a short description by pressing the \fB?\fR key at any time while running rtv.
-.PP
+Navigate between posts by using the arrow keys or vim-style `hjkl` movement.
+You can view the full list of commands by pressing the \fB?\fR key inside of the program.
 .SH FILES
 .TP
-All config files can make use of $XDG_CONFIG_HOME which allows you to place them in other places then the given example paths.
+.BR $XDG_CONFIG_HOME/rtv/rtv.cfg
+The configuration file can be used to customize default program settings, see
+README.rst for more information.
 .TP
-~/.config/rtv/rtv.cfg
-Personal configuration file.
-.TP
-~/.config/rtv/refresh-token
-Session token for OAuth login, if you do not wish to have a persistent login you can set the option \fBpersistent=False\fR in the config file. But some features will not be available.
-
-.SH CONFIG FILE EXAMPLE
-.B RTV
-has many options that can be set in a configuration file. Here is a simple example configuration.
-
-.nf
-[rtv]
-# Log file location
-log=/tmp/rtv.log
-
-# Default subreddit
-subreddit=CollegeBasketball
-
-# Default submission link - will be opened every time the program starts
-link=http://www.reddit.com/r/CollegeBasketball/comments/31irjq
-
-# Turn on ascii-only mode and disable all unicode characters
-# This may be necessary for compatibility with some terminal browsers
-ascii=True
-
-# Enable persistent storage of your authentication token
-# This allows you to remain logged in when you restart the program
-persistent=True
-
-.SH ENVIROMENT VARIABLES 
-.B RTV
-Supports enviroment variables that can help improve your experience. These options can be set in the current shell. Or placed in your configuration file for your shell of choice. Such as
-.IR ~/.bashrc
-or
-.IR ~/.zshrc
-, restarting your session will make these settings persistent for future use of
-.B RTV.
+.BR $XDG_CONFIG_HOME/rtv/refresh-token
+After you login to reddit, your most recent OAuth refresh token will be stored
+for future sessions. You can disable this behavior by setting the option
+\fBpersistent=False\fR in your configuration file.
+.SH ENVIRONMENT
 .TP
 .BR RTV_EDITOR
-Setting
-.IR export
-.IR RTV_EDITOR=gedit 
-will open gedit as your editor when composing comments and replies.
-If no editor is set,
-.B RTV
-will fall back to the environment's default
-.IR $EDITOR
-, and as an extra fall back nano.
-
+Specifies which text editor RTV will attempt to use when editing comments and
+posts. RTV will fallback to \fI$EDITOR\fR if the editor is unspecified.
 .TP
-.BR BROWSER 
-.B RTV
-can open links in any browser you wish to use. Most system's will open the default such as Firefox or Chrome. But if you prefer to enjoy a terminal only experience, you can use
-.IR $BROWSER
-to set a browser such as w3m, lynx, and elinks. For example w3m would be
-.IR export
-.IR BROWSER=w3m
-
-
-.PP
+.BR BROWSER
+Specifies which webbrowser RTV will attempt to use when opening links.
+This can be set to a terminal browser (w3m, lynx, elinks, etc.) for a true
+terminal experience. RTV will fallback to the system's default browser.
 .SH AUTHOR
-Written by Johnathan "ShaggyTwoDope" Jenkins <twodopeshaggy@gmail.com> (2015).
-.SH REPORTING BUGS
-Report bugs to
-.I https://github.com/michael-lazar/rtv/issues
-.SH COPYRIGHT
-Copyright \(co 2015 michael-lazar
-License MIT.
+Man page written by Johnathan "ShaggyTwoDope" Jenkins <twodopeshaggy@gmail.com> (2015).
+.SH BUGS
+Report bugs to \fIhttps://github.com/michael-lazar/rtv/issues\fR
+.SH LICENSE
+{license}
 .PP
+{copyright}

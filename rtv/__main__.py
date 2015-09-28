@@ -61,7 +61,7 @@ def main():
 
     try:
         print('Connecting...')
-        reddit = praw.Reddit(user_agent=AGENT)
+        reddit = praw.Reddit(user_agent=AGENT.format(__version__))
         reddit.config.decode_html_entities = False
         with curses_session() as stdscr:
             oauth = OAuthTool(reddit, stdscr, LoadScreen(stdscr))
