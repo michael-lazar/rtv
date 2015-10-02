@@ -57,20 +57,16 @@ def load_config():
     """
 
     config = configparser.ConfigParser()
-    if os.path.exists(CONFIG):
-        config.read(CONFIG)
+    config.read(CONFIG)
 
     config_dict = {}
     if config.has_section('rtv'):
         config_dict = dict(config.items('rtv'))
 
     # Convert 'true'/'false' to boolean True/False
-    if 'ascii' in config_dict:
-        config_dict['ascii'] = config.getboolean('rtv', 'ascii')
-    if 'clear_auth' in config_dict:
-        config_dict['clear_auth'] = config.getboolean('rtv', 'clear_auth')
-    if 'persistent' in config_dict:
-        config_dict['persistent'] = config.getboolean('rtv', 'persistent')
+    for name in ['ascii', 'clear_auth', 'persistent']:
+        if name in config_dict:
+            config_dict[name] = config.getboolean('rtv', name)
 
     return config_dict
 
@@ -78,8 +74,6 @@ def load_refresh_token(filename=TOKEN):
     if os.path.exists(filename):
         with open(filename) as fp:
             return fp.read().strip()
-    else:
-        return None
 
 def save_refresh_token(token, filename=TOKEN):
     with open(filename, 'w+') as fp:
