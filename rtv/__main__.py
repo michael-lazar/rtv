@@ -63,7 +63,8 @@ def main():
         print('Connecting...')
         reddit = praw.Reddit(user_agent=AGENT.format(version=__version__))
         reddit.config.decode_html_entities = False
-        with curses_session() as stdscr:
+
+        def loop(stdscr):
             oauth = OAuthTool(reddit, stdscr, LoadScreen(stdscr))
             if oauth.refresh_token:
                 oauth.authorize()
@@ -71,8 +72,11 @@ def main():
             if args.link:
                 page = SubmissionPage(stdscr, reddit, oauth, url=args.link)
                 page.loop()
+
             page = SubredditPage(stdscr, reddit, oauth, args.subreddit)
             page.loop()
+
+        curses_session(loop)
     except (praw.errors.OAuthAppRequired, praw.errors.OAuthInvalidToken):
         print('Invalid OAuth data')
     except praw.errors.NotFound:

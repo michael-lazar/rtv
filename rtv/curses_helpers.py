@@ -318,55 +318,26 @@ def prompt_input(window, prompt, hide=False):
     return out
 
 
-@contextmanager
-def curses_session():
+def curses_session(func):
     """
     Setup terminal and initialize curses.
     """
 
-    try:
-        # Curses must wait for some time after the Escape key is pressed to
-        # check if it is the beginning of an escape sequence indicating a
-        # special key. The default wait time is 1 second, which means that
-        # getch() will not return the escape key (27) until a full second
-        # after it has been pressed.
-        # Turn this down to 25 ms, which is close to what VIM uses.
-        # http://stackoverflow.com/questions/27372068
-        os.environ['ESCDELAY'] = '25'
+    # Curses must wait for some time after the Escape key is pressed to
+    # check if it is the beginning of an escape sequence indicating a
+    # special key. The default wait time is 1 second, which means that
+    # getch() will not return the escape key (27) until a full second
+    # after it has been pressed.
+    # Turn this down to 25 ms, which is close to what VIM uses.
+    # http://stackoverflow.com/questions/27372068
+    os.environ['ESCDELAY'] = '25'
 
-        # Initialize curses
-        stdscr = curses.initscr()
-
-        # Turn off echoing of keys, and enter cbreak mode,
-        # where no buffering is performed on keyboard input
-        curses.noecho()
-        curses.cbreak()
-
-        # In keypad mode, escape sequences for special keys
-        # (like the cursor keys) will be interpreted and
-        # a special value like curses.KEY_LEFT will be returned
-        stdscr.keypad(1)
-
-        # Start color, too.  Harmless if the terminal doesn't have
-        # color; user can test with has_color() later on.  The try/catch
-        # works around a minor bit of over-conscientiousness in the curses
-        # module -- the error return from C start_color() is ignorable.
-        try:
-            curses.start_color()
-        except:
-            pass
-
+    def inner(stdscr):
         Color.init()
 
         # Hide blinking cursor
         curses.curs_set(0)
 
-        yield stdscr
+        func(stdscr)
 
-    finally:
-
-        if stdscr is not None:
-            stdscr.keypad(0)
-            curses.echo()
-            curses.nocbreak()
-            curses.endwin()
+    curses.wrapper(inner)
