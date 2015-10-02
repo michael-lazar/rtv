@@ -1,4 +1,5 @@
 import os
+import signal
 import time
 import threading
 import curses
@@ -210,6 +211,37 @@ class LoadScreen(object):
                 window.addstr(1, 1, message + trail[:i])
                 window.refresh()
                 time.sleep(interval)
+
+
+class KeyboardInterruptible(object):
+
+    """
+    Make code block interruptible with Ctrl-C and display info message.
+    """
+
+    @classmethod
+    def ignore_interrupt(cls):
+        cls._keyboard_interrupt = signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+    def __init__(self, stdscr):
+        self._stdscr = stdscr
+        self._enabled = True
+
+    def __enter__(self):
+        self._previous_handler = signal.signal(signal.SIGINT, self._keyboard_interrupt)
+        return self
+
+    def disable(self):
+        signal.signal(signal.SIGINT, self._previous_handler)
+        self._enabled = False
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self._enabled:
+            self.disable()
+
+        if exc_type is KeyboardInterrupt:
+            show_notification(self._stdscr, ['Cancelled'], delay=0.1)
+            return True
 
 
 class Color(object):
