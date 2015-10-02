@@ -79,12 +79,15 @@ def add_line(window, text, row=None, col=None, attr=None):
     window.addstr(row, col, text, *params)
 
 
-def show_notification(stdscr, message):
+def show_notification(stdscr, message, delay=0):
     """
-    Overlay a message box on the center of the screen and wait for user input.
+    Overlay a message box on the center of the screen and wait for user input
+    or sleep for fixed number of seconds.
 
     Params:
         message (list): List of strings, one per line.
+        delay (float): If set to zero, wait for keypress, else specifies
+                       number of seconds to sleep before returning.
     """
 
     n_rows, n_cols = stdscr.getmaxyx()
@@ -107,13 +110,14 @@ def show_notification(stdscr, message):
     for index, line in enumerate(message, start=1):
         add_line(window, line, index, 1)
     window.refresh()
-    ch = stdscr.getch()
+    if delay == 0:
+        stdscr.getch()
+    else:
+        time.sleep(delay)
 
     window.clear()
     window = None
     stdscr.refresh()
-
-    return ch
 
 
 def show_help(stdscr):
