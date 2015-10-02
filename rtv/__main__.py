@@ -71,8 +71,7 @@ def main():
             if args.link:
                 page = SubmissionPage(stdscr, reddit, oauth, url=args.link)
                 page.loop()
-            subreddit = args.subreddit or 'front'
-            page = SubredditPage(stdscr, reddit, oauth, subreddit)
+            page = SubredditPage(stdscr, reddit, oauth, args.subreddit)
             page.loop()
     except (praw.errors.OAuthAppRequired, praw.errors.OAuthInvalidToken):
         print('Invalid OAuth data')

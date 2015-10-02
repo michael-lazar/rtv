@@ -32,7 +32,7 @@ def build_parser():
         '-V', '--version', action='version', version='rtv '+__version__,
     )
     parser.add_argument(
-        '-s', dest='subreddit',
+        '-s', dest='subreddit', default='front',
         help='name of the subreddit that will be opened on start')
     parser.add_argument(
         '-l', dest='link',
