@@ -129,7 +129,7 @@ class LoadScreen(object):
     """
     Display a loading dialog while waiting for a blocking action to complete.
 
-    This class spins off a seperate thread to animate the loading screen in the
+    This class spins off a separate thread to animate the loading screen in the
     background.
 
     Usage:

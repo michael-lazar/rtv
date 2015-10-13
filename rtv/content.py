@@ -20,7 +20,7 @@ class BaseContent(object):
 
         while True:
             if step < 0 and index < 0:
-                # Hack to prevent displaying negative indicies if iterating in
+                # Hack to prevent displaying negative indices if iterating in
                 # the negative direction.
                 break
             try:

@@ -57,7 +57,7 @@ Features
 * Unicode support has been vastly improved and is now turned on by default. Ascii only mode can be toggled with the `--ascii` command line flag.
 * Added pageup and pagedown with the `m` and `n` keys.
 * Support for terminal based webbrowsers such as links and w3m.
-* Browsing history is now persistant and stored in `$XDG_CACHE_HOME`.
+* Browsing history is now persistent and stored in `$XDG_CACHE_HOME`.
 
 Bugfixes
 
