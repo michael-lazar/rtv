@@ -188,7 +188,7 @@ def strip_subreddit_url(permalink):
     """
     Strip a subreddit name from the subreddit's permalink.
 
-    This is used to avoid submission.subreddit.url making a seperate API call.
+    This is used to avoid submission.subreddit.url making a separate API call.
     """
 
     subreddit = permalink.split('/')[4]
