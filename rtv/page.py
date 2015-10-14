@@ -265,7 +265,15 @@ class BasePage(object):
 
     @BaseController.register('q')
     def exit(self):
-        sys.exit()
+        """
+        Prompt to exit the application.
+        """
+
+        ch = prompt_input(self.stdscr, "Do you really want to quit? (y/n): ")
+        if ch == 'y':
+            sys.exit()
+        elif ch != 'n':
+            curses.flash()
 
     @BaseController.register('?')
     def help(self):
@@ -350,8 +358,12 @@ class BasePage(object):
         """
 
         if self.reddit.is_oauth_session():
-            self.oauth.clear_oauth_data()
-            show_notification(self.stdscr, ['Logged out'])
+            ch = prompt_input(self.stdscr, "Log out? (y/n): ")
+            if ch == 'y':
+                self.reddit.clear_authentication()
+                show_notification(self.stdscr, ['Logged out'])
+            elif ch != 'n':
+                curses.flash()
         else:
             self.oauth.authorize()
 
@@ -370,7 +382,7 @@ class BasePage(object):
             curses.flash()
             return
 
-        prompt = 'Are you sure you want to delete this? (y/n):'
+        prompt = 'Are you sure you want to delete this? (y/n): '
         char = prompt_input(self.stdscr, prompt)
         if char != 'y':
             show_notification(self.stdscr, ['Aborted'])
@@ -445,18 +457,6 @@ class BasePage(object):
         while self.stdscr.getch() != -1:
             continue
         self.stdscr.nodelay(0)
-
-    def logout(self):
-        """
-        Prompt to log out of the user's account.
-        """
-
-        ch = prompt_input(self.stdscr, "Log out? (y/n):")
-        if ch == 'y':
-            self.reddit.clear_authentication()
-            show_notification(self.stdscr, ['Logged out'])
-        elif ch != 'n':
-            curses.flash()
 
     @property
     def safe_call(self):
