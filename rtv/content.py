@@ -131,7 +131,7 @@ class BaseContent(object):
         data['flair'] = flair
         data['url_full'] = sub.url
 
-        if flair is not None and flair[0] != '[':
+        if flair and not flair.startswith('['):
             data['flair'] = '[{}]'.format(flair.strip())
 
         if data['permalink'].split('/r/')[-1] == data['url_full'].split('/r/')[-1]:
@@ -140,7 +140,7 @@ class BaseContent(object):
 
         elif reddit_link.match(data['url_full']):
             data['url_type'] = 'x-post'
-            data['url'] = 'x-post via {}'.format(strip_subreddit_url(data['url_full']))
+            data['url'] = 'x-post via {}'.format(data['subreddit'])
 
         else:
             data['url_type'] = 'external'
@@ -166,6 +166,7 @@ class BaseContent(object):
         data['title'] = subscription.title
 
         return data
+
 
 class SubmissionContent(BaseContent):
     """
@@ -387,6 +388,7 @@ class SubredditContent(BaseContent):
 
         return data
 
+
 class SubscriptionContent(BaseContent):
 
     def __init__(self, subscriptions, loader):
@@ -409,8 +411,8 @@ class SubscriptionContent(BaseContent):
 
     def get(self, index, n_cols=70):
         """
-        Grab the `i`th subscription, with the title field formatted to fit inside
-        of a window of width `n_cols`
+        Grab the `i`th subscription, with the title field formatted to fit
+        inside of a window of width `n_cols`
         """
 
         if index < 0:
