@@ -131,9 +131,12 @@ class BaseContent(object):
         data['flair'] = flair
         data['url_full'] = sub.url
 
+        if flair is not None and flair[0] != '[':
+            data['flair'] = '[{}]'.format(flair.strip())
+
         if data['permalink'].split('/r/')[-1] == data['url_full'].split('/r/')[-1]:
             data['url_type'] = 'selfpost'
-            data['url'] = 'selfpost'
+            data['url'] = 'self.{}'.format(data['subreddit'])
 
         elif reddit_link.match(data['url_full']):
             data['url_type'] = 'x-post'
