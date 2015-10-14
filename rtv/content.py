@@ -5,6 +5,7 @@ import requests
 import re
 
 from .exceptions import SubmissionError, SubredditError, SubscriptionError, AccountError
+from .curses_helpers import KeyboardInterruptible
 from .helpers import humanize_timestamp, wrap_text, strip_subreddit_url
 
 __all__ = ['SubredditContent', 'SubmissionContent', 'SubscriptionContent']
@@ -185,6 +186,10 @@ class SubmissionContent(BaseContent):
         self._submission_data = submission_data
         self._comment_data = [self.strip_praw_comment(c) for c in comments]
 
+    @property
+    def keyboard_interruptible(self):
+        return KeyboardInterruptible(self._loader._stdscr)
+
     @classmethod
     def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=8,
                  order=None):
@@ -264,13 +269,13 @@ class SubmissionContent(BaseContent):
             self._comment_data[index:index + 1] = data['cache']
 
         elif data['type'] == 'MoreComments':
-            with self._loader():
+            with self.keyboard_interruptible as k, self._loader():
                 comments = data['object'].comments(update=True)
+                k.disable()
                 comments = self.flatten_comments(comments,
                                                  root_level=data['level'])
                 comment_data = [self.strip_praw_comment(c) for c in comments]
                 self._comment_data[index:index + 1] = comment_data
-
         else:
             raise ValueError('% type not recognized' % data['type'])
 

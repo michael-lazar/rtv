@@ -2,6 +2,7 @@ import os
 import sys
 import locale
 import logging
+import signal
 
 import requests
 import praw
@@ -10,7 +11,7 @@ import tornado
 
 from . import config
 from .exceptions import SubmissionError, SubredditError, SubscriptionError, ProgramError
-from .curses_helpers import curses_session, LoadScreen
+from .curses_helpers import curses_session, KeyboardInterruptible, LoadScreen
 from .submission import SubmissionPage
 from .subreddit import SubredditPage
 from .docs import AGENT
@@ -63,17 +64,24 @@ def main():
         print('Connecting...')
         reddit = praw.Reddit(user_agent=AGENT.format(version=__version__))
         reddit.config.decode_html_entities = False
-        with curses_session() as stdscr:
+        KeyboardInterruptible.ignore_interrupt()
+
+        def loop(stdscr):
             oauth = OAuthTool(reddit, stdscr, LoadScreen(stdscr))
             if oauth.refresh_token:
                 oauth.authorize()
 
-            if args.link:
-                page = SubmissionPage(stdscr, reddit, oauth, url=args.link)
+            with KeyboardInterruptible(stdscr) as k:
+                if args.link:
+                    page = SubmissionPage(stdscr, reddit, oauth, url=args.link)
+                else:
+                    page = SubredditPage(stdscr, reddit, oauth, args.subreddit)
+                k.disable()
                 page.loop()
-            subreddit = args.subreddit or 'front'
-            page = SubredditPage(stdscr, reddit, oauth, subreddit)
-            page.loop()
+
+        curses_session(loop)
+    except requests.exceptions.RequestException:
+        print('Request failed')
     except (praw.errors.OAuthAppRequired, praw.errors.OAuthInvalidToken):
         print('Invalid OAuth data')
     except praw.errors.NotFound:
@@ -87,8 +95,6 @@ def main():
     except ProgramError as e:
         print('Error: could not open file with program "{}", '
               'try setting RTV_EDITOR'.format(e.name))
-    except KeyboardInterrupt:
-        pass
     finally:
         # Ensure sockets are closed to prevent a ResourceWarning
         reddit.handler.http.close()

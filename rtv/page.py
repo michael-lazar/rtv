@@ -9,8 +9,8 @@ import requests
 from kitchen.text.display import textual_width
 
 from .helpers import open_editor
-from .curses_helpers import (Color, show_notification, show_help, prompt_input,
-                             add_line)
+from .curses_helpers import (Color, KeyboardInterruptible, show_notification,
+                             show_help, prompt_input, add_line)
 from .docs import COMMENT_EDIT_FILE, SUBMISSION_FILE
 
 __all__ = ['Navigator', 'BaseController', 'BasePage']
@@ -149,10 +149,9 @@ class Navigator(object):
 
         try:
             self._page_cb(page_index)
+            return True
         except IndexError:
             return False
-        else:
-            return True
 
 
 class SafeCaller(object):
@@ -474,6 +473,10 @@ class BasePage(object):
             #>>>     on_success()
         """
         return SafeCaller(self.stdscr)
+
+    @property
+    def keyboard_interruptible(self):
+        return KeyboardInterruptible(self.stdscr)
 
     def draw(self):
 

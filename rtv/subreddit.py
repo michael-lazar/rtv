@@ -105,11 +105,14 @@ class SubredditPage(BasePage):
         "Select the current submission to view posts"
 
         data = self.content.get(self.nav.absolute_index)
-        page = SubmissionPage(self.stdscr, self.reddit, self.oauth, url=data['permalink'])
-        page.loop()
-        if data['url_type'] == 'selfpost':
-            global history
-            history.add(data['url_full'])
+
+        with self.keyboard_interruptible as k:
+            page = SubmissionPage(self.stdscr, self.reddit, self.oauth, url=data['permalink'])
+            k.disable()
+            page.loop()
+            if data['url_type'] == 'selfpost':
+                global history
+                history.add(data['url_full'])
 
     @SubredditController.register(curses.KEY_ENTER, 10, 'o')
     def open_link(self):
@@ -120,8 +123,10 @@ class SubredditPage(BasePage):
         global history
         history.add(url)
         if data['url_type'] in ['x-post', 'selfpost']:
-            page = SubmissionPage(self.stdscr, self.reddit, self.oauth, url=url)
-            page.loop()
+            with self.keyboard_interruptible as k:
+                page = SubmissionPage(self.stdscr, self.reddit, self.oauth, url=url)
+                k.disable()
+                page.loop()
         else:
             open_browser(url)
 

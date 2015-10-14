@@ -1,4 +1,5 @@
 import os
+import signal
 import time
 import threading
 import curses
@@ -79,12 +80,15 @@ def add_line(window, text, row=None, col=None, attr=None):
     window.addstr(row, col, text, *params)
 
 
-def show_notification(stdscr, message):
+def show_notification(stdscr, message, delay=0):
     """
-    Overlay a message box on the center of the screen and wait for user input.
+    Overlay a message box on the center of the screen and wait for user input
+    or sleep for fixed number of seconds.
 
     Params:
         message (list): List of strings, one per line.
+        delay (float): If set to zero, wait for keypress, else specifies
+                       number of seconds to sleep before returning.
     """
 
     n_rows, n_cols = stdscr.getmaxyx()
@@ -107,13 +111,14 @@ def show_notification(stdscr, message):
     for index, line in enumerate(message, start=1):
         add_line(window, line, index, 1)
     window.refresh()
-    ch = stdscr.getch()
+    if delay == 0:
+        stdscr.getch()
+    else:
+        time.sleep(delay)
 
     window.clear()
     window = None
     stdscr.refresh()
-
-    return ch
 
 
 def show_help(stdscr):
@@ -206,6 +211,37 @@ class LoadScreen(object):
                 window.addstr(1, 1, message + trail[:i])
                 window.refresh()
                 time.sleep(interval)
+
+
+class KeyboardInterruptible(object):
+
+    """
+    Make code block interruptible with Ctrl-C and display info message.
+    """
+
+    @classmethod
+    def ignore_interrupt(cls):
+        cls._keyboard_interrupt = signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+    def __init__(self, stdscr):
+        self._stdscr = stdscr
+        self._enabled = True
+
+    def __enter__(self):
+        self._previous_handler = signal.signal(signal.SIGINT, self._keyboard_interrupt)
+        return self
+
+    def disable(self):
+        signal.signal(signal.SIGINT, self._previous_handler)
+        self._enabled = False
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self._enabled:
+            self.disable()
+
+        if exc_type is KeyboardInterrupt:
+            show_notification(self._stdscr, ['Cancelled'], delay=0.1)
+            return True
 
 
 class Color(object):
@@ -314,55 +350,26 @@ def prompt_input(window, prompt, hide=False):
     return out
 
 
-@contextmanager
-def curses_session():
+def curses_session(func):
     """
     Setup terminal and initialize curses.
     """
 
-    try:
-        # Curses must wait for some time after the Escape key is pressed to
-        # check if it is the beginning of an escape sequence indicating a
-        # special key. The default wait time is 1 second, which means that
-        # getch() will not return the escape key (27) until a full second
-        # after it has been pressed.
-        # Turn this down to 25 ms, which is close to what VIM uses.
-        # http://stackoverflow.com/questions/27372068
-        os.environ['ESCDELAY'] = '25'
+    # Curses must wait for some time after the Escape key is pressed to
+    # check if it is the beginning of an escape sequence indicating a
+    # special key. The default wait time is 1 second, which means that
+    # getch() will not return the escape key (27) until a full second
+    # after it has been pressed.
+    # Turn this down to 25 ms, which is close to what VIM uses.
+    # http://stackoverflow.com/questions/27372068
+    os.environ['ESCDELAY'] = '25'
 
-        # Initialize curses
-        stdscr = curses.initscr()
-
-        # Turn off echoing of keys, and enter cbreak mode,
-        # where no buffering is performed on keyboard input
-        curses.noecho()
-        curses.cbreak()
-
-        # In keypad mode, escape sequences for special keys
-        # (like the cursor keys) will be interpreted and
-        # a special value like curses.KEY_LEFT will be returned
-        stdscr.keypad(1)
-
-        # Start color, too.  Harmless if the terminal doesn't have
-        # color; user can test with has_color() later on.  The try/catch
-        # works around a minor bit of over-conscientiousness in the curses
-        # module -- the error return from C start_color() is ignorable.
-        try:
-            curses.start_color()
-        except:
-            pass
-
+    def inner(stdscr):
         Color.init()
 
         # Hide blinking cursor
         curses.curs_set(0)
 
-        yield stdscr
+        func(stdscr)
 
-    finally:
-
-        if stdscr is not None:
-            stdscr.keypad(0)
-            curses.echo()
-            curses.nocbreak()
-            curses.endwin()
+    curses.wrapper(inner)
