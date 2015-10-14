@@ -140,7 +140,8 @@ class BaseContent(object):
 
         elif reddit_link.match(data['url_full']):
             data['url_type'] = 'x-post'
-            data['url'] = 'x-post via {}'.format(data['subreddit'])
+            data['url'] = 'x-post via {}'.format(strip_subreddit_url(
+                                                 data['url_full'])[3:])
 
         else:
             data['url_type'] = 'external'
