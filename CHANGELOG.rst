@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.6: http://github.com/michael-lazar/rtv/releases/tag/v1.6
 .. _1.5: http://github.com/michael-lazar/rtv/releases/tag/v1.5
 .. _1.4.2: http://github.com/michael-lazar/rtv/releases/tag/v1.4.2
 .. _1.4.1: http://github.com/michael-lazar/rtv/releases/tag/v1.4.1
@@ -10,6 +11,21 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+-----------------
+1.6_ (2015-10-14)
+-----------------
+Features
+
+* Switched all authentication to OAuth.
+* Can now list the version with `rtv --version`.
+* Added a man page.
+
+Documentation
+
+* Added missing docs for the `i` key.
+* New documentation for OAuth.
+* New FAQ section.
 
 -----------------
 1.5_ (2015-08-26)

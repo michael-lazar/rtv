@@ -54,8 +54,8 @@ def main():
     data['copyright'] = rtv.__copyright__
     # Escape dashes is all of the sections
     data = {k:v.replace('-', r'\-') for k,v in data.items()}
-    print('Reading from %s/templates/rtv.1' % ROOT)
-    with open(os.path.join(ROOT, 'templates/rtv.1')) as fp:
+    print('Reading from %s/templates/rtv.1.template' % ROOT)
+    with open(os.path.join(ROOT, 'templates/rtv.1.template')) as fp:
         template = fp.read()
     print('Populating template')
     out = template.format(**data)
