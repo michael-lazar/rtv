@@ -9,7 +9,8 @@ def history_path():
     Create the path to the history log
     """
     HOME = os.path.expanduser('~')
-    XDG_CONFIG_HOME = os.getenv('XDG_CACHE_HOME', os.path.join(HOME, '.config'))
+    XDG_CONFIG_HOME = os.getenv('XDG_CACHE_HOME',
+                                os.path.join(HOME, '.config'))
     path = os.path.join(XDG_CONFIG_HOME, 'rtv')
     if not os.path.exists(path):
         os.makedirs(path)

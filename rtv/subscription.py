@@ -1,6 +1,4 @@
 import curses
-import sys
-import time
 import logging
 
 from .content import SubscriptionContent
@@ -10,8 +8,10 @@ from .curses_helpers import (Color, LoadScreen, add_line)
 __all__ = ['SubscriptionController', 'SubscriptionPage']
 _logger = logging.getLogger(__name__)
 
+
 class SubscriptionController(BaseController):
     character_map = {}
+
 
 class SubscriptionPage(BasePage):
 
@@ -44,7 +44,8 @@ class SubscriptionPage(BasePage):
     def store_selected_subreddit(self):
         "Store the selected subreddit and return to the subreddit page"
 
-        self.selected_subreddit_data = self.content.get(self.nav.absolute_index)
+        self.selected_subreddit_data = self.content.get(
+            self.nav.absolute_index)
         self.active = False
 
     @SubscriptionController.register(curses.KEY_LEFT, 'h', 's')
