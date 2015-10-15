@@ -3,7 +3,7 @@ import setuptools
 
 from version import __version__ as version
 
-requirements = ['tornado', 'praw>=3.1.0', 'six', 'requests', 'kitchen']
+requirements = ['tornado', 'praw>=3.3.0', 'six', 'requests', 'kitchen']
 
 # Python 2: add required concurrent.futures backport from Python 3.2
 if sys.version_info.major <= 2:

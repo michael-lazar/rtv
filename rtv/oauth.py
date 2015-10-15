@@ -16,6 +16,8 @@ oauth_state = None
 oauth_code = None
 oauth_error = None
 
+template_path = os.path.join(os.path.dirname(__file__), 'templates')
+
 class AuthHandler(web.RequestHandler):
 
     def get(self):
@@ -44,7 +46,7 @@ class OAuthTool(object):
 
         # Initialize Tornado webapp
         routes = [('/', AuthHandler)]
-        self.callback_app = web.Application(routes, template_path='rtv/templates')
+        self.callback_app = web.Application(routes, template_path=template_path)
 
         self.reddit.set_oauth_app_info(config.oauth_client_id,
                                        config.oauth_client_secret,
