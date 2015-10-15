@@ -20,6 +20,12 @@ Features
 * Switched all authentication to OAuth.
 * Can now list the version with `rtv --version`.
 * Added a man page.
+* Added confirmation prompt when quitting.
+* Submissions now display the index in front of their title.
+
+Bugfixes
+
+* Streamlined error logging.
 
 Documentation
 
