@@ -135,13 +135,17 @@ class BaseContent(object):
         data['nsfw'] = sub.over_18
         data['index'] = None  # This is filled in later by the method caller
 
+        if flair and not flair.startswith('['):
+            data['flair'] = '[{}]'.format(flair.strip())
+
         if data['permalink'].split('/r/')[-1] == data['url_full'].split('/r/')[-1]:
             data['url_type'] = 'selfpost'
-            data['url'] = 'selfpost'
+            data['url'] = 'self.{}'.format(data['subreddit'])
 
         elif reddit_link.match(data['url_full']):
             data['url_type'] = 'x-post'
-            data['url'] = 'x-post via {}'.format(strip_subreddit_url(data['url_full']))
+            data['url'] = 'self.{}'.format(strip_subreddit_url(
+                                           data['url_full'])[3:])
 
         else:
             data['url_type'] = 'external'
@@ -163,6 +167,7 @@ class BaseContent(object):
         data['title'] = subscription.title
 
         return data
+
 
 class SubmissionContent(BaseContent):
     """
@@ -387,6 +392,7 @@ class SubredditContent(BaseContent):
 
         return data
 
+
 class SubscriptionContent(BaseContent):
 
     def __init__(self, subscriptions, loader):
@@ -409,8 +415,8 @@ class SubscriptionContent(BaseContent):
 
     def get(self, index, n_cols=70):
         """
-        Grab the `i`th subscription, with the title field formatted to fit inside
-        of a window of width `n_cols`
+        Grab the `i`th subscription, with the title field formatted to fit
+        inside of a window of width `n_cols`
         """
 
         if index < 0:
