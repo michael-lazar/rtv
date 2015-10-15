@@ -3,13 +3,14 @@ import sys
 import locale
 import logging
 
-import requests
 import praw
 import praw.errors
 import tornado
+import requests
+from requests import exceptions
 
 from . import config
-from .exceptions import SubmissionError, SubredditError, SubscriptionError, ProgramError
+from .exceptions import RTVError
 from .curses_helpers import curses_session, LoadScreen
 from .submission import SubmissionPage
 from .subreddit import SubredditPage
@@ -18,6 +19,7 @@ from .oauth import OAuthTool
 from .__version__ import __version__
 
 __all__ = []
+_logger = logging.getLogger(__name__)
 
 # Pycharm debugging note:
 # You can use pycharm to debug a curses application by launching rtv in a
@@ -34,11 +36,9 @@ def main():
     locale.setlocale(locale.LC_ALL, '')
 
     # Set the terminal title
+    # TODO: Need to clear the title when the program exits
     title = 'rtv {0}'.format(__version__)
-    if os.name == 'nt':
-        os.system('title {0}'.format(title))
-    else:
-        sys.stdout.write("\x1b]2;{0}\x07".format(title))
+    sys.stdout.write("\x1b]2;{0}\x07".format(title))
 
     # Fill in empty arguments with config file values. Parameters explicitly
     # typed on the command line will take priority over config file params.
@@ -54,10 +54,13 @@ def main():
         config.unicode = False
     if not args.persistent:
         config.persistent = False
-    if args.log:
-        logging.basicConfig(level=logging.DEBUG, filename=args.log)
     if args.clear_auth:
         config.clear_refresh_token()
+
+    if args.log:
+        logging.basicConfig(level=logging.DEBUG, filename=args.log)
+    else:
+        logging.root.addHandler(logging.NullHandler())
 
     try:
         print('Connecting...')
@@ -74,19 +77,9 @@ def main():
             subreddit = args.subreddit or 'front'
             page = SubredditPage(stdscr, reddit, oauth, subreddit)
             page.loop()
-    except (praw.errors.OAuthAppRequired, praw.errors.OAuthInvalidToken):
-        print('Invalid OAuth data')
-    except praw.errors.NotFound:
-        print('HTTP Error: 404 Not Found')
-    except praw.errors.HTTPException:
-        print('Connection timeout')
-    except SubmissionError as e:
-        print('Could not reach submission URL: {}'.format(e.url))
-    except SubredditError as e:
-        print('Could not reach subreddit: {}'.format(e.name))
-    except ProgramError as e:
-        print('Error: could not open file with program "{}", '
-              'try setting RTV_EDITOR'.format(e.name))
+    except (exceptions.RequestException, praw.errors.PRAWException, RTVError) as e:
+        _logger.exception(e)
+        print('{}: {}'.format(type(e).__name__, e))
     except KeyboardInterrupt:
         pass
     finally:

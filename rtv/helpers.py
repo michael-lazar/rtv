@@ -70,7 +70,7 @@ def open_editor(data=''):
         try:
             subprocess.Popen([editor, fp.name]).wait()
         except OSError:
-            raise ProgramError(editor)
+            raise ProgramError('Could not open file with %s' % editor)
         curses.doupdate()
 
         # Open a second file object to read. This appears to be necessary in

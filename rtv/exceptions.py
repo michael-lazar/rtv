@@ -13,15 +13,9 @@ class AccountError(RTVError):
 class SubmissionError(RTVError):
     "Submission could not be loaded"
 
-    def __init__(self, url):
-        self.url = url
-
 
 class SubredditError(RTVError):
     "Subreddit could not be reached"
-
-    def __init__(self, name):
-        self.name = name
 
 
 class SubscriptionError(RTVError):
@@ -30,6 +24,3 @@ class SubscriptionError(RTVError):
 
 class ProgramError(RTVError):
     "Problem executing an external program"
-
-    def __init__(self, name):
-        self.name = name

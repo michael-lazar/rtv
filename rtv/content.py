@@ -194,7 +194,7 @@ class SubmissionContent(BaseContent):
                 url = url.replace('http:', 'https:')
                 submission = reddit.get_submission(url, comment_sort=order)
         except (praw.errors.APIException, praw.errors.NotFound):
-            raise SubmissionError(url)
+            raise SubmissionError('Could not load %s' % url)
 
         return cls(submission, loader, indent_size, max_indent_level, order)
 
@@ -299,7 +299,7 @@ class SubredditContent(BaseContent):
                 praw.errors.RedirectException, praw.errors.Forbidden,
                 praw.errors.InvalidSubreddit, praw.errors.NotFound,
                 IndexError):
-            raise SubredditError(name)
+            raise SubredditError('Could not reach subreddit %s' % name)
 
     @classmethod
     def from_name(cls, reddit, name, loader, order=None, query=None):
@@ -317,11 +317,11 @@ class SubredditContent(BaseContent):
         display_name = '/r/{}'.format(name)
 
         if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
-            raise SubredditError(name)
+            raise SubredditError('Unrecognized order "%s"' % order)
 
         if name == 'me':
             if not reddit.is_logged_in():
-                raise AccountError
+                raise AccountError('Could not access user account')
             elif order:
                 submissions = reddit.user.get_submitted(sort=order)
             else:
@@ -403,7 +403,7 @@ class SubscriptionContent(BaseContent):
             with loader():
                 subscriptions = reddit.get_my_subreddits(limit=None)
         except praw.errors.APIException:
-            raise SubscriptionError()
+            raise SubscriptionError('Unable to load subscriptions')
 
         return cls(subscriptions, loader)
 
