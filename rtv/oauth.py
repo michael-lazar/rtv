@@ -44,7 +44,7 @@ class OAuthTool(object):
 
         # Initialize Tornado webapp
         routes = [('/', AuthHandler)]
-        self.callback_app = web.Application(routes, template_path='templates')
+        self.callback_app = web.Application(routes, template_path='rtv/templates')
 
         self.reddit.set_oauth_app_info(config.oauth_client_id,
                                        config.oauth_client_secret,

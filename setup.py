@@ -20,7 +20,7 @@ setuptools.setup(
     license='MIT',
     keywords='reddit terminal praw curses',
     packages=['rtv'],
-    include_package_data=True,
+    package_data={'rtv': ['templates/index.html']},
     data_files=[("share/man/man1", ["rtv.1"])],
     install_requires=requirements,
     entry_points={'console_scripts': ['rtv=rtv.__main__:main']},
