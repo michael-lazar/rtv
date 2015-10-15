@@ -360,7 +360,7 @@ class BasePage(object):
         if self.reddit.is_oauth_session():
             ch = prompt_input(self.stdscr, "Log out? (y/n): ")
             if ch == 'y':
-                self.reddit.clear_authentication()
+                self.oauth.clear_oauth_data()
                 show_notification(self.stdscr, ['Logged out'])
             elif ch != 'n':
                 curses.flash()

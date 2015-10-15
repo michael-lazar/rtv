@@ -106,7 +106,7 @@ class OAuthTool(object):
         except (praw.errors.OAuthAppRequired, praw.errors.OAuthInvalidToken):
             show_notification(self.stdscr, ['Invalid OAuth data'])
         else:
-            message = ['Welcome, {}!'.format(self.reddit.user.name)]
+            message = ['Welcome {}!'.format(self.reddit.user.name)]
             show_notification(self.stdscr, message)
 
     def clear_oauth_data(self):
