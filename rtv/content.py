@@ -135,17 +135,19 @@ class BaseContent(object):
         data['nsfw'] = sub.over_18
         data['index'] = None  # This is filled in later by the method caller
 
-        if data['permalink'].split('/r/')[-1] == data['url_full'].split('/r/')[-1]:
+        if data['flair'] and not data['flair'].startswith('['):
+            data['flair'] = '[{}]'.format(data['flair'].strip())
+
+        url_full = data['url_full']
+        if data['permalink'].split('/r/')[-1] == url_full.split('/r/')[-1]:
             data['url_type'] = 'selfpost'
-            data['url'] = 'selfpost'
-
-        elif reddit_link.match(data['url_full']):
+            data['url'] = 'self.{}'.format(data['subreddit'])
+        elif reddit_link.match(url_full):
             data['url_type'] = 'x-post'
-            data['url'] = 'x-post via {}'.format(strip_subreddit_url(data['url_full']))
-
+            data['url'] = 'self.{}'.format(strip_subreddit_url(url_full)[3:])
         else:
             data['url_type'] = 'external'
-            data['url'] = data['url_full']
+            data['url'] = url_full
 
         return data
 
@@ -163,6 +165,7 @@ class BaseContent(object):
         data['title'] = subscription.title
 
         return data
+
 
 class SubmissionContent(BaseContent):
     """
@@ -387,6 +390,7 @@ class SubredditContent(BaseContent):
 
         return data
 
+
 class SubscriptionContent(BaseContent):
 
     def __init__(self, subscriptions, loader):
@@ -409,8 +413,8 @@ class SubscriptionContent(BaseContent):
 
     def get(self, index, n_cols=70):
         """
-        Grab the `i`th subscription, with the title field formatted to fit inside
-        of a window of width `n_cols`
+        Grab the `i`th subscription, with the title field formatted to fit
+        inside of a window of width `n_cols`
         """
 
         if index < 0:
