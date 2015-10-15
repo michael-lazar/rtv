@@ -130,6 +130,10 @@ class BaseContent(object):
         data['subreddit'] = str(sub.subreddit)
         data['flair'] = flair
         data['url_full'] = sub.url
+        data['likes'] = sub.likes
+        data['gold'] = sub.gilded > 0
+        data['nsfw'] = sub.over_18
+        data['index'] = None  # This is filled in later by the method caller
 
         if data['permalink'].split('/r/')[-1] == data['url_full'].split('/r/')[-1]:
             data['url_type'] = 'selfpost'
@@ -142,10 +146,6 @@ class BaseContent(object):
         else:
             data['url_type'] = 'external'
             data['url'] = data['url_full']
-
-        data['likes'] = sub.likes
-        data['gold'] = sub.gilded > 0
-        data['nsfw'] = sub.over_18
 
         return data
 
@@ -374,6 +374,9 @@ class SubredditContent(BaseContent):
                 raise IndexError
             else:
                 data = self.strip_praw_submission(submission)
+                data['index'] = index
+                # Add the post number to the beginning of the title
+                data['title'] = u'{}. {}'.format(index+1, data['title'])
                 self._submission_data.append(data)
 
         # Modifies the original dict, faster than copying
