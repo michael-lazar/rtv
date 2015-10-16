@@ -7,7 +7,7 @@ from tornado import gen, ioloop, web, httpserver
 from concurrent.futures import ThreadPoolExecutor
 
 from . import config
-from .curses_helpers import show_notification, prompt_input
+from .curses_helpers import show_notification
 from .helpers import check_browser_display, open_browser
 
 __all__ = ['OAuthTool']
@@ -18,6 +18,7 @@ oauth_error = None
 
 template_path = os.path.join(os.path.dirname(__file__), 'templates')
 
+
 class AuthHandler(web.RequestHandler):
 
     def get(self):
@@ -27,11 +28,13 @@ class AuthHandler(web.RequestHandler):
         oauth_code = self.get_argument('code', default='placeholder')
         oauth_error = self.get_argument('error', default='placeholder')
 
-        self.render('index.html', state=oauth_state, code=oauth_code, error=oauth_error)
+        self.render('index.html', state=oauth_state, code=oauth_code,
+                    error=oauth_error)
 
         # Stop IOLoop if using a background browser such as firefox
         if check_browser_display():
             ioloop.IOLoop.current().stop()
+
 
 class OAuthTool(object):
 
@@ -46,7 +49,8 @@ class OAuthTool(object):
 
         # Initialize Tornado webapp
         routes = [('/', AuthHandler)]
-        self.callback_app = web.Application(routes, template_path=template_path)
+        self.callback_app = web.Application(routes,
+                                            template_path=template_path)
 
         self.reddit.set_oauth_app_info(config.oauth_client_id,
                                        config.oauth_client_secret,

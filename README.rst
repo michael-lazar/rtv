@@ -4,7 +4,7 @@ RTV: Reddit Terminal Viewer
 
 RTV is an application that allows you to view and interact with reddit from your terminal. It is compatible with *most* terminal emulators on Linux and OSX.
 
-.. image:: http://i.imgur.com/W1hxqCt.png
+.. image:: http://i.imgur.com/xpOEi1E.png
 
 RTV is built in **python** using the **curses** library.
 
@@ -201,7 +201,7 @@ How do I run the code directly using python?
   This project is structured to be run as a python *module*. This means that in order to resolve imports you need to launch using python's ``-m`` flag. This method works for all versions of python. Follow the example below, which assumes that you have cloned the repository into the directory **~/rtv_project**.
 
   .. code-block:: bash
-   
+
     $ cd ~/rtv_project
     $ python2 -m rtv
     $ python3 -m rtv
@@ -225,7 +225,7 @@ License
 Please see `LICENSE <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_.
 
 
-.. |python| image:: https://img.shields.io/badge/python-2.7%2C%203.4-blue.svg?style=flat-square
+.. |python| image:: https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg?style=flat-square
     :target: https://pypi.python.org/pypi/rtv/
     :alt: Supported Python versions
 

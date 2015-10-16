@@ -117,7 +117,7 @@ class Navigator(object):
                     self.page_index += (self.step * (n_windows-1))
                     self.inverted = not self.inverted
                     self.cursor_index \
-                        = (n_windows-(direction<0)) - self.cursor_index
+                        = (n_windows-(direction < 0)) - self.cursor_index
 
                 valid = False
                 adj = 0
@@ -565,7 +565,8 @@ class BasePage(object):
         if not valid:
             curses.flash()
 
-        # Note: ACS_VLINE doesn't like changing the attribute, so always redraw.
+        # Note: ACS_VLINE doesn't like changing the attribute,
+        # so always redraw.
         self._draw_content()
         self._add_cursor()
 
@@ -575,7 +576,8 @@ class BasePage(object):
         if not valid:
             curses.flash()
 
-        # Note: ACS_VLINE doesn't like changing the attribute, so always redraw.
+        # Note: ACS_VLINE doesn't like changing the attribute,
+        # so always redraw.
         self._draw_content()
         self._add_cursor()
 
