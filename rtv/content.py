@@ -323,7 +323,7 @@ class SubredditContent(BaseContent):
             raise SubredditError('Unrecognized order "%s"' % order)
 
         if name == 'me':
-            if not reddit.is_logged_in():
+            if not reddit.is_oauth_session():
                 raise AccountError('Could not access user account')
             elif order:
                 submissions = reddit.user.get_submitted(sort=order)
