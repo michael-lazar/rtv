@@ -1,4 +1,3 @@
-import os
 import sys
 import locale
 import logging
@@ -6,7 +5,6 @@ import logging
 import praw
 import praw.errors
 import tornado
-import requests
 from requests import exceptions
 
 from . import config
@@ -27,6 +25,7 @@ _logger = logging.getLogger(__name__)
 # process. On Ubuntu, you may need to allow ptrace permissions by setting
 # ptrace_scope to 0 in /etc/sysctl.d/10-ptrace.conf.
 # http://blog.mellenthin.de/archives/2010/10/18/gdb-attach-fails
+
 
 def main():
     "Main entry point"
@@ -77,7 +76,8 @@ def main():
             subreddit = args.subreddit or 'front'
             page = SubredditPage(stdscr, reddit, oauth, subreddit)
             page.loop()
-    except (exceptions.RequestException, praw.errors.PRAWException, RTVError) as e:
+    except (exceptions.RequestException, praw.errors.PRAWException,
+            RTVError) as e:
         _logger.exception(e)
         print('{}: {}'.format(type(e).__name__, e))
     except KeyboardInterrupt:

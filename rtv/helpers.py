@@ -24,17 +24,18 @@ def clean(string, n_cols=None):
         http://nedbatchelder.com/text/unipain.html
 
     Python 2 input string will be a unicode type (unicode code points). Curses
-    will accept unicode if all of the points are in the ascii range. However, if
-    any of the code points are not valid ascii curses will throw a
+    will accept unicode if all of the points are in the ascii range. However,
+    if any of the code points are not valid ascii curses will throw a
     UnicodeEncodeError: 'ascii' codec can't encode character, ordinal not in
-    range(128). If we encode the unicode to a utf-8 byte string and pass that to
-    curses, it will render correctly.
+    range(128). If we encode the unicode to a utf-8 byte string and pass that
+    to curses, it will render correctly.
 
     Python 3 input string will be a string type (unicode code points). Curses
     will accept that in all cases. However, the n character count in addnstr
-    will not be correct. If code points are passed to addnstr, curses will treat
-    each code point as one character and will not account for wide characters.
-    If utf-8 is passed in, addnstr will treat each 'byte' as a single character.
+    will not be correct. If code points are passed to addnstr, curses will
+    treat each code point as one character and will not account for wide
+    characters. If utf-8 is passed in, addnstr will treat each 'byte' as a
+    single character.
     """
 
     if n_cols is not None and n_cols <= 0:
@@ -124,7 +125,8 @@ def check_browser_display():
 
     # Use the convention defined here to parse $BROWSER
     # https://docs.python.org/2/library/webbrowser.html
-    console_browsers = ['www-browser', 'links', 'links2', 'elinks', 'lynx', 'w3m']
+    console_browsers = ['www-browser', 'links', 'links2', 'elinks', 'lynx',
+                        'w3m']
     if "BROWSER" in os.environ:
         user_browser = os.environ["BROWSER"].split(os.pathsep)[0]
         if user_browser in console_browsers:
@@ -138,7 +140,8 @@ def check_browser_display():
 
 def wrap_text(text, width):
     """
-    Wrap text paragraphs to the given character width while preserving newlines.
+    Wrap text paragraphs to the given character width while preserving
+    newlines.
     """
     out = []
     for paragraph in text.splitlines():

@@ -21,8 +21,10 @@ oauth_client_id = 'E2oEtRQfdfAfNQ'
 oauth_client_secret = 'praw_gapfill'
 oauth_redirect_uri = 'http://127.0.0.1:65000/'
 oauth_redirect_port = 65000
-oauth_scope = ['edit', 'history', 'identity', 'mysubreddits', 'privatemessages',
-               'read', 'report', 'save', 'submit', 'subscribe', 'vote']
+oauth_scope = ['edit', 'history', 'identity', 'mysubreddits',
+               'privatemessages', 'read', 'report', 'save', 'submit',
+               'subscribe', 'vote']
+
 
 def build_parser():
     parser = argparse.ArgumentParser(
@@ -51,6 +53,7 @@ def build_parser():
         help='Remove any saved OAuth tokens before starting')
     return parser
 
+
 def load_config():
     """
     Attempt to load settings from the local config file.
@@ -74,6 +77,7 @@ def load_config():
 
     return config_dict
 
+
 def load_refresh_token(filename=TOKEN):
     if os.path.exists(filename):
         with open(filename) as fp:
@@ -81,9 +85,11 @@ def load_refresh_token(filename=TOKEN):
     else:
         return None
 
+
 def save_refresh_token(token, filename=TOKEN):
     with open(filename, 'w+') as fp:
         fp.write(token)
+
 
 def clear_refresh_token(filename=TOKEN):
     if os.path.exists(filename):

@@ -10,7 +10,7 @@ from .page import BasePage, Navigator, BaseController
 from .submission import SubmissionPage
 from .subscription import SubscriptionPage
 from .content import SubredditContent
-from .helpers import open_browser, open_editor, strip_subreddit_url
+from .helpers import open_browser, open_editor
 from .docs import SUBMISSION_FILE
 from .history import load_history, save_history
 from .curses_helpers import (Color, LoadScreen, add_line, get_arrow, get_gold,
@@ -105,7 +105,8 @@ class SubredditPage(BasePage):
         "Select the current submission to view posts"
 
         data = self.content.get(self.nav.absolute_index)
-        page = SubmissionPage(self.stdscr, self.reddit, self.oauth, url=data['permalink'])
+        page = SubmissionPage(self.stdscr, self.reddit, self.oauth,
+                              url=data['permalink'])
         page.loop()
         if data['url_type'] == 'selfpost':
             global history
@@ -120,7 +121,8 @@ class SubredditPage(BasePage):
         global history
         history.add(url)
         if data['url_type'] in ['x-post', 'selfpost']:
-            page = SubmissionPage(self.stdscr, self.reddit, self.oauth, url=url)
+            page = SubmissionPage(self.stdscr, self.reddit, self.oauth,
+                                  url=url)
             page.loop()
         else:
             open_browser(url)
@@ -162,7 +164,8 @@ class SubredditPage(BasePage):
                 time.sleep(2.0)
             # Open the newly created post
             s.catch = False
-            page = SubmissionPage(self.stdscr, self.reddit, self.oauth, submission=post)
+            page = SubmissionPage(self.stdscr, self.reddit, self.oauth,
+                                  submission=post)
             page.loop()
             self.refresh_content()
 
