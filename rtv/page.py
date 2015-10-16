@@ -275,6 +275,10 @@ class BasePage(object):
         elif ch != 'n':
             curses.flash()
 
+    @BaseController.register('Q')
+    def force_exit(self):
+        sys.exit()
+
     @BaseController.register('?')
     def help(self):
         show_help(self._content_window)
