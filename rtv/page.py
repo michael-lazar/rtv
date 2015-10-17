@@ -275,6 +275,10 @@ class BasePage(object):
         elif ch != 'n':
             curses.flash()
 
+    @BaseController.register('Q')
+    def force_exit(self):
+        sys.exit()
+
     @BaseController.register('?')
     def help(self):
         show_help(self._content_window)
@@ -438,6 +442,10 @@ class BasePage(object):
         """
         Checks the inbox for unread messages and displays a notification.
         """
+
+        if not self.reddit.is_oauth_session():
+            show_notification(self.stdscr, ['Not logged in'])
+            return
 
         inbox = len(list(self.reddit.get_unread(limit=1)))
         try:

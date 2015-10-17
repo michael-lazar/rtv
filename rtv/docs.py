@@ -29,7 +29,7 @@ Basic Commands
   `r` or `F5`         : Refresh page content
   `u`                 : Log in or switch accounts
   `?`                 : Show the help screen
-  `q`                 : Quit
+  `q/Q`               : Quit/Force quit
 
 Authenticated Commands
   `a/z`               : Upvote/downvote

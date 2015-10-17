@@ -34,11 +34,16 @@ class SubscriptionPage(BasePage):
             self.controller.trigger(cmd)
 
     @SubscriptionController.register(curses.KEY_F5, 'r')
-    def refresh_content(self):
+    def refresh_content(self, order=None):
         "Re-download all subscriptions and reset the page index"
 
-        self.content = SubscriptionContent.from_user(self.reddit, self.loader)
-        self.nav = Navigator(self.content.get)
+        if order:
+            # reddit.get_my_subreddits() does not support sorting by order
+            curses.flash()
+        else:
+            self.content = SubscriptionContent.from_user(self.reddit,
+                                                         self.loader)
+            self.nav = Navigator(self.content.get)
 
     @SubscriptionController.register(curses.KEY_ENTER, 10, curses.KEY_RIGHT)
     def store_selected_subreddit(self):
