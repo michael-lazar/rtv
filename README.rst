@@ -33,6 +33,13 @@ Install using pip
 
 Or clone the repository
 
+Note for pip users, your default python version may not be python3.
+Which may cause some errors when trying to run rtv.
+
+Debian/Ubuntu/Mint users can do ``sudo apt-get install python3-pip``,
+then replace pip with pip3 in the command above to use pip with python3 to install rtv.
+
+
 .. code-block:: bash
 
    $ git clone https://github.com/michael-lazar/rtv.git
