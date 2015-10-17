@@ -443,6 +443,10 @@ class BasePage(object):
         Checks the inbox for unread messages and displays a notification.
         """
 
+        if not self.reddit.is_oauth_session():
+            show_notification(self.stdscr, ['Not logged in'])
+            return
+
         inbox = len(list(self.reddit.get_unread(limit=1)))
         try:
             if inbox > 0:
