@@ -155,7 +155,7 @@ If you prefer to stay in the terminal, use ``$BROWSER`` to specify a console-bas
 Authentication
 --------------
 
-RTV use OAuth to facilitate logging into your reddit user account [#]_. The login process follows these steps:
+RTV uses OAuth to facilitate logging into your reddit user account [#]_. The login process follows these steps:
 
 1. You initiate a login by pressing the ``u`` key.
 2. You're redirected to a webbrowser where reddit will ask you to login and authorize RTV.
