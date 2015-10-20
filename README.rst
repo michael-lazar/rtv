@@ -2,7 +2,8 @@
 RTV: Reddit Terminal Viewer
 ===========================
 
-RTV is an application that allows you to view and interact with reddit from your terminal. It is compatible with *most* terminal emulators on Linux and OSX.
+RTV is an application that allows you to view and interact with reddit from your terminal.
+It is compatible with *most* terminal emulators on Linux and OSX.
 
 .. image:: http://i.imgur.com/xpOEi1E.png
 
@@ -17,6 +18,7 @@ RTV is built in **python** using the **curses** library.
 * `Installation`_
 * `Usage`_
 * `Configuration`_
+* `FAQ`_
 * `Changelog`_
 * `Contributors`_
 * `License`_
@@ -33,18 +35,11 @@ Install using pip
 
 Or clone the repository
 
-Note for pip users, your default python version may not be python3.
-Which may cause some errors when trying to run rtv.
-
-Debian/Ubuntu/Mint users can do ``sudo apt-get install python3-pip``,
-then replace pip with pip3 in the command above to use pip with python3 to install rtv.
-
-
 .. code-block:: bash
 
    $ git clone https://github.com/michael-lazar/rtv.git
    $ cd rtv
-   $ sudo python setup.py install
+   $ sudo python3 setup.py install
 
 The installation will place a script in the system path
 
@@ -52,6 +47,8 @@ The installation will place a script in the system path
 
    $ rtv
    $ rtv --help
+
+See the `FAQ`_ for more information on common installation problems
 
 =====
 Usage
@@ -204,15 +201,30 @@ Example initial config:
 FAQ
 ===
 
-How do I run the code directly using python?
-  This project is structured to be run as a python *module*. This means that in order to resolve imports you need to launch using python's ``-m`` flag. This method works for all versions of python. Follow the example below, which assumes that you have cloned the repository into the directory **~/rtv_project**.
+Why am I getting an error during installation/when launching rtv?
+  If your distro ships with an older version of python 2.7 or python-requests,
+  you may experience SSL errors or other package incompatibilities. The
+  easiest way to fix this is to install rtv using python 3. If you
+  don't already have pip3, see http://stackoverflow.com/a/6587528 for setup
+  instructions. Then do
+
+  .. code-block:: bash
+
+    $ sudo pip uninstall rtv
+    $ sudo pip3 install -U rtv
+
+How do I run the repository code directly?
+  This project is structured to be run as a python *module*. This means that in
+  order to resolve imports you need to launch using python's ``-m`` flag.
+  This method works for all versions of python. See the example below, which
+  assumes that you have cloned the repository into the directory
+  **~/rtv_project**.
 
   .. code-block:: bash
 
     $ cd ~/rtv_project
-    $ python2 -m rtv
+    $ python3 -m pip install -r requirements.py3.txt
     $ python3 -m rtv
-
 
 =========
 Changelog
