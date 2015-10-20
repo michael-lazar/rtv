@@ -33,6 +33,13 @@ Install using pip
 
 Or clone the repository
 
+Note for pip users, your default python version may not be python3.
+Which may cause some errors when trying to run rtv.
+
+Debian/Ubuntu/Mint users can do ``sudo apt-get install python3-pip``,
+then replace pip with pip3 in the command above to use pip with python3 to install rtv.
+
+
 .. code-block:: bash
 
    $ git clone https://github.com/michael-lazar/rtv.git
@@ -148,7 +155,7 @@ If you prefer to stay in the terminal, use ``$BROWSER`` to specify a console-bas
 Authentication
 --------------
 
-RTV use OAuth to facilitate logging into your reddit user account [#]_. The login process follows these steps:
+RTV uses OAuth to facilitate logging into your reddit user account [#]_. The login process follows these steps:
 
 1. You initiate a login by pressing the ``u`` key.
 2. You're redirected to a webbrowser where reddit will ask you to login and authorize RTV.
