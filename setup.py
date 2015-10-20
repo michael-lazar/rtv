@@ -22,6 +22,8 @@ setuptools.setup(
     packages=['rtv'],
     package_data={'rtv': ['templates/index.html']},
     data_files=[("share/man/man1", ["rtv.1"])],
+    extras_require={
+        ':python_version=="2.6" or python_version=="2.7"': ['futures']},
     install_requires=requirements,
     entry_points={'console_scripts': ['rtv=rtv.__main__:main']},
     classifiers=[
