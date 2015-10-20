@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.6.1: http://github.com/michael-lazar/rtv/releases/tag/v1.6.1
 .. _1.6: http://github.com/michael-lazar/rtv/releases/tag/v1.6
 .. _1.5: http://github.com/michael-lazar/rtv/releases/tag/v1.5
 .. _1.4.2: http://github.com/michael-lazar/rtv/releases/tag/v1.4.2
@@ -11,6 +12,22 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+-------------------
+1.6.1_ (2015-10-19)
+-------------------
+Bugfixes
+
+* Fixed authentication checking for */r/me*.
+* Added force quit option with the `Q` key.
+* Removed option to sort subscriptions.
+* Fixed crash with pressing `i` when not logged in.
+* Removed futures requirement from the python 3 distribution.
+
+Documentation
+
+* Updated screenshot in README.
+* Added section to the FAQ on installation.
 
 -----------------
 1.6_ (2015-10-14)
