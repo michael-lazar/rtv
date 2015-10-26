@@ -138,7 +138,7 @@ class BaseContent(object):
         data['index'] = None  # This is filled in later by the method caller
 
         if data['flair'] and not data['flair'].startswith('['):
-            data['flair'] = '[{}]'.format(data['flair'].strip())
+            data['flair'] = u'[{}]'.format(data['flair'].strip())
 
         url_full = data['url_full']
         if data['permalink'].split('/r/')[-1] == url_full.split('/r/')[-1]:
