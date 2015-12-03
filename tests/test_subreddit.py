@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from rtv.subreddit import SubredditPage
-from rtv.content import SubmissionContent
 
 try:
     from unittest import mock

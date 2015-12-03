@@ -11,7 +11,6 @@ import pytest
 from vcr import VCR
 from six.moves.urllib.parse import urlparse, parse_qs
 
-from rtv.page import Page
 from rtv.oauth import OAuthHelper
 from rtv.config import Config
 from rtv.terminal import Terminal

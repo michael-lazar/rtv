@@ -80,7 +80,7 @@ def test_submission_unauthenticated(submission_page, terminal):
 
 def test_submission_open(submission_page, terminal):
 
-   # Open the selected link with the web browser
+    # Open the selected link with the web browser
     with mock.patch.object(terminal, 'open_browser'):
         submission_page.controller.trigger(terminal.RETURN)
         assert terminal.open_browser.called

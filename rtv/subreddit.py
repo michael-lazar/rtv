@@ -4,8 +4,6 @@ from __future__ import unicode_literals
 import time
 import curses
 
-import six
-
 from . import docs
 from .content import SubredditContent
 from .page import Page, PageController, logged_in

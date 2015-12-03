@@ -173,7 +173,7 @@ def test_content_subreddit_load_more(reddit, terminal):
     assert content.get(50)['type'] == 'Submission'
     assert len(content._submission_data) == 51
 
-    for data in islice(content.iterate(0, 1, 70), 0, 50):
+    for data in islice(content.iterate(0, 1), 0, 50):
         assert all(k in data for k in ('object', 'n_rows', 'offset', 'type',
                                        'index', 'title', 'split_title'))
         # All text should be converted to unicode by this point

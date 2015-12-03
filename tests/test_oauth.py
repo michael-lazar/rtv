@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os
-
 from tornado.web import Application
 from tornado.testing import AsyncHTTPTestCase
 from praw.errors import OAuthException
@@ -154,6 +152,7 @@ def test_oauth_authorize(oauth, reddit, stdscr, refresh_token):
         message = 'Invalid OAuth data'.encode('utf-8')
         stdscr.derwin().addstr.assert_called_with(1, 1, message)
         assert not oauth.config.save_refresh_token.called
+
 
 def test_oauth_clear_data(oauth):
 

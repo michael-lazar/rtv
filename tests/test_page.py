@@ -17,7 +17,7 @@ def test_page_logged_in(terminal):
     page.term = terminal
 
     @logged_in
-    def func(page):
+    def func(_):
         raise RuntimeError()
 
     # Logged in runs the function
@@ -45,7 +45,7 @@ def test_page_unauthenticated(reddit, terminal, config, oauth):
             mock.patch.object(page, 'draw'):
 
         # Loop
-        def func(ch):
+        def func(_):
             page.active = False
         with mock.patch.object(page, 'controller'):
             page.controller.trigger = mock.MagicMock(side_effect=func)

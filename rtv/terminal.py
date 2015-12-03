@@ -318,8 +318,7 @@ class Terminal(object):
             with codecs.open(fp.name, 'r', 'utf-8') as fp2:
                 text = ''.join(line for line in fp2 if not line.startswith('#'))
                 text = text.rstrip()
-
-        return text
+                return text
 
     def text_input(self, window, allow_resize=False):
         """

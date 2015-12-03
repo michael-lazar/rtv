@@ -16,6 +16,7 @@ from .objects import curses_session
 from .subreddit import SubredditPage
 from .__version__ import __version__
 
+
 _logger = logging.getLogger(__name__)
 
 # Pycharm debugging note:

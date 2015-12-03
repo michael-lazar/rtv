@@ -4,9 +4,11 @@ from __future__ import unicode_literals
 import os
 import codecs
 import argparse
+
 from six.moves import configparser
 
 from . import docs, __version__
+
 
 HOME = os.path.expanduser('~')
 PACKAGE = os.path.dirname(__file__)
