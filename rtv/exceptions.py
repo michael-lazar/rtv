@@ -28,3 +28,7 @@ class SubscriptionError(RTVError):
 
 class ProgramError(RTVError):
     "Problem executing an external program"
+
+
+class BrowserError(RTVError):
+    "Could not open a web browser tab"

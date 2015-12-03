@@ -112,6 +112,7 @@ class LoadScreen(object):
     """
 
     HANDLED_EXCEPTIONS = [
+        (exceptions.BrowserError, 'Could not open browser'),
         (exceptions.SubscriptionError, 'No Subscriptions'),
         (exceptions.AccountError, 'Unable to Access Account'),
         (exceptions.SubredditError, 'Invalid Subreddit'),

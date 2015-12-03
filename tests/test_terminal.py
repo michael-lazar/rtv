@@ -28,9 +28,10 @@ def test_terminal_properties(terminal, config):
     assert len(terminal.guilded) == 2
     assert isinstance(terminal.guilded[0], six.text_type)
 
+    # DISPLAY isn't reliable on all systems so we no longer rely on it.
     terminal._display = None
     with mock.patch.dict('os.environ', {'DISPLAY': ''}):
-        assert terminal.display is False
+        assert terminal.display is True
 
     terminal._display = None
     with mock.patch.dict('os.environ', {'DISPLAY': ':0', 'BROWSER': 'w3m'}):
@@ -279,9 +280,10 @@ def test_open_browser(terminal):
     url = 'http://www.test.com'
 
     terminal._display = True
-    with mock.patch('subprocess.check_call', autospec=True) as check_call:
+    with mock.patch('subprocess.Popen', autospec=True) as Popen:
+        Popen.return_value.poll.return_value = 0
         terminal.open_browser(url)
-    assert check_call.called
+    assert Popen.called
     assert not curses.endwin.called
     assert not curses.doupdate.called
 

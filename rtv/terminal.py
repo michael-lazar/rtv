@@ -16,8 +16,8 @@ from tempfile import NamedTemporaryFile
 import six
 from kitchen.text.display import textual_width_chop
 
+from . import exceptions
 from .objects import LoadScreen, Color
-from .exceptions import EscapeInterrupt, ProgramError
 
 
 class Terminal(object):
@@ -68,7 +68,11 @@ class Terminal(object):
         """
 
         if self._display is None:
-            display = bool(os.environ.get("DISPLAY"))
+            
+            # OSX doesn't set DISPLAY so we can't use this to check
+            # display = bool(os.environ.get("DISPLAY"))
+            display = True
+
             # Use the convention defined here to parse $BROWSER
             # https://docs.python.org/2/library/webbrowser.html
             console_browsers = ['www-browser', 'links', 'links2', 'elinks',
@@ -287,7 +291,25 @@ class Terminal(object):
             command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
             args = [sys.executable, '-c', command]
             with open(os.devnull, 'ab+', 0) as null:
-                subprocess.check_call(args, stdout=null, stderr=null)
+                p = subprocess.Popen(args, stdout=null, stderr=null)
+                with self.loader(message='Opening page in a new window'):
+                    # Give the browser 5 seconds to open a new tab. Because the
+                    # display is set, calling webbrowser should be non-blocking.
+                    # If it blocks or returns an error, something went wrong.
+                    start = time.time()
+                    while time.time() - start < 5:
+                        code = p.poll()
+                        if code == 0:
+                            break  # Success
+                        elif code is not None:
+                            raise exceptions.BrowserError(
+                                'Process exited with status=%s' % code)
+                        time.sleep(0.01)
+                    else:
+                        raise exceptions.BrowserError('Timeout opening browser')
+                if self.loader.exception is not None:
+                    # Cleanup the process
+                    p.terminate()
         else:
             with self.suspend():
                 webbrowser.open_new_tab(url)
@@ -310,7 +332,8 @@ class Terminal(object):
                 with self.suspend():
                     subprocess.Popen([editor, fp.name]).wait()
             except OSError:
-                raise ProgramError('Could not open file with %s' % editor)
+                raise exceptions.ProgramError(
+                    'Could not open file with %s' % editor)
 
             # Open a second file object to read. This appears to be necessary
             # in order to read the changes made by some editors (gedit). w+
@@ -343,9 +366,9 @@ class Terminal(object):
         def validate(ch):
             "Filters characters for special key sequences"
             if ch == self.ESCAPE:
-                raise EscapeInterrupt()
+                raise exceptions.EscapeInterrupt()
             if (not allow_resize) and (ch == curses.KEY_RESIZE):
-                raise EscapeInterrupt()
+                raise exceptions.EscapeInterrupt()
             # Fix backspace for iterm
             if ch == curses.ascii.DEL:
                 ch = curses.KEY_BACKSPACE
@@ -358,7 +381,7 @@ class Terminal(object):
             out = textbox.edit(validate=validate)
             if isinstance(out, six.binary_type):
                 out = out.decode('utf-8')
-        except EscapeInterrupt:
+        except exceptions.EscapeInterrupt:
             out = None
 
         curses.curs_set(0)
