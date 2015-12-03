@@ -11,7 +11,7 @@ RTV is built in **python** using the **curses** library.
 
 ---------------
 
-|pypi| |python| |travis-ci| |coveralls|
+|pypi| |python| |travis-ci| |coveralls| |gitter|
 
 ---------------
 
@@ -259,4 +259,8 @@ Please see `LICENSE <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_
 .. |coveralls| image:: https://coveralls.io/repos/michael-lazar/rtv/badge.svg?branch=master&service=github
     :target: https://coveralls.io/github/michael-lazar/rtv?branch=master
     :alt: Coverage
+    
+.. |gitter| image:: https://img.shields.io/gitter/room/michael-lazar/rtv.js.svg
+    :target: https://gitter.im/michael-lazar/rtv
+    :alt: Chat
 
