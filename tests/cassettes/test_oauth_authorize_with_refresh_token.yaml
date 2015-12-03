@@ -1,0 +1,78 @@
+interactions:
+- request:
+    body: !!binary |
+      cmVkaXJlY3RfdXJpPWh0dHAlM0ElMkYlMkYxMjcuMC4wLjElM0E2NTAwMCUyRiZncmFudF90eXBl
+      PXJlZnJlc2hfdG9rZW4mcmVmcmVzaF90b2tlbj0qKioqKioqKioq
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: ['**********']
+      Connection: [keep-alive]
+      Content-Length: ['122']
+      Content-Type: [application/x-www-form-urlencoded]
+      User-Agent: [rtv test suite PRAW/3.3.0 Python/3.4.0 b'Linux-3.13.0-24-generic-x86_64-with-Ubuntu-14.04-trusty']
+    method: POST
+    uri: https://api.reddit.com/api/v1/access_token/
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAyWMwWrDMBAFf2XROQEbJ6bk2mI3EHBzbC9Gsl6TpTgSuxtTUfrvxenpwTDzfpyf
+        JqiOlr5wcwdyu137VNX1ftsPL+m5Ow357fz+2eSu7oePvn3153B0G3KPYLSSsVYBXiArx3dmgY68
+        vjVtVW3I6ZT+NUQ2urJakkIccTO2QnPRexDEyKaUhRdvmKHqL1AS+EiCnMRI/QLSe5jZ1tFJOICW
+        ZHC/f8fwa1rKAAAA
+    headers:
+      CF-RAY: [24e5686084e51e7d-SJC]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Wed, 02 Dec 2015 07:44:38 GMT']
+      Server: [cloudflare-nginx]
+      Set-Cookie: ['__cfduid=d97dd5b69ae5538390d1e4ad773c2b04e1449042278; expires=Thu,
+          01-Dec-16 07:44:38 GMT; path=/; domain=.reddit.com; HttpOnly']
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
+      X-Moose: [majestic]
+      cache-control: ['max-age=0, must-revalidate']
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: ['**********']
+      Connection: [keep-alive]
+      User-Agent: [rtv test suite PRAW/3.3.0 Python/3.4.0 b'Linux-3.13.0-24-generic-x86_64-with-Ubuntu-14.04-trusty']
+    method: GET
+    uri: https://oauth.reddit.com/api/v1/me.json
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA12QwWrDMBBEf0Xs2YTYuLTxZ5TSq5CtdbNE2k1XUhoI/fei1C5xjxp23ozmBkeX
+        bHQUYDCzCwkbA+wiwmDgFb2n/IYaiV14J/xChcbApOgyehhM2/fd89O+Oxx2+8bAkTzaWSValVFy
+        emBSsqmkM7K/G1d5QdmSpxXXtf2Kq9XE/68XiE/25DS6aqkQiRE5/2nVKxdU275sG3xI8Fslykao
+        D/gMjGP9Zz23eD2TukzCMBguIdQ7HuVqJymcl7ha9YJKM6G3uBTOWnDFTHofMy33v1skEn4IWFao
+        Id8/dZfx5JkBAAA=
+    headers:
+      CF-RAY: [24e5686b66a111a7-SJC]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Wed, 02 Dec 2015 07:44:40 GMT']
+      Server: [cloudflare-nginx]
+      Set-Cookie: ['__cfduid=dae4a6a80cbf9100c339be2eeca35c7bc1449042280; expires=Thu,
+          01-Dec-16 07:44:40 GMT; path=/; domain=.reddit.com; HttpOnly']
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
+      X-Moose: [majestic]
+      cache-control: ['private, s-maxage=0, max-age=0, must-revalidate', 'max-age=0,
+          must-revalidate']
+      expires: ['-1']
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-ratelimit-remaining: ['595.0']
+      x-ratelimit-reset: ['320']
+      x-ratelimit-used: ['5']
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+version: 1

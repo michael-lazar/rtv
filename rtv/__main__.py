@@ -1,22 +1,21 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import sys
 import locale
 import logging
 
 import praw
-import praw.errors
 import tornado
-from requests import exceptions
 
-from . import config
-from .exceptions import RTVError
-from .curses_helpers import curses_session, LoadScreen
-from .submission import SubmissionPage
+from . import docs
+from .config import Config
+from .oauth import OAuthHelper
+from .terminal import Terminal
+from .objects import curses_session
 from .subreddit import SubredditPage
-from .docs import AGENT
-from .oauth import OAuthTool
 from .__version__ import __version__
 
-__all__ = []
 _logger = logging.getLogger(__name__)
 
 # Pycharm debugging note:
@@ -35,56 +34,65 @@ def main():
     locale.setlocale(locale.LC_ALL, '')
 
     # Set the terminal title
-    # TODO: Need to clear the title when the program exits
     title = 'rtv {0}'.format(__version__)
-    sys.stdout.write("\x1b]2;{0}\x07".format(title))
+    sys.stdout.write('\x1b]2;{0}\x07'.format(title))
 
-    # Fill in empty arguments with config file values. Parameters explicitly
-    # typed on the command line will take priority over config file params.
-    parser = config.build_parser()
-    args = parser.parse_args()
+    # Attempt to load from the config file first, and then overwrite with any
+    # provided command line arguments.
+    config = Config()
+    config.from_file()
+    config.from_args()
 
-    local_config = config.load_config()
-    for key, val in local_config.items():
-        if getattr(args, key, None) is None:
-            setattr(args, key, val)
+    # Load the browsing history from previous sessions
+    config.load_history()
 
-    if args.ascii:
-        config.unicode = False
-    if not args.persistent:
-        config.persistent = False
-    if args.clear_auth:
-        config.clear_refresh_token()
+    # Load any previously saved auth session token
+    config.load_refresh_token()
+    if config['clear_auth']:
+        config.delete_refresh_token()
 
-    if args.log:
-        logging.basicConfig(level=logging.DEBUG, filename=args.log)
+    if config['log']:
+        logging.basicConfig(level=logging.DEBUG, filename=config['log'])
     else:
+        # Add an empty handler so the logger doesn't complain
         logging.root.addHandler(logging.NullHandler())
 
+    # Construct the reddit user agent
+    user_agent = docs.AGENT.format(version=__version__)
+
     try:
-        print('Connecting...')
-        reddit = praw.Reddit(user_agent=AGENT.format(version=__version__))
-        reddit.config.decode_html_entities = False
         with curses_session() as stdscr:
-            oauth = OAuthTool(reddit, stdscr, LoadScreen(stdscr))
-            if oauth.refresh_token:
+            term = Terminal(stdscr, config['ascii'])
+            with term.loader(catch_exception=False):
+                reddit = praw.Reddit(
+                    user_agent=user_agent,
+                    decode_html_entities=False,
+                    disable_update_check=True)
+
+            # Authorize on launch if the refresh token is present
+            oauth = OAuthHelper(reddit, term, config)
+            if config.refresh_token:
                 oauth.authorize()
 
-            if args.link:
-                page = SubmissionPage(stdscr, reddit, oauth, url=args.link)
-                page.loop()
-            subreddit = args.subreddit or 'front'
-            page = SubredditPage(stdscr, reddit, oauth, subreddit)
+            with term.loader():
+                page = SubredditPage(
+                    reddit, term, config, oauth,
+                    name=config['subreddit'], url=config['link'])
+            if term.loader.exception:
+                return
+
             page.loop()
-    except (exceptions.RequestException, praw.errors.PRAWException,
-            RTVError) as e:
+    except Exception as e:
         _logger.exception(e)
-        print('{}: {}'.format(type(e).__name__, e))
+        raise
     except KeyboardInterrupt:
         pass
     finally:
+        # Try to save the browsing history
+        config.save_history()
         # Ensure sockets are closed to prevent a ResourceWarning
-        reddit.handler.http.close()
+        if 'reddit' in locals():
+            reddit.handler.http.close()
         # Explicitly close file descriptors opened by Tornado's IOLoop
         tornado.ioloop.IOLoop.current().close(all_fds=True)
 

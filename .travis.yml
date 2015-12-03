@@ -1,0 +1,15 @@
+language: python
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+before_install:
+  - pip install coveralls pytest coverage mock
+  - pip install git+https://github.com/kevin1024/vcrpy.git
+install:
+  - pip install .
+script:
+  - coverage run -m py.test -v
+after_success:
+  - coveralls

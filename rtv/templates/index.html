@@ -28,9 +28,10 @@
     {% if error == 'access_denied' %}
         <h1 style="color: red">Access Denied</h1><hr>
         <p><span style="font-weight: bold">Reddit Terminal Viewer</span> was denied access and will continue to operate in unauthenticated mode, you can close this window.
-    {% elif error != 'placeholder' %}
-        <h1 style="color: red">Error : {{ error }}</h1>
-    {% elif (state == 'placeholder' or code == 'placeholder') %}
+    {% elif error is not None %}
+        <h1 style="color: red">Error</h1><hr>
+        <p>{{ error }}</p>
+    {% elif (state is None or code is None) %}
         <h1>Wait...</h1><hr>
         <p>This page is supposed to be a Reddit OAuth callback. You can't just come here hands in your pocket!</p>
     {% else %}

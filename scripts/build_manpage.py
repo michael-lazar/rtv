@@ -17,10 +17,12 @@ sys.path.insert(0, ROOT)
 import rtv
 from rtv import config
 
+
 def main():
+
     parser = config.build_parser()
-    help = parser.format_help()
-    help_sections = help.split('\n\n')
+    help_text = parser.format_help()
+    help_sections = help_text.split('\n\n')
 
     data = {}
     print('Fetching version')
@@ -53,7 +55,7 @@ def main():
     print('Fetching copyright')
     data['copyright'] = rtv.__copyright__
     # Escape dashes is all of the sections
-    data = {k:v.replace('-', r'\-') for k,v in data.items()}
+    data = {k: v.replace('-', r'\-') for k, v in data.items()}
     print('Reading from %s/rtv/templates/rtv.1.template' % ROOT)
     with open(os.path.join(ROOT, 'rtv/templates/rtv.1.template')) as fp:
         template = fp.read()

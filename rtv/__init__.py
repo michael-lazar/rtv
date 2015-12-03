@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from .__version__ import __version__
 
 __title__ = 'Reddit Terminal Viewer'

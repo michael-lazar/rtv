@@ -1,28 +1,27 @@
-import logging
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-import praw
-import requests
 import re
+from datetime import datetime
 
-from .exceptions import (SubmissionError, SubredditError, SubscriptionError,
-                         AccountError)
-from .helpers import humanize_timestamp, wrap_text, strip_subreddit_url
+import six
+import praw
+from kitchen.text.display import wrap
 
-__all__ = ['SubredditContent', 'SubmissionContent', 'SubscriptionContent']
-_logger = logging.getLogger(__name__)
+from . import exceptions
 
 
-class BaseContent(object):
+class Content(object):
 
     def get(self, index, n_cols):
         raise NotImplementedError
 
-    def iterate(self, index, step, n_cols):
+    def iterate(self, index, step, n_cols=70):
 
         while True:
             if step < 0 and index < 0:
-                # Hack to prevent displaying negative indices if iterating in
-                # the negative direction.
+                # Hack to prevent displaying a submission's post if iterating
+                # comments in the negative direction
                 break
             try:
                 yield self.get(index, n_cols=n_cols)
@@ -63,8 +62,8 @@ class BaseContent(object):
             retval.append(item)
         return retval
 
-    @staticmethod
-    def strip_praw_comment(comment):
+    @classmethod
+    def strip_praw_comment(cls, comment):
         """
         Parse through a submission comment and return a dict with data ready to
         be displayed through the terminal.
@@ -89,7 +88,7 @@ class BaseContent(object):
 
             data['type'] = 'Comment'
             data['body'] = comment.body
-            data['created'] = humanize_timestamp(comment.created_utc)
+            data['created'] = cls.humanize_timestamp(comment.created_utc)
             data['score'] = '{} pts'.format(comment.score)
             data['author'] = name
             data['is_author'] = (name == sub_name)
@@ -100,8 +99,8 @@ class BaseContent(object):
 
         return data
 
-    @staticmethod
-    def strip_praw_submission(sub):
+    @classmethod
+    def strip_praw_submission(cls, sub):
         """
         Parse through a submission and return a dict with data ready to be
         displayed through the terminal.
@@ -114,7 +113,7 @@ class BaseContent(object):
         """
 
         reddit_link = re.compile(
-            "https?://(www\.)?(np\.)?redd(it\.com|\.it)/r/.*")
+            'https?://(www\.)?(np\.)?redd(it\.com|\.it)/r/.*')
         author = getattr(sub, 'author', '[deleted]')
         name = getattr(author, 'name', '[deleted]')
         flair = getattr(sub, 'link_flair_text', '')
@@ -124,12 +123,12 @@ class BaseContent(object):
         data['type'] = 'Submission'
         data['title'] = sub.title
         data['text'] = sub.selftext
-        data['created'] = humanize_timestamp(sub.created_utc)
+        data['created'] = cls.humanize_timestamp(sub.created_utc)
         data['comments'] = '{} comments'.format(sub.num_comments)
         data['score'] = '{} pts'.format(sub.score)
         data['author'] = name
         data['permalink'] = sub.permalink
-        data['subreddit'] = str(sub.subreddit)
+        data['subreddit'] = six.text_type(sub.subreddit)
         data['flair'] = flair
         data['url_full'] = sub.url
         data['likes'] = sub.likes
@@ -146,7 +145,9 @@ class BaseContent(object):
             data['url'] = 'self.{}'.format(data['subreddit'])
         elif reddit_link.match(url_full):
             data['url_type'] = 'x-post'
-            data['url'] = 'self.{}'.format(strip_subreddit_url(url_full)[3:])
+            # Strip the subreddit name from the permalink to avoid having
+            # submission.subreddit.url make a separate API call
+            data['url'] = 'self.{}'.format(url_full.split('/')[4])
         else:
             data['url_type'] = 'external'
             data['url'] = url_full
@@ -165,11 +166,51 @@ class BaseContent(object):
         data['type'] = 'Subscription'
         data['name'] = "/r/" + subscription.display_name
         data['title'] = subscription.title
-
         return data
 
+    @staticmethod
+    def humanize_timestamp(utc_timestamp, verbose=False):
+        """
+        Convert a utc timestamp into a human readable relative-time.
+        """
 
-class SubmissionContent(BaseContent):
+        timedelta = datetime.utcnow() - datetime.utcfromtimestamp(utc_timestamp)
+
+        seconds = int(timedelta.total_seconds())
+        if seconds < 60:
+            return 'moments ago' if verbose else '0min'
+        minutes = seconds // 60
+        if minutes < 60:
+            return '%d minutes ago' % minutes if verbose else '%dmin' % minutes
+        hours = minutes // 60
+        if hours < 24:
+            return '%d hours ago' % hours if verbose else '%dhr' % hours
+        days = hours // 24
+        if days < 30:
+            return '%d days ago' % days if verbose else '%dday' % days
+        months = days // 30.4
+        if months < 12:
+            return '%d months ago' % months if verbose else '%dmonth' % months
+        years = months // 12
+        return '%d years ago' % years if verbose else '%dyr' % years
+
+    @staticmethod
+    def wrap_text(text, width):
+        """
+        Wrap text paragraphs to the given character width while preserving
+        newlines.
+        """
+        out = []
+        for paragraph in text.splitlines():
+            # Wrap returns an empty list when paragraph is a newline. In order
+            # to preserve newlines we substitute a list containing an empty
+            # string.
+            lines = wrap(paragraph, width=width) or ['']
+            out.extend(lines)
+        return out
+
+
+class SubmissionContent(Content):
     """
     Grab a submission from PRAW and lazily store comments to an internal
     list for repeat access.
@@ -194,13 +235,8 @@ class SubmissionContent(BaseContent):
     def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=8,
                  order=None):
 
-        try:
-            with loader():
-                url = url.replace('http:', 'https:')
-                submission = reddit.get_submission(url, comment_sort=order)
-        except (praw.errors.APIException, praw.errors.NotFound):
-            raise SubmissionError('Could not load %s' % url)
-
+        url = url.replace('http:', 'https:')
+        submission = reddit.get_submission(url, comment_sort=order)
         return cls(submission, loader, indent_size, max_indent_level, order)
 
     def get(self, index, n_cols=70):
@@ -214,8 +250,8 @@ class SubmissionContent(BaseContent):
 
         elif index == -1:
             data = self._submission_data
-            data['split_title'] = wrap_text(data['title'], width=n_cols-2)
-            data['split_text'] = wrap_text(data['text'], width=n_cols-2)
+            data['split_title'] = self.wrap_text(data['title'], width=n_cols-2)
+            data['split_text'] = self.wrap_text(data['text'], width=n_cols-2)
             data['n_rows'] = len(data['split_title'] + data['split_text']) + 5
             data['offset'] = 0
 
@@ -226,7 +262,7 @@ class SubmissionContent(BaseContent):
 
             if data['type'] == 'Comment':
                 width = n_cols - data['offset']
-                data['split_body'] = wrap_text(data['body'], width=width)
+                data['split_body'] = self.wrap_text(data['body'], width=width)
                 data['n_rows'] = len(data['split_body']) + 1
             else:
                 data['n_rows'] = 1
@@ -270,17 +306,19 @@ class SubmissionContent(BaseContent):
 
         elif data['type'] == 'MoreComments':
             with self._loader():
+                # Undefined behavior if using a nested loader here
+                assert self._loader.depth == 1
                 comments = data['object'].comments(update=True)
-                comments = self.flatten_comments(comments,
-                                                 root_level=data['level'])
+            if not self._loader.exception:
+                comments = self.flatten_comments(comments, data['level'])
                 comment_data = [self.strip_praw_comment(c) for c in comments]
                 self._comment_data[index:index + 1] = comment_data
 
         else:
-            raise ValueError('% type not recognized' % data['type'])
+            raise ValueError('%s type not recognized' % data['type'])
 
 
-class SubredditContent(BaseContent):
+class SubredditContent(Content):
     """
     Grab a subreddit from PRAW and lazily stores submissions to an internal
     list for repeat access.
@@ -300,11 +338,8 @@ class SubredditContent(BaseContent):
         # don't have a real corresponding subreddit object.
         try:
             self.get(0)
-        except (praw.errors.APIException, requests.HTTPError,
-                praw.errors.RedirectException, praw.errors.Forbidden,
-                praw.errors.InvalidSubreddit, praw.errors.NotFound,
-                IndexError):
-            raise SubredditError('Could not reach subreddit %s' % name)
+        except IndexError:
+            raise exceptions.SubredditError('Unable to retrieve subreddit')
 
     @classmethod
     def from_name(cls, reddit, name, loader, order=None, query=None):
@@ -322,11 +357,11 @@ class SubredditContent(BaseContent):
         display_name = '/r/{}'.format(name)
 
         if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
-            raise SubredditError('Unrecognized order "%s"' % order)
+            raise exceptions.SubredditError('Unrecognized order "%s"' % order)
 
         if name == 'me':
             if not reddit.is_oauth_session():
-                raise AccountError('Could not access user account')
+                raise exceptions.AccountError('Could not access user account')
             elif order:
                 submissions = reddit.user.get_submitted(sort=order)
             else:
@@ -375,25 +410,27 @@ class SubredditContent(BaseContent):
             try:
                 with self._loader():
                     submission = next(self._submissions)
+                if self._loader.exception:
+                    raise IndexError
             except StopIteration:
                 raise IndexError
             else:
                 data = self.strip_praw_submission(submission)
                 data['index'] = index
                 # Add the post number to the beginning of the title
-                data['title'] = u'{}. {}'.format(index+1, data['title'])
+                data['title'] = '{0}. {1}'.format(index+1, data['title'])
                 self._submission_data.append(data)
 
         # Modifies the original dict, faster than copying
         data = self._submission_data[index]
-        data['split_title'] = wrap_text(data['title'], width=n_cols)
+        data['split_title'] = self.wrap_text(data['title'], width=n_cols)
         data['n_rows'] = len(data['split_title']) + 3
         data['offset'] = 0
 
         return data
 
 
-class SubscriptionContent(BaseContent):
+class SubscriptionContent(Content):
 
     def __init__(self, subscriptions, loader):
 
@@ -403,14 +440,14 @@ class SubscriptionContent(BaseContent):
         self._subscriptions = subscriptions
         self._subscription_data = []
 
+        try:
+            self.get(0)
+        except IndexError:
+            raise exceptions.SubscriptionError('Unable to load subscriptions')
+
     @classmethod
     def from_user(cls, reddit, loader):
-        try:
-            with loader():
-                subscriptions = reddit.get_my_subreddits(limit=None)
-        except praw.errors.APIException:
-            raise SubscriptionError('Unable to load subscriptions')
-
+        subscriptions = reddit.get_my_subreddits(limit=None)
         return cls(subscriptions, loader)
 
     def get(self, index, n_cols=70):
@@ -426,6 +463,8 @@ class SubscriptionContent(BaseContent):
             try:
                 with self._loader():
                     subscription = next(self._subscriptions)
+                if self._loader.exception:
+                    raise IndexError
             except StopIteration:
                 raise IndexError
             else:
@@ -433,7 +472,7 @@ class SubscriptionContent(BaseContent):
                 self._subscription_data.append(data)
 
         data = self._subscription_data[index]
-        data['split_title'] = wrap_text(data['title'], width=n_cols)
+        data['split_title'] = self.wrap_text(data['title'], width=n_cols)
         data['n_rows'] = len(data['split_title']) + 1
         data['offset'] = 0
 

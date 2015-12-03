@@ -1,0 +1,3 @@
+[run]
+source = rtv
+omit = *__main__.py
