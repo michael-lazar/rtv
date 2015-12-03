@@ -260,3 +260,8 @@ Please see `LICENSE <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_
     :target: https://coveralls.io/github/michael-lazar/rtv?branch=master
     :alt: Coverage
 
+
+
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/michael-lazar/rtv
+   :target: https://gitter.im/michael-lazar/rtv?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
