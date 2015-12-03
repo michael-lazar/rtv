@@ -11,7 +11,7 @@ RTV is built in **python** using the **curses** library.
 
 ---------------
 
-|pypi| |python| |downloads|
+|pypi| |python| |travis-ci| |coveralls| |gitter|
 
 ---------------
 
@@ -244,14 +244,23 @@ License
 Please see `LICENSE <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_.
 
 
-.. |python| image:: https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg?style=flat-square
+.. |python| image:: https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg
     :target: https://pypi.python.org/pypi/rtv/
     :alt: Supported Python versions
 
-.. |pypi| image:: https://img.shields.io/pypi/v/rtv.svg?label=version&style=flat-square
+.. |pypi| image:: https://img.shields.io/pypi/v/rtv.svg?label=version
     :target: https://pypi.python.org/pypi/rtv/
     :alt: Latest Version
+    
+.. |travis-ci| image:: https://travis-ci.org/michael-lazar/rtv.svg?branch=master
+    :target: https://travis-ci.org/michael-lazar/rtv
+    :alt: Build
 
-.. |downloads| image:: https://img.shields.io/pypi/dm/rtv.svg?period=month&style=flat-square
-    :target: https://pypi.python.org/pypi/rtv/
-    :alt: Downloads
+.. |coveralls| image:: https://coveralls.io/repos/michael-lazar/rtv/badge.svg?branch=master&service=github
+    :target: https://coveralls.io/github/michael-lazar/rtv?branch=master
+    :alt: Coverage
+    
+.. |gitter| image:: https://img.shields.io/gitter/room/michael-lazar/rtv.js.svg
+    :target: https://gitter.im/michael-lazar/rtv
+    :alt: Chat
+
