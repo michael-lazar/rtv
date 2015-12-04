@@ -124,7 +124,8 @@ class SubredditPage(Page):
 
         title, content = text.split('\n', 1)
         with self.term.loader(message='Posting', delay=0):
-            submission = self.reddit.submit(name, title, text=content)
+            submission = self.reddit.submit(name, title, text=content,
+                                            raise_captcha_exception=True)
             # Give reddit time to process the submission
             time.sleep(2.0)
         if self.term.loader.exception:

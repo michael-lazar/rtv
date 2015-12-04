@@ -339,7 +339,7 @@ class SubredditContent(Content):
         try:
             self.get(0)
         except IndexError:
-            raise exceptions.SubredditError('Unable to retrieve subreddit')
+            raise exceptions.SubredditError('No submissions')
 
     @classmethod
     def from_name(cls, reddit, name, loader, order=None, query=None):
@@ -361,7 +361,7 @@ class SubredditContent(Content):
 
         if name == 'me':
             if not reddit.is_oauth_session():
-                raise exceptions.AccountError('Could not access user account')
+                raise exceptions.AccountError('Not logged in')
             elif order:
                 submissions = reddit.user.get_submitted(sort=order)
             else:
@@ -443,7 +443,7 @@ class SubscriptionContent(Content):
         try:
             self.get(0)
         except IndexError:
-            raise exceptions.SubscriptionError('Unable to load subscriptions')
+            raise exceptions.SubscriptionError('No subscriptions')
 
     @classmethod
     def from_user(cls, reddit, loader):

@@ -12,10 +12,10 @@ import threading
 from contextlib import contextmanager
 
 import six
-import praw
-import requests
+from praw.errors import PRAWException
+from requests import RequestException
 
-from . import exceptions
+from .exceptions import RTVError
 
 
 _logger = logging.getLogger(__name__)
@@ -111,25 +111,6 @@ class LoadScreen(object):
     >>> assert isinstance(terminal.loader.exception, KeyboardInterrupt)
     """
 
-    HANDLED_EXCEPTIONS = [
-        (exceptions.SubscriptionError, 'No Subscriptions'),
-        (exceptions.AccountError, 'Unable to Access Account'),
-        (exceptions.SubredditError, 'Invalid Subreddit'),
-        (praw.errors.InvalidSubreddit, 'Invalid Subreddit'),
-        (praw.errors.InvalidComment, 'Invalid Comment'),
-        (praw.errors.InvalidSubmission, 'Invalid Submission'),
-        (praw.errors.OAuthAppRequired, 'Invalid OAuth data'),
-        (praw.errors.OAuthException, 'Invalid OAuth data'),
-        (praw.errors.LoginOrScopeRequired, 'Not Logged In'),
-        (praw.errors.ClientException, 'Reddit Client Error'),
-        (praw.errors.NotFound, 'Not Found'),
-        (praw.errors.APIException, 'Reddit API Error'),
-        (praw.errors.HTTPException, 'Reddit HTTP Error'),
-        (requests.HTTPError, 'Unexpected HTTP Error'),
-        (requests.ConnectionError, 'Connection Error'),
-        (KeyboardInterrupt, None),
-    ]
-
     def __init__(self, terminal):
 
         self.exception = None
@@ -186,19 +167,27 @@ class LoadScreen(object):
         self._animator.join()
         self._terminal.stdscr.refresh()
 
-        if self.catch_exception and e is not None:
-            # Log the exception and attach it so the caller can inspect it
-            self.exception = e
-            _logger.info('Loader caught: {0} - {1}'.format(type(e).__name__, e))
-            # If an error occurred, display a notification on the screen
-            for base, message in self.HANDLED_EXCEPTIONS:
-                if isinstance(e, base):
-                    if message:
-                        self._terminal.show_notification(message)
-                    break
-            else:
-                return  # Re-raise unhandled exceptions
-            return True  # Otherwise swallow the exception and continue
+        if e is None or not self.catch_exception:
+            # Skip exception handling
+            return
+
+        self.exception = e
+        exc_name = type(e).__name__
+        _logger.info('Loader caught: {0} - {1}'.format(exc_name, e))
+
+        # Some exceptions we want to swallow and display a notification
+        handled_exceptions = (RTVError, PRAWException, RequestException)
+        if isinstance(e, handled_exceptions):
+            # Pass the message straight through to the user
+            message = six.text_type(e).split('/n') if e else exc_name
+            self._terminal.show_notification(message)
+            return True
+        elif isinstance(e, KeyboardInterrupt):
+            # Don't need to print anything for this one
+            return True
+        else:
+            # Allow the exception to re-raise
+            return None
 
     def animate(self, delay, interval, message, trail):
 
