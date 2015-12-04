@@ -28,9 +28,14 @@ def test_terminal_properties(terminal, config):
     assert len(terminal.guilded) == 2
     assert isinstance(terminal.guilded[0], six.text_type)
 
-    # DISPLAY isn't reliable on all systems so we no longer rely on it.
     terminal._display = None
     with mock.patch.dict('os.environ', {'DISPLAY': ''}):
+        assert terminal.display is False
+
+    terminal._display = None
+    with mock.patch('rtv.terminal.sys') as sys, \
+            mock.patch.dict('os.environ', {'DISPLAY': ''}):
+        sys.platform = 'darwin'
         assert terminal.display is True
 
     terminal._display = None
