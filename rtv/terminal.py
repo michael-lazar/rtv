@@ -313,7 +313,10 @@ class Terminal(object):
                     # Can't check the loader exception because the oauth module
                     # supersedes this loader and we need to always kill the
                     # process if escape is pressed
-                    p.terminate()
+                    try:
+                        p.terminate()
+                    except OSError:
+                        pass
         else:
             with self.suspend():
                 webbrowser.open_new_tab(url)
