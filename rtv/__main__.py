@@ -65,10 +65,9 @@ def main():
         with curses_session() as stdscr:
             term = Terminal(stdscr, config['ascii'])
             with term.loader(catch_exception=False):
-                reddit = praw.Reddit(
-                    user_agent=user_agent,
-                    decode_html_entities=False,
-                    disable_update_check=True)
+                reddit = praw.Reddit(user_agent=user_agent,
+                                     decode_html_entities=False,
+                                     disable_update_check=True)
 
             # Authorize on launch if the refresh token is present
             oauth = OAuthHelper(reddit, term, config)
@@ -76,13 +75,18 @@ def main():
                 oauth.authorize()
 
             with term.loader():
-                page = SubredditPage(
-                    reddit, term, config, oauth,
-                    name=config['subreddit'], url=config['link'])
+                page = SubredditPage(reddit, term, config, oauth,
+                                     config['subreddit'])
             if term.loader.exception:
                 return
 
+            # Open the supplied submission link before opening the subreddit
+            if config['link']:
+                page.open_submission(url=config['link'])
+
+            # Launch the subreddit page
             page.loop()
+
     except Exception as e:
         _logger.exception(e)
         raise

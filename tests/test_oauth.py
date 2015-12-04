@@ -77,8 +77,7 @@ def test_oauth_authorize_with_refresh_token(oauth, stdscr, refresh_token):
         exception = OAuthException('', '')
         oauth.reddit.refresh_access_information.side_effect = exception
         oauth.authorize()
-    message = 'Invalid OAuth data'.encode('utf-8')
-    stdscr.derwin().addstr.assert_called_with(1, 1, message)
+    assert isinstance(oauth.term.loader.exception, OAuthException)
     assert oauth.http_server is None
 
 
@@ -149,8 +148,7 @@ def test_oauth_authorize(oauth, reddit, stdscr, refresh_token):
             exception = OAuthException('', '')
             oauth.reddit.get_access_information.side_effect = exception
             oauth.authorize()
-        message = 'Invalid OAuth data'.encode('utf-8')
-        stdscr.derwin().addstr.assert_called_with(1, 1, message)
+        assert isinstance(oauth.term.loader.exception, OAuthException)
         assert not oauth.config.save_refresh_token.called
 
 

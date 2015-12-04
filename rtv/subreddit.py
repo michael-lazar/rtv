@@ -19,7 +19,7 @@ class SubredditController(PageController):
 
 class SubredditPage(Page):
 
-    def __init__(self, reddit, term, config, oauth, name, url=None):
+    def __init__(self, reddit, term, config, oauth, name):
         """
         Params:
             name (string): Name of subreddit to open
@@ -30,9 +30,6 @@ class SubredditPage(Page):
         self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.controller = SubredditController(self)
         self.nav = Navigator(self.content.get)
-
-        if url:
-            self.open_submission(url=url)
 
     @SubredditController.register(curses.KEY_F5, 'r')
     def refresh_content(self, name=None, order=None):
@@ -127,7 +124,8 @@ class SubredditPage(Page):
 
         title, content = text.split('\n', 1)
         with self.term.loader(message='Posting', delay=0):
-            submission = self.reddit.submit(name, title, text=content)
+            submission = self.reddit.submit(name, title, text=content,
+                                            raise_captcha_exception=True)
             # Give reddit time to process the submission
             time.sleep(2.0)
         if self.term.loader.exception:
