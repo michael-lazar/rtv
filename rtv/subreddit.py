@@ -90,7 +90,7 @@ class SubredditPage(Page):
 
         page.loop()
 
-        if data.get('url_type') in ('selfpost', 'x-post'):
+        if data.get('url_type') == 'selfpost':
             self.config.history.add(data['url_full'])
 
     @SubredditController.register(curses.KEY_ENTER, Terminal.RETURN, 'o')
@@ -98,9 +98,11 @@ class SubredditPage(Page):
         "Open a link with the webbrowser"
 
         data = self.content.get(self.nav.absolute_index)
-        if data['url_type'] in ('x-post', 'selfpost'):
-            # Open links to other posts directly in RTV
+        if data['url_type'] == 'selfpost':
             self.open_submission()
+        elif data['url_type'] == 'x-post':
+            self.open_submission(url=data['url_full'])
+            self.config.history.add(data['url_full'])
         else:
             self.term.open_browser(data['url_full'])
             self.config.history.add(data['url_full'])
