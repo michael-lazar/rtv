@@ -19,7 +19,7 @@ class SubredditController(PageController):
 
 class SubredditPage(Page):
 
-    def __init__(self, reddit, term, config, oauth, name, url=None):
+    def __init__(self, reddit, term, config, oauth, name):
         """
         Params:
             name (string): Name of subreddit to open
@@ -30,9 +30,6 @@ class SubredditPage(Page):
         self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.controller = SubredditController(self)
         self.nav = Navigator(self.content.get)
-
-        if url:
-            self.open_submission(url=url)
 
     @SubredditController.register(curses.KEY_F5, 'r')
     def refresh_content(self, name=None, order=None):
