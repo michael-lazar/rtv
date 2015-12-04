@@ -68,10 +68,11 @@ class Terminal(object):
         """
 
         if self._display is None:
-            
-            # OSX doesn't set DISPLAY so we can't use this to check
-            # display = bool(os.environ.get("DISPLAY"))
-            display = True
+            if sys.platform == 'darwin':
+                # OSX doesn't always set DISPLAY so we can't use this to check
+                display = True
+            else:
+                display = bool(os.environ.get("DISPLAY"))
 
             # Use the convention defined here to parse $BROWSER
             # https://docs.python.org/2/library/webbrowser.html
@@ -290,12 +291,13 @@ class Terminal(object):
         if self.display:
             command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
             args = [sys.executable, '-c', command]
-            with open(os.devnull, 'ab+', 0) as null:
-                p = subprocess.Popen(args, stdout=null, stderr=null)
-                with self.loader(message='Opening page in a new window'):
-                    # Give the browser 5 seconds to open a new tab. Because the
-                    # display is set, calling webbrowser should be non-blocking.
-                    # If it blocks or returns an error, something went wrong.
+            null = open(os.devnull, 'ab+', 0)
+            p = subprocess.Popen(args, stdout=null, stderr=null)
+            with self.loader(message='Opening page in a new window'):
+                # Give the browser 5 seconds to open a new tab. Because the
+                # display is set, calling webbrowser should be non-blocking.
+                # If it blocks or returns an error, something went wrong.
+                try:
                     start = time.time()
                     while time.time() - start < 5:
                         code = p.poll()
@@ -303,12 +305,14 @@ class Terminal(object):
                             break  # Success
                         elif code is not None:
                             raise exceptions.BrowserError(
-                                'Process exited with status=%s' % code)
+                                'Browser exited with status=%s' % code)
                         time.sleep(0.01)
                     else:
                         raise exceptions.BrowserError('Timeout opening browser')
-                if self.loader.exception is not None:
-                    # Cleanup the process
+                finally:
+                    # Can't check the loader exception because the oauth module
+                    # supersedes this loader and we need to always kill the
+                    # process if escape is pressed
                     p.terminate()
         else:
             with self.suspend():

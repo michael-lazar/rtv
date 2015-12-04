@@ -97,7 +97,6 @@ class OAuthHelper(object):
                 self.term.open_browser(authorize_url)
                 io.start()
             if self.term.loader.exception:
-                io.clear_instance()
                 return
         else:
             # Open the terminal webbrowser in a background thread and wait
@@ -115,6 +114,9 @@ class OAuthHelper(object):
             return
         elif self.params['error']:
             self.term.show_notification('Authentication error')
+            return
+        elif self.params['state'] is None:
+            # Something went wrong but it's not clear what happened
             return
         elif self.params['state'] != state:
             self.term.show_notification('UUID mismatch')
