@@ -227,7 +227,7 @@ class SubmissionPage(Page):
         self.term.add_line(win, ' {comments} '.format(**data))
 
         if data['gold']:
-            text, attr = self.term.gold
+            text, attr = self.term.guilded
             self.term.add_line(win, text, attr=attr)
 
         if data['nsfw']:
