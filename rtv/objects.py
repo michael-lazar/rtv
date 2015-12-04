@@ -179,7 +179,7 @@ class LoadScreen(object):
         handled_exceptions = (RTVError, PRAWException, RequestException)
         if isinstance(e, handled_exceptions):
             # Pass the message straight through to the user
-            message = six.text_type(e).split('/n') if e else exc_name
+            message = six.text_type(e).split('/n') if str(e) else exc_name
             self._terminal.show_notification(message)
             return True
         elif isinstance(e, KeyboardInterrupt):
