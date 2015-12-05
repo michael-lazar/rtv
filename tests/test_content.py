@@ -12,11 +12,6 @@ from rtv.content import (
     Content, SubmissionContent, SubredditContent, SubscriptionContent)
 from rtv import exceptions
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
 
 def test_content_humanize_timestamp():
 
