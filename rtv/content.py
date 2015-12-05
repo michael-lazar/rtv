@@ -76,7 +76,7 @@ class Content(object):
         if isinstance(comment, praw.objects.MoreComments):
             data['type'] = 'MoreComments'
             data['count'] = comment.count
-            data['body'] = 'More comments'.format(comment.count)
+            data['body'] = 'More comments'
         else:
             author = getattr(comment, 'author', '[deleted]')
             name = getattr(author, 'name', '[deleted]')
@@ -89,7 +89,7 @@ class Content(object):
             data['type'] = 'Comment'
             data['body'] = comment.body
             data['created'] = cls.humanize_timestamp(comment.created_utc)
-            data['score'] = '{} pts'.format(comment.score)
+            data['score'] = '{0} pts'.format(comment.score)
             data['author'] = name
             data['is_author'] = (name == sub_name)
             data['flair'] = flair
@@ -113,7 +113,7 @@ class Content(object):
         """
 
         reddit_link = re.compile(
-            'https?://(www\.)?(np\.)?redd(it\.com|\.it)/r/.*')
+            r'https?://(www\.)?(np\.)?redd(it\.com|\.it)/r/.*')
         author = getattr(sub, 'author', '[deleted]')
         name = getattr(author, 'name', '[deleted]')
         flair = getattr(sub, 'link_flair_text', '')
@@ -124,8 +124,8 @@ class Content(object):
         data['title'] = sub.title
         data['text'] = sub.selftext
         data['created'] = cls.humanize_timestamp(sub.created_utc)
-        data['comments'] = '{} comments'.format(sub.num_comments)
-        data['score'] = '{} pts'.format(sub.score)
+        data['comments'] = '{0} comments'.format(sub.num_comments)
+        data['score'] = '{0} pts'.format(sub.score)
         data['author'] = name
         data['permalink'] = sub.permalink
         data['subreddit'] = six.text_type(sub.subreddit)
@@ -137,17 +137,17 @@ class Content(object):
         data['index'] = None  # This is filled in later by the method caller
 
         if data['flair'] and not data['flair'].startswith('['):
-            data['flair'] = u'[{}]'.format(data['flair'].strip())
+            data['flair'] = u'[{0}]'.format(data['flair'].strip())
 
         url_full = data['url_full']
         if data['permalink'].split('/r/')[-1] == url_full.split('/r/')[-1]:
             data['url_type'] = 'selfpost'
-            data['url'] = 'self.{}'.format(data['subreddit'])
+            data['url'] = 'self.{0}'.format(data['subreddit'])
         elif reddit_link.match(url_full):
             data['url_type'] = 'x-post'
             # Strip the subreddit name from the permalink to avoid having
             # submission.subreddit.url make a separate API call
-            data['url'] = 'self.{}'.format(url_full.split('/')[4])
+            data['url'] = 'self.{0}'.format(url_full.split('/')[4])
         else:
             data['url_type'] = 'external'
             data['url'] = url_full
@@ -298,7 +298,7 @@ class SubmissionContent(Content):
             comment['cache'] = cache
             comment['count'] = count
             comment['level'] = data['level']
-            comment['body'] = 'Hidden'.format(count)
+            comment['body'] = 'Hidden'
             self._comment_data[index:index + len(cache)] = [comment]
 
         elif data['type'] == 'HiddenComment':
@@ -354,7 +354,7 @@ class SubredditContent(Content):
         if '/' in name:
             name, name_order = name.split('/')
             order = order or name_order
-        display_name = '/r/{}'.format(name)
+        display_name = '/r/{0}'.format(name)
 
         if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
             raise exceptions.SubredditError('Unrecognized order "%s"' % order)

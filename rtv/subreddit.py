@@ -32,11 +32,11 @@ class SubredditPage(Page):
         self.nav = Navigator(self.content.get)
 
     @SubredditController.register(curses.KEY_F5, 'r')
-    def refresh_content(self, name=None, order=None):
+    def refresh_content(self, order=None, name=None):
         "Re-download all submissions and reset the page index"
 
-        name = name or self.content.name
         order = order or self.content.order
+        name = name or self.content.name
 
         # Hack to allow an order specified in the name by prompt_subreddit() to
         # override the current default
@@ -71,7 +71,7 @@ class SubredditPage(Page):
 
         name = self.term.prompt_input('Enter Subreddit: /r/')
         if name is not None:
-            self.refresh_content(name=name, order='ignore')
+            self.refresh_content(order='ignore', name=name)
 
     @SubredditController.register(curses.KEY_RIGHT, 'l')
     def open_submission(self, url=None):
@@ -161,10 +161,10 @@ class SubredditPage(Page):
         # When the user has chosen a subreddit in the subscriptions list,
         # refresh content with the selected subreddit
         if page.subreddit_data is not None:
-            self.refresh_content(name=page.subreddit_data['name'],
-                                 order='ignore')
+            self.refresh_content(order='ignore',
+                                 name=page.subreddit_data['name'])
 
-    def _draw_item(self, win, data, inverted=False):
+    def _draw_item(self, win, data, inverted):
 
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1  # Leave space for the cursor in the first column

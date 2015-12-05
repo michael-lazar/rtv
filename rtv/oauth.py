@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 import time
 import uuid
 
-from tornado import gen, ioloop, web, httpserver
 from concurrent.futures import ThreadPoolExecutor
+from tornado import gen, ioloop, web, httpserver
 
 
 class OAuthHandler(web.RequestHandler):

@@ -61,6 +61,10 @@ class Terminal(object):
         return symbol, attr
 
     @property
+    def vline(self):
+        return getattr(curses, 'ACS_VLINE', ord('|'))
+
+    @property
     def display(self):
         """
         Use a number of methods to guess if the default webbrowser will open in
@@ -229,7 +233,7 @@ class Terminal(object):
 
         n_rows, n_cols = self.stdscr.getmaxyx()
 
-        box_width = max(map(len, message)) + 2
+        box_width = max(len(m) for m in message) + 2
         box_height = len(message) + 2
 
         # Cut off the lines of the message that don't fit on the screen
@@ -291,9 +295,9 @@ class Terminal(object):
         if self.display:
             command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
             args = [sys.executable, '-c', command]
-            null = open(os.devnull, 'ab+', 0)
-            p = subprocess.Popen(args, stdout=null, stderr=null)
-            with self.loader(message='Opening page in a new window'):
+            with self.loader(message='Opening page in a new window'), \
+                    open(os.devnull, 'ab+', 0) as null:
+                p = subprocess.Popen(args, stdout=null, stderr=null)
                 # Give the browser 5 seconds to open a new tab. Because the
                 # display is set, calling webbrowser should be non-blocking.
                 # If it blocks or returns an error, something went wrong.

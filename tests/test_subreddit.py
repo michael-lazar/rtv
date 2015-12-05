@@ -46,7 +46,7 @@ def test_subreddit_refresh(subreddit_page, terminal):
     assert terminal.loader.exception is None
 
     # Refresh with the order in the name
-    subreddit_page.refresh_content(name='/r/front/hot', order='ignore')
+    subreddit_page.refresh_content(order='ignore', name='/r/front/hot')
     assert subreddit_page.content.order == 'hot'
     assert subreddit_page.content.name == '/r/front'
     assert terminal.loader.exception is None
@@ -132,13 +132,13 @@ def test_subreddit_post(subreddit_page, terminal, reddit, refresh_token):
     subreddit_page.oauth.authorize()
 
     # Post a submission to an invalid subreddit
-    subreddit_page.refresh_content('front')
+    subreddit_page.refresh_content(name='front')
     subreddit_page.controller.trigger('c')
     text = "Can't post to /r/front".encode('utf-8')
     terminal.stdscr.subwin.addstr.assert_called_with(1, 1, text)
 
     # Post a submission with a title but with no body
-    subreddit_page.refresh_content('python')
+    subreddit_page.refresh_content(name='python')
     with mock.patch.object(terminal, 'open_editor'):
         terminal.open_editor.return_value = 'title'
         subreddit_page.controller.trigger('c')

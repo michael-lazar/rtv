@@ -48,11 +48,11 @@ class SubmissionPage(Page):
         self.active = False
 
     @SubmissionController.register(curses.KEY_F5, 'r')
-    def refresh_content(self, order=None):
+    def refresh_content(self, order=None, name=None):
         "Re-download comments and reset the page index"
 
         order = order or self.content.order
-        url = self.content.name
+        url = name or self.content.name
 
         with self.term.loader():
             self.content = SubmissionContent.from_url(
@@ -124,18 +124,18 @@ class SubmissionPage(Page):
         else:
             self.term.flash()
 
-    def _draw_item(self, win, data, inverted=False):
+    def _draw_item(self, win, data, inverted):
 
         if data['type'] == 'MoreComments':
             return self._draw_more_comments(win, data)
         elif data['type'] == 'HiddenComment':
             return self._draw_more_comments(win, data)
         elif data['type'] == 'Comment':
-            return self._draw_comment(win, data, inverted=inverted)
+            return self._draw_comment(win, data, inverted)
         else:
             return self._draw_submission(win, data)
 
-    def _draw_comment(self, win, data, inverted=False):
+    def _draw_comment(self, win, data, inverted):
 
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
@@ -172,9 +172,9 @@ class SubmissionPage(Page):
         attr = Color.get_level(data['level'])
         x = 0
         for y in range(n_rows):
-            self.term.addch(win, y, x, curses.ACS_VLINE, attr)
+            self.term.addch(win, y, x, self.term.vline, attr)
 
-        return attr | curses.ACS_VLINE
+        return attr | self.term.vline
 
     def _draw_more_comments(self, win, data):
 
@@ -185,9 +185,9 @@ class SubmissionPage(Page):
         self.term.add_line(win, ' [{count}]'.format(**data), attr=curses.A_BOLD)
 
         attr = Color.get_level(data['level'])
-        self.term.addch(win, 0, 0, curses.ACS_VLINE, attr)
+        self.term.addch(win, 0, 0, self.term.vline, attr)
 
-        return attr | curses.ACS_VLINE
+        return attr | self.term.vline
 
     def _draw_submission(self, win, data):
 

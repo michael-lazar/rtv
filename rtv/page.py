@@ -46,11 +46,10 @@ class Page(object):
         self._content_window = None
         self._subwindows = None
 
-    def refresh_content(self, order=None):
+    def refresh_content(self, order=None, name=None):
         raise NotImplementedError
 
-    @staticmethod
-    def _draw_item(window, data, inverted):
+    def _draw_item(self, window, data, inverted):
         raise NotImplementedError
 
     def loop(self):
