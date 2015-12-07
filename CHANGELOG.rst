@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.7.0: http://github.com/michael-lazar/rtv/releases/tag/v1.7.0
 .. _1.6.1: http://github.com/michael-lazar/rtv/releases/tag/v1.6.1
 .. _1.6: http://github.com/michael-lazar/rtv/releases/tag/v1.6
 .. _1.5: http://github.com/michael-lazar/rtv/releases/tag/v1.5
@@ -12,6 +13,40 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+
+-------------------
+1.7.0_ (2015-12-08)
+-------------------
+
+**Note**
+This version comes with a large change in the internal structure of the project,
+but does not break backwards compatibility. This includes adding a new test
+suite that will hopefully improve the stability of future releases.
+
+Continuous Integration additions
+
+* Travis-CI https://travis-ci.org/michael-lazar/rtv
+* Coveralls https://coveralls.io/github/michael-lazar/rtv
+* Gitter (chat) https://gitter.im/michael-lazar/rtv
+* Added a tox config for local testing
+* Added a pylint config for static code and style analysis
+* The project now uses VCR.py to record HTTP interactions for testing.
+
+Features
+
+* Added a wider utilization of the loading screen for functions that make
+  reddit API calls.
+* In-progress loading screens can now be cancelled by pressing the `Esc` key.
+
+Bugfixes
+
+* OSX users should now be able to login using OAuth.
+* Comments now return the correct nested level when loading "More Comments".
+* Several unicode fixes, the project is now much more consistent in the way
+  that unicode is handled.
+* Several undocumented bug fixes as a result of the code restructure.
+
 
 -------------------
 1.6.1_ (2015-10-19)
