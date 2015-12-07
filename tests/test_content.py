@@ -37,6 +37,46 @@ def test_content_wrap_text():
     assert Content.wrap_text('\n\n\n\n', 70) == ['', '', '', '']
 
 
+def test_content_flatten_comments(reddit):
+
+    # Grab a large MoreComments instance to test
+    url = 'https://www.reddit.com/r/AskReddit/comments/cmwov'
+    submission = reddit.get_submission(url, comment_sort='top')
+    more_comment = submission.comments[-1]
+    assert isinstance(more_comment, praw.objects.MoreComments)
+
+    # Double check that reddit's api hasn't changed the response structure
+    comments = more_comment.comments()
+    top_level_comments = []
+    for comment in comments[:-1]:
+        if comment.parent_id == more_comment.parent_id:
+            top_level_comments.append(comment.id)
+        else:
+            # Sometimes replies are returned below their parents instead of
+            # being automatically nested. In this case, make sure the parent_id
+            # of the comment matches the most recent top level comment.
+            assert comment.parent_id.endswith(top_level_comments[-1])
+
+    # The last item should be a MoreComments linked to the original parent
+    top_level_comments.append(comments[-1].id)
+    assert isinstance(comments[-1], praw.objects.MoreComments)
+    assert comments[-1].parent_id == more_comment.parent_id
+
+    flattened = Content.flatten_comments(comments, root_level=2)
+
+    # Because the comments returned by praw's comment.comments() don't have
+    # nested replies, the flattened size should not change.
+    assert len(flattened) == len(comments)
+    for i, comment in enumerate(flattened):
+        # Order should be preserved
+        assert comment.id == comments[i].id
+        # And the nested level should be added
+        if comment.id in top_level_comments:
+            assert comment.nested_level == 2
+        else:
+            assert comment.nested_level > 2
+
+
 def test_content_submission_initialize(reddit, terminal):
 
     url = 'https://www.reddit.com/r/Python/comments/2xmo63/'

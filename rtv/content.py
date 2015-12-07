@@ -43,22 +43,37 @@ class Content(object):
         retval = []
         while stack:
             item = stack.pop(0)
-            if isinstance(item, praw.objects.MoreComments):
-                if item.count == 0:
-                    # MoreComments item count should never be zero, but if it
-                    # is then discard the MoreComment object. Need to look into
-                    # this further.
-                    continue
-            else:
-                if item._replies is None:
-                    # Attach children MoreComment replies to parents
-                    # https://github.com/praw-dev/praw/issues/391
-                    item._replies = [stack.pop(0)]
-                nested = getattr(item, 'replies', None)
-                if nested:
-                    for n in nested:
-                        n.nested_level = item.nested_level + 1
-                    stack[0:0] = nested
+
+            # MoreComments item count should never be zero, but if it is then
+            # discard the MoreComment object. Need to look into this further.
+            if isinstance(item, praw.objects.MoreComments) and item.count == 0:
+                continue
+
+            # https://github.com/praw-dev/praw/issues/391
+            # Attach children replies to parents. Children will have the
+            # same parent_id, but with a suffix attached.
+            # E.g.
+            #   parent_comment.id = c0tprcm
+            #   comment.parent_id = t1_c0tprcm
+            if item.parent_id:
+                level = None
+                # Search through previous comments for a possible parent
+                for parent in retval[::-1]:
+                    if level and parent.nested_level >= level:
+                        # Stop if we reach a sibling or a child, we know that
+                        # nothing before this point is a candidate for parent.
+                        break
+                    level = parent.nested_level
+                    if item.parent_id.endswith(parent.id):
+                        item.nested_level = parent.nested_level + 1
+
+            # Otherwise, grab all of the attached replies and add them back to
+            # the list of comments to parse
+            if hasattr(item, 'replies'):
+                for n in item.replies:
+                    n.nested_level = item.nested_level + 1
+                stack[0:0] = item.replies
+
             retval.append(item)
         return retval
 
@@ -293,12 +308,13 @@ class SubmissionContent(Content):
                 count += d.get('count', 1)
                 cache.append(d)
 
-            comment = {}
-            comment['type'] = 'HiddenComment'
-            comment['cache'] = cache
-            comment['count'] = count
-            comment['level'] = data['level']
-            comment['body'] = 'Hidden'
+            comment = {
+                'type': 'HiddenComment',
+                'cache': cache,
+                'count': count,
+                'level': data['level'],
+                'body': 'Hidden'}
+
             self._comment_data[index:index + len(cache)] = [comment]
 
         elif data['type'] == 'HiddenComment':
