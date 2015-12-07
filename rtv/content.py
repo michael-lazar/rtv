@@ -321,7 +321,7 @@ class SubmissionContent(Content):
             self._comment_data[index:index + 1] = data['cache']
 
         elif data['type'] == 'MoreComments':
-            with self._loader():
+            with self._loader('Loading comments'):
                 # Undefined behavior if using a nested loader here
                 assert self._loader.depth == 1
                 comments = data['object'].comments(update=True)
@@ -424,7 +424,7 @@ class SubredditContent(Content):
 
         while index >= len(self._submission_data):
             try:
-                with self._loader():
+                with self._loader('Loading more submissions'):
                     submission = next(self._submissions)
                 if self._loader.exception:
                     raise IndexError
@@ -477,7 +477,7 @@ class SubscriptionContent(Content):
 
         while index >= len(self._subscription_data):
             try:
-                with self._loader():
+                with self._loader('Loading subscriptions'):
                     subscription = next(self._subscriptions)
                 if self._loader.exception:
                     raise IndexError

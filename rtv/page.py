@@ -129,12 +129,12 @@ class Page(object):
         if 'likes' not in data:
             self.term.flash()
         elif data['likes']:
-            with self.term.loader():
+            with self.term.loader('Clearing vote'):
                 data['object'].clear_vote()
             if not self.term.loader.exception:
                 data['likes'] = None
         else:
-            with self.term.loader():
+            with self.term.loader('Voting'):
                 data['object'].upvote()
             if not self.term.loader.exception:
                 data['likes'] = True
@@ -146,12 +146,12 @@ class Page(object):
         if 'likes' not in data:
             self.term.flash()
         elif data['likes'] or data['likes'] is None:
-            with self.term.loader():
+            with self.term.loader('Voting'):
                 data['object'].downvote()
             if not self.term.loader.exception:
                 data['likes'] = False
         else:
-            with self.term.loader():
+            with self.term.loader('Clearing vote'):
                 data['object'].clear_vote()
             if not self.term.loader.exception:
                 data['likes'] = None
@@ -187,7 +187,7 @@ class Page(object):
             self.term.show_notification('Aborted')
             return
 
-        with self.term.loader(message='Deleting', delay=0):
+        with self.term.loader('Deleting', delay=0):
             data['object'].delete()
             # Give reddit time to process the request
             time.sleep(2.0)
@@ -223,7 +223,7 @@ class Page(object):
             self.term.show_notification('Aborted')
             return
 
-        with self.term.loader(message='Editing', delay=0):
+        with self.term.loader('Editing', delay=0):
             data['object'].edit(text)
             time.sleep(2.0)
         if self.term.loader.exception is None:

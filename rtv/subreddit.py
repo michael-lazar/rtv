@@ -43,7 +43,7 @@ class SubredditPage(Page):
         if order == 'ignore':
             order = None
 
-        with self.term.loader():
+        with self.term.loader('Refreshing page'):
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.term.loader, order=order)
         if not self.term.loader.exception:
@@ -59,7 +59,7 @@ class SubredditPage(Page):
         if not query:
             return
 
-        with self.term.loader():
+        with self.term.loader('Searching'):
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.term.loader, query=query)
         if not self.term.loader.exception:
@@ -82,7 +82,7 @@ class SubredditPage(Page):
             data = self.content.get(self.nav.absolute_index)
             url = data['permalink']
 
-        with self.term.loader():
+        with self.term.loader('Loading submission'):
             page = SubmissionPage(
                 self.reddit, self.term, self.config, self.oauth, url=url)
         if self.term.loader.exception:
@@ -125,7 +125,7 @@ class SubredditPage(Page):
             return
 
         title, content = text.split('\n', 1)
-        with self.term.loader(message='Posting', delay=0):
+        with self.term.loader('Posting', delay=0):
             submission = self.reddit.submit(name, title, text=content,
                                             raise_captcha_exception=True)
             # Give reddit time to process the submission
@@ -134,7 +134,7 @@ class SubredditPage(Page):
             return
 
         # Open the newly created post
-        with self.term.loader():
+        with self.term.loader('Loading submission'):
             page = SubmissionPage(
                 self.reddit, self.term, self.config, self.oauth,
                 submission=submission)
@@ -150,7 +150,7 @@ class SubredditPage(Page):
     def open_subscriptions(self):
         "Open user subscriptions page"
 
-        with self.term.loader():
+        with self.term.loader('Loading subscriptions'):
             page = SubscriptionPage(
                 self.reddit, self.term, self.config, self.oauth)
         if self.term.loader.exception:

@@ -295,7 +295,7 @@ class Terminal(object):
         if self.display:
             command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
             args = [sys.executable, '-c', command]
-            with self.loader(message='Opening page in a new window'), \
+            with self.loader('Opening page in a new window'), \
                     open(os.devnull, 'ab+', 0) as null:
                 p = subprocess.Popen(args, stdout=null, stderr=null)
                 # Give the browser 5 seconds to open a new tab. Because the

@@ -64,7 +64,7 @@ def main():
     try:
         with curses_session() as stdscr:
             term = Terminal(stdscr, config['ascii'])
-            with term.loader(catch_exception=False):
+            with term.loader('Initializing', catch_exception=False):
                 reddit = praw.Reddit(user_agent=user_agent,
                                      decode_html_entities=False,
                                      disable_update_check=True)
@@ -74,9 +74,9 @@ def main():
             if config.refresh_token:
                 oauth.authorize()
 
-            with term.loader():
-                page = SubredditPage(reddit, term, config, oauth,
-                                     config['subreddit'])
+            name = config['subreddit']
+            with term.loader('Loading subreddit'):
+                page = SubredditPage(reddit, term, config, oauth, name)
             if term.loader.exception:
                 return
 

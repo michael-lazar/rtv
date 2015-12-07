@@ -54,7 +54,7 @@ class SubmissionPage(Page):
         order = order or self.content.order
         url = name or self.content.name
 
-        with self.term.loader():
+        with self.term.loader('Refreshing page'):
             self.content = SubmissionContent.from_url(
                 self.reddit, url, self.term.loader, order=order)
         if not self.term.loader.exception:
@@ -107,7 +107,7 @@ class SubmissionPage(Page):
             self.term.show_notification('Aborted')
             return
 
-        with self.term.loader(message='Posting', delay=0):
+        with self.term.loader('Posting', delay=0):
             reply(comment)
             # Give reddit time to process the submission
             time.sleep(2.0)

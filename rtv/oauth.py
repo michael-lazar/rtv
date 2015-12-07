@@ -72,7 +72,7 @@ class OAuthHelper(object):
 
         # If we already have a token, request new access credentials
         if self.config.refresh_token:
-            with self.term.loader(message='Logging in'):
+            with self.term.loader('Logging in'):
                 self.reddit.refresh_access_information(
                     self.config.refresh_token)
             return
@@ -93,7 +93,7 @@ class OAuthHelper(object):
             # Open a background browser (e.g. firefox) which is non-blocking.
             # Stop the iloop when the user hits the auth callback, at which
             # point we continue and check the callback params.
-            with self.term.loader(message='Opening browser for authorization'):
+            with self.term.loader('Opening browser for authorization'):
                 self.term.open_browser(authorize_url)
                 io.start()
             if self.term.loader.exception:
@@ -103,7 +103,7 @@ class OAuthHelper(object):
             # while for the user to close the process. Once the process is
             # closed, the iloop is stopped and we can check if the user has
             # hit the callback URL.
-            with self.term.loader(delay=0, message='Redirecting to reddit'):
+            with self.term.loader('Redirecting to reddit', delay=0):
                 # This load message exists to provide user feedback
                 time.sleep(1)
             io.add_callback(self._async_open_browser, authorize_url)
@@ -122,7 +122,7 @@ class OAuthHelper(object):
             self.term.show_notification('UUID mismatch')
             return
 
-        with self.term.loader(message='Logging in'):
+        with self.term.loader('Logging in'):
             info = self.reddit.get_access_information(self.params['code'])
         if self.term.loader.exception:
             return

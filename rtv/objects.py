@@ -121,8 +121,13 @@ class LoadScreen(object):
         self._animator = None
         self._is_running = None
 
-    def __call__(self, delay=0.5, interval=0.4, message='Downloading',
-                 trail='...', catch_exception=True):
+    def __call__(
+            self,
+            message='Downloading',
+            trail='...',
+            delay=0.5,
+            interval=0.4,
+            catch_exception=True):
         """
         Params:
             delay (float): Length of time that the loader will wait before
