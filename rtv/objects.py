@@ -12,10 +12,10 @@ import threading
 from contextlib import contextmanager
 
 import six
-from praw.errors import PRAWException
-from requests import RequestException
+import praw
+import requests
 
-from .exceptions import RTVError
+from . import exceptions
 
 
 _logger = logging.getLogger(__name__)
@@ -111,6 +111,13 @@ class LoadScreen(object):
     >>> assert isinstance(terminal.loader.exception, KeyboardInterrupt)
     """
 
+    EXCEPTION_MESSAGES = [
+        # These ones are triggered by us, so they should always have a message
+        (exceptions.RTVError, '{0}'),
+        (praw.errors.PRAWException, '{0.__class__}'),
+        (requests.exceptions.RequestException, '{0.__class__}'),
+    ]
+
     def __init__(self, terminal):
 
         self.exception = None
@@ -180,19 +187,15 @@ class LoadScreen(object):
         exc_name = type(e).__name__
         _logger.info('Loader caught: {0} - {1}'.format(exc_name, e))
 
-        # Some exceptions we want to swallow and display a notification
-        handled_exceptions = (RTVError, PRAWException, RequestException)
-        if isinstance(e, handled_exceptions):
-            # Pass the message straight through to the user
-            message = six.text_type(e).split('/n') if str(e) else exc_name
-            self._terminal.show_notification(message)
+        if isinstance(e, KeyboardInterrupt):
+            # Don't need to print anything for this one, just swallow it
             return True
-        elif isinstance(e, KeyboardInterrupt):
-            # Don't need to print anything for this one
-            return True
-        else:
-            # Allow the exception to re-raise
-            return None
+
+        for e_type, message in self.EXCEPTION_MESSAGES:
+            # Some exceptions we want to swallow and display a notification
+            if isinstance(e, e_type):
+                self._terminal.show_notification(message.format(e))
+                return True
 
     def animate(self, delay, interval, message, trail):
 
