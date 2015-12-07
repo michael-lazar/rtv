@@ -32,9 +32,11 @@ class SubscriptionPage(Page):
             self.term.flash()
             return
 
-        self.content = SubscriptionContent.from_user(self.reddit,
-                                                     self.term.loader)
-        self.nav = Navigator(self.content.get)
+        with self.term.loader():
+            self.content = SubscriptionContent.from_user(self.reddit,
+                                                         self.term.loader)
+        if not self.term.loader.exception:
+            self.nav = Navigator(self.content.get)
 
     @SubscriptionController.register(curses.KEY_ENTER, Terminal.RETURN,
                                      curses.KEY_RIGHT, 'l')
