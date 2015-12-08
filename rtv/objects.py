@@ -112,10 +112,12 @@ class LoadScreen(object):
     """
 
     EXCEPTION_MESSAGES = [
-        # These ones are triggered by us, so they should always have a message
         (exceptions.RTVError, '{0}'),
-        (praw.errors.PRAWException, '{0.__class__}'),
-        (requests.exceptions.RequestException, '{0.__class__}'),
+        (praw.errors.OAuthException, 'Not logged in'),
+        (praw.errors.OAuthScopeRequired, 'Not logged in'),
+        (praw.errors.LoginRequired, 'Not logged in'),
+        (praw.errors.PRAWException, '{0.__class__.__name__}'),
+        (requests.exceptions.RequestException, '{0.__class__.__name__}'),
     ]
 
     def __init__(self, terminal):
