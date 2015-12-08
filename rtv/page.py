@@ -184,7 +184,7 @@ class Page(object):
 
         prompt = 'Are you sure you want to delete this? (y/n): '
         if not self.term.prompt_y_or_n(prompt):
-            self.term.show_notification('Aborted')
+            self.term.show_notification('Canceled')
             return
 
         with self.term.loader('Deleting', delay=0):
@@ -220,7 +220,7 @@ class Page(object):
 
         text = self.term.open_editor(info)
         if text == content:
-            self.term.show_notification('Aborted')
+            self.term.show_notification('Canceled')
             return
 
         with self.term.loader('Editing', delay=0):

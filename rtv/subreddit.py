@@ -121,7 +121,7 @@ class SubredditPage(Page):
         submission_info = docs.SUBMISSION_FILE.format(name=name)
         text = self.term.open_editor(submission_info)
         if not text or '\n' not in text:
-            self.term.show_notification('Aborted')
+            self.term.show_notification('Canceled')
             return
 
         title, content = text.split('\n', 1)

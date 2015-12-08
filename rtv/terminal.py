@@ -303,7 +303,7 @@ class Terminal(object):
                 # If it blocks or returns an error, something went wrong.
                 try:
                     start = time.time()
-                    while time.time() - start < 5:
+                    while time.time() - start < 10:
                         code = p.poll()
                         if code == 0:
                             break  # Success

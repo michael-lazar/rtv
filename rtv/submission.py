@@ -104,7 +104,7 @@ class SubmissionPage(Page):
 
         comment = self.term.open_editor(comment_info)
         if not comment:
-            self.term.show_notification('Aborted')
+            self.term.show_notification('Canceled')
             return
 
         with self.term.loader('Posting', delay=0):

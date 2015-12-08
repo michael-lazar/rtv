@@ -116,6 +116,7 @@ class LoadScreen(object):
         (praw.errors.OAuthException, 'Not logged in'),
         (praw.errors.OAuthScopeRequired, 'Not logged in'),
         (praw.errors.LoginRequired, 'Not logged in'),
+        (praw.errors.InvalidCaptcha, 'Error, captcha required'),
         (praw.errors.PRAWException, '{0.__class__.__name__}'),
         (requests.exceptions.RequestException, '{0.__class__.__name__}'),
     ]
