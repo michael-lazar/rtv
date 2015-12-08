@@ -411,12 +411,19 @@ class Terminal(object):
 
         n_rows, n_cols = self.stdscr.getmaxyx()
         attr = curses.A_BOLD | Color.CYAN
-        prompt = self.clean(prompt, n_cols - 1)
-        window = self.stdscr.derwin(
-            1, n_cols - len(prompt), n_rows - 1, len(prompt))
-        window.attrset(attr)
-        self.add_line(self.stdscr, prompt, n_rows-1, 0, attr)
-        self.stdscr.refresh()
+        prompt = self.clean(prompt, n_cols-1)
+
+        # Create a new window to draw the text at the bottom of the screen,
+        # so we can erase it when we're done.
+        prompt_win = curses.newwin(1, len(prompt)+1, n_rows-1, 0)
+        self.add_line(prompt_win, prompt, attr=attr)
+        prompt_win.refresh()
+
+        # Create a separate window for text input
+        input_win = curses.newwin(1, n_cols-len(prompt), n_rows-1, len(prompt))
+        input_win.attrset(attr)
+        input_win.refresh()
+
         if key:
             curses.curs_set(1)
             ch = self.getch()
@@ -426,7 +433,15 @@ class Terminal(object):
             text = ch if ch != self.ESCAPE else None
             curses.curs_set(0)
         else:
-            text = self.text_input(window)
+            text = self.text_input(input_win)
+
+        prompt_win.clear()
+        input_win.clear()
+        del prompt_win
+        del input_win
+        self.stdscr.touchwin()
+        self.stdscr.refresh()
+
         return text
 
     def prompt_y_or_n(self, prompt):
