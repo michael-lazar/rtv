@@ -43,6 +43,7 @@ class Page(object):
 
         self.active = True
         self._header_window = None
+        self._banner_window = None
         self._content_window = None
         self._subwindows = None
 
@@ -260,17 +261,18 @@ class Page(object):
 
         # Note: 2 argument form of derwin breaks PDcurses on Windows 7!
         self._header_window = window.derwin(1, n_cols, 0, 0)
-        self._content_window = window.derwin(n_rows - 1, n_cols, 1, 0)
+        self._banner_window = window.derwin(2, n_cols, 1, 0)
+        self._content_window = window.derwin(n_rows - 3, n_cols, 3, 0)
 
         window.erase()
         self._draw_header()
+        self._draw_banner()
         self._draw_content()
         self._add_cursor()
 
     def _draw_header(self):
 
         n_rows, n_cols = self._header_window.getmaxyx()
-
         self._header_window.erase()
         # curses.bkgd expects bytes in py2 and unicode in py3
         ch, attr = str(' '), curses.A_REVERSE | curses.A_BOLD | Color.CYAN
@@ -294,6 +296,22 @@ class Page(object):
                 self.term.add_line(self._header_window, username, 0, s_col)
 
         self._header_window.refresh()
+
+    def _draw_banner(self):
+
+        n_rows, n_cols = self._header_window.getmaxyx()
+        self._banner_window.erase()
+        ch, attr = str(' '), curses.A_BOLD
+        self._banner_window.bkgd(ch, attr)
+
+        items = ['[1]hot', '[2]top', '[3]rising', '[4]new', '[5]controversial']
+        distance = (n_cols - sum(len(t) for t in items) - 1) / (len(items) - 1)
+        spacing = max(1, int(distance)) * ' '
+        text = spacing.join(items)
+        self.term.add_line(self._banner_window, text, 0, 0)
+        if self.content.order is not None:
+            col = text.find(self.content.order) - 3
+            self._banner_window.chgat(0, col, 3, attr | curses.A_REVERSE)
 
     def _draw_content(self):
         """
