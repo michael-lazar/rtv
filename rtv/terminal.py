@@ -19,6 +19,13 @@ from kitchen.text.display import textual_width_chop
 from . import exceptions
 from .objects import LoadScreen, Color
 
+try:
+    # Added in python 3.4+
+    from html import unescape
+except ImportError:
+    from six.moves import html_parser
+    unescape = html_parser.HTMLParser().unescape
+
 
 class Terminal(object):
 
@@ -173,10 +180,21 @@ class Terminal(object):
         curses will treat each code point as one character and will not account
         for wide characters. If utf-8 is passed in, addnstr will treat each
         'byte' as a single character.
+
+        Reddit's api sometimes chokes and double-encodes some html characters
+        Praw handles the initial decoding, but we need to do a second pass
+        just to make sure. See https://github.com/michael-lazar/rtv/issues/96
+
+        Example:
+            &amp;amp; -> returned directly from reddit's api
+            &amp;     -> returned after PRAW decodes the html characters
+            &         -> returned after our second pass, this is the true value
         """
 
         if n_cols is not None and n_cols <= 0:
             return ''
+
+        string = unescape(string)
 
         if self.ascii:
             if isinstance(string, six.binary_type):

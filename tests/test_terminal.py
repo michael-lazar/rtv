@@ -146,6 +146,16 @@ def test_terminal_clean_ncols(terminal):
 
 
 @pytest.mark.parametrize('ascii', [True, False])
+def test_terminal_clean_unescape_html(terminal, ascii):
+
+    # HTML characters get decoded
+    terminal.ascii = ascii
+    text = terminal.clean('&lt;')
+    assert isinstance(text, six.binary_type)
+    assert text.decode('ascii' if ascii else 'utf-8') == '<'
+
+
+@pytest.mark.parametrize('ascii', [True, False])
 def test_terminal_add_line(terminal, stdscr, ascii):
 
     terminal.ascii = ascii
