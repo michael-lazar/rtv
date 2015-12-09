@@ -45,7 +45,7 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
     # Banner shouldn't be drawn
     menu = ('[1]hot         '
             '[2]top         '
-            '[3]rising      '
+            '[3]rising         '
             '[4]new         '
             '[5]controversial').encode('utf-8')
     with pytest.raises(AssertionError):

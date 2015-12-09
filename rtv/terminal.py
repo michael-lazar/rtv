@@ -194,7 +194,8 @@ class Terminal(object):
         if n_cols is not None and n_cols <= 0:
             return ''
 
-        string = unescape(string)
+        if isinstance(string, six.text_type):
+            string = unescape(string)
 
         if self.ascii:
             if isinstance(string, six.binary_type):

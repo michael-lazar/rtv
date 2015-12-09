@@ -31,7 +31,7 @@ def test_submission_page_construct(reddit, terminal, config, oauth):
     # Banner
     menu = ('[1]hot         '
             '[2]top         '
-            '[3]rising      '
+            '[3]rising         '
             '[4]new         '
             '[5]controversial').encode('utf-8')
     window.addstr.assert_any_call(0, 0, menu)
