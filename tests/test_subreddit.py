@@ -21,6 +21,14 @@ def test_subreddit_page_construct(reddit, terminal, config, oauth):
     title = '/r/python'.encode('utf-8')
     window.addstr.assert_any_call(0, 0, title)
 
+    # Banner
+    menu = ('[1]hot         '
+            '[2]top         '
+            '[3]rising      '
+            '[4]new         '
+            '[5]controversial').encode('utf-8')
+    window.addstr.assert_any_call(0, 0, menu)
+
     # Submission
     text = page.content.get(0)['split_title'][0].encode('utf-8')
     window.subwin.addstr.assert_any_call(0, 1, text, 2097152)

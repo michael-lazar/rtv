@@ -28,6 +28,14 @@ def test_submission_page_construct(reddit, terminal, config, oauth):
     title = url[:terminal.stdscr.ncols-1].encode('utf-8')
     window.addstr.assert_any_call(0, 0, title)
 
+    # Banner
+    menu = ('[1]hot         '
+            '[2]top         '
+            '[3]rising      '
+            '[4]new         '
+            '[5]controversial').encode('utf-8')
+    window.addstr.assert_any_call(0, 0, menu)
+
     # Submission
     submission_data = page.content.get(-1)
     text = submission_data['title'].encode('utf-8')

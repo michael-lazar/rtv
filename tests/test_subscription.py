@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import curses
 
 import praw
+import pytest
 
 from rtv.subscription import SubscriptionPage
 
@@ -40,6 +41,15 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
     # Header - Name
     name = reddit.user.name.encode('utf-8')
     window.addstr.assert_any_call(0, 59, name)
+
+    # Banner shouldn't be drawn
+    menu = ('[1]hot         '
+            '[2]top         '
+            '[3]rising      '
+            '[4]new         '
+            '[5]controversial').encode('utf-8')
+    with pytest.raises(AssertionError):
+        window.addstr.assert_any_call(0, 0, menu)
 
     # Cursor - 2 lines
     window.subwin.chgat.assert_any_call(0, 0, 1, 262144)
