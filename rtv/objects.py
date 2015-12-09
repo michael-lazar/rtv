@@ -552,9 +552,6 @@ class Controller(object):
     def register(cls, *chars):
         def inner(f):
             for char in chars:
-                if isinstance(char, six.string_types) and len(char) == 1:
-                    cls.character_map[ord(char)] = f
-                else:
-                    cls.character_map[char] = f
+                cls.bind(cls, f, char)
             return f
         return inner
