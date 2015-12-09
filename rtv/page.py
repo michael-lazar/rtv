@@ -42,9 +42,7 @@ class Page(object):
         self.controller = None
 
         self.active = True
-        self._header_window = None
-        self._banner_window = None
-        self._content_window = None
+        self._row = 0
         self._subwindows = None
 
     def refresh_content(self, order=None, name=None):
@@ -252,37 +250,32 @@ class Page(object):
 
     def draw(self):
 
-        window = self.term.stdscr
-        n_rows, n_cols = window.getmaxyx()
+        n_rows, n_cols = self.term.stdscr.getmaxyx()
         if n_rows < self.term.MIN_HEIGHT or n_cols < self.term.MIN_WIDTH:
             # TODO: Will crash when you try to navigate if the terminal is too
             # small at startup because self._subwindows will never be populated
             return
 
-        # Note: 2 argument form of derwin breaks PDcurses on Windows 7!
-        self._header_window = window.derwin(1, n_cols, 0, 0)
-        self._banner_window = window.derwin(2, n_cols, 1, 0)
-        self._content_window = window.derwin(n_rows - 3, n_cols, 3, 0)
-
-        window.erase()
+        self._row = 0
         self._draw_header()
         self._draw_banner()
         self._draw_content()
         self._add_cursor()
+        self.term.stdscr.touchwin()
+        self.term.stdscr.refresh()
 
     def _draw_header(self):
 
-        n_rows, n_cols = self._header_window.getmaxyx()
-        self._header_window.erase()
+        n_rows, n_cols = self.term.stdscr.getmaxyx()
+        # Note: 2 argument form of derwin breaks PDcurses on Windows 7!
+        window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
+        window.erase()
         # curses.bkgd expects bytes in py2 and unicode in py3
         ch, attr = str(' '), curses.A_REVERSE | curses.A_BOLD | Color.CYAN
-        self._header_window.bkgd(ch, attr)
+        window.bkgd(ch, attr)
 
         sub_name = self.content.name.replace('/r/front', 'Front Page')
-        self.term.add_line(self._header_window, sub_name, 0, 0)
-        if self.content.order is not None:
-            order = ' [{}]'.format(self.content.order)
-            self.term.add_line(self._header_window, order)
+        self.term.add_line(window, sub_name, 0, 0)
 
         if self.reddit.user is not None:
             # The starting position of the name depends on if we're converting
@@ -293,53 +286,59 @@ class Page(object):
             s_col = (n_cols - width(username) - 1)
             # Only print username if it fits in the empty space on the right
             if (s_col - 1) >= width(sub_name):
-                self.term.add_line(self._header_window, username, 0, s_col)
+                self.term.add_line(window, username, 0, s_col)
 
-        self._header_window.refresh()
+        self._row += 1
 
     def _draw_banner(self):
 
-        n_rows, n_cols = self._header_window.getmaxyx()
-        self._banner_window.erase()
-        ch, attr = str(' '), curses.A_BOLD
-        self._banner_window.bkgd(ch, attr)
+        n_rows, n_cols = self.term.stdscr.getmaxyx()
+        window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
+        window.erase()
+        ch, attr = str(' '), curses.A_BOLD | Color.YELLOW
+        window.bkgd(ch, attr)
 
         items = ['[1]hot', '[2]top', '[3]rising', '[4]new', '[5]controversial']
         distance = (n_cols - sum(len(t) for t in items) - 1) / (len(items) - 1)
         spacing = max(1, int(distance)) * ' '
         text = spacing.join(items)
-        self.term.add_line(self._banner_window, text, 0, 0)
+        self.term.add_line(window, text, 0, 0)
         if self.content.order is not None:
             col = text.find(self.content.order) - 3
-            self._banner_window.chgat(0, col, 3, attr | curses.A_REVERSE)
+            window.chgat(0, col, 3, attr | curses.A_REVERSE)
+
+        self._row += 1
 
     def _draw_content(self):
         """
         Loop through submissions and fill up the content page.
         """
 
-        n_rows, n_cols = self._content_window.getmaxyx()
-        self._content_window.erase()
-        self._subwindows = []
+        n_rows, n_cols = self.term.stdscr.getmaxyx()
+        window = self.term.stdscr.derwin(
+            n_rows - self._row, n_cols, self._row, 0)
+        window.erase()
+        win_n_rows, win_n_cols = window.getmaxyx()
 
+        self._subwindows = []
         page_index, cursor_index, inverted = self.nav.position
         step = self.nav.step
 
         # If not inverted, align the first submission with the top and draw
         # downwards. If inverted, align the first submission with the bottom
         # and draw upwards.
-        current_row = (n_rows - 1) if inverted else 0
-        available_rows = (n_rows - 1) if inverted else n_rows
-        for data in self.content.iterate(page_index, step, n_cols - 2):
-            window_rows = min(available_rows, data['n_rows'])
-            window_cols = n_cols - data['offset']
-            start = current_row - window_rows if inverted else current_row
-            subwindow = self._content_window.derwin(
-                window_rows, window_cols, start, data['offset'])
+        current_row = (win_n_rows - 1) if inverted else 0
+        available_rows = (win_n_rows - 1) if inverted else win_n_rows
+        for data in self.content.iterate(page_index, step, win_n_cols - 2):
+            subwin_n_rows = min(available_rows, data['n_rows'])
+            subwin_n_cols = win_n_cols - data['offset']
+            start = current_row - subwin_n_rows if inverted else current_row
+            subwindow = window.derwin(
+                subwin_n_rows, subwin_n_cols, start, data['offset'])
             attr = self._draw_item(subwindow, data, inverted)
             self._subwindows.append((subwindow, attr))
-            available_rows -= (window_rows + 1)  # Add one for the blank line
-            current_row += step * (window_rows + 1)
+            available_rows -= (subwin_n_rows + 1)  # Add one for the blank line
+            current_row += step * (subwin_n_rows + 1)
             if available_rows <= 0:
                 break
         else:
@@ -352,7 +351,7 @@ class Page(object):
                 self.nav.flip((len(self._subwindows) - 1))
                 self._draw_content()
 
-        self._content_window.refresh()
+        self._row = n_rows
 
     def _add_cursor(self):
         self._edit_cursor(curses.A_REVERSE)
@@ -362,13 +361,11 @@ class Page(object):
 
     def _move_cursor(self, direction):
         self._remove_cursor()
+        # Note: ACS_VLINE doesn't like changing the attribute, so disregard the
+        # redraw flag and opt to always redraw
         valid, redraw = self.nav.move(direction, len(self._subwindows))
         if not valid:
             self.term.flash()
-
-        # Note: ACS_VLINE doesn't like changing the attribute,
-        # so always redraw.
-        self._draw_content()
         self._add_cursor()
 
     def _move_page(self, direction):
@@ -376,10 +373,6 @@ class Page(object):
         valid, redraw = self.nav.move_page(direction, len(self._subwindows)-1)
         if not valid:
             self.term.flash()
-
-        # Note: ACS_VLINE doesn't like changing the attribute,
-        # so always redraw.
-        self._draw_content()
         self._add_cursor()
 
     def _edit_cursor(self, attribute):
@@ -401,5 +394,3 @@ class Page(object):
         n_rows, _ = window.getmaxyx()
         for row in range(n_rows):
             window.chgat(row, 0, 1, attribute)
-
-        window.refresh()

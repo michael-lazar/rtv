@@ -180,7 +180,6 @@ class LoadScreen(object):
 
         self._is_running = False
         self._animator.join()
-        self._terminal.stdscr.refresh()
 
         if e is None or not self.catch_exception:
             # Skip exception handling

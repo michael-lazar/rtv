@@ -422,7 +422,6 @@ class Terminal(object):
         # Create a separate window for text input
         input_win = curses.newwin(1, n_cols-len(prompt), n_rows-1, len(prompt))
         input_win.attrset(attr)
-        input_win.refresh()
 
         if key:
             curses.curs_set(1)
