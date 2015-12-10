@@ -104,7 +104,8 @@ class Content(object):
             data['type'] = 'Comment'
             data['body'] = comment.body
             data['created'] = cls.humanize_timestamp(comment.created_utc)
-            data['score'] = '{0} pts'.format(comment.score)
+            data['score'] = '{0} pts'.format(
+                '-' if comment.score_hidden else comment.score)
             data['author'] = name
             data['is_author'] = (name == sub_name)
             data['flair'] = flair
@@ -140,32 +141,29 @@ class Content(object):
         data['text'] = sub.selftext
         data['created'] = cls.humanize_timestamp(sub.created_utc)
         data['comments'] = '{0} comments'.format(sub.num_comments)
-        data['score'] = '{0} pts'.format(sub.score)
+        data['score'] = '{0} pts'.format(
+            '-' if sub.hide_score else comment.score)
         data['author'] = name
         data['permalink'] = sub.permalink
         data['subreddit'] = six.text_type(sub.subreddit)
-        data['flair'] = flair
+        data['flair'] = '[{0}]'.format(flair.strip(' []')) if flair else ''
         data['url_full'] = sub.url
         data['likes'] = sub.likes
         data['gold'] = sub.gilded > 0
         data['nsfw'] = sub.over_18
         data['index'] = None  # This is filled in later by the method caller
 
-        if data['flair'] and not data['flair'].startswith('['):
-            data['flair'] = u'[{0}]'.format(data['flair'].strip())
-
-        url_full = data['url_full']
-        if data['permalink'].split('/r/')[-1] == url_full.split('/r/')[-1]:
-            data['url_type'] = 'selfpost'
+        if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:
             data['url'] = 'self.{0}'.format(data['subreddit'])
-        elif reddit_link.match(url_full):
-            data['url_type'] = 'x-post'
+            data['url_type'] = 'selfpost'
+        elif reddit_link.match(sub.url):
             # Strip the subreddit name from the permalink to avoid having
             # submission.subreddit.url make a separate API call
-            data['url'] = 'self.{0}'.format(url_full.split('/')[4])
+            data['url'] = 'self.{0}'.format(sub.url.split('/')[4])
+            data['url_type'] = 'x-post'
         else:
+            data['url'] = sub.url
             data['url_type'] = 'external'
-            data['url'] = url_full
 
         return data
 
