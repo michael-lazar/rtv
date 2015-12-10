@@ -142,7 +142,7 @@ class Content(object):
         data['created'] = cls.humanize_timestamp(sub.created_utc)
         data['comments'] = '{0} comments'.format(sub.num_comments)
         data['score'] = '{0} pts'.format(
-            '-' if sub.hide_score else comment.score)
+            '-' if sub.hide_score else sub.score)
         data['author'] = name
         data['permalink'] = sub.permalink
         data['subreddit'] = six.text_type(sub.subreddit)
