@@ -117,6 +117,13 @@ In submission mode you can view the self text for a submission and browse commen
 :``o`` or ``ENTER``: Open the comment permalink with your web browser
 :``SPACE``: Fold the selected comment, or load additional comments
 
+
+=======
+Key Map
+=======
+
+.. image:: http://i.imgur.com/W4x3a1A.png
+
 =============
 Configuration
 =============
