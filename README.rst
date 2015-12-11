@@ -9,6 +9,8 @@ It is compatible with *most* terminal emulators on Linux and OSX.
 
 RTV is built in **python** using the **curses** library.
 
+`Demo <https://asciinema.org/a/31609?speed=2&autoplay=1>`_
+
 ---------------
 
 |pypi| |python| |travis-ci| |coveralls| |gitter|
