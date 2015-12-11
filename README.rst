@@ -122,7 +122,7 @@ In submission mode you can view the self text for a submission and browse commen
 Key Map
 =======
 
-.. image:: http://i.imgur.com/W4x3a1A.png
+.. image:: http://i.imgur.com/xDUQ03C.png
 
 =============
 Configuration
