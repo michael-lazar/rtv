@@ -9,7 +9,7 @@ import praw
 import tornado
 
 from . import docs
-from .config import Config
+from .config import Config, copy_default_config
 from .oauth import OAuthHelper
 from .terminal import Terminal
 from .objects import curses_session
@@ -38,11 +38,18 @@ def main():
     title = 'rtv {0}'.format(__version__)
     sys.stdout.write('\x1b]2;{0}\x07'.format(title))
 
-    # Attempt to load from the config file first, and then overwrite with any
-    # provided command line arguments.
+    args = Config.get_args()
+    fargs = Config.get_file(args.get('config'))
+
+    # Apply the file config first, then overwrite with any command line args
     config = Config()
-    config.from_file()
-    config.from_args()
+    config.update(**fargs)
+    config.update(**args)
+
+    # Copy the default config file and quit
+    if config['copy_config']:
+        copy_default_config()
+        return
 
     # Load the browsing history from previous sessions
     config.load_history()

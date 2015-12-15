@@ -5,12 +5,24 @@ import os
 import codecs
 from tempfile import NamedTemporaryFile
 
-from rtv.config import Config
+from rtv.config import Config, copy_default_config, DEFAULT_CONFIG
 
 try:
     from unittest import mock
 except ImportError:
     import mock
+
+
+def test_copy_default_config():
+    "Make sure the default config file was included in the package"
+
+    with NamedTemporaryFile(suffix='.cfg') as fp:
+        with mock.patch('rtv.config.input', return_value='y'):
+            copy_default_config(fp.name)
+            with open(DEFAULT_CONFIG) as fp_default:
+                assert fp.read() == fp_default.read()
+            permissions = os.stat(fp.name).st_mode & 0o777
+            assert permissions == 0o664
 
 
 def test_config_interface():
@@ -20,40 +32,50 @@ def test_config_interface():
     assert config['ascii'] is True
     config['ascii'] = False
     assert config['ascii'] is False
-    config['ascii'] = True
+    config['ascii'] = None
+    assert config['ascii'] is None
     del config['ascii']
     assert config['ascii'] is False
+
     config.update(subreddit='cfb', new_value=2.0)
     assert config['subreddit'] == 'cfb'
     assert config['new_value'] == 2.0
 
+    assert config['link'] is None
+    assert config['log'] is None
 
-def test_config_from_args():
+
+def test_config_get_args():
     "Ensure that command line arguments are parsed properly"
 
     args = ['rtv',
             '-s', 'cfb',
             '-l', 'https://reddit.com/permalink •',
             '--log', 'logfile.log',
+            '--config', 'configfile.cfg',
             '--ascii',
             '--non-persistent',
-            '--clear-auth']
+            '--clear-auth',
+            '--copy-config']
 
     with mock.patch('sys.argv', ['rtv']):
-        config = Config()
-        config.from_args()
+        config_dict = Config.get_args()
+        config = Config(**config_dict)
         assert config.config == {}
 
     with mock.patch('sys.argv', args):
-        config = Config()
-        config.from_args()
+        config_dict = Config.get_args()
+
+        config = Config(**config_dict)
         assert config['ascii'] is True
         assert config['subreddit'] == 'cfb'
-        assert config['link'] == 'https://reddit.com/permalink •'
         assert config['log'] == 'logfile.log'
         assert config['ascii'] is True
         assert config['persistent'] is False
         assert config['clear_auth'] is True
+        assert config['link'] == 'https://reddit.com/permalink •'
+        assert config['config'] == 'configfile.cfg'
+        assert config['copy_config'] is True
 
 
 def test_config_from_file():
@@ -68,15 +90,17 @@ def test_config_from_file():
         'subreddit': 'cfb'}
 
     with NamedTemporaryFile(suffix='.cfg') as fp:
-        config = Config(config_file=fp.name)
-        config.from_file()
+
+        fargs = Config.get_file(filename=fp.name)
+        config = Config(**fargs)
         assert config.config == {}
 
         rows = ['{0}={1}'.format(key, val) for key, val in args.items()]
         data = '\n'.join(['[rtv]'] + rows)
         fp.write(codecs.encode(data, 'utf-8'))
         fp.flush()
-        config.from_file()
+        fargs = Config.get_file(filename=fp.name)
+        config.update(**fargs)
         assert config.config == args
 
 
