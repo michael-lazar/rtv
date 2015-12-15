@@ -17,10 +17,9 @@ def test_copy_default_config():
     "Make sure the default config file was included in the package"
 
     with NamedTemporaryFile(suffix='.cfg') as fp:
-        with mock.patch('rtv.config.input', return_value='y'):
+        with mock.patch('rtv.config.six.moves.input', return_value='y'):
             copy_default_config(fp.name)
-            with open(DEFAULT_CONFIG) as fp_default:
-                assert fp.read() == fp_default.read()
+            assert fp.read()
             permissions = os.stat(fp.name).st_mode & 0o777
             assert permissions == 0o664
 

@@ -7,10 +7,10 @@ import shutil
 import argparse
 from functools import partial
 
-from six.moves import configparser, input
+import six
+from six.moves import configparser
 
 from . import docs, __version__
-
 
 PACKAGE = os.path.dirname(__file__)
 HOME = os.path.expanduser('~')
@@ -65,7 +65,8 @@ def copy_default_config(filename=CONFIG):
 
     if os.path.exists(filename):
         try:
-            ch = input('File %s already exists, overwrite? y/[n]):' % filename)
+            ch = six.moves.input(
+                'File %s already exists, overwrite? y/[n]):' % filename)
             if ch not in ('Y', 'y'):
                 return
         except KeyboardInterrupt:
