@@ -26,6 +26,7 @@ Basic Commands
   `j/k` or `UP/DOWN`  : Move the cursor up/down
   `m/n` or `PgUp/PgDn`: Jump to the previous/next page
   `o` or `ENTER`      : Open the selected item as a webpage
+  `1`-`5`             : Toggle post order
   `r` or `F5`         : Refresh page content
   `u`                 : Log in or switch accounts
   `?`                 : Show the help screen

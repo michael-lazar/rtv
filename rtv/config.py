@@ -38,10 +38,10 @@ def build_parser():
         help='full URL of a submission that will be opened on start')
     parser.add_argument(
         '--log', metavar='FILE', action='store',
-        help='log HTTP requests')
+        help='log HTTP requests to the given file')
     parser.add_argument(
         '--config', metavar='FILE', action='store',
-        help='Load configuration settings')
+        help='Load configuration settings from the given file')
     parser.add_argument(
         '--ascii', action='store_const', const=True,
         help='enable ascii-only mode')

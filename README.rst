@@ -166,7 +166,7 @@ RTV uses OAuth to facilitate logging into your reddit user account [#]_. The log
 1. You initiate a login by pressing the ``u`` key.
 2. You're redirected to a webbrowser where reddit will ask you to login and authorize RTV.
 3. RTV uses the generated token to login on your behalf.
-4. The token is stored on your computer at ``~/.config/rtv/refresh-token`` for future sessions.   You can disable this behavior by setting ``persistent=False`` in your RTV config.
+4. The token is stored on your computer at ``{HOME}/.config/rtv/refresh-token`` for future sessions. You can disable this behavior by setting ``persistent=False`` in your RTV config.
 
 Note that RTV no longer allows you to input your username/password directly. This method of cookie based authentication has been deprecated by reddit and will not be supported in future releases [#]_.
 
@@ -177,34 +177,14 @@ Note that RTV no longer allows you to input your username/password directly. Thi
 Config File
 -----------
 
-RTV will read a configuration placed at ``~/.config/rtv/rtv.cfg`` (or ``$XDG_CONFIG_HOME``).
-Each line in the file will replace the corresponding default argument in the launch script.
-This can be used to avoid having to re-enter login credentials every time the program is launched.
+RTV loads its config from ``{HOME}/.config/rtv/rtv.cfg`` (or ``$XDG_CONFIG_HOME``).
+You can auto-generate this file by running
 
-Example initial config:
+.. code-block:: bash
 
-**rtv.cfg**
+   $ rtv --copy-config
 
-.. code-block:: ini
-
-  [rtv]
-  # Log file location
-  log=/tmp/rtv.log
-
-  # Default subreddit
-  subreddit=CollegeBasketball
-
-  # Default submission link - will be opened every time the program starts
-  # link=http://www.reddit.com/r/CollegeBasketball/comments/31irjq
-
-  # Turn on ascii-only mode and disable all unicode characters
-  # This may be necessary for compatibility with some terminal browsers
-  # ascii=True
-
-  # Enable persistent storage of your authentication token
-  # This allows you to remain logged in when you restart the program
-  persistent=True
-
+View the default `config <rtv.cfg>`_.
 
 ===
 FAQ
@@ -238,19 +218,19 @@ How do I run the repository code directly?
 =========
 Changelog
 =========
-Please see `CHANGELOG.rst <https://github.com/michael-lazar/rtv/blob/master/CHANGELOG.rst>`_.
+Please see `CHANGELOG.rst <CHANGELOG.rst>`_.
 
 
 ============
 Contributors
 ============
-Please see `CONTRIBUTORS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTRIBUTORS.rst>`_.
+Please see `CONTRIBUTORS.rst <CONTRIBUTORS.rst>`_.
 
 
 =======
 License
 =======
-Please see `LICENSE <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_.
+Please see `LICENSE <LICENSE>`_.
 
 
 .. |python| image:: https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg
