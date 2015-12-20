@@ -184,7 +184,7 @@ You can auto-generate the config file by running
 
    $ rtv --copy-config
 
-See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv.cfg>`_ to view descriptions for each setting.
+See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv/rtv.cfg>`_ to view descriptions for each setting.
 
 ===
 FAQ
