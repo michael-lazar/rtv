@@ -7,6 +7,8 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor
 from tornado import gen, ioloop, web, httpserver
 
+from .config import TEMPLATE
+
 
 class OAuthHandler(web.RequestHandler):
     """
@@ -54,7 +56,7 @@ class OAuthHelper(object):
         kwargs = {'display': self.term.display, 'params': self.params}
         routes = [('/', OAuthHandler, kwargs)]
         self.callback_app = web.Application(
-            routes, template_path=self.config['template_path'])
+            routes, template_path=TEMPLATE)
 
         self.reddit.set_oauth_app_info(
             self.config['oauth_client_id'],

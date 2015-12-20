@@ -50,7 +50,7 @@ The installation will place a script in the system path
    $ rtv
    $ rtv --help
 
-See the `FAQ`_ for more information on common installation problems
+See the `FAQ`_ to troubleshoot common installation problems
 
 =====
 Usage
@@ -166,7 +166,7 @@ RTV uses OAuth to facilitate logging into your reddit user account [#]_. The log
 1. You initiate a login by pressing the ``u`` key.
 2. You're redirected to a webbrowser where reddit will ask you to login and authorize RTV.
 3. RTV uses the generated token to login on your behalf.
-4. The token is stored on your computer at ``~/.config/rtv/refresh-token`` for future sessions.   You can disable this behavior by setting ``persistent=False`` in your RTV config.
+4. The token is stored on your computer at ``{HOME}/.config/rtv/refresh-token`` for future sessions. You can disable this behavior by setting ``persistent=False`` in your RTV config.
 
 Note that RTV no longer allows you to input your username/password directly. This method of cookie based authentication has been deprecated by reddit and will not be supported in future releases [#]_.
 
@@ -177,34 +177,14 @@ Note that RTV no longer allows you to input your username/password directly. Thi
 Config File
 -----------
 
-RTV will read a configuration placed at ``~/.config/rtv/rtv.cfg`` (or ``$XDG_CONFIG_HOME``).
-Each line in the file will replace the corresponding default argument in the launch script.
-This can be used to avoid having to re-enter login credentials every time the program is launched.
+RTV stores configuration settings in ``{HOME}/.config/rtv/rtv.cfg``.
+You can auto-generate the config file by running
 
-Example initial config:
+.. code-block:: bash
 
-**rtv.cfg**
+   $ rtv --copy-config
 
-.. code-block:: ini
-
-  [rtv]
-  # Log file location
-  log=/tmp/rtv.log
-
-  # Default subreddit
-  subreddit=CollegeBasketball
-
-  # Default submission link - will be opened every time the program starts
-  # link=http://www.reddit.com/r/CollegeBasketball/comments/31irjq
-
-  # Turn on ascii-only mode and disable all unicode characters
-  # This may be necessary for compatibility with some terminal browsers
-  # ascii=True
-
-  # Enable persistent storage of your authentication token
-  # This allows you to remain logged in when you restart the program
-  persistent=True
-
+See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv.cfg>`_ to view descriptions for each setting.
 
 ===
 FAQ
