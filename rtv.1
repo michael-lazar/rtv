@@ -1,8 +1,8 @@
-.TH "RTV" "1" "December 07, 2015" "Version 1.7" "Usage and Commands"
+.TH "RTV" "1" "December 20, 2015" "Version 1.8.0" "Usage and Commands"
 .SH NAME
 RTV - Reddit Terminal Viewer
 .SH SYNOPSIS
-rtv [\-h] [\-V] [\-s SUBREDDIT] [\-l LINK] [\-\-ascii] [\-\-log FILE] [\-\-non\-persistent] [\-\-clear\-auth]
+rtv [\-h] [\-V] [\-s SUBREDDIT] [\-l LINK] [\-\-log FILE] [\-\-config FILE] [\-\-ascii] [\-\-non\-persistent] [\-\-clear\-auth] [\-\-copy\-config]
 .SH DESCRIPTION
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
 terminal window.
@@ -24,20 +24,28 @@ name of the subreddit that will be opened on start
 full URL of a submission that will be opened on start
 
 .TP
+\fB\-\-log FILE\fR
+log HTTP requests to the given file
+
+.TP
+\fB\-\-config FILE\fR
+Load configuration settings from the given file
+
+.TP
 \fB\-\-ascii\fR
 enable ascii\-only mode
 
 .TP
-\fB\-\-log FILE\fR
-log HTTP requests to a file
-
-.TP
 \fB\-\-non\-persistent\fR
-Forget all authenticated users when the program exits
+Forget the authenticated user when the program exits
 
 .TP
 \fB\-\-clear\-auth\fR
-Remove any saved OAuth tokens before starting
+Remove any saved user data before launching
+
+.TP
+\fB\-\-copy\-config\fR
+Copy the default configuration to {HOME}/.config/rtv/rtv.cfg
 
 
 .SH CONTROLS

@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.8.0: http://github.com/michael-lazar/rtv/releases/tag/v1.8.0
 .. _1.7.0: http://github.com/michael-lazar/rtv/releases/tag/v1.7.0
 .. _1.6.1: http://github.com/michael-lazar/rtv/releases/tag/v1.6.1
 .. _1.6: http://github.com/michael-lazar/rtv/releases/tag/v1.6
@@ -14,6 +15,22 @@ RTV Changelog
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
 
+
+------------------
+1.8.0_ (2015-12-20
+------------------
+Features
+
+* A banner on the top of the page now displays the selected page sort order.
+* Hidden scores now show up as "- pts".
+* Oauth settings are now accesible through the config file.
+* New argument `--config` specifies the config file to use.
+* New argument `--copy-config` generates a default config file.
+
+Documentation
+
+* Added a keyboard reference from keyboardlayouteditor.com
+* Added a link to an asciinema demo video
 
 -------------------
 1.7.0_ (2015-12-08)

@@ -43,9 +43,15 @@ def main():
     #         \fB-h\fR, \fB--help\fR
     #         show this help message and exit
     options = ''
-    arguments = help_sections[2].split('\n')
-    for argument in arguments[1:]:
-        argument = argument.strip()
+    lines = help_sections[2].split('\n')[1:]
+    lines = [line.strip() for line in lines]
+    arguments = []
+    for line in lines:
+        if line.startswith('-'):
+            arguments.append(line)
+        else:
+            arguments[-1] = arguments[-1] + ' ' + line
+    for argument in arguments:
         flag, description = (col.strip() for col in argument.split('  ', 1))
         flag = ', '.join(r'\fB'+f+r'\fR' for f in flag.split(', '))
         options += '\n'.join(('.TP', flag, description, '\n'))
@@ -56,8 +62,8 @@ def main():
     data['copyright'] = rtv.__copyright__
     # Escape dashes is all of the sections
     data = {k: v.replace('-', r'\-') for k, v in data.items()}
-    print('Reading from %s/rtv/scripts/rtv.1.template' % ROOT)
-    with open(os.path.join(ROOT, 'rtv/scripts/rtv.1.template')) as fp:
+    print('Reading from %s/scripts/rtv.1.template' % ROOT)
+    with open(os.path.join(ROOT, 'scripts/rtv.1.template')) as fp:
         template = fp.read()
     print('Populating template')
     out = template.format(**data)
