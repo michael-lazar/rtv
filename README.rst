@@ -50,7 +50,7 @@ The installation will place a script in the system path
    $ rtv
    $ rtv --help
 
-See the `FAQ`_ for more information on common installation problems
+See the `FAQ`_ to troubleshoot common installation problems
 
 =====
 Usage
@@ -177,14 +177,14 @@ Note that RTV no longer allows you to input your username/password directly. Thi
 Config File
 -----------
 
-RTV loads its config from ``{HOME}/.config/rtv/rtv.cfg`` (or ``$XDG_CONFIG_HOME``).
-You can auto-generate this file by running
+RTV stores configuration settings in ``{HOME}/.config/rtv/rtv.cfg``.
+You can auto-generate the config file by running
 
 .. code-block:: bash
 
    $ rtv --copy-config
 
-View the default `config <rtv.cfg>`_.
+See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv.cfg>`_ to view descriptions for each setting.
 
 ===
 FAQ
@@ -218,19 +218,19 @@ How do I run the repository code directly?
 =========
 Changelog
 =========
-Please see `CHANGELOG.rst <CHANGELOG.rst>`_.
+Please see `CHANGELOG.rst <https://github.com/michael-lazar/rtv/blob/master/CHANGELOG.rst>`_.
 
 
 ============
 Contributors
 ============
-Please see `CONTRIBUTORS.rst <CONTRIBUTORS.rst>`_.
+Please see `CONTRIBUTORS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTRIBUTORS.rst>`_.
 
 
 =======
 License
 =======
-Please see `LICENSE <LICENSE>`_.
+Please see `LICENSE <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_.
 
 
 .. |python| image:: https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg
