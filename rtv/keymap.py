@@ -71,8 +71,9 @@ class KeyMap(dict):
 
     def loadUserMap(self, userMap):
         for bind in userMap:
+            key = userMap[bind]
             try:
-                self.bind(bind, userMap[bind])
+                self.bind(bind, key)
             except UnknownBinding:
                 print("binding "+bind+" Don't exist")
 
