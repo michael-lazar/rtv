@@ -1,4 +1,5 @@
 import re
+import six
 from .page import Page
 from .subreddit import SubredditPage
 from .submission import SubmissionPage
@@ -85,7 +86,10 @@ class KeyMap(dict):
 
         if binding in self.default_bindings:
             keymap, function = self.binding2function(binding)
-            self.addUserBinding(key, keymap, function)
+            if isinstance(key, six.string_types) and len(key) == 1:
+                self.addUserBinding(ord(key), keymap, function)
+            else:
+                raise NonStandardKey()
         else:
             raise UnknownBinding()
 
