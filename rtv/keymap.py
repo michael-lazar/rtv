@@ -76,6 +76,8 @@ class KeyMap(dict):
                 self.bind(bind, key)
             except UnknownBinding:
                 print("binding "+bind+" Don't exist")
+            except NonStandardKey:
+                print("key \""+key+"\" is not standart")
 
     def addUserBinding(self, key, keymap, function):
         if key not in keymap:
