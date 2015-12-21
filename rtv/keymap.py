@@ -8,6 +8,10 @@ class UnknownBinding(Exception):
     pass
 
 
+class NonStandardKey(Exception):
+    pass
+
+
 class KeyMap(dict):
 
     default_bindings = {
