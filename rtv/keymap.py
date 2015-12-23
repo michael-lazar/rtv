@@ -90,9 +90,9 @@ class KeyMap(dict):
     def bind(self, binding, key):
 
         if binding in self.default_bindings:
-            keymap, function = self.binding2function(binding)
+            keymap = self.bindingKeyMap(binding)
             if isinstance(key, six.string_types) and len(key) == 1:
-                self.addUserBinding(ord(key), keymap, function)
+                self.addUserBinding(ord(key), keymap, binding)
             else:
                 raise NonStandardKey()
         else:
@@ -147,7 +147,7 @@ class KeyMap(dict):
 
     def fillWithDefaultKey(self):
         for binding, key in self.default_bindings.items():
-            keymap, function = self.binding2function(binding)
-            if function not in keymap.values():
+            keymap = self.bindingKeyMap(binding)
+            if binding not in keymap.values():
                 print("Add default binding "+binding)
-                keymap[ord(key[0])] = function
+                keymap[ord(key[0])] = binding
