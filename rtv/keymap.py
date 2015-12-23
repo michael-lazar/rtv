@@ -1,9 +1,10 @@
 import re
 import six
-from .page import Page
-from .subreddit import SubredditPage
-from .submission import SubmissionPage
-from .subscription import SubscriptionPage
+from .page import Page, PageController
+from .subreddit import SubredditPage, SubredditController
+from .submission import SubmissionPage, SubmissionController
+from .subscription import SubscriptionPage, SubscriptionController
+
 
 class UnknownBinding(Exception):
     pass
@@ -97,19 +98,36 @@ class KeyMap(dict):
         else:
             raise UnknownBinding()
 
-    def binding2function(self, binding):
-        """ Get the keymap and method reference of a binding's string """
+    def bindingInfo(self, binding):
+        base_class = None
+        controller = None
+        function = None
+        keymap = None
 
         s = binding.split('-')
 
         if re.match('^main-', binding):
-            return (self.userPageMap, eval('Page.'+s[1]))
+            base_class = Page
+            keymap = self.userPageMap
+            function = eval('Page.'+s[1])
+            controller = PageController
         if re.match('^submission-', binding):
-            return (self.userSubmissionMap, eval('SubmissionPage.'+s[1]))
+            base_class = SubmissionPage
+            keymap = self.userSubmissionMap
+            function = eval('SubmissionPage.'+s[1])
+            controller = SubmissionController
         if re.match('^subreddit-', binding):
-            return (self.userSubredditMap, eval('SubredditPage.'+s[1]))
+            base_class = SubredditPage
+            keymap = self.userSubredditMap
+            function = eval('SubredditPage.'+s[1])
+            controller = SubredditController
         if re.match('^subscription-', binding):
-            return (self.userSubscriptionMap, eval('SubscriptionPage.'+s[1]))
+            base_class = SubscriptionPage
+            keymap = self.userSubscriptionMap
+            function = eval('SubscriptionPage.'+s[1])
+            controller = SubscriptionController
+
+        return base_class, function, controller, keymap
 
     def fillWithDefaultKey(self):
         for binding, key in self.default_bindings.items():
