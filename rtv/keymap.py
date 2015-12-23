@@ -109,3 +109,10 @@ class KeyMap(dict):
             return (self.userSubredditMap, eval('SubredditPage.'+s[1]))
         if re.match('^subscription-', binding):
             return (self.userSubscriptionMap, eval('SubscriptionPage.'+s[1]))
+
+    def fillWithDefaultKey(self):
+        for binding, key in self.default_bindings.items():
+            keymap, function = self.binding2function(binding)
+            if function not in keymap.values():
+                print("Add default binding "+binding)
+                keymap[ord(key[0])] = function
