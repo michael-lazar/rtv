@@ -98,6 +98,22 @@ class KeyMap(dict):
         else:
             raise UnknownBinding()
 
+    def bindingFunction(self, binding):
+        base_class, function, controller, keymap = self.bindingInfo(binding)
+        return function
+
+    def bindingClass(self, binding):
+        base_class, function, controller, keymap = self.bindingInfo(binding)
+        return base_ccontrollerlass
+
+    def bindingController(self, binding):
+        base_class, function, controller, keymap = self.bindingInfo(binding)
+        return controller
+
+    def bindingKeyMap(self, binding):
+        base_class, function, controller, keymap = self.bindingInfo(binding)
+        return keymap
+
     def bindingInfo(self, binding):
         base_class = None
         controller = None
