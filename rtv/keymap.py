@@ -81,7 +81,7 @@ class KeyMap(dict):
 
     def addUserBinding(self, key, keymap, function):
         if key not in keymap:
-            keymap[ord(key[0])] = function
+            keymap[key] = function
         else:
             print(key+" is mapped multiple time")
 
