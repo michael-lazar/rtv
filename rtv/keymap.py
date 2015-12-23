@@ -65,6 +65,7 @@ class KeyMap(dict):
 
         if userMap:
             self.loadUserMap(userMap)
+        self.fillWithDefaultKey()
 
     def __setitem__(self, binding, key):
         self.bind(binding, key)
