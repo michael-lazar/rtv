@@ -104,7 +104,7 @@ class KeyMap(dict):
 
     def bindingClass(self, binding):
         base_class, function, controller, keymap = self.bindingInfo(binding)
-        return base_ccontrollerlass
+        return base_class
 
     def bindingController(self, binding):
         base_class, function, controller, keymap = self.bindingInfo(binding)
