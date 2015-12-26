@@ -85,7 +85,7 @@ class KeyMap(dict):
         if key not in keymap:
             keymap[key] = function
         else:
-            print(key+" is mapped multiple time")
+            print(chr(key)+" is mapped multiple time")
 
     def bind(self, binding, key):
 
