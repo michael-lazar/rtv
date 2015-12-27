@@ -157,3 +157,23 @@ class KeyMap(dict):
         SubredditController.character_map = {}
         SubmissionController.character_map = {}
         SubscriptionController.character_map = {}
+
+    def fillController(self):
+        keymap = {}
+        self.emptyController()
+
+        for key, binding in self.userPageMap.items():
+            base_class, function, controller, keymap = self.bindingInfo(binding)
+            controller.bind(function, key)
+
+        for key, binding in self.userSubredditMap.items():
+            base_class, function, controller, keymap = self.bindingInfo(binding)
+            controller.bind(function, key)
+
+        for key, binding in self.userSubmissionMap.items():
+            base_class, function, controller, keymap = self.bindingInfo(binding)
+            controller.bind(function, key)
+
+        for key, binding in self.userSubscriptionMap.items():
+            base_class, function, controller, keymap = self.bindingInfo(binding)
+            controller.bind(function, key)
