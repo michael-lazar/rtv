@@ -542,16 +542,17 @@ class Controller(object):
             func = controller.character_map.get(None)
         return func(self.instance, *args, **kwargs) if func else None
 
-    def bind(self, f, char):
+    @classmethod
+    def bind(cls, f, char):
         if isinstance(char, six.string_types) and len(char) == 1:
-            self.character_map[ord(char)] = f
+            cls.character_map[ord(char)] = f
         else:
-            self.character_map[char] = f
+            cls.character_map[char] = f
 
     @classmethod
     def register(cls, *chars):
         def inner(f):
             for char in chars:
-                cls.bind(cls, f, char)
+                cls.bind(f, char)
             return f
         return inner
