@@ -151,3 +151,9 @@ class KeyMap(dict):
             if binding not in keymap.values():
                 print("Add default binding "+binding)
                 keymap[ord(key[0])] = binding
+
+    def emptyController(self):
+        PageController.character_map = {}
+        SubredditController.character_map = {}
+        SubmissionController.character_map = {}
+        SubscriptionController.character_map = {}
