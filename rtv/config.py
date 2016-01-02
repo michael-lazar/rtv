@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from .keymap import KeyMap
+
 import os
 import codecs
 import shutil
@@ -197,6 +199,11 @@ class Config(object):
 
     @staticmethod
     def _parse_rtv_file(config):
+
+        userkey = {}
+        if config.has_section('key'):
+            userkey = dict(config.items('key'))
+        KeyMap(userkey)
 
         out = {}
         if config.has_section('rtv'):
