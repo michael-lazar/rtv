@@ -153,6 +153,7 @@ class Content(object):
         data['likes'] = sub.likes
         data['gold'] = sub.gilded > 0
         data['nsfw'] = sub.over_18
+        data['stickied'] = sub.stickied
         data['index'] = None  # This is filled in later by the method caller
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:

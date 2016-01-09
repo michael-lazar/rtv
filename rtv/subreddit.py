@@ -191,6 +191,9 @@ class SubredditPage(Page):
             text, attr = self.term.get_arrow(data['likes'])
             self.term.add_line(win, text, attr=attr)
             self.term.add_line(win, ' {created} {comments} '.format(**data))
+            if data['stickied']:
+                text, attr = self.term.stickied
+                self.term.add_line(win, text, attr=attr)
 
             if data['gold']:
                 text, attr = self.term.guilded
