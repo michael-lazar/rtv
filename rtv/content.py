@@ -100,6 +100,7 @@ class Content(object):
             sub_name = getattr(sub_author, 'name', '[deleted]')
             flair = getattr(comment, 'author_flair_text', '')
             permalink = getattr(comment, 'permalink', None)
+            stickied = getattr(comment, 'stickied', False)
 
             data['type'] = 'Comment'
             data['body'] = comment.body
@@ -112,6 +113,7 @@ class Content(object):
             data['likes'] = comment.likes
             data['gold'] = comment.gilded > 0
             data['permalink'] = permalink
+            data['stickied'] = stickied
 
         return data
 
@@ -151,6 +153,7 @@ class Content(object):
         data['likes'] = sub.likes
         data['gold'] = sub.gilded > 0
         data['nsfw'] = sub.over_18
+        data['stickied'] = sub.stickied
         data['index'] = None  # This is filled in later by the method caller
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:

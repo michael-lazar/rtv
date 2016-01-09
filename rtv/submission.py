@@ -163,6 +163,10 @@ class SubmissionPage(Page):
                 text, attr = self.term.guilded
                 self.term.add_line(win, text, attr=attr)
 
+            if data['stickied']:
+                text, attr = self.term.stickied
+                self.term.add_line(win, text, attr=attr)
+
         for row, text in enumerate(data['split_body'], start=offset+1):
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1)

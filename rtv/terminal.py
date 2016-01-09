@@ -68,6 +68,12 @@ class Terminal(object):
         return symbol, attr
 
     @property
+    def stickied(self):
+        text = '[stickied]'
+        attr = Color.GREEN
+        return text, attr
+
+    @property
     def vline(self):
         return getattr(curses, 'ACS_VLINE', ord('|'))
 
