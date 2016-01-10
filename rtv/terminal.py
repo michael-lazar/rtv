@@ -57,7 +57,7 @@ class Terminal(object):
 
     @property
     def neutral_arrow(self):
-        symbol = 'o' if self.ascii else '•'
+        symbol = '>' if self.ascii else '‣'
         attr = curses.A_BOLD
         return symbol, attr
 
