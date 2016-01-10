@@ -62,6 +62,12 @@ class Terminal(object):
         return symbol, attr
 
     @property
+    def timestamp_sep(self):
+        symbol = 'o' if self.ascii else '•'
+        attr = curses.A_BOLD
+        return symbol, attr
+
+    @property
     def guilded(self):
         symbol = '*' if self.ascii else '✪'
         attr = curses.A_BOLD | Color.YELLOW

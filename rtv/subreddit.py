@@ -190,7 +190,10 @@ class SubredditPage(Page):
             self.term.add_line(win, '{score} '.format(**data), row, 1)
             text, attr = self.term.get_arrow(data['likes'])
             self.term.add_line(win, text, attr=attr)
-            self.term.add_line(win, ' {created} {comments} '.format(**data))
+            self.term.add_line(win, ' {created} '.format(**data))
+            text, attr = self.term.timestamp_sep
+            self.term.add_line(win, text, attr=attr)
+            self.term.add_line(win, ' {comments} '.format(**data))
             if data['stickied']:
                 text, attr = self.term.stickied
                 self.term.add_line(win, text, attr=attr)
