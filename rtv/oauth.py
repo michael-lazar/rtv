@@ -59,9 +59,9 @@ class OAuthHelper(object):
             routes, template_path=TEMPLATE)
 
         self.reddit.set_oauth_app_info(
-            self.config['oauth_client_id'],
-            self.config['oauth_client_secret'],
-            self.config['oauth_redirect_uri'])
+            self.config['rtv', 'oauth_client_id'],
+            self.config['rtv', 'oauth_client_secret'],
+            self.config['rtv', 'oauth_redirect_uri'])
 
         # Reddit's mobile website works better on terminal browsers
         if not self.term.display:
@@ -85,11 +85,11 @@ class OAuthHelper(object):
         # Start the authorization callback server
         if self.http_server is None:
             self.http_server = httpserver.HTTPServer(self.callback_app)
-            self.http_server.listen(self.config['oauth_redirect_port'])
+            self.http_server.listen(self.config['rtv', 'oauth_redirect_port'])
 
         state = uuid.uuid4().hex
         authorize_url = self.reddit.get_authorize_url(
-            state, scope=self.config['oauth_scope'], refreshable=True)
+            state, scope=self.config['rtv', 'oauth_scope'], refreshable=True)
 
         if self.term.display:
             # Open a background browser (e.g. firefox) which is non-blocking.
@@ -133,7 +133,7 @@ class OAuthHelper(object):
         self.term.show_notification(message)
 
         self.config.refresh_token = info['refresh_token']
-        if self.config['persistent']:
+        if self.config['rtv', 'persistent']:
             self.config.save_refresh_token()
 
     def clear_oauth_data(self):

@@ -56,7 +56,7 @@ def main():
 
     # Load any previously saved auth session token
     config.load_refresh_token()
-    if config['clear_auth']:
+    if config['rtv', 'clear_auth']:
         config.delete_refresh_token()
 
     if config['log']:
@@ -70,7 +70,7 @@ def main():
 
     try:
         with curses_session() as stdscr:
-            term = Terminal(stdscr, config['ascii'])
+            term = Terminal(stdscr, config['rtv', 'ascii'])
             with term.loader('Initializing', catch_exception=False):
                 reddit = praw.Reddit(user_agent=user_agent,
                                      decode_html_entities=False,
@@ -81,14 +81,14 @@ def main():
             if config.refresh_token:
                 oauth.authorize()
 
-            name = config['subreddit']
+            name = config['rtv', 'subreddit']
             with term.loader('Loading subreddit'):
                 page = SubredditPage(reddit, term, config, oauth, name)
             if term.loader.exception:
                 return
 
             # Open the supplied submission link before opening the subreddit
-            if config['link']:
+            if config['rtv', 'link']:
                 page.open_submission(url=config['link'])
 
             # Launch the subreddit page

@@ -163,7 +163,8 @@ class Config(object):
     def save_history(self):
         self._ensure_filepath(self.history_file)
         with codecs.open(self.history_file, 'w+', encoding='utf-8') as fp:
-            fp.writelines('\n'.join(self.history[-self['history_size']:]))
+            lines = '\n'.join(self.history[-self['rtv', 'history_size']:])
+            fp.writelines(lines)
 
     def delete_history(self):
         if os.path.exists(self.history_file):
