@@ -208,6 +208,8 @@ class Config(object):
         out = {}
         if config.has_section('rtv'):
             out['rtv'] = dict(config.items('rtv'))
+        if config.has_section('key'):
+            out['key'] = dict(config.items('key'))
 
         params = {'rtv': {
             'ascii': partial(config.getboolean, 'rtv'),
