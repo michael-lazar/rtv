@@ -133,7 +133,7 @@ class Config(object):
     def __delitem__(self, key):
         self.config.pop(key, None)
 
-    def update(self, **kwargs):
+    def update(self, kwargs):
         self.config.update(kwargs)
 
     def load_refresh_token(self):

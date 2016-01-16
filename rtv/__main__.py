@@ -43,8 +43,8 @@ def main():
 
     # Apply the file config first, then overwrite with any command line args
     config = Config()
-    config.update(**fargs)
-    config.update(**args)
+    config.update(fargs)
+    config.update(args)
 
     # Copy the default config file and quit
     if config['copy_config']:
