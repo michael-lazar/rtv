@@ -207,20 +207,24 @@ class Config(object):
 
         out = {}
         if config.has_section('rtv'):
-            out = dict(config.items('rtv'))
+            out['rtv'] = dict(config.items('rtv'))
 
-        params = {
+        params = {'rtv': {
             'ascii': partial(config.getboolean, 'rtv'),
             'clear_auth': partial(config.getboolean, 'rtv'),
             'persistent': partial(config.getboolean, 'rtv'),
             'history_size': partial(config.getint, 'rtv'),
             'oauth_redirect_port': partial(config.getint, 'rtv'),
-            'oauth_scope': lambda x: out[x].split(',')
+            'oauth_scope': lambda x: out['rtv'][x].split(',')
+            }
         }
 
-        for key, func in params.items():
-            if key in out:
-                out[key] = func(key)
+        for section, param in params.items():
+            if section in out:
+                for key, func in param.items():
+                    if key in out[section]:
+                        out[section][key] = func(key)
+
         return out
 
     @staticmethod
