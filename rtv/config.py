@@ -226,6 +226,11 @@ class Config(object):
                         out[section][key] = func(key)
 
         return out
+        return {
+                (section,  key): value
+                for section, param in out.items()
+                for key, value in param.items()
+               }
 
     @staticmethod
     def _ensure_filepath(filename):
