@@ -385,11 +385,9 @@ class SubredditContent(Content):
             else:
                 submissions = reddit.user.get_submitted()
 
-        if name == 'saved':
+        elif name == 'saved':
             if not reddit.is_oauth_session():
                 raise exceptions.AccountError('Not logged in')
-            elif order:
-                submissions = reddit.user.get_saved(sort=order)
             else:
                 submissions = reddit.user.get_saved()
 
