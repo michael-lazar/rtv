@@ -155,6 +155,23 @@ class Page(object):
             if not self.term.loader.exception:
                 data['likes'] = None
 
+    @PageController.register('w')
+    @logged_in
+    def savepost(self):
+        data = self.content.get(self.nav.absolute_index)
+        if 'saved' not in data:
+            self.term.flash()
+        elif not data['saved']:
+            with self.term.loader('Saving'):
+                data['object'].save()
+            if not self.term.loader.exception:
+                data['saved'] = True
+        else:
+            with self.term.loader('Unsaving'):
+                data['object'].unsave()
+            if not self.term.loader.exception:
+                data['saved'] = False
+
     @PageController.register('u')
     def login(self):
         """

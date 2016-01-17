@@ -114,7 +114,7 @@ class SubredditPage(Page):
 
         # Check that the subreddit can be submitted to
         name = self.content.name
-        if '+' in name or name in ('/r/all', '/r/front', '/r/me'):
+        if '+' in name or name in ('/r/all', '/r/front', '/r/me','/r/saved'):
             self.term.show_notification("Can't post to {0}".format(name))
             return
 
@@ -191,6 +191,11 @@ class SubredditPage(Page):
             text, attr = self.term.get_arrow(data['likes'])
             self.term.add_line(win, text, attr=attr)
             self.term.add_line(win, ' {created} {comments} '.format(**data))
+
+            if data['saved']:
+                text, attr = self.term.saved
+                self.term.add_line(win, text, attr=attr)
+
             if data['stickied']:
                 text, attr = self.term.stickied
                 self.term.add_line(win, text, attr=attr)

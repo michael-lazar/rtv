@@ -34,6 +34,7 @@ Basic Commands
 
 Authenticated Commands
   `a/z`               : Upvote/downvote
+  `w`                 : Save/unsave a post
   `c`                 : Compose a new post or comment
   `e`                 : Edit an existing post or comment
   `d`                 : Delete an existing post or comment

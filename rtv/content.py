@@ -154,6 +154,7 @@ class Content(object):
         data['gold'] = sub.gilded > 0
         data['nsfw'] = sub.over_18
         data['stickied'] = sub.stickied
+        data['saved'] = sub.saved
         data['index'] = None  # This is filled in later by the method caller
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:
@@ -383,6 +384,14 @@ class SubredditContent(Content):
                 submissions = reddit.user.get_submitted(sort=order)
             else:
                 submissions = reddit.user.get_submitted()
+
+        if name == 'saved':
+            if not reddit.is_oauth_session():
+                raise exceptions.AccountError('Not logged in')
+            elif order:
+                submissions = reddit.user.get_saved(sort=order)
+            else:
+                submissions = reddit.user.get_saved()
 
         elif query:
             if name == 'front':
