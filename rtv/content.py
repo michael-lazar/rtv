@@ -455,7 +455,10 @@ class SubredditContent(Content):
             else:
                 # TODO: In order to display saved comment, we need to
                 # coerce the comment into a submission
-                data = self.strip_praw_submission(submission)
+                try:
+                    data = self.strip_praw_submission(submission)
+                except:
+                    continue
                 data['index'] = index
                 # Add the post number to the beginning of the title
                 data['title'] = '{0}. {1}'.format(index+1, data.get('title'))
