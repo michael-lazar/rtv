@@ -89,6 +89,7 @@ Once you are logged in your username will appear in the top-right corner of the 
 :``d``: Delete an existing post or comment
 :``i``: Display new messages prompt
 :``s``: View a list of subscribed subreddits
+:``y``: View a list of your saved posts
 
 --------------
 Subreddit Mode
@@ -108,6 +109,7 @@ The ``/`` prompt accepts subreddits in the following formats
 * ``/r/python+linux`` supports multireddits
 * ``/r/front`` will redirect to the front page
 * ``/r/me`` will display your submissions
+* ``/r/saved`` will display your saved posts/comments
 
 ---------------
 Submission Mode

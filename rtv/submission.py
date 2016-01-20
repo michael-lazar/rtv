@@ -24,7 +24,6 @@ class SubmissionPage(Page):
             self.content = SubmissionContent.from_url(reddit, url, term.loader)
         else:
             self.content = SubmissionContent(submission, term.loader)
-
         self.controller = SubmissionController(self)
         # Start at the submission post, which is indexed as -1
         self.nav = Navigator(self.content.get, page_index=-1)
@@ -70,6 +69,14 @@ class SubmissionPage(Page):
             self.term.open_browser(url)
         else:
             self.term.flash()
+
+    @SubmissionController.register('y')
+    @logged_in
+    def save_comment(self):
+        comment = self.content.get(self.nav.absolute_index).get('object')
+        if comment:
+            with self.term.loader('Saving comment'):
+                comment.save()
 
     @SubmissionController.register('c')
     @logged_in
@@ -167,6 +174,10 @@ class SubmissionPage(Page):
                 text, attr = self.term.stickied
                 self.term.add_line(win, text, attr=attr)
 
+            if data['saved']:
+                text, attr = 'SAVED', (curses.A_BOLD | Color.BLUE)
+                self.term.add_line(win, text, attr=attr)
+
         for row, text in enumerate(data['split_body'], start=offset+1):
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1)
@@ -236,6 +247,10 @@ class SubmissionPage(Page):
 
         if data['nsfw']:
             text, attr = 'NSFW', (curses.A_BOLD | Color.RED)
+            self.term.add_line(win, text, attr=attr)
+
+        if data['saved']:
+            text, attr = 'SAVED', (curses.A_BOLD | Color.RED)
             self.term.add_line(win, text, attr=attr)
 
         win.border()
