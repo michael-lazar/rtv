@@ -108,6 +108,7 @@ The ``/`` prompt accepts subreddits in the following formats
 * ``/r/python+linux`` supports multireddits
 * ``/r/front`` will redirect to the front page
 * ``/r/me`` will display your submissions
+* ``/r/saved`` will display your saved posts/comments
 
 ---------------
 Submission Mode

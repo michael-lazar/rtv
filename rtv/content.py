@@ -86,7 +86,11 @@ class Content(object):
 
         data = {}
         data['object'] = comment
-        data['level'] = comment.nested_level
+        # Saved comments do not have a nested_level
+        if hasattr(comment, 'nested_level'):
+            data['level'] = comment.nested_level
+        else:
+            data['level'] = None
 
         if isinstance(comment, praw.objects.MoreComments):
             data['type'] = 'MoreComments'
@@ -114,6 +118,7 @@ class Content(object):
             data['gold'] = comment.gilded > 0
             data['permalink'] = permalink
             data['stickied'] = stickied
+            data['saved'] = comment.saved
 
         return data
 
@@ -155,6 +160,7 @@ class Content(object):
         data['nsfw'] = sub.over_18
         data['stickied'] = sub.stickied
         data['index'] = None  # This is filled in later by the method caller
+        data['saved'] = sub.saved
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:
             data['url'] = 'self.{0}'.format(data['subreddit'])
@@ -254,6 +260,12 @@ class SubmissionContent(Content):
         url = url.replace('http:', 'https:')
         submission = reddit.get_submission(url, comment_sort=order)
         return cls(submission, loader, indent_size, max_indent_level, order)
+
+    def save(self):
+        """
+        Saves a submission to the authenticated user
+        """
+        self._submission.save()
 
     def get(self, index, n_cols=70):
         """
@@ -400,6 +412,15 @@ class SubredditContent(Content):
                     'new': reddit.get_new,
                     'controversial': reddit.get_controversial,
                     }
+            elif name == 'saved':
+                dispatch = {
+                    None: reddit.user.get_saved,
+                    'hot': reddit.user.get_saved,
+                    'top': reddit.user.get_saved,
+                    'rising': reddit.user.get_saved,
+                    'new': reddit.user.get_saved,
+                    'controversial': reddit.user.get_saved,
+                    }
             else:
                 subreddit = reddit.get_subreddit(name)
                 dispatch = {
@@ -432,10 +453,12 @@ class SubredditContent(Content):
             except StopIteration:
                 raise IndexError
             else:
+                # TODO: In order to display saved comment, we need to
+                # coerce the comment into a submission
                 data = self.strip_praw_submission(submission)
                 data['index'] = index
                 # Add the post number to the beginning of the title
-                data['title'] = '{0}. {1}'.format(index+1, data['title'])
+                data['title'] = '{0}. {1}'.format(index+1, data.get('title'))
                 self._submission_data.append(data)
 
         # Modifies the original dict, faster than copying
