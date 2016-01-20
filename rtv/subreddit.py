@@ -145,6 +145,16 @@ class SubredditPage(Page):
 
         self.refresh_content()
 
+    @SubredditController.register('y')
+    @logged_in
+    def save_submition(self):
+        data = self.content.get(self.nav.absolute_index)
+        url = data['permalink']
+        with self.term.loader('Saving submission'):
+            page = SubmissionPage(
+                self.reddit, self.term, self.config, self.oauth, url=url)
+            page.content.save()
+
     @SubredditController.register('s')
     @logged_in
     def open_subscriptions(self):
@@ -201,6 +211,10 @@ class SubredditPage(Page):
 
             if data['nsfw']:
                 text, attr = 'NSFW', (curses.A_BOLD | Color.RED)
+                self.term.add_line(win, text, attr=attr)
+
+            if data['saved']:
+                text, attr = ' SAVED', (curses.A_BOLD | Color.BLUE)
                 self.term.add_line(win, text, attr=attr)
 
         row = n_title + offset + 2
