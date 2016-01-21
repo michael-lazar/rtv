@@ -89,7 +89,7 @@ Once you are logged in your username will appear in the top-right corner of the 
 :``d``: Delete an existing post or comment
 :``i``: Display new messages prompt
 :``s``: View a list of subscribed subreddits
-:``y``: View a list of your saved posts
+:``w``: View a list of your saved posts
 
 --------------
 Subreddit Mode

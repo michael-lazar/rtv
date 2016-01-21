@@ -70,14 +70,6 @@ class SubmissionPage(Page):
         else:
             self.term.flash()
 
-    @SubmissionController.register('y')
-    @logged_in
-    def save_comment(self):
-        comment = self.content.get(self.nav.absolute_index).get('object')
-        if comment:
-            with self.term.loader('Saving comment'):
-                comment.save()
-
     @SubmissionController.register('c')
     @logged_in
     def add_comment(self):
@@ -175,7 +167,7 @@ class SubmissionPage(Page):
                 self.term.add_line(win, text, attr=attr)
 
             if data['saved']:
-                text, attr = 'SAVED', (curses.A_BOLD | Color.BLUE)
+                text, attr = self.term.saved
                 self.term.add_line(win, text, attr=attr)
 
         for row, text in enumerate(data['split_body'], start=offset+1):
@@ -250,7 +242,7 @@ class SubmissionPage(Page):
             self.term.add_line(win, text, attr=attr)
 
         if data['saved']:
-            text, attr = 'SAVED', (curses.A_BOLD | Color.RED)
+            text, attr = self.term.saved
             self.term.add_line(win, text, attr=attr)
 
         win.border()

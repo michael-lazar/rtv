@@ -159,7 +159,6 @@ class Content(object):
         data['gold'] = sub.gilded > 0
         data['nsfw'] = sub.over_18
         data['stickied'] = sub.stickied
-        data['saved'] = sub.saved
         data['index'] = None  # This is filled in later by the method caller
         data['saved'] = sub.saved
 
@@ -262,11 +261,6 @@ class SubmissionContent(Content):
         submission = reddit.get_submission(url, comment_sort=order)
         return cls(submission, loader, indent_size, max_indent_level, order)
 
-    def save(self):
-        """
-        Saves a submission to the authenticated user
-        """
-        self._submission.save()
 
     def get(self, index, n_cols=70):
         """
@@ -400,6 +394,8 @@ class SubredditContent(Content):
         elif name == 'saved':
             if not reddit.is_oauth_session():
                 raise exceptions.AccountError('Not logged in')
+            elif order:
+                submissions = reddit.user.get_submitted(sort=order)
             else:
                 submissions = reddit.user.get_saved()
 
@@ -418,15 +414,6 @@ class SubredditContent(Content):
                     'rising': reddit.get_rising,
                     'new': reddit.get_new,
                     'controversial': reddit.get_controversial,
-                    }
-            elif name == 'saved':
-                dispatch = {
-                    None: reddit.user.get_saved,
-                    'hot': reddit.user.get_saved,
-                    'top': reddit.user.get_saved,
-                    'rising': reddit.user.get_saved,
-                    'new': reddit.user.get_saved,
-                    'controversial': reddit.user.get_saved,
                     }
             else:
                 subreddit = reddit.get_subreddit(name)

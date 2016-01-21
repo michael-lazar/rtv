@@ -157,7 +157,7 @@ class Page(object):
 
     @PageController.register('w')
     @logged_in
-    def savepost(self):
+    def save(self):
         data = self.content.get(self.nav.absolute_index)
         if 'saved' not in data:
             self.term.flash()
