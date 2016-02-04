@@ -251,7 +251,10 @@ class SubmissionContent(Content):
     def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=8,
                  order=None):
 
-        url = url.replace('http:', 'https:')
+        url = url.replace('http:', 'https:')  # Reddit forces SSL
+        # Sometimes reddit will return a 403 FORBIDDEN when trying to access an
+        # np link while using OAUTH. Cause is unknown.
+        url = url.replace('https://np.', 'https://www.')
         submission = reddit.get_submission(url, comment_sort=order)
         return cls(submission, loader, indent_size, max_indent_level, order)
 
