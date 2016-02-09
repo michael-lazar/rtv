@@ -57,6 +57,12 @@ class Terminal(object):
 
     @property
     def neutral_arrow(self):
+        symbol = '>' if self.ascii else '‣'
+        attr = curses.A_BOLD
+        return symbol, attr
+
+    @property
+    def timestamp_sep(self):
         symbol = 'o' if self.ascii else '•'
         attr = curses.A_BOLD
         return symbol, attr
