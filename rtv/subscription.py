@@ -5,8 +5,7 @@ import curses
 
 from .page import Page, PageController
 from .content import SubscriptionContent
-from .objects import Color, Navigator
-from .terminal import Terminal
+from .objects import Color, Navigator, KeyMap
 
 
 class SubscriptionController(PageController):
@@ -23,7 +22,7 @@ class SubscriptionPage(Page):
         self.nav = Navigator(self.content.get)
         self.subreddit_data = None
 
-    @SubscriptionController.register(curses.KEY_F5, 'r')
+    @SubscriptionController.register(KeyMap.REFRESH)
     def refresh_content(self, order=None, name=None):
         "Re-download all subscriptions and reset the page index"
 
@@ -38,15 +37,14 @@ class SubscriptionPage(Page):
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
-    @SubscriptionController.register(curses.KEY_ENTER, Terminal.RETURN,
-                                     curses.KEY_RIGHT, 'l')
+    @SubscriptionController.register(KeyMap.SUBSCRIPTION_SELECT)
     def select_subreddit(self):
         "Store the selected subreddit and return to the subreddit page"
 
         self.subreddit_data = self.content.get(self.nav.absolute_index)
         self.active = False
 
-    @SubscriptionController.register(curses.KEY_LEFT, Terminal.ESCAPE, 'h', 's')
+    @SubscriptionController.register(KeyMap.SUBSCRIPTION_CLOSE)
     def close_subscriptions(self):
         "Close subscriptions and return to the subreddit page"
 

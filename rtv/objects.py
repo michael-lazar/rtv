@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
 import os
 import time
 import curses
@@ -9,7 +10,9 @@ import inspect
 import weakref
 import logging
 import threading
+from curses import ascii
 from contextlib import contextmanager
+from collections import defaultdict
 
 import six
 import praw
@@ -502,6 +505,11 @@ class Controller(object):
     >>> def func(self, *args)
     >>>     ...
 
+    Register a KeyBinding that can be defined later by the config file
+    >>> @Controller.register(KeyMap.UPVOTE)
+    >>> def upvote(self, *args)
+    >>      ...
+
     Register a default behavior by using `None`.
     >>> @Controller.register(None)
     >>> def default_func(self, *args)
@@ -515,12 +523,21 @@ class Controller(object):
 
     character_map = {}
 
-    def __init__(self, instance):
+    def __init__(self, instance, keymap=None):
 
         self.instance = instance
-        # Build a list of parent controllers that follow the object's MRO to
-        # check if any parent controllers have registered the keypress
+        # Build a list of parent controllers that follow the object's MRO
+        # to check if any parent controllers have registered the keypress
         self.parents = inspect.getmro(type(self))[:-1]
+
+        # Update the character map with the bindings defined in the keymap
+        if not keymap:
+            for controller in [self] + self.parents:
+                for binding, func in controller.character_map.items():
+                    if isinstance(binding, KeyBinding):
+                        # TODO: Raise error if trying to overwrite a char
+                        mappings = {char: func for char in keymap.get(binding)}
+                        self.character_map.update(mappings)
 
     def trigger(self, char, *args, **kwargs):
 
@@ -552,3 +569,52 @@ class Controller(object):
                     cls.character_map[char] = f
             return f
         return inner
+
+
+class KeyBinding(object):
+
+    def __init__(self, val):
+        self.val = val.upper()
+
+
+class KeyMapMeta(type):
+
+    def __getattr__(cls, key):
+        return KeyBinding(key)
+
+
+@six.add_metaclass(KeyMapMeta)
+class KeyMap(object):
+
+    def __init__(self, bindings):
+        self._bindings = defaultdict(list)
+        self.update(bindings)
+
+    def update(self, **bindings):
+        for command, keys in bindings:
+            binding = KeyBinding(command)
+            self._bindings[binding] = [self._parse_key(key) for key in keys]
+
+    def get(self, binding):
+        return self._bindings[binding]
+
+    @staticmethod
+    def _parse_key(key):
+        """
+        Parse a key represented by a string and return its character code.
+        """
+
+        if isinstance(key, int):
+            return key
+        elif re.match('[<]KEY_.*[>]', key):
+            # Curses control character
+            return getattr(curses, key[1:-1])
+        elif re.match('[<].*[>]', key):
+            # Ascii control character
+            return getattr(ascii, key[1:-1])
+        elif key.startswith('0x'):
+            # Ascii hex code
+            return int(key, 16)
+        else:
+            # Ascii character
+            return ord(key)

@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import re
 import os
-import curses
 import codecs
 import shutil
 import argparse
-from curses import ascii
 from functools import partial
 
 import six
 from six.moves import configparser
 
 from . import docs, __version__
+from .objects import KeyMap
 
 PACKAGE = os.path.dirname(__file__)
 HOME = os.path.expanduser('~')
@@ -115,7 +113,10 @@ class Config(object):
         self.history_file = history_file
         self.token_file = token_file
         self.config = kwargs
-        self.default = self.get_file(DEFAULT_CONFIG)
+
+        default, bindings = self.get_file(DEFAULT_CONFIG)
+        self.default = default
+        self.keymap = KeyMap(bindings)
 
         # `refresh_token` and `history` are saved/loaded at separate locations,
         # so they are treated differently from the rest of the config options.
@@ -198,8 +199,8 @@ class Config(object):
 
         return cls._parse_rtv_file(config)
 
-    @classmethod
-    def _parse_rtv_file(cls, config):
+    @staticmethod
+    def _parse_rtv_file(config):
 
         rtv = {}
         if config.has_section('rtv'):
@@ -213,7 +214,6 @@ class Config(object):
             'oauth_redirect_port': partial(config.getint, 'rtv'),
             'oauth_scope': lambda x: rtv[x].split(',')
         }
-
         for key, func in params.items():
             if key in rtv:
                 rtv[key] = func(key)
@@ -223,29 +223,9 @@ class Config(object):
             bindings = dict(config.items('bindings'))
 
         for name, keys in bindings.items():
-            bindings[name] = [cls._parse_key(key) for key in keys.split(',')]
+            bindings[name] = [key.strip() for key in keys.split(',')]
 
         return rtv, bindings
-
-    @staticmethod
-    def _parse_key(key):
-        """
-        Parse a key represented by a string return its character code.
-        """
-
-        key = key.strip()
-        if re.match('[<]KEY_.*[>]', key):
-            # Curses control character
-            return getattr(curses, key[1:-1])
-        elif re.match('[<].*[>]', key):
-            # Ascii control character
-            return getattr(ascii, key[1:-1])
-        elif key.startswith('0x'):
-            # Ascii hex code
-            return int(key, 16)
-        else:
-            # Ascii character
-            return ord(key)
 
     @staticmethod
     def _ensure_filepath(filename):

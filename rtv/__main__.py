@@ -26,6 +26,7 @@ _logger = logging.getLogger(__name__)
 # ptrace_scope to 0 in /etc/sysctl.d/10-ptrace.conf.
 # http://blog.mellenthin.de/archives/2010/10/18/gdb-attach-fails
 
+
 def main():
     "Main entry point"
 
@@ -38,12 +39,13 @@ def main():
     sys.stdout.write('\x1b]2;{0}\x07'.format(title))
 
     args = Config.get_args()
-    fargs = Config.get_file(args.get('config'))
+    fargs, bindings = Config.get_file(args.get('config'))
 
     # Apply the file config first, then overwrite with any command line args
     config = Config()
     config.update(**fargs)
     config.update(**args)
+    config.keymap.update(**bindings)
 
     # Copy the default config file and quit
     if config['copy_config']:
