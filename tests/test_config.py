@@ -103,6 +103,12 @@ def test_config_from_file():
         assert config.config == args
 
 
+def test_config_keys():
+
+    config = Config()
+    pass
+
+
 def test_config_refresh_token():
     "Ensure that the refresh token can be loaded, saved, and removed"
 

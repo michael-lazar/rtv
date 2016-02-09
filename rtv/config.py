@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
 import os
+import curses
 import codecs
 import shutil
 import argparse
+from curses import ascii
 from functools import partial
 
 import six
@@ -195,12 +198,12 @@ class Config(object):
 
         return cls._parse_rtv_file(config)
 
-    @staticmethod
-    def _parse_rtv_file(config):
+    @classmethod
+    def _parse_rtv_file(cls, config):
 
-        out = {}
+        rtv = {}
         if config.has_section('rtv'):
-            out = dict(config.items('rtv'))
+            rtv = dict(config.items('rtv'))
 
         params = {
             'ascii': partial(config.getboolean, 'rtv'),
@@ -208,13 +211,41 @@ class Config(object):
             'persistent': partial(config.getboolean, 'rtv'),
             'history_size': partial(config.getint, 'rtv'),
             'oauth_redirect_port': partial(config.getint, 'rtv'),
-            'oauth_scope': lambda x: out[x].split(',')
+            'oauth_scope': lambda x: rtv[x].split(',')
         }
 
         for key, func in params.items():
-            if key in out:
-                out[key] = func(key)
-        return out
+            if key in rtv:
+                rtv[key] = func(key)
+
+        bindings = {}
+        if config.has_section('bindings'):
+            bindings = dict(config.items('bindings'))
+
+        for name, keys in bindings.items():
+            bindings[name] = [cls._parse_key(key) for key in keys.split(',')]
+
+        return rtv, bindings
+
+    @staticmethod
+    def _parse_key(key):
+        """
+        Parse a key represented by a string return its character code.
+        """
+
+        key = key.strip()
+        if re.match('[<]KEY_.*[>]', key):
+            # Curses control character
+            return getattr(curses, key[1:-1])
+        elif re.match('[<].*[>]', key):
+            # Ascii control character
+            return getattr(ascii, key[1:-1])
+        elif key.startswith('0x'):
+            # Ascii hex code
+            return int(key, 16)
+        else:
+            # Ascii character
+            return ord(key)
 
     @staticmethod
     def _ensure_filepath(filename):
