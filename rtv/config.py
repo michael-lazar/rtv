@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from .keymap import KeyMap
+
 import os
 import codecs
 import shutil
@@ -131,7 +133,7 @@ class Config(object):
     def __delitem__(self, key):
         self.config.pop(key, None)
 
-    def update(self, **kwargs):
+    def update(self, kwargs):
         self.config.update(kwargs)
 
     def load_refresh_token(self):
@@ -161,7 +163,8 @@ class Config(object):
     def save_history(self):
         self._ensure_filepath(self.history_file)
         with codecs.open(self.history_file, 'w+', encoding='utf-8') as fp:
-            fp.writelines('\n'.join(self.history[-self['history_size']:]))
+            lines = '\n'.join(self.history[-self['rtv', 'history_size']:])
+            fp.writelines(lines)
 
     def delete_history(self):
         if os.path.exists(self.history_file):
@@ -198,23 +201,39 @@ class Config(object):
     @staticmethod
     def _parse_rtv_file(config):
 
+        userkey = {}
+        if config.has_section('key'):
+            userkey = dict(config.items('key'))
+        KeyMap(userkey)
+
         out = {}
         if config.has_section('rtv'):
-            out = dict(config.items('rtv'))
+            out['rtv'] = dict(config.items('rtv'))
+        if config.has_section('key'):
+            out['key'] = dict(config.items('key'))
 
-        params = {
+        params = {'rtv': {
             'ascii': partial(config.getboolean, 'rtv'),
             'clear_auth': partial(config.getboolean, 'rtv'),
             'persistent': partial(config.getboolean, 'rtv'),
             'history_size': partial(config.getint, 'rtv'),
             'oauth_redirect_port': partial(config.getint, 'rtv'),
-            'oauth_scope': lambda x: out[x].split(',')
+            'oauth_scope': lambda x: out['rtv'][x].split(',')
+            }
         }
 
-        for key, func in params.items():
-            if key in out:
-                out[key] = func(key)
+        for section, param in params.items():
+            if section in out:
+                for key, func in param.items():
+                    if key in out[section]:
+                        out[section][key] = func(key)
+
         return out
+        return {
+                (section,  key): value
+                for section, param in out.items()
+                for key, value in param.items()
+               }
 
     @staticmethod
     def _ensure_filepath(filename):

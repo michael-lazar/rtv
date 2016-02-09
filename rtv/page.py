@@ -280,7 +280,7 @@ class Page(object):
         if self.reddit.user is not None:
             # The starting position of the name depends on if we're converting
             # to ascii or not
-            width = len if self.config['ascii'] else textual_width
+            width = len if self.config['rtv', 'ascii'] else textual_width
 
             username = self.reddit.user.name
             s_col = (n_cols - width(username) - 1)
