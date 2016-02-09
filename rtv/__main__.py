@@ -26,7 +26,6 @@ _logger = logging.getLogger(__name__)
 # ptrace_scope to 0 in /etc/sysctl.d/10-ptrace.conf.
 # http://blog.mellenthin.de/archives/2010/10/18/gdb-attach-fails
 
-
 def main():
     "Main entry point"
 
@@ -60,6 +59,14 @@ def main():
         config.delete_refresh_token()
 
     if config['log']:
+        # Log request headers to the file (print hack only works on python 3.x)
+        # from http import client
+        # _http_logger = logging.getLogger('http.client')
+        # client.HTTPConnection.debuglevel = 2
+        # def print_to_file(*args, **_):
+        #     if args[0] != "header:":
+        #         _http_logger.info(' '.join(args))
+        # client.print = print_to_file
         logging.basicConfig(level=logging.DEBUG, filename=config['log'])
     else:
         # Add an empty handler so the logger doesn't complain
