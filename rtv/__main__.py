@@ -45,7 +45,10 @@ def main():
     config = Config()
     config.update(**fargs)
     config.update(**args)
-    config.keymap.update(**bindings)
+
+    # If key bindings are supplied in the config file, overwrite the defaults
+    if bindings:
+        config.keymap.set_bindings(bindings)
 
     # Copy the default config file and quit
     if config['copy_config']:

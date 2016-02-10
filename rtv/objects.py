@@ -610,6 +610,7 @@ class KeyMap(object):
     """
 
     def __init__(self, bindings):
+        self._keymap = None
         self.set_bindings(bindings)
 
     def set_bindings(self, bindings):
