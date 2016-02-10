@@ -505,7 +505,7 @@ class Controller(object):
     >>>     ...
 
     Register a KeyBinding that can be defined later by the config file
-    >>> @Controller.register(KeyMap.UPVOTE)
+    >>> @Controller.register(Command("UPVOTE"))
     >>> def upvote(self, *args)
     >>      ...
 
