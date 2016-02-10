@@ -4,13 +4,13 @@ from __future__ import unicode_literals
 import re
 import os
 import time
-import curses
 import signal
 import inspect
 import weakref
 import logging
 import threading
-from curses import ascii
+import curses
+import curses.ascii
 from contextlib import contextmanager
 
 import six
@@ -545,9 +545,9 @@ class Controller(object):
                         # different function.
                         if controller.character_map.get(val, func) != func:
                             raise exceptions.ConfigError(
-                                'Invalid configuration, cannot bind the `%s`'
-                                ' key to two different commands in the `%s`'
-                                ' context' % (key, self.__class__.__name__))
+                                "Invalid configuration! `%s` is bound to "
+                                "duplicate commands in the "
+                                "%s" % (key, controller.__name__))
                         controller.character_map[val] = func
 
     def trigger(self, char, *args, **kwargs):
@@ -632,8 +632,8 @@ class KeyMap(object):
         try:
             return self._keymap[command]
         except KeyError:
-            raise exceptions.ConfigError(
-                'Invalid configuration, `%s` key undefined' % command.val)
+            raise exceptions.ConfigError('Invalid configuration! `%s` key is '
+                                         'undefined' % command.val)
 
     @staticmethod
     def parse(key):
@@ -649,7 +649,7 @@ class KeyMap(object):
                 return getattr(curses, key[1:-1])
             elif re.match('[<].*[>]', key):
                 # Ascii control character
-                return getattr(ascii, key[1:-1])
+                return getattr(curses.ascii, key[1:-1])
             elif key.startswith('0x'):
                 # Ascii hex code
                 return int(key, 16)
@@ -660,8 +660,9 @@ class KeyMap(object):
                     return code
                 # Python 3.3 has a curses.get_wch() function that we can use
                 # for unicode keys, but Python 2.7 is limited to ascii.
-                raise exceptions.ConfigError(
-                    'Invalid key `%s`, must be in the ascii range' % key)
+                raise exceptions.ConfigError('Invalid configuration! `%s` is '
+                                             'not in the ascii range' % key)
 
         except (AttributeError, ValueError, TypeError):
-            raise exceptions.ConfigError('Invalid key string `%s`' % key)
+            raise exceptions.ConfigError('Invalid configuration! "%s" is not a '
+                                         'valid key' % key)

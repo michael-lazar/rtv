@@ -24,9 +24,9 @@ class SubredditPage(Page):
             name (string): Name of subreddit to open
             url (string): Optional submission to load upon start
         """
-        self.controller = SubredditController(self, keymap=config.keymap)
-
         super(SubredditPage, self).__init__(reddit, term, config, oauth)
+
+        self.controller = SubredditController(self, keymap=config.keymap)
         self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.nav = Navigator(self.content.get)
 

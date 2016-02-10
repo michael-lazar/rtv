@@ -17,9 +17,9 @@ class SubmissionController(PageController):
 class SubmissionPage(Page):
 
     def __init__(self, reddit, term, config, oauth, url=None, submission=None):
-        self.controller = SubmissionController(self, keymap=config.keymap)
-
         super(SubmissionPage, self).__init__(reddit, term, config, oauth)
+
+        self.controller = SubmissionController(self, keymap=config.keymap)
         if url:
             self.content = SubmissionContent.from_url(reddit, url, term.loader)
         else:
