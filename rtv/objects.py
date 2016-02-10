@@ -12,7 +12,6 @@ import logging
 import threading
 from curses import ascii
 from contextlib import contextmanager
-from collections import defaultdict
 
 import six
 import praw
@@ -530,14 +529,23 @@ class Controller(object):
         # to check if any parent controllers have registered the keypress
         self.parents = inspect.getmro(type(self))[:-1]
 
-        # Update the character map with the bindings defined in the keymap
         if not keymap:
-            for controller in [self] + self.parents:
-                for binding, func in controller.character_map.items():
-                    if isinstance(binding, KeyBinding):
-                        # TODO: Raise error if trying to overwrite a char
-                        mappings = {char: func for char in keymap.get(binding)}
-                        self.character_map.update(mappings)
+            return
+
+        # Go through the controller and all of it's parents and look for
+        # Command objects in the character map. Use the keymap the lookup the
+        # keys associated with those command objects and add them to the
+        # character map.
+        for controller in self.parents:
+            for command, func in controller.character_map.copy().items():
+                if isinstance(command, Command):
+                    for key in keymap.get(command):
+                        if key in controller.character_map:
+                            raise exceptions.ConfigError(
+                                'Invalid configuration, cannot bind the `%s`'
+                                ' key to two different commands in the `%s`'
+                                ' context' % (key, self.__class__.__name__))
+                        controller.character_map[key] = func
 
     def trigger(self, char, *args, **kwargs):
 
@@ -571,32 +579,57 @@ class Controller(object):
         return inner
 
 
-class KeyBinding(object):
+class Command(object):
+    """
+    Minimal class that should be used to wrap abstract commands that may be
+    implemented as one or more physical keystrokes.
+
+    E.g. Command("REFRESH") can be represented by the KeyMap to be triggered
+         by either `r` or `F5`
+    """
 
     def __init__(self, val):
         self.val = val.upper()
 
+    def __repr__(self):
+        return 'Command(%s)' % self.val
 
-class KeyMapMeta(type):
+    def __eq__(self, other):
+        return repr(self) == repr(other)
 
-    def __getattr__(cls, key):
-        return KeyBinding(key)
+    def __ne__(self, other):
+        return not self == other
+
+    def __hash__(self):
+        return hash(repr(self))
 
 
-@six.add_metaclass(KeyMapMeta)
 class KeyMap(object):
+    """
+    Mapping between commands and the keys that they represent.
+    """
 
     def __init__(self, bindings):
-        self._bindings = defaultdict(list)
-        self.update(bindings)
+        self.set_bindings(bindings)
 
-    def update(self, **bindings):
-        for command, keys in bindings:
-            binding = KeyBinding(command)
-            self._bindings[binding] = [self._parse_key(key) for key in keys]
+    def set_bindings(self, bindings):
+        # Clear the keymap before applying the bindings to avoid confusion.
+        # If a user defines custom bindings in their config file, they must
+        # explicitly define ALL of the bindings.
+        self._keymap = {}
+        for command, keys in bindings.items():
+            if not isinstance(command, Command):
+                command = Command(command)
+            self._keymap[command] = [self._parse_key(key) for key in keys]
 
-    def get(self, binding):
-        return self._bindings[binding]
+    def get(self, command):
+        if not isinstance(command, Command):
+            command = Command(command)
+        try:
+            return self._keymap[command]
+        except KeyError:
+            raise exceptions.ConfigError(
+                'Invalid configuration, `%s` key undefined' % command.val)
 
     @staticmethod
     def _parse_key(key):
@@ -604,17 +637,27 @@ class KeyMap(object):
         Parse a key represented by a string and return its character code.
         """
 
-        if isinstance(key, int):
-            return key
-        elif re.match('[<]KEY_.*[>]', key):
-            # Curses control character
-            return getattr(curses, key[1:-1])
-        elif re.match('[<].*[>]', key):
-            # Ascii control character
-            return getattr(ascii, key[1:-1])
-        elif key.startswith('0x'):
-            # Ascii hex code
-            return int(key, 16)
-        else:
-            # Ascii character
-            return ord(key)
+        try:
+            if isinstance(key, int):
+                return key
+            elif re.match('[<]KEY_.*[>]', key):
+                # Curses control character
+                return getattr(curses, key[1:-1])
+            elif re.match('[<].*[>]', key):
+                # Ascii control character
+                return getattr(ascii, key[1:-1])
+            elif key.startswith('0x'):
+                # Ascii hex code
+                return int(key, 16)
+            else:
+                # Ascii character
+                code = ord(key)
+                if 0 <= code <= 255:
+                    return code
+                # Python 3.3 has a curses.get_wch() function that we can use
+                # for unicode keys, but Python 2.7 is limited to ascii.
+                raise exceptions.ConfigError(
+                    'Invalid key `%s`, must be in the ascii range' % key)
+
+        except (AttributeError, ValueError, TypeError):
+            raise exceptions.ConfigError('Invalid key string `%s`' % key)

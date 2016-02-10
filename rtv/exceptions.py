@@ -10,6 +10,14 @@ class RTVError(Exception):
     "Base RTV error class"
 
 
+class KeystringError(RTVError):
+    "Unable to parse key string"
+
+
+class ConfigError(RTVError):
+    "There was a problem with the configuration"
+
+
 class AccountError(RTVError):
     "Could not access user account"
 

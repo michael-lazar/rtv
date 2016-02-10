@@ -9,7 +9,7 @@ from functools import wraps
 from kitchen.text.display import textual_width
 
 from . import docs
-from .objects import Controller, Color, KeyMap
+from .objects import Controller, Color, Command
 
 
 def logged_in(f):
@@ -68,60 +68,60 @@ class Page(object):
             ch = self.term.stdscr.getch()
             self.controller.trigger(ch)
 
-    @PageController.register(KeyMap.EXIT)
+    @PageController.register(Command('EXIT'))
     def exit(self):
         if self.term.prompt_y_or_n('Do you really want to quit? (y/n): '):
             sys.exit()
 
-    @PageController.register(KeyMap.FORCE_EXIT)
+    @PageController.register(Command('FORCE_EXIT'))
     def force_exit(self):
         sys.exit()
 
-    @PageController.register(KeyMap.HELP)
+    @PageController.register(Command('HELP'))
     def show_help(self):
         self.term.show_notification(docs.HELP.strip().splitlines())
 
-    @PageController.register(KeyMap.SORT_HOT)
+    @PageController.register(Command('SORT_HOT'))
     def sort_content_hot(self):
         self.refresh_content(order='hot')
 
-    @PageController.register(KeyMap.SORT_TOP)
+    @PageController.register(Command('SORT_TOP'))
     def sort_content_top(self):
         self.refresh_content(order='top')
 
-    @PageController.register(KeyMap.SORT_RISING)
+    @PageController.register(Command('SORT_RISING'))
     def sort_content_rising(self):
         self.refresh_content(order='rising')
 
-    @PageController.register(KeyMap.SORT_NEW)
+    @PageController.register(Command('SORT_NEW'))
     def sort_content_new(self):
         self.refresh_content(order='new')
 
-    @PageController.register(KeyMap.SORT_CONTROVERSIAL)
+    @PageController.register(Command('SORT_CONTROVERSIAL'))
     def sort_content_controversial(self):
         self.refresh_content(order='controversial')
 
-    @PageController.register(KeyMap.MOVE_UP)
+    @PageController.register(Command('MOVE_UP'))
     def move_cursor_up(self):
         self._move_cursor(-1)
         self.clear_input_queue()
 
-    @PageController.register(KeyMap.MOVE_DOWN)
+    @PageController.register(Command('MOVE_DOWN'))
     def move_cursor_down(self):
         self._move_cursor(1)
         self.clear_input_queue()
 
-    @PageController.register(KeyMap.PAGE_UP)
+    @PageController.register(Command('PAGE_UP'))
     def move_page_up(self):
         self._move_page(-1)
         self.clear_input_queue()
 
-    @PageController.register(KeyMap.PAGE_DOWN)
+    @PageController.register(Command('PAGE_DOWN'))
     def move_page_down(self):
         self._move_page(1)
         self.clear_input_queue()
 
-    @PageController.register(KeyMap.UPVOTE)
+    @PageController.register(Command('UPVOTE'))
     @logged_in
     def upvote(self):
         data = self.content.get(self.nav.absolute_index)
@@ -138,7 +138,7 @@ class Page(object):
             if not self.term.loader.exception:
                 data['likes'] = True
 
-    @PageController.register(KeyMap.DOWNVOTE)
+    @PageController.register(Command('DOWNVOTE'))
     @logged_in
     def downvote(self):
         data = self.content.get(self.nav.absolute_index)
@@ -155,7 +155,7 @@ class Page(object):
             if not self.term.loader.exception:
                 data['likes'] = None
 
-    @PageController.register(KeyMap.LOGIN)
+    @PageController.register(Command('LOGIN'))
     def login(self):
         """
         Prompt to log into the user's account, or log out of the current
@@ -169,7 +169,7 @@ class Page(object):
         else:
             self.oauth.authorize()
 
-    @PageController.register(KeyMap.DELETE)
+    @PageController.register(Command('DELETE'))
     @logged_in
     def delete_item(self):
         """
@@ -193,7 +193,7 @@ class Page(object):
         if self.term.loader.exception is None:
             self.refresh_content()
 
-    @PageController.register(KeyMap.EDIT)
+    @PageController.register(Command('EDIT'))
     @logged_in
     def edit(self):
         """
@@ -228,7 +228,7 @@ class Page(object):
         if self.term.loader.exception is None:
             self.refresh_content()
 
-    @PageController.register(KeyMap.INBOX)
+    @PageController.register(Command('INBOX'))
     @logged_in
     def get_inbox(self):
         """

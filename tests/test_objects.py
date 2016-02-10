@@ -4,10 +4,13 @@ from __future__ import unicode_literals
 import time
 import curses
 
+import six
 import pytest
 import requests
 
-from rtv.objects import Color, Controller, Navigator, curses_session
+from rtv import exceptions
+from rtv.objects import Color, Controller, Navigator, Command, KeyMap, \
+    curses_session
 
 try:
     from unittest import mock
@@ -244,6 +247,88 @@ def test_objects_controller():
     assert controller_c.trigger('1') == 'a1'
     assert controller_c.trigger('2') == 'c2'
     assert controller_c.trigger('3') is None
+
+
+def test_objects_controller_command():
+
+    class ControllerA(Controller):
+        character_map = {}
+
+    class ControllerB(ControllerA):
+        character_map = {}
+
+    @ControllerA.register(Command('REFRESH'))
+    def call_page(_):
+        return 'a1'
+
+    @ControllerA.register(Command('UPVOTE'))
+    def call_page(_):
+        return 'a2'
+
+    @ControllerB.register(Command('REFRESH'))
+    def call_page(_):
+        return 'b1'
+
+    # Two commands aren't allowed to share keys
+    keymap = KeyMap({'REFRESH': [0x10, 0x11], 'UPVOTE': [0x11, 0x12]})
+    with pytest.raises(exceptions.ConfigError) as e:
+        ControllerA(None, keymap=keymap)
+    assert 'ControllerA' in six.text_type(e)
+
+    # Reset the character map
+    ControllerA.character_map = {Command('REFRESH'): int, Command('UPVOTE'):int}
+
+    # All commands must be defined in the keymap
+    keymap = KeyMap({'REFRESH': [0x10]})
+    with pytest.raises(exceptions.ConfigError) as e:
+        ControllerB(None, keymap=keymap)
+    assert 'UPVOTE' in six.text_type(e)
+
+
+def test_objects_command():
+
+    c1 = Command("REFRESH")
+    c2 = Command("refresh")
+    c3 = Command("EXIT")
+
+    assert c1 == c2
+    assert c1 != c3
+
+    keymap = {c1: None, c2: None, c3: None}
+    assert len(keymap) == 2
+    assert c1 in keymap
+    assert c2 in keymap
+    assert c3 in keymap
+
+
+def test_objects_keymap():
+
+    bindings = {
+        'refresh': ['a', 0x12, '<LF>', '<KEY_UP>'],
+        'exit': [],
+        Command('UPVOTE'): ['b', '<KEY_F5>']
+    }
+
+    keymap = KeyMap(bindings)
+    assert keymap.get(Command('REFRESH')) == [97, 18, 10, 259]
+    assert keymap.get(Command('exit')) == []
+    assert keymap.get('upvote') == [98, 269]
+    with pytest.raises(exceptions.ConfigError) as e:
+        keymap.get('downvote')
+    assert 'Command(DOWNVOTE)' in six.text_type(e)
+
+    # Updating the bindings wipes out the old ones
+    bindings = {'refresh': ['a', 0x12, '<LF>', '<KEY_UP>']}
+    keymap.set_bindings(bindings)
+    assert keymap.get('refresh')
+    with pytest.raises(exceptions.ConfigError) as e:
+        keymap.get('upvote')
+    assert 'Command(UPVOTE)' in six.text_type(e)
+
+    for key in ('', None, '<lf>', '<DNS>', '<KEY_UD>', '♬'):
+        with pytest.raises(exceptions.ConfigError) as e:
+            keymap.set_bindings({'refresh': [key]})
+        assert six.text_type(key) in six.text_type(e)
 
 
 def test_objects_navigator_properties():
