@@ -10,7 +10,6 @@ from .page import Page, PageController, logged_in
 from .objects import Navigator, Color, Command
 from .submission import SubmissionPage
 from .subscription import SubscriptionPage
-from .terminal import Terminal
 
 
 class SubredditController(PageController):
@@ -25,10 +24,10 @@ class SubredditPage(Page):
             name (string): Name of subreddit to open
             url (string): Optional submission to load upon start
         """
-        super(SubredditPage, self).__init__(reddit, term, config, oauth)
-
-        self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.controller = SubredditController(self, keymap=config.keymap)
+
+        super(SubredditPage, self).__init__(reddit, term, config, oauth)
+        self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.nav = Navigator(self.content.get)
 
     @SubredditController.register(Command('REFRESH'))

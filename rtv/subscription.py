@@ -15,10 +15,10 @@ class SubscriptionController(PageController):
 class SubscriptionPage(Page):
 
     def __init__(self, reddit, term, config, oauth):
-        super(SubscriptionPage, self).__init__(reddit, term, config, oauth)
-
-        self.content = SubscriptionContent.from_user(reddit, term.loader)
         self.controller = SubscriptionController(self, keymap=config.keymap)
+
+        super(SubscriptionPage, self).__init__(reddit, term, config, oauth)
+        self.content = SubscriptionContent.from_user(reddit, term.loader)
         self.nav = Navigator(self.content.get)
         self.subreddit_data = None
 

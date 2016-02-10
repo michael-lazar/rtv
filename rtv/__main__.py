@@ -14,6 +14,7 @@ from .oauth import OAuthHelper
 from .terminal import Terminal
 from .objects import curses_session
 from .subreddit import SubredditPage
+from .exceptions import ConfigError
 from .__version__ import __version__
 
 
@@ -106,6 +107,9 @@ def main():
             # Launch the subreddit page
             page.loop()
 
+    except ConfigError as e:
+        _logger.exception(e)
+        print(e)
     except Exception as e:
         _logger.exception(e)
         raise

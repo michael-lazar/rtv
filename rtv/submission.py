@@ -17,14 +17,13 @@ class SubmissionController(PageController):
 class SubmissionPage(Page):
 
     def __init__(self, reddit, term, config, oauth, url=None, submission=None):
-        super(SubmissionPage, self).__init__(reddit, term, config, oauth)
+        self.controller = SubmissionController(self, keymap=config.keymap)
 
+        super(SubmissionPage, self).__init__(reddit, term, config, oauth)
         if url:
             self.content = SubmissionContent.from_url(reddit, url, term.loader)
         else:
             self.content = SubmissionContent(submission, term.loader)
-
-        self.controller = SubmissionController(self, keymap=config.keymap)
         # Start at the submission post, which is indexed as -1
         self.nav = Navigator(self.content.get, page_index=-1)
 

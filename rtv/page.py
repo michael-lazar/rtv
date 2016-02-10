@@ -39,7 +39,6 @@ class Page(object):
         self.oauth = oauth
         self.content = None
         self.nav = None
-        self.controller = None
 
         self.active = True
         self._row = 0
