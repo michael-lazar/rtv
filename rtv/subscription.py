@@ -44,7 +44,7 @@ class SubscriptionPage(Page):
         self.subreddit_data = self.content.get(self.nav.absolute_index)
         self.active = False
 
-    @SubscriptionController.register(Command('SUBSCRIPTION_CLOSE'))
+    @SubscriptionController.register(Command('SUBSCRIPTION_EXIT'))
     def close_subscriptions(self):
         "Close subscriptions and return to the subreddit page"
 

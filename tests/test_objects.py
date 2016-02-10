@@ -276,7 +276,7 @@ def test_objects_controller_command():
     assert 'ControllerA' in six.text_type(e)
 
     # Reset the character map
-    ControllerA.character_map = {Command('REFRESH'): int, Command('UPVOTE'):int}
+    ControllerA.character_map = {Command('REFRESH'): 0, Command('UPVOTE'): 0}
 
     # All commands must be defined in the keymap
     keymap = KeyMap({'REFRESH': [0x10]})
@@ -310,12 +310,12 @@ def test_objects_keymap():
     }
 
     keymap = KeyMap(bindings)
-    assert keymap.get(Command('REFRESH')) == [97, 18, 10, 259]
+    assert keymap.get(Command('REFRESH')) == ['a', 0x12, '<LF>', '<KEY_UP>']
     assert keymap.get(Command('exit')) == []
-    assert keymap.get('upvote') == [98, 269]
+    assert keymap.get('upvote') == ['b', '<KEY_F5>']
     with pytest.raises(exceptions.ConfigError) as e:
         keymap.get('downvote')
-    assert 'Command(DOWNVOTE)' in six.text_type(e)
+    assert 'DOWNVOTE' in six.text_type(e)
 
     # Updating the bindings wipes out the old ones
     bindings = {'refresh': ['a', 0x12, '<LF>', '<KEY_UP>']}
@@ -323,11 +323,17 @@ def test_objects_keymap():
     assert keymap.get('refresh')
     with pytest.raises(exceptions.ConfigError) as e:
         keymap.get('upvote')
-    assert 'Command(UPVOTE)' in six.text_type(e)
+    assert 'UPVOTE' in six.text_type(e)
 
+    # Strings should be parsed correctly into keys
+    assert KeyMap.parse('a') == 97
+    assert KeyMap.parse(0x12) == 18
+    assert KeyMap.parse('<LF>') == 10
+    assert KeyMap.parse('<KEY_UP>') == 259
+    assert KeyMap.parse('<KEY_F5>') == 269
     for key in ('', None, '<lf>', '<DNS>', '<KEY_UD>', '♬'):
         with pytest.raises(exceptions.ConfigError) as e:
-            keymap.set_bindings({'refresh': [key]})
+            keymap.parse(key)
         assert six.text_type(key) in six.text_type(e)
 
 

@@ -540,12 +540,15 @@ class Controller(object):
             for command, func in controller.character_map.copy().items():
                 if isinstance(command, Command):
                     for key in keymap.get(command):
-                        if key in controller.character_map:
+                        val = keymap.parse(key)
+                        # Check if the key is already programmed to trigger a
+                        # different function.
+                        if controller.character_map.get(val, func) != func:
                             raise exceptions.ConfigError(
                                 'Invalid configuration, cannot bind the `%s`'
                                 ' key to two different commands in the `%s`'
                                 ' context' % (key, self.__class__.__name__))
-                        controller.character_map[key] = func
+                        controller.character_map[val] = func
 
     def trigger(self, char, *args, **kwargs):
 
@@ -621,7 +624,7 @@ class KeyMap(object):
         for command, keys in bindings.items():
             if not isinstance(command, Command):
                 command = Command(command)
-            self._keymap[command] = [self._parse_key(key) for key in keys]
+            self._keymap[command] = keys
 
     def get(self, command):
         if not isinstance(command, Command):
@@ -633,7 +636,7 @@ class KeyMap(object):
                 'Invalid configuration, `%s` key undefined' % command.val)
 
     @staticmethod
-    def _parse_key(key):
+    def parse(key):
         """
         Parse a key represented by a string and return its character code.
         """

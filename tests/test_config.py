@@ -115,8 +115,8 @@ def test_config_from_file():
         config.update(**fargs)
         config.keymap.set_bindings(fbindings)
         assert config.config == args
-        assert config.keymap.get('REFRESH') == [ord('r'), 269]
-        assert config.keymap.get('UPVOTE') == []
+        assert config.keymap.get('REFRESH') == ['r', '<KEY_F5>']
+        assert config.keymap.get('UPVOTE') == ['']
 
 
 def test_config_refresh_token():
