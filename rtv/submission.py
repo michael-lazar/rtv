@@ -7,8 +7,7 @@ import curses
 from . import docs
 from .content import SubmissionContent
 from .page import Page, PageController, logged_in
-from .objects import Navigator, Color
-from .terminal import Terminal
+from .objects import Navigator, Color, Command
 
 
 class SubmissionController(PageController):
@@ -20,16 +19,15 @@ class SubmissionPage(Page):
     def __init__(self, reddit, term, config, oauth, url=None, submission=None):
         super(SubmissionPage, self).__init__(reddit, term, config, oauth)
 
+        self.controller = SubmissionController(self, keymap=config.keymap)
         if url:
             self.content = SubmissionContent.from_url(reddit, url, term.loader)
         else:
             self.content = SubmissionContent(submission, term.loader)
-
-        self.controller = SubmissionController(self)
         # Start at the submission post, which is indexed as -1
         self.nav = Navigator(self.content.get, page_index=-1)
 
-    @SubmissionController.register(curses.KEY_RIGHT, 'l', ' ')
+    @SubmissionController.register(Command('SUBMISSION_TOGGLE_COMMENT'))
     def toggle_comment(self):
         "Toggle the selected comment tree between visible and hidden"
 
@@ -41,13 +39,13 @@ class SubmissionPage(Page):
             # causes the cursor index to go out of bounds.
             self.nav.page_index, self.nav.cursor_index = current_index, 0
 
-    @SubmissionController.register(curses.KEY_LEFT, 'h')
+    @SubmissionController.register(Command('SUBMISSION_EXIT'))
     def exit_submission(self):
         "Close the submission and return to the subreddit page"
 
         self.active = False
 
-    @SubmissionController.register(curses.KEY_F5, 'r')
+    @SubmissionController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
         "Re-download comments and reset the page index"
 
@@ -60,7 +58,7 @@ class SubmissionPage(Page):
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get, page_index=-1)
 
-    @SubmissionController.register(curses.KEY_ENTER, Terminal.RETURN, 'o')
+    @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):
         "Open the selected item with the webbrowser"
 
@@ -71,7 +69,7 @@ class SubmissionPage(Page):
         else:
             self.term.flash()
 
-    @SubmissionController.register('c')
+    @SubmissionController.register(Command('SUBMISSION_POST'))
     @logged_in
     def add_comment(self):
         """
@@ -114,7 +112,7 @@ class SubmissionPage(Page):
         if not self.term.loader.exception:
             self.refresh_content()
 
-    @SubmissionController.register('d')
+    @SubmissionController.register(Command('DELETE'))
     @logged_in
     def delete_comment(self):
         "Delete a comment as long as it is not the current submission"

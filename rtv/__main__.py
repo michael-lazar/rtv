@@ -14,6 +14,7 @@ from .oauth import OAuthHelper
 from .terminal import Terminal
 from .objects import curses_session
 from .subreddit import SubredditPage
+from .exceptions import ConfigError
 from .__version__ import __version__
 
 
@@ -25,6 +26,7 @@ _logger = logging.getLogger(__name__)
 # process. On Ubuntu, you may need to allow ptrace permissions by setting
 # ptrace_scope to 0 in /etc/sysctl.d/10-ptrace.conf.
 # http://blog.mellenthin.de/archives/2010/10/18/gdb-attach-fails
+
 
 def main():
     "Main entry point"
@@ -38,12 +40,16 @@ def main():
     sys.stdout.write('\x1b]2;{0}\x07'.format(title))
 
     args = Config.get_args()
-    fargs = Config.get_file(args.get('config'))
+    fargs, bindings = Config.get_file(args.get('config'))
 
     # Apply the file config first, then overwrite with any command line args
     config = Config()
     config.update(**fargs)
     config.update(**args)
+
+    # If key bindings are supplied in the config file, overwrite the defaults
+    if bindings:
+        config.keymap.set_bindings(bindings)
 
     # Copy the default config file and quit
     if config['copy_config']:
@@ -101,6 +107,9 @@ def main():
             # Launch the subreddit page
             page.loop()
 
+    except ConfigError as e:
+        _logger.exception(e)
+        print(e)
     except Exception as e:
         _logger.exception(e)
         raise

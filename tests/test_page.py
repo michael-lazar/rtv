@@ -38,7 +38,7 @@ def test_page_logged_in(terminal):
 def test_page_unauthenticated(reddit, terminal, config, oauth):
 
     page = Page(reddit, terminal, config, oauth)
-    page.controller = PageController(page)
+    page.controller = PageController(page, keymap=config.keymap)
     with mock.patch.object(page, 'refresh_content'), \
             mock.patch.object(page, 'content'),      \
             mock.patch.object(page, 'nav'),          \
@@ -104,7 +104,7 @@ def test_page_unauthenticated(reddit, terminal, config, oauth):
 def test_page_authenticated(reddit, terminal, config, oauth, refresh_token):
 
     page = Page(reddit, terminal, config, oauth)
-    page.controller = PageController(page)
+    page.controller = PageController(page, keymap=config.keymap)
     config.refresh_token = refresh_token
 
     # Login
