@@ -27,7 +27,7 @@ def build_parser():
 
     parser = argparse.ArgumentParser(
         prog='rtv', description=docs.SUMMARY,
-        epilog=docs.CONTROLS+docs.HELP,
+        epilog=docs.CONTROLS,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(
         '-V', '--version', action='version', version='rtv '+__version__)
