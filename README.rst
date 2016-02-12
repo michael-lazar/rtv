@@ -92,6 +92,7 @@ Authentication
 
 RTV allows you to login to your reddit account in order to do things like vote and leave comments.
 The login process uses OAuth [#]_ and follows these steps:
+
 1. Initiate a login by pressing the ``u`` key.
 2. Open a new webpage where reddit will ask you to authorize the application.
 3. Click accept.
