@@ -34,7 +34,7 @@ Install using pip
 
    $ pip install rtv
 
-or clone the repository
+or clone the repository.
 
 .. code-block:: bash
 
@@ -42,22 +42,20 @@ or clone the repository
    $ cd rtv
    $ python3 setup.py install
 
-and run it
-
-.. code-block:: bash
-
-   $ rtv
-
-See the `FAQ`_ for troubleshooting
+See the `FAQ`_ for troubleshooting.
 
 =====
 Usage
 =====
 
-Move the cursor using either the arrow keys or *Vim* style movement.
-Press **up** and **down** to scroll through submissions.
-Press **right** to view the selected submission and **left** to return.
-Press **?** to open the help screen.
+.. code-block:: bash
+
+   $ rtv --help
+
+| Move the cursor using either the arrow keys or *Vim* style movement.
+| Press **up** and **down** to scroll through submissions.
+| Press **right** to view the selected submission and **left** to return.
+| Press **?** to open the help screen.
 
 See `CONTROLS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of commands.
 
