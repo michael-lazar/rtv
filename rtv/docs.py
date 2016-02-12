@@ -12,8 +12,8 @@ terminal window.
 """
 
 CONTROLS = """
-Move the cursor using either the arrow keys or *Vim* style movement. Open the
-help screen by pressing the `?` key.
+Move the cursor using either the arrow keys or *Vim* style movement.
+Press `?` to open the help screen.
 """
 
 HELP = """
