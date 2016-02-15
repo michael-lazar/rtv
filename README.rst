@@ -2,9 +2,8 @@
 RTV: Reddit Terminal Viewer
 ===========================
 
-RTV allows you to view and interact with reddit from your terminal.
-
-It's compatible with *most* terminal emulators on Linux and OSX.
+| RTV allows you to view and interact with reddit from your terminal.
+| It's compatible with *most* terminal emulators on Linux and OSX.
 
 .. image:: http://i.imgur.com/Ek13lqM.png
 
@@ -53,13 +52,10 @@ Usage
 
    $ rtv --help
 
-Move the cursor using either the arrow keys or *Vim* style movement
-
-Press **up** and **down** to scroll through submissions.
-
-Press **right** to view the selected submission and **left** to return.
-
-Press **?** to open the help screen.
+| Move the cursor using either the arrow keys or *Vim* style movement
+| Press **up** and **down** to scroll through submissions.
+| Press **right** to view the selected submission and **left** to return.
+| Press **?** to open the help screen.
 
 See `CONTROLS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of commands.
 
