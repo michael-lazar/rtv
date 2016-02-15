@@ -28,7 +28,7 @@ RTV is built in **python** using the **curses** library.
 Installation
 ============
 
-Install using pip
+Install using pip...
 
 .. code-block:: bash
 
@@ -47,6 +47,8 @@ See the `FAQ`_ for troubleshooting.
 =====
 Usage
 =====
+
+To run the program, type 
 
 .. code-block:: bash
 
