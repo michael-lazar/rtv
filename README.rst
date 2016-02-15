@@ -7,9 +7,9 @@ RTV: Reddit Terminal Viewer
 
 .. image:: http://i.imgur.com/Ek13lqM.png
 
-RTV is built in **python** using the **curses** library.
-
 `Demo <https://asciinema.org/a/31609?speed=2&autoplay=1>`_
+
+RTV is built in **python** using the **curses** library.
 
 ---------------
 
