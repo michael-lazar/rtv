@@ -58,12 +58,13 @@ To run the program, type
 Controls
 --------
 
-| Move the cursor using either the arrow keys or *Vim* style movement
-| Press **up** and **down** to scroll through submissions.
-| Press **right** to view the selected submission and **left** to return.
-| Press **?** to open the help screen.
-|
-| See `CONTROLS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of available commands.
+Move the cursor using either the arrow keys or *Vim* style movement
+
+- Press **up** and **down** to scroll through submissions.
+- Press **right** to view the selected submission and **left** to return.
+- Press **?** to open the help screen.
+
+See `CONTROLS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of available commands.
 
 --------------
 Authentication
