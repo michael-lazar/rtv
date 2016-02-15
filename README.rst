@@ -57,7 +57,7 @@ Usage
 | Press **right** to view the selected submission and **left** to return.
 | Press **?** to open the help screen.
 |
-| See `CONTROLS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of commands.
+| See `CONTROLS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of available commands.
 
 =============
 Configuration
@@ -68,7 +68,7 @@ Editor
 ------
 
 You can compose posts and reply to comments using your preferred text editor.
-Specify the editor by setting ``$RTV_EDITOR`` in your environment.
+Set the editor by changing ``$RTV_EDITOR`` in your environment.
 
 .. code-block:: bash
 
@@ -82,21 +82,26 @@ Web Browser
 
 You can open submission links using your web browser.
 On most systems the default web browser will open in a new window.
-If you would prefer the complete terminal experience, set ``$BROWSER`` to a console-based web browser.
+If you prefer the complete terminal experience, set ``$BROWSER`` to a console-based web browser.
+
+.. code-block:: bash
+
+   $ export BROWSER=w3m
+
 `w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices.
 
 --------------
 Authentication
 --------------
 
-RTV allows you to login to your reddit account in order to do things like vote and leave comments.
+RTV enables you to login to your reddit account in order to perform actions like voting and leave comments.
 The login process uses OAuth [#]_ and follows these steps:
 
 1. Initiate a login by pressing the ``u`` key.
 2. Open a new webpage where reddit will ask you to authorize the application.
-3. Click accept.
+3. Click **Accept**.
 
-RTV will retrieve your new auth token and store it locally in ``{HOME}/.config/rtv/refresh-token``.
+RTV will retrieve an auth token with your information and store it locally in ``{HOME}/.config/rtv/refresh-token``.
 You can disable storing the token by setting ``persistent=False`` in the config.
 
 Note that RTV no longer allows you to input your username/password directly. This method of cookie based authentication has been deprecated by reddit [#]_.
@@ -143,13 +148,12 @@ How do I run the repository code directly?
   .. code-block:: bash
 
     $ cd ~/rtv_project
-    $ python3 -m pip install -r requirements.py3.txt
     $ python3 -m rtv
 
 =========
 Changelog
 =========
-Please see the `change log <https://github.com/michael-lazar/rtv/blob/master/CHANGELOG.rst>`_.
+Please see `CHANGELOG.rst <https://github.com/michael-lazar/rtv/blob/master/CHANGELOG.rst>`_.
 
 =======
 License
