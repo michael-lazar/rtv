@@ -42,8 +42,6 @@ or clone the repository.
    $ cd rtv
    $ python3 setup.py install
 
-See the `FAQ`_ for troubleshooting.
-
 =====
 Usage
 =====
