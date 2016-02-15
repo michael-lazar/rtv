@@ -2,14 +2,14 @@
 RTV: Reddit Terminal Viewer
 ===========================
 
-RTV is an application that allows you to view and interact with reddit from your terminal.
-It is compatible with *most* terminal emulators on Linux and OSX.
+| RTV allows you to view and interact with reddit from your terminal.
+| It's compatible with *most* terminal emulators on Linux and OSX.
 
 .. image:: http://i.imgur.com/Ek13lqM.png
 
-RTV is built in **python** using the **curses** library.
+`DEMO <https://asciinema.org/a/31609?speed=2&autoplay=1>`_
 
-`Demo <https://asciinema.org/a/31609?speed=2&autoplay=1>`_
+RTV is built in **python** using the **curses** library.
 
 ---------------
 
@@ -19,172 +19,113 @@ RTV is built in **python** using the **curses** library.
 
 * `Installation`_
 * `Usage`_
-* `Configuration`_
+* `Settings`_
 * `FAQ`_
 * `Changelog`_
-* `Contributors`_
 * `License`_
 
 ============
 Installation
 ============
 
-Install using pip
+Install using pip...
 
 .. code-block:: bash
 
-   $ sudo pip install rtv
+   $ pip install rtv
 
-Or clone the repository
+or clone the repository.
 
 .. code-block:: bash
 
    $ git clone https://github.com/michael-lazar/rtv.git
    $ cd rtv
-   $ sudo python3 setup.py install
-
-The installation will place a script in the system path
-
-.. code-block:: bash
-
-   $ rtv
-   $ rtv --help
-
-See the `FAQ`_ to troubleshoot common installation problems
+   $ python3 setup.py install
 
 =====
 Usage
 =====
 
-RTV supports browsing both subreddits and submission comments.
-
-Navigating is simple and intuitive.
-Move the cursor using either the arrow keys or *Vim* style movement.
-Move **up** and **down** to scroll through the page.
-Move **right** to view the selected submission, and **left** to exit the submission.
-
---------------
-Basic Commands
---------------
-
-:``j``/``k`` or ``▲``/``▼``: Move the cursor up/down
-:``m``/``n`` or ``PgUp``/``PgDn``: Jump to the previous/next page
-:``1-5``: Toggle post order (*hot*, *top*, *rising*, *new*, *controversial*)
-:``r`` or ``F5``: Refresh page content
-:``u``: Log in or switch accounts
-:``?``: Show the help screen
-:``q``/``Q``: Quit/Force quit
-
-----------------------
-Authenticated Commands
-----------------------
-
-Some actions require that you be logged in to your reddit account.
-You can log in by pressing ``u`` while inside of the program.
-Once you are logged in your username will appear in the top-right corner of the screen.
-
-:``a``/``z``: Upvote/downvote
-:``c``: Compose a new post or comment
-:``e``: Edit an existing post or comment
-:``d``: Delete an existing post or comment
-:``i``: Display new messages prompt
-:``s``: View a list of subscribed subreddits
-
---------------
-Subreddit Mode
---------------
-
-In subreddit mode you can browse through the top submissions on either the front page or a specific subreddit.
-
-:``l`` or ``►``: Enter the selected submission
-:``o`` or ``ENTER``:  Open the submission link with your web browser
-:``/``: Open a prompt to switch subreddits
-:``f``: Open a prompt to search the current subreddit
-
-The ``/`` prompt accepts subreddits in the following formats
-
-* ``/r/python``
-* ``/r/python/new``
-* ``/r/python+linux`` supports multireddits
-* ``/r/front`` will redirect to the front page
-* ``/r/me`` will display your submissions
-
----------------
-Submission Mode
----------------
-
-In submission mode you can view the self text for a submission and browse comments.
-
-:``h`` or ``◄``: Return to the subreddit
-:``o`` or ``ENTER``: Open the comment permalink with your web browser
-:``SPACE``: Fold the selected comment, or load additional comments
-
-
-=======
-Key Map
-=======
-
-.. image:: http://i.imgur.com/xDUQ03C.png
-
-=============
-Configuration
-=============
-
-------
-Editor
-------
-
-RTV allows users to compose comments and replies using their preferred text editor (**vi**, **nano**, **gedit**, etc).
-You can specify which text editor you would like to use by setting the ``$RTV_EDITOR`` environment variable.
+To run the program, type 
 
 .. code-block:: bash
 
-   $ export RTV_EDITOR=gedit
+   $ rtv --help
 
-If no editor is specified, RTV will fallback to the system's default ``$EDITOR``, and finally to ``nano``.
+--------
+Controls
+--------
 
------------
-Web Browser
------------
+Move the cursor using either the arrow keys or *Vim* style movement
 
-RTV has the capability to open links inside of your web browser.
-By default RTV will use the system's browser.
-On most systems this corresponds to a graphical browser such as Firefox or Chrome.
-If you prefer to stay in the terminal, use ``$BROWSER`` to specify a console-based web browser.
-`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices.
+- Press **up** and **down** to scroll through submissions.
+- Press **right** to view the selected submission and **left** to return.
+- Press **?** to open the help screen.
 
-.. code-block:: bash
-
-   $ export BROWSER=w3m
+See `CONTROLS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of available commands.
 
 --------------
 Authentication
 --------------
 
-RTV uses OAuth to facilitate logging into your reddit user account [#]_. The login process follows these steps:
+RTV enables you to login to your reddit account in order to perform actions like voting and leave comments.
+The login process uses OAuth [#]_ and follows these steps:
 
-1. You initiate a login by pressing the ``u`` key.
-2. You're redirected to a webbrowser where reddit will ask you to login and authorize RTV.
-3. RTV uses the generated token to login on your behalf.
-4. The token is stored on your computer at ``{HOME}/.config/rtv/refresh-token`` for future sessions. You can disable this behavior by setting ``persistent=False`` in your RTV config.
+1. Initiate a login by pressing the ``u`` key.
+2. Open a new webpage where reddit will ask you to authorize the application.
+3. Click **Accept**.
 
-Note that RTV no longer allows you to input your username/password directly. This method of cookie based authentication has been deprecated by reddit and will not be supported in future releases [#]_.
+RTV will retrieve an auth token with your information and store it locally in ``{HOME}/.config/rtv/refresh-token``.
+You can disable storing the token by setting ``persistent=False`` in the config.
+
+Note that RTV no longer allows you to input your username/password directly. This method of cookie based authentication has been deprecated by reddit [#]_.
 
 .. [#] `<https://github.com/reddit/reddit/wiki/OAuth2>`_
 .. [#] `<https://www.reddit.com/r/redditdev/comments/2ujhkr/important_api_licensing_terms_clarified/>`_
 
------------
-Config File
------------
+========
+Settings
+========
 
-RTV stores configuration settings in ``{HOME}/.config/rtv/rtv.cfg``.
-You can auto-generate the config file by running
+-------------
+Configuration
+-------------
+
+Configuration settings are stored in ``{HOME}/.config/rtv/rtv.cfg``.
+Auto-generate the config file by running
 
 .. code-block:: bash
 
    $ rtv --copy-config
 
-See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv/rtv.cfg>`_ to view descriptions for each setting.
+See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv/rtv.cfg>`_ for the full list of settings.
+
+------
+Editor
+------
+
+You can compose posts and reply to comments using your preferred text editor.
+Set the editor by changing ``$RTV_EDITOR`` in your environment.
+
+.. code-block:: bash
+
+   $ export RTV_EDITOR=gedit
+
+If not specified, the default system ``$EDITOR`` (or *nano*) will be used.
+
+-----------
+Web Browser
+-----------
+
+You can open submission links using your web browser.
+On most systems the default web browser will open in a new window.
+If you prefer the complete terminal experience, set ``$BROWSER`` to a console-based web browser.
+
+.. code-block:: bash
+
+   $ export BROWSER=w3m
+
+`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices.
 
 ===
 FAQ
@@ -212,7 +153,6 @@ How do I run the repository code directly?
   .. code-block:: bash
 
     $ cd ~/rtv_project
-    $ python3 -m pip install -r requirements.py3.txt
     $ python3 -m rtv
 
 =========
@@ -220,17 +160,10 @@ Changelog
 =========
 Please see `CHANGELOG.rst <https://github.com/michael-lazar/rtv/blob/master/CHANGELOG.rst>`_.
 
-
-============
-Contributors
-============
-Please see `CONTRIBUTORS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTRIBUTORS.rst>`_.
-
-
 =======
 License
 =======
-Please see `LICENSE <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_.
+This project is distributed under the `MIT <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_ license.
 
 
 .. |python| image:: https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg
