@@ -54,12 +54,35 @@ To run the program, type
 
    $ rtv --help
 
+--------
+Controls
+--------
+
 | Move the cursor using either the arrow keys or *Vim* style movement
 | Press **up** and **down** to scroll through submissions.
 | Press **right** to view the selected submission and **left** to return.
 | Press **?** to open the help screen.
 |
 | See `CONTROLS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of available commands.
+
+--------------
+Authentication
+--------------
+
+RTV enables you to login to your reddit account in order to perform actions like voting and leave comments.
+The login process uses OAuth [#]_ and follows these steps:
+
+1. Initiate a login by pressing the ``u`` key.
+2. Open a new webpage where reddit will ask you to authorize the application.
+3. Click **Accept**.
+
+RTV will retrieve an auth token with your information and store it locally in ``{HOME}/.config/rtv/refresh-token``.
+You can disable storing the token by setting ``persistent=False`` in the config.
+
+Note that RTV no longer allows you to input your username/password directly. This method of cookie based authentication has been deprecated by reddit [#]_.
+
+.. [#] `<https://github.com/reddit/reddit/wiki/OAuth2>`_
+.. [#] `<https://www.reddit.com/r/redditdev/comments/2ujhkr/important_api_licensing_terms_clarified/>`_
 
 =============
 Configuration
@@ -92,25 +115,6 @@ If you prefer the complete terminal experience, set ``$BROWSER`` to a console-ba
 
 `w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices.
 
---------------
-Authentication
---------------
-
-RTV enables you to login to your reddit account in order to perform actions like voting and leave comments.
-The login process uses OAuth [#]_ and follows these steps:
-
-1. Initiate a login by pressing the ``u`` key.
-2. Open a new webpage where reddit will ask you to authorize the application.
-3. Click **Accept**.
-
-RTV will retrieve an auth token with your information and store it locally in ``{HOME}/.config/rtv/refresh-token``.
-You can disable storing the token by setting ``persistent=False`` in the config.
-
-Note that RTV no longer allows you to input your username/password directly. This method of cookie based authentication has been deprecated by reddit [#]_.
-
-.. [#] `<https://github.com/reddit/reddit/wiki/OAuth2>`_
-.. [#] `<https://www.reddit.com/r/redditdev/comments/2ujhkr/important_api_licensing_terms_clarified/>`_
-
 -----------
 Config File
 -----------
@@ -122,7 +126,7 @@ Auto-generate the config file by running
 
    $ rtv --copy-config
 
-See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv/rtv.cfg>`_ for a list of settings.
+See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv/rtv.cfg>`_ for the full list of settings.
 
 ===
 FAQ
