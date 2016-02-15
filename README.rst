@@ -19,7 +19,7 @@ RTV is built in **python** using the **curses** library.
 
 * `Installation`_
 * `Usage`_
-* `Configuration`_
+* `Settings`_
 * `FAQ`_
 * `Changelog`_
 * `License`_
@@ -83,9 +83,22 @@ Note that RTV no longer allows you to input your username/password directly. Thi
 .. [#] `<https://github.com/reddit/reddit/wiki/OAuth2>`_
 .. [#] `<https://www.reddit.com/r/redditdev/comments/2ujhkr/important_api_licensing_terms_clarified/>`_
 
-=============
+========
+Settings
+========
+
+-------------
 Configuration
-=============
+-------------
+
+Configuration settings are stored in ``{HOME}/.config/rtv/rtv.cfg``.
+Auto-generate the config file by running
+
+.. code-block:: bash
+
+   $ rtv --copy-config
+
+See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv/rtv.cfg>`_ for the full list of settings.
 
 ------
 Editor
@@ -113,19 +126,6 @@ If you prefer the complete terminal experience, set ``$BROWSER`` to a console-ba
    $ export BROWSER=w3m
 
 `w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices.
-
------------
-Config File
------------
-
-Configuration settings are stored in ``{HOME}/.config/rtv/rtv.cfg``.
-Auto-generate the config file by running
-
-.. code-block:: bash
-
-   $ rtv --copy-config
-
-See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv/rtv.cfg>`_ for the full list of settings.
 
 ===
 FAQ
