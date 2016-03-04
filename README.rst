@@ -160,17 +160,13 @@ How do I run the tests?
   to facilitate testing.
 
   .. code-block:: bash
-
     $ pip3 install pytest
-    # The pip release for VCR.py is out-of-date
+    $ # The pip release for VCR.py is out-of-date
     $ pip3 install git+https://github.com/kevin1024/vcrpy.git
-
-  .. code-block:: bash
-
     $ cd ~/rtv_project
     $ # Run the full suite
     $ PYTHONPATH=. py.test
-    $ # or run a single test
+    $ # or a single test
     $ PYTHONPATH=. py.test tests/test_config.py::test_copy_default_config
 
   VCR.py will record HTTP requests made during the test run and store
