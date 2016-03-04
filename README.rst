@@ -32,15 +32,15 @@ Install using pip...
 
 .. code-block:: bash
 
-   $ pip install rtv
+    $ pip install rtv
 
 or clone the repository.
 
 .. code-block:: bash
 
-   $ git clone https://github.com/michael-lazar/rtv.git
-   $ cd rtv
-   $ python3 setup.py install
+    $ git clone https://github.com/michael-lazar/rtv.git
+    $ cd rtv
+    $ python3 setup.py install
 
 =====
 Usage
@@ -50,7 +50,7 @@ To run the program, type
 
 .. code-block:: bash
 
-   $ rtv --help
+    $ rtv --help
 
 --------
 Controls
@@ -96,7 +96,7 @@ Auto-generate the config file by running
 
 .. code-block:: bash
 
-   $ rtv --copy-config
+    $ rtv --copy-config
 
 See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv/rtv.cfg>`_ for the full list of settings.
 
@@ -109,7 +109,7 @@ Set the editor by changing ``$RTV_EDITOR`` in your environment.
 
 .. code-block:: bash
 
-   $ export RTV_EDITOR=gedit
+    $ export RTV_EDITOR=gedit
 
 If not specified, the default system ``$EDITOR`` (or *nano*) will be used.
 
@@ -123,7 +123,7 @@ If you prefer the complete terminal experience, set ``$BROWSER`` to a console-ba
 
 .. code-block:: bash
 
-   $ export BROWSER=w3m
+    $ export BROWSER=w3m
 
 `w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices.
 
@@ -155,6 +155,28 @@ How do I run the repository code directly?
     $ cd ~/rtv_project
     $ python3 -m rtv
 
+How do I run the tests?
+  This project uses `pytest <http://pytest.org/>`_ and `VCR.py <https://vcrpy.readthedocs.org/>`_.
+
+  .. code-block:: bash
+    
+    $ pip3 install pytest
+    $ # The pip release for VCR.py is out-of-date
+    $ pip3 install git+https://github.com/kevin1024/vcrpy.git
+    $ cd ~/rtv_project
+    $ # Run the full suite
+    $ PYTHONPATH=. py.test
+    $ # or a single test
+    $ PYTHONPATH=. py.test tests/test_config.py::test_copy_default_config
+
+  VCR.py will record HTTP requests made during the test run and store
+  them in *tests/cassettes/*. By default these cassettes are read-only,
+  if you would like to record new cassettes you must provide your own refresh token.
+
+  .. code-block:: bash
+
+     $ PYTHONPATH=. py.test --record-mode=once --refresh-token=~/.config/rtv/refresh-token
+  
 =========
 Changelog
 =========

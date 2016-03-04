@@ -72,7 +72,7 @@ def test_page_unauthenticated(reddit, terminal, config, oauth):
 
         # Show help
         page.controller.trigger('?')
-        message = 'Basic Commands'.encode('utf-8')
+        message = '[Basic Commands]'.encode('utf-8')
         terminal.stdscr.subwin.addstr.assert_any_call(1, 1, message)
 
         # Sort content

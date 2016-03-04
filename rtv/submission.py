@@ -69,6 +69,19 @@ class SubmissionPage(Page):
         else:
             self.term.flash()
 
+    @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
+    def open_pager(self):
+        "Open the selected item with the system's pager"
+        data = self.content.get(self.nav.absolute_index)
+        if data['type'] == 'Submission':
+            text = '\n\n'.join((data['permalink'], data['text']))
+            self.term.open_pager(text)
+        elif data['type'] == 'Comment':
+            text = '\n\n'.join((data['permalink'], data['body']))
+            self.term.open_pager(text)
+        else:
+            self.term.flash()
+
     @SubmissionController.register(Command('SUBMISSION_POST'))
     @logged_in
     def add_comment(self):
