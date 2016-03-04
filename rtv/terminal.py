@@ -35,6 +35,7 @@ class Terminal(object):
     # ASCII code
     ESCAPE = 27
     RETURN = 10
+    SPACE = 32
 
     def __init__(self, stdscr, ascii=False):
 
@@ -356,6 +357,26 @@ class Terminal(object):
             with self.suspend():
                 webbrowser.open_new_tab(url)
 
+    def open_pager(self, data):
+        """
+        View a long block of text using the system's default pager.
+
+        The data string will be piped directly to the pager.
+        """
+
+        pager = os.getenv('PAGER') or 'less'
+        try:
+            with self.suspend():
+                p = subprocess.Popen([pager], stdin=subprocess.PIPE)
+                p.stdin.write(self.clean(data))
+                p.stdin.close()
+                try:
+                    p.wait()
+                except KeyboardInterrupt:
+                    p.terminate()
+        except OSError:
+            self.show_notification('Could not open pager %s' % pager)
+
     def open_editor(self, data=''):
         """
         Open a temporary file using the system's default editor.
@@ -366,16 +387,19 @@ class Terminal(object):
         """
 
         with NamedTemporaryFile(prefix='rtv-', suffix='.txt', mode='wb') as fp:
-            fp.write(codecs.encode(data, 'utf-8'))
+            fp.write(self.clean(data))
             fp.flush()
             editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
 
             try:
                 with self.suspend():
-                    subprocess.Popen([editor, fp.name]).wait()
+                    p = subprocess.Popen([editor, fp.name])
+                    try:
+                        p.wait()
+                    except KeyboardInterrupt:
+                        p.terminate()
             except OSError:
-                raise exceptions.ProgramError(
-                    'Could not open file with %s' % editor)
+                self.show_notification('Could not open file with %s' % editor)
 
             # Open a second file object to read. This appears to be necessary
             # in order to read the changes made by some editors (gedit). w+

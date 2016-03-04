@@ -94,6 +94,23 @@ def test_submission_open(submission_page, terminal):
         assert terminal.open_browser.called
 
 
+def test_submission_pager(submission_page, terminal):
+
+    # View a submission with the pager
+    with mock.patch.object(terminal, 'open_pager'):
+        submission_page.controller.trigger(terminal.RETURN)
+        assert terminal.open_browser.called
+
+    # Move down to the first comment
+    with mock.patch.object(submission_page, 'clear_input_queue'):
+        submission_page.controller.trigger('j')
+
+    # View a comment with the pager
+    with mock.patch.object(terminal, 'open_pager'):
+        submission_page.controller.trigger(terminal.RETURN)
+        assert terminal.open_browser.called
+
+
 def test_submission_vote(submission_page, refresh_token):
 
     # Log in
