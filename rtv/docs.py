@@ -42,6 +42,7 @@ Subreddit Mode
 
 Submission Mode
   `h` or `LEFT`       : Return to subreddit mode
+  `l` or `RIGHT`      : Open the selected comment in a new window
   `SPACE`             : Fold the selected comment, or load additional comments
 """
 

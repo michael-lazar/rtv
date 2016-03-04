@@ -25,13 +25,13 @@ for future sessions. You can disable this behavior by setting the option
 .SH ENVIRONMENT
 .TP
 .BR RTV_EDITOR
-Specifies which text editor RTV will attempt to use when editing comments and
-posts. RTV will fallback to \fI$EDITOR\fR if the editor is unspecified.
+Text editor to use when editing comments and submissions. Will fallback to
+\fI$EDITOR\fR. 
 .TP
 .BR BROWSER
-Specifies which webbrowser RTV will attempt to use when opening links.
-This can be set to a terminal browser (w3m, lynx, elinks, etc.) for a true
-terminal experience. RTV will fallback to the system's default browser.
+Web browser to use when opening links.
+.BR PAGER
+Pager to use when expanding individual comments and submissions. 
 .SH AUTHOR
 Michael Lazar <lazar.michael22@gmail.com> (2016).
 .SH BUGS
