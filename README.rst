@@ -155,6 +155,34 @@ How do I run the repository code directly?
     $ cd ~/rtv_project
     $ python3 -m rtv
 
+How do I run the tests?
+  This project uses `pytest <http://pytest.org/>`_ and `VCR.py <https://vcrpy.readthedocs.org/>`
+  to facilitate testing. The pip release for VCR.py is out of date, so you must
+  install directly from git.
+
+  .. code-block:: bash
+
+    $ pip3 install pytest
+    $ pip3 install git+https://github.com/kevin1024/vcrpy.git
+
+  Then set PYTHONPATH to the root of the project and unlease pytest!
+
+  .. code-block:: bash
+
+    $ cd ~/rtv_project
+    $ # Run the full suite
+    $ PYTHONPATH=. py.test
+    $ # Or run a single test
+    $ PYTHONPATH=. py.test tests/test_config.py::test_copy_default_config
+
+  VCR.py will record HTTP requests made during the test run and store
+  them in *tests/cassettes/*. By default these cassettes are read-only.
+  In order to record new cassettes you must provide your own refresh token.
+
+  .. code-block:: bash
+
+    $ PYTHONPATH=. py.test --record-mode=once --refresh-token=~/.config/rtv/refresh-token
+  
 =========
 Changelog
 =========
