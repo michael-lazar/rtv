@@ -315,12 +315,13 @@ def test_open_pager(terminal, stdscr):
 
     data = "Hello World!"
 
-    def side_effect(*_, stdin=None):
+    def side_effect(args, stdin=None):
         assert stdin is not None
         raise OSError
 
     with mock.patch('subprocess.Popen', autospec=True) as Popen, \
             mock.patch.dict('os.environ', {'PAGER': 'fake'}):
+        Popen.return_value.stdin = mock.Mock()
 
         terminal.open_pager(data)
         assert Popen.called
