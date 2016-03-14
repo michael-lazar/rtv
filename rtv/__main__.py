@@ -14,6 +14,7 @@ from .oauth import OAuthHelper
 from .terminal import Terminal
 from .objects import curses_session
 from .subreddit import SubredditPage
+from .exceptions import ConfigError
 from .__version__ import __version__
 
 
@@ -39,12 +40,16 @@ def main():
     sys.stdout.write('\x1b]2;{0}\x07'.format(title))
 
     args = Config.get_args()
-    fargs = Config.get_file(args.get('config'))
+    fargs, bindings = Config.get_file(args.get('config'))
 
     # Apply the file config first, then overwrite with any command line args
     config = Config()
     config.update(**fargs)
     config.update(**args)
+
+    # If key bindings are supplied in the config file, overwrite the defaults
+    if bindings:
+        config.keymap.set_bindings(bindings)
 
     # Copy the default config file and quit
     if config['copy_config']:
@@ -60,6 +65,14 @@ def main():
         config.delete_refresh_token()
 
     if config['log']:
+        # Log request headers to the file (print hack only works on python 3.x)
+        # from http import client
+        # _http_logger = logging.getLogger('http.client')
+        # client.HTTPConnection.debuglevel = 2
+        # def print_to_file(*args, **_):
+        #     if args[0] != "header:":
+        #         _http_logger.info(' '.join(args))
+        # client.print = print_to_file
         logging.basicConfig(level=logging.DEBUG, filename=config['log'])
     else:
         # Add an empty handler so the logger doesn't complain
@@ -94,6 +107,9 @@ def main():
             # Launch the subreddit page
             page.loop()
 
+    except ConfigError as e:
+        _logger.exception(e)
+        print(e)
     except Exception as e:
         _logger.exception(e)
         raise

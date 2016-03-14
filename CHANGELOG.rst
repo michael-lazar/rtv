@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.8.1: http://github.com/michael-lazar/rtv/releases/tag/v1.8.1
 .. _1.8.0: http://github.com/michael-lazar/rtv/releases/tag/v1.8.0
 .. _1.7.0: http://github.com/michael-lazar/rtv/releases/tag/v1.7.0
 .. _1.6.1: http://github.com/michael-lazar/rtv/releases/tag/v1.6.1
@@ -15,10 +16,27 @@ RTV Changelog
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
 
+-------------------
+1.8.1_ (2016-03-01)
+-------------------
+Features
 
-------------------
-1.8.0_ (2015-12-20
-------------------
+* All keys are now rebindable through the config.
+* New bindings - ctrl-d and ctrl-u for page up / page down.
+* Added tag for stickied posts and comments.
+* Added bullet between timestamp and comment count.
+
+Bugfixes
+
+* Links starting with np.reddit.com no longer return `Forbidden`.
+
+Documentation
+
+* Updated README.
+
+-------------------
+1.8.0_ (2015-12-20)
+-------------------
 Features
 
 * A banner on the top of the page now displays the selected page sort order.

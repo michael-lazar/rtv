@@ -1,4 +1,4 @@
-.TH "RTV" "1" "December 20, 2015" "Version 1.8.0" "Usage and Commands"
+.TH "RTV" "1" "March 02, 2016" "Version 1.8.1" "Usage and Commands"
 .SH NAME
 RTV - Reddit Terminal Viewer
 .SH SYNOPSIS
@@ -49,8 +49,10 @@ Copy the default configuration to {HOME}/.config/rtv/rtv.cfg
 
 
 .SH CONTROLS
-Navigate between posts by using the arrow keys or vim-style `hjkl` movement.
-You can view the full list of commands by pressing the \fB?\fR key inside of the program.
+Move the cursor using either the arrow keys or Vim-style movement.
+- Press \fBup\fR and \fBdown\fR to scroll through submissions.
+- Press \fBright\fR to view the selected submission and \fBleft\fR to return.
+- Press \fB?\fR to open the help screen.
 .SH FILES
 .TP
 .BR $XDG_CONFIG_HOME/rtv/rtv.cfg
@@ -72,10 +74,8 @@ Specifies which webbrowser RTV will attempt to use when opening links.
 This can be set to a terminal browser (w3m, lynx, elinks, etc.) for a true
 terminal experience. RTV will fallback to the system's default browser.
 .SH AUTHOR
-Man page written by Johnathan "ShaggyTwoDope" Jenkins <twodopeshaggy@gmail.com> (2015).
+Michael Lazar <lazar.michael22@gmail.com> (2016).
 .SH BUGS
 Report bugs to \fIhttps://github.com/michael-lazar/rtv/issues\fR
 .SH LICENSE
 The MIT License (MIT)
-.PP
-(c) 2015 Michael Lazar

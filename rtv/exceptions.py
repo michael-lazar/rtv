@@ -6,6 +6,10 @@ class EscapeInterrupt(Exception):
     "Signal that the ESC key has been pressed"
 
 
+class ConfigError(Exception):
+    "There was a problem with the configuration"
+
+
 class RTVError(Exception):
     "Base RTV error class"
 

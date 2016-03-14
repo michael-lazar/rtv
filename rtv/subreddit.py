@@ -7,10 +7,9 @@ import curses
 from . import docs
 from .content import SubredditContent
 from .page import Page, PageController, logged_in
-from .objects import Navigator, Color
+from .objects import Navigator, Color, Command
 from .submission import SubmissionPage
 from .subscription import SubscriptionPage
-from .terminal import Terminal
 
 
 class SubredditController(PageController):
@@ -27,11 +26,11 @@ class SubredditPage(Page):
         """
         super(SubredditPage, self).__init__(reddit, term, config, oauth)
 
+        self.controller = SubredditController(self, keymap=config.keymap)
         self.content = SubredditContent.from_name(reddit, name, term.loader)
-        self.controller = SubredditController(self)
         self.nav = Navigator(self.content.get)
 
-    @SubredditController.register(curses.KEY_F5, 'r')
+    @SubredditController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
         "Re-download all submissions and reset the page index"
 
@@ -49,7 +48,7 @@ class SubredditPage(Page):
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
-    @SubredditController.register('f')
+    @SubredditController.register(Command('SUBREDDIT_SEARCH'))
     def search_subreddit(self, name=None):
         "Open a prompt to search the given subreddit"
 
@@ -65,7 +64,7 @@ class SubredditPage(Page):
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
-    @SubredditController.register('/')
+    @SubredditController.register(Command('SUBREDDIT_PROMPT'))
     def prompt_subreddit(self):
         "Open a prompt to navigate to a different subreddit"
 
@@ -73,7 +72,7 @@ class SubredditPage(Page):
         if name is not None:
             self.refresh_content(order='ignore', name=name)
 
-    @SubredditController.register(curses.KEY_RIGHT, 'l')
+    @SubredditController.register(Command('SUBREDDIT_OPEN'))
     def open_submission(self, url=None):
         "Select the current submission to view posts"
 
@@ -93,7 +92,7 @@ class SubredditPage(Page):
         if data.get('url_type') == 'selfpost':
             self.config.history.add(data['url_full'])
 
-    @SubredditController.register(curses.KEY_ENTER, Terminal.RETURN, 'o')
+    @SubredditController.register(Command('SUBREDDIT_OPEN_IN_BROWSER'))
     def open_link(self):
         "Open a link with the webbrowser"
 
@@ -107,7 +106,7 @@ class SubredditPage(Page):
             self.term.open_browser(data['url_full'])
             self.config.history.add(data['url_full'])
 
-    @SubredditController.register('c')
+    @SubredditController.register(Command('SUBREDDIT_POST'))
     @logged_in
     def post_submission(self):
         "Post a new submission to the given subreddit"
@@ -145,7 +144,7 @@ class SubredditPage(Page):
 
         self.refresh_content()
 
-    @SubredditController.register('s')
+    @SubredditController.register(Command('SUBREDDIT_OPEN_SUBSCRIPTIONS'))
     @logged_in
     def open_subscriptions(self):
         "Open user subscriptions page"
@@ -190,7 +189,10 @@ class SubredditPage(Page):
             self.term.add_line(win, '{score} '.format(**data), row, 1)
             text, attr = self.term.get_arrow(data['likes'])
             self.term.add_line(win, text, attr=attr)
-            self.term.add_line(win, ' {created} {comments} '.format(**data))
+            self.term.add_line(win, ' {created} '.format(**data))
+            text, attr = self.term.timestamp_sep
+            self.term.add_line(win, text, attr=attr)
+            self.term.add_line(win, ' {comments} '.format(**data))
 
             if data['saved']:
                 text, attr = self.term.saved

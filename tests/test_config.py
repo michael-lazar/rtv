@@ -88,19 +88,35 @@ def test_config_from_file():
         'link': 'https://reddit.com/permalink •',
         'subreddit': 'cfb'}
 
+    bindings = {
+        'REFRESH': 'r, <KEY_F5>',
+        'UPVOTE': ''}
+
     with NamedTemporaryFile(suffix='.cfg') as fp:
 
-        fargs = Config.get_file(filename=fp.name)
+        fargs, fbindings = Config.get_file(filename=fp.name)
         config = Config(**fargs)
+        config.keymap.set_bindings(fbindings)
         assert config.config == {}
+        assert config.keymap._keymap == {}
 
+        # [rtv]
         rows = ['{0}={1}'.format(key, val) for key, val in args.items()]
         data = '\n'.join(['[rtv]'] + rows)
         fp.write(codecs.encode(data, 'utf-8'))
+
+        # [bindings]
+        rows = ['{0}={1}'.format(key, val) for key, val in bindings.items()]
+        data = '\n'.join(['', '', '[bindings]'] + rows)
+        fp.write(codecs.encode(data, 'utf-8'))
+
         fp.flush()
-        fargs = Config.get_file(filename=fp.name)
+        fargs, fbindings = Config.get_file(filename=fp.name)
         config.update(**fargs)
+        config.keymap.set_bindings(fbindings)
         assert config.config == args
+        assert config.keymap.get('REFRESH') == ['r', '<KEY_F5>']
+        assert config.keymap.get('UPVOTE') == ['']
 
 
 def test_config_refresh_token():

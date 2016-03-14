@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
 import os
 import time
-import curses
 import signal
 import inspect
 import weakref
 import logging
 import threading
+import curses
+import curses.ascii
 from contextlib import contextmanager
 
 import six
@@ -502,6 +504,11 @@ class Controller(object):
     >>> def func(self, *args)
     >>>     ...
 
+    Register a KeyBinding that can be defined later by the config file
+    >>> @Controller.register(Command("UPVOTE"))
+    >>> def upvote(self, *args)
+    >>      ...
+
     Register a default behavior by using `None`.
     >>> @Controller.register(None)
     >>> def default_func(self, *args)
@@ -515,12 +522,33 @@ class Controller(object):
 
     character_map = {}
 
-    def __init__(self, instance):
+    def __init__(self, instance, keymap=None):
 
         self.instance = instance
-        # Build a list of parent controllers that follow the object's MRO to
-        # check if any parent controllers have registered the keypress
+        # Build a list of parent controllers that follow the object's MRO
+        # to check if any parent controllers have registered the keypress
         self.parents = inspect.getmro(type(self))[:-1]
+
+        if not keymap:
+            return
+
+        # Go through the controller and all of it's parents and look for
+        # Command objects in the character map. Use the keymap the lookup the
+        # keys associated with those command objects and add them to the
+        # character map.
+        for controller in self.parents:
+            for command, func in controller.character_map.copy().items():
+                if isinstance(command, Command):
+                    for key in keymap.get(command):
+                        val = keymap.parse(key)
+                        # Check if the key is already programmed to trigger a
+                        # different function.
+                        if controller.character_map.get(val, func) != func:
+                            raise exceptions.ConfigError(
+                                "Invalid configuration! `%s` is bound to "
+                                "duplicate commands in the "
+                                "%s" % (key, controller.__name__))
+                        controller.character_map[val] = func
 
     def trigger(self, char, *args, **kwargs):
 
@@ -552,3 +580,89 @@ class Controller(object):
                     cls.character_map[char] = f
             return f
         return inner
+
+
+class Command(object):
+    """
+    Minimal class that should be used to wrap abstract commands that may be
+    implemented as one or more physical keystrokes.
+
+    E.g. Command("REFRESH") can be represented by the KeyMap to be triggered
+         by either `r` or `F5`
+    """
+
+    def __init__(self, val):
+        self.val = val.upper()
+
+    def __repr__(self):
+        return 'Command(%s)' % self.val
+
+    def __eq__(self, other):
+        return repr(self) == repr(other)
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __hash__(self):
+        return hash(repr(self))
+
+
+class KeyMap(object):
+    """
+    Mapping between commands and the keys that they represent.
+    """
+
+    def __init__(self, bindings):
+        self._keymap = None
+        self.set_bindings(bindings)
+
+    def set_bindings(self, bindings):
+        # Clear the keymap before applying the bindings to avoid confusion.
+        # If a user defines custom bindings in their config file, they must
+        # explicitly define ALL of the bindings.
+        self._keymap = {}
+        for command, keys in bindings.items():
+            if not isinstance(command, Command):
+                command = Command(command)
+            self._keymap[command] = keys
+
+    def get(self, command):
+        if not isinstance(command, Command):
+            command = Command(command)
+        try:
+            return self._keymap[command]
+        except KeyError:
+            raise exceptions.ConfigError('Invalid configuration! `%s` key is '
+                                         'undefined' % command.val)
+
+    @staticmethod
+    def parse(key):
+        """
+        Parse a key represented by a string and return its character code.
+        """
+
+        try:
+            if isinstance(key, int):
+                return key
+            elif re.match('[<]KEY_.*[>]', key):
+                # Curses control character
+                return getattr(curses, key[1:-1])
+            elif re.match('[<].*[>]', key):
+                # Ascii control character
+                return getattr(curses.ascii, key[1:-1])
+            elif key.startswith('0x'):
+                # Ascii hex code
+                return int(key, 16)
+            else:
+                # Ascii character
+                code = ord(key)
+                if 0 <= code <= 255:
+                    return code
+                # Python 3.3 has a curses.get_wch() function that we can use
+                # for unicode keys, but Python 2.7 is limited to ascii.
+                raise exceptions.ConfigError('Invalid configuration! `%s` is '
+                                             'not in the ascii range' % key)
+
+        except (AttributeError, ValueError, TypeError):
+            raise exceptions.ConfigError('Invalid configuration! "%s" is not a '
+                                         'valid key' % key)

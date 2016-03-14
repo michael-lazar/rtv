@@ -11,6 +11,7 @@ import six
 from six.moves import configparser
 
 from . import docs, __version__
+from .objects import KeyMap
 
 PACKAGE = os.path.dirname(__file__)
 HOME = os.path.expanduser('~')
@@ -26,7 +27,7 @@ def build_parser():
 
     parser = argparse.ArgumentParser(
         prog='rtv', description=docs.SUMMARY,
-        epilog=docs.CONTROLS+docs.HELP,
+        epilog=docs.CONTROLS,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(
         '-V', '--version', action='version', version='rtv '+__version__)
@@ -112,7 +113,10 @@ class Config(object):
         self.history_file = history_file
         self.token_file = token_file
         self.config = kwargs
-        self.default = self.get_file(DEFAULT_CONFIG)
+
+        default, bindings = self.get_file(DEFAULT_CONFIG)
+        self.default = default
+        self.keymap = KeyMap(bindings)
 
         # `refresh_token` and `history` are saved/loaded at separate locations,
         # so they are treated differently from the rest of the config options.
@@ -198,9 +202,9 @@ class Config(object):
     @staticmethod
     def _parse_rtv_file(config):
 
-        out = {}
+        rtv = {}
         if config.has_section('rtv'):
-            out = dict(config.items('rtv'))
+            rtv = dict(config.items('rtv'))
 
         params = {
             'ascii': partial(config.getboolean, 'rtv'),
@@ -208,13 +212,20 @@ class Config(object):
             'persistent': partial(config.getboolean, 'rtv'),
             'history_size': partial(config.getint, 'rtv'),
             'oauth_redirect_port': partial(config.getint, 'rtv'),
-            'oauth_scope': lambda x: out[x].split(',')
+            'oauth_scope': lambda x: rtv[x].split(',')
         }
-
         for key, func in params.items():
-            if key in out:
-                out[key] = func(key)
-        return out
+            if key in rtv:
+                rtv[key] = func(key)
+
+        bindings = {}
+        if config.has_section('bindings'):
+            bindings = dict(config.items('bindings'))
+
+        for name, keys in bindings.items():
+            bindings[name] = [key.strip() for key in keys.split(',')]
+
+        return rtv, bindings
 
     @staticmethod
     def _ensure_filepath(filename):

@@ -309,3 +309,26 @@ def test_open_browser(terminal):
     open_new_tab.assert_called_with(url)
     assert curses.endwin.called
     assert curses.doupdate.called
+
+
+def test_open_pager(terminal, stdscr):
+
+    data = "Hello World!"
+
+    def side_effect(args, stdin=None):
+        assert stdin is not None
+        raise OSError
+
+    with mock.patch('subprocess.Popen', autospec=True) as Popen, \
+            mock.patch.dict('os.environ', {'PAGER': 'fake'}):
+        Popen.return_value.stdin = mock.Mock()
+
+        terminal.open_pager(data)
+        assert Popen.called
+        assert not stdscr.addstr.called
+
+        # Raise an OS error
+        Popen.side_effect = side_effect
+        terminal.open_pager(data)
+        message = 'Could not open pager fake'.encode('ascii')
+        assert stdscr.addstr.called_with(0, 0, message)

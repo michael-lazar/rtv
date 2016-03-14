@@ -12,17 +12,12 @@ terminal window.
 """
 
 CONTROLS = """
-Controls
---------
-RTV currently supports browsing both subreddits and individual submissions.
-In each mode the controls are slightly different. In subreddit mode you can
-browse through the top submissions on either the front page or a specific
-subreddit. In submission mode you can view the self text for a submission and
-browse comments.
+Move the cursor using either the arrow keys or *Vim* style movement.
+Press `?` to open the help screen.
 """
 
 HELP = """
-Basic Commands
+[Basic Commands]
   `j/k` or `UP/DOWN`  : Move the cursor up/down
   `m/n` or `PgUp/PgDn`: Jump to the previous/next page
   `o` or `ENTER`      : Open the selected item as a webpage
@@ -32,7 +27,7 @@ Basic Commands
   `?`                 : Show the help screen
   `q/Q`               : Quit/Force quit
 
-Authenticated Commands
+[Authenticated Commands]
   `a/z`               : Upvote/downvote
   `w`                 : Save/unsave a post
   `c`                 : Compose a new post or comment
@@ -41,13 +36,14 @@ Authenticated Commands
   `i`                 : Display new messages prompt
   `s`                 : Open/close subscribed subreddits list
 
-Subreddit Mode
+[Subreddit Mode]
   `l` or `RIGHT`      : Enter the selected submission
   `/`                 : Open a prompt to switch subreddits
   `f`                 : Open a prompt to search the current subreddit
 
-Submission Mode
+[Submission Mode]
   `h` or `LEFT`       : Return to subreddit mode
+  `l` or `RIGHT`      : Open the selected comment in a new window
   `SPACE`             : Fold the selected comment, or load additional comments
 """
 
