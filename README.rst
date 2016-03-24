@@ -32,7 +32,7 @@ Install using pip...
 
 .. code-block:: bash
 
-    $ pip install rtv
+  # pip install rtv
 
 or clone the repository.
 
