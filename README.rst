@@ -1,6 +1,6 @@
-===========================
-RTV: Reddit Terminal Viewer
-===========================
+============================
+RTV (Reddit Terminal Viewer)
+============================
 
 | RTV allows you to view and interact with reddit from your terminal.
 | It's compatible with *most* terminal emulators on Linux and OSX.
