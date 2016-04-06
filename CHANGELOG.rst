@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.9.0: http://github.com/michael-lazar/rtv/releases/tag/v1.9.0
 .. _1.8.1: http://github.com/michael-lazar/rtv/releases/tag/v1.8.1
 .. _1.8.0: http://github.com/michael-lazar/rtv/releases/tag/v1.8.0
 .. _1.7.0: http://github.com/michael-lazar/rtv/releases/tag/v1.7.0
@@ -15,6 +16,18 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+-------------------
+1.9.0_ (2016-04-05)
+-------------------
+Features
+
+* You can now open long posts/comments with the $PAGER by pressing `l`.
+* Changed a couple of visual separators.
+
+Documentation
+
+* Added testing instructions to the FAQ.
 
 -------------------
 1.8.1_ (2016-03-01)
