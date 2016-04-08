@@ -405,6 +405,9 @@ class SubredditContent(Content):
                     }
             else:
                 subreddit = reddit.get_subreddit(name)
+                # For special subreddits like /r/random we want to replace the
+                # display name with the one returned by the request.
+                display_name = '/r/{0}'.format(subreddit.display_name)
                 dispatch = {
                     None: subreddit.get_hot,
                     'hot': subreddit.get_hot,

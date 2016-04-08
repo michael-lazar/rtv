@@ -274,6 +274,14 @@ def test_content_subreddit_multireddit(reddit, terminal):
     assert isinstance(terminal.loader.exception, praw.errors.NotFound)
 
 
+def test_content_subreddit_random(reddit, terminal):
+
+    name = '/r/random'
+    content = SubredditContent.from_name(reddit, name, terminal.loader)
+    assert content.name.startswith('/r/')
+    assert content.name != name
+
+
 def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):
 
     # Not logged in
