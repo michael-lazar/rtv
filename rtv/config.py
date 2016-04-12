@@ -33,22 +33,22 @@ def build_parser():
         '-V', '--version', action='version', version='rtv '+__version__)
     parser.add_argument(
         '-s', dest='subreddit',
-        help='name of the subreddit that will be opened on start')
+        help='Name of the subreddit that will be opened on start')
     parser.add_argument(
         '-l', dest='link',
-        help='full URL of a submission that will be opened on start')
+        help='Full URL of a submission that will be opened on start')
     parser.add_argument(
         '--log', metavar='FILE', action='store',
-        help='log HTTP requests to the given file')
+        help='Log HTTP requests to the given file')
     parser.add_argument(
         '--config', metavar='FILE', action='store',
         help='Load configuration settings from the given file')
     parser.add_argument(
         '--ascii', action='store_const', const=True,
-        help='enable ascii-only mode')
+        help='Enable ascii-only mode')
     parser.add_argument(
         '--monochrome', action='store_const', const=True,
-        help='enable monochrome mode and force text to black & white')
+        help='Disable color')
     parser.add_argument(
         '--non-persistent', dest='persistent', action='store_const',
         const=False,
