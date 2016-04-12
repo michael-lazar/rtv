@@ -47,6 +47,9 @@ def build_parser():
         '--ascii', action='store_const', const=True,
         help='enable ascii-only mode')
     parser.add_argument(
+        '--monochrome', action='store_const', const=True,
+        help='enable monochrome mode and force text to black & white')
+    parser.add_argument(
         '--non-persistent', dest='persistent', action='store_const',
         const=False,
         help='Forget the authenticated user when the program exits')
@@ -79,6 +82,7 @@ def copy_default_config(filename=CONFIG):
 
     print('Copying default settings to %s' % filename)
     shutil.copy(DEFAULT_CONFIG, filename)
+    os.chmod(filename, 0o664)
 
 
 class OrderedSet(object):
@@ -208,6 +212,7 @@ class Config(object):
 
         params = {
             'ascii': partial(config.getboolean, 'rtv'),
+            'monochrome': partial(config.getboolean, 'rtv'),
             'clear_auth': partial(config.getboolean, 'rtv'),
             'persistent': partial(config.getboolean, 'rtv'),
             'history_size': partial(config.getint, 'rtv'),

@@ -12,7 +12,7 @@ from . import docs
 from .config import Config, copy_default_config
 from .oauth import OAuthHelper
 from .terminal import Terminal
-from .objects import curses_session
+from .objects import curses_session, Color
 from .subreddit import SubredditPage
 from .exceptions import ConfigError
 from .__version__ import __version__
@@ -83,6 +83,11 @@ def main():
 
     try:
         with curses_session() as stdscr:
+
+            # Initialize global color-pairs with curses
+            if not config['monochrome']:
+                Color.init()
+
             term = Terminal(stdscr, config['ascii'])
             with term.loader('Initializing', catch_exception=False):
                 reddit = praw.Reddit(user_agent=user_agent,
