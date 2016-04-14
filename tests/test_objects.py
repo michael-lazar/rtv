@@ -168,7 +168,6 @@ def test_objects_color(stdscr):
         assert getattr(Color, color) == curses.A_NORMAL
 
     Color.init()
-    assert curses.use_default_colors.called
 
     # Check that all colors are populated
     for color in colors:
@@ -182,6 +181,7 @@ def test_objects_curses_session(stdscr):
         pass
     assert curses.initscr.called
     assert curses.endwin.called
+    assert curses.use_default_colors.called
     curses.initscr.reset_mock()
     curses.endwin.reset_mock()
 

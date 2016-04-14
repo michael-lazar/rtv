@@ -62,7 +62,8 @@ def curses_session():
         # Hide the blinking cursor
         curses.curs_set(0)
 
-        Color.init()
+        # Assign the terminal's default (background) color to code -1
+        curses.use_default_colors()
 
         yield stdscr
 
@@ -254,7 +255,6 @@ class LoadScreen(object):
 
 
 class Color(object):
-
     """
     Color attributes for curses.
     """
@@ -285,9 +285,6 @@ class Color(object):
         This should be called once during the curses initial setup. Afterwards,
         curses color pairs can be accessed directly through class attributes.
         """
-
-        # Assign the terminal's default (background) color to code -1
-        curses.use_default_colors()
 
         for index, (attr, code) in enumerate(cls._colors.items(), start=1):
             curses.init_pair(index, code[0], code[1])
