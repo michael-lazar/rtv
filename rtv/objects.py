@@ -315,7 +315,8 @@ class Navigator(object):
             valid_page_cb,
             page_index=0,
             cursor_index=0,
-            inverted=False):
+            inverted=False,
+            top_height=None):
         """
         Params:
             valid_page_callback (func): This function, usually `Content.get`,
@@ -336,6 +337,7 @@ class Navigator(object):
         self.page_index = page_index
         self.cursor_index = cursor_index
         self.inverted = inverted
+        self.top_height = top_height
         self._page_cb = valid_page_cb
 
     @property
@@ -396,6 +398,7 @@ class Navigator(object):
                     # Flip the orientation and reset the cursor
                     self.flip(self.cursor_index)
                     self.cursor_index = 0
+                    self.top_height = None
                     redraw = True
         else:
             if self.cursor_index > 0:
@@ -405,6 +408,7 @@ class Navigator(object):
                 if self._is_valid(self.absolute_index):
                     # We have reached the beginning of the page - move the
                     # index
+                    self.top_height = None
                     redraw = True
                 else:
                     self.page_index += self.step
@@ -476,7 +480,7 @@ class Navigator(object):
 
         assert n_windows >= 0
         self.page_index += (self.step * n_windows)
-        self.cursor_index = n_windows
+        self.cursor_index = n_windows - self.cursor_index
         self.inverted = not self.inverted
 
     def _is_valid(self, page_index):

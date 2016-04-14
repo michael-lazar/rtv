@@ -34,10 +34,8 @@ class SubmissionPage(Page):
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
         if self.nav.inverted:
-            # Reset the navigator so that the cursor is at the bottom of the
-            # page. This is a workaround to handle if folding the comment
-            # causes the cursor index to go out of bounds.
-            self.nav.page_index, self.nav.cursor_index = current_index, 0
+            self.nav.top_height = self._subwindows[-1][2]
+            self.nav.flip(len(self._subwindows) - 1)
 
     @SubmissionController.register(Command('SUBMISSION_EXIT'))
     def exit_submission(self):

@@ -314,6 +314,23 @@ class Page(object):
         Loop through submissions and fill up the content page.
         """
 
+        # Case 1. Inverted, hiding the bottom element
+        # Case 2. Inverted, hiding or expanding middle elements
+        # Case 1+2. Inverted, hiding or expanding elements
+
+        # In both cases the screen jumps and is re-aligned with the selected
+        # item at the bottom of the screen. What we need to do is
+        # 1.) Grab the height of the top row (subwin.getmaxyx())
+        # 2.) Draw the page as non inverted, except for the top element. This
+        #     element will be drawn as inverted with the smaller height
+        # 3.) If expanding and the bottom element also doesn't fit, redraw
+        #     everything inverted as normal.
+        # 4.) Otherwise, this should ensure that the bottom element is always
+        #     full visible and the cursor doesn't jump lines.
+
+        # Note: Should also disable drawing inverted if only one element
+        # Note: If only one comment, add (Not enough space to display)
+
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(
             n_rows - self._row, n_cols, self._row, 0)
@@ -327,29 +344,41 @@ class Page(object):
         # If not inverted, align the first submission with the top and draw
         # downwards. If inverted, align the first submission with the bottom
         # and draw upwards.
+        cancel_inverted = True
         current_row = (win_n_rows - 1) if inverted else 0
         available_rows = (win_n_rows - 1) if inverted else win_n_rows
+        top_height = self.nav.top_height if not inverted else None
         for data in self.content.iterate(page_index, step, win_n_cols - 2):
             subwin_n_rows = min(available_rows, data['n_rows'])
+            if top_height:
+                subwin_n_rows = min(subwin_n_rows, top_height)
             subwin_n_cols = win_n_cols - data['offset']
             start = current_row - subwin_n_rows if inverted else current_row
             subwindow = window.derwin(
                 subwin_n_rows, subwin_n_cols, start, data['offset'])
-            attr = self._draw_item(subwindow, data, inverted)
-            self._subwindows.append((subwindow, attr))
+            attr = self._draw_item(subwindow, data, top_height or inverted)
+            self._subwindows.append((subwindow, attr, subwin_n_rows))
             available_rows -= (subwin_n_rows + 1)  # Add one for the blank line
             current_row += step * (subwin_n_rows + 1)
+            top_height = None
             if available_rows <= 0:
+                # Indicate the page is full and we can keep the inverted screen.
+                cancel_inverted = False
                 break
-        else:
-            # If the page is not full we need to make sure that it is NOT
+
+        if len(self._subwindows) == 1:
+            # Never draw inverted if only one subwindow. The top of the
+            # subwindow should always be aligned with the top of the screen.
+            cancel_inverted = True
+
+        if cancel_inverted and self.nav.inverted:
+            # In some special cases we need to make sure that the screen is NOT
             # inverted. Unfortunately, this currently means drawing the whole
             # page over again. Could not think of a better way to pre-determine
             # if the content will fill up the page, given that it is dependent
             # on the size of the terminal.
-            if self.nav.inverted:
-                self.nav.flip((len(self._subwindows) - 1))
-                self._draw_content()
+            self.nav.flip((len(self._subwindows) - 1))
+            self._draw_content()
 
         self._row = n_rows
 
@@ -387,7 +416,7 @@ class Page(object):
         if self.nav.cursor_index >= len(self._subwindows):
             self.nav.cursor_index = len(self._subwindows) - 1
 
-        window, attr = self._subwindows[self.nav.cursor_index]
+        window, attr, _ = self._subwindows[self.nav.cursor_index]
         if attr is not None:
             attribute |= attr
 
