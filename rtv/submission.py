@@ -34,8 +34,14 @@ class SubmissionPage(Page):
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
         if self.nav.inverted:
-            self.nav.top_height = self._subwindows[-1][2]
+            # Special case when inverted and toggling a comment. We want to
+            # ensure that when we re-draw the page, the cursor stays at its
+            # current absolute position. Do this by turning off inversion and
+            # applying an offset to the top item.
+            window = self._subwindows[-1]
+            n_rows, _ = window.getmaxyx()
             self.nav.flip(len(self._subwindows) - 1)
+            self.nav.top_item_height = n_rows
 
     @SubmissionController.register(Command('SUBMISSION_EXIT'))
     def exit_submission(self):
