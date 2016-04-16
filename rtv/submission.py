@@ -38,7 +38,7 @@ class SubmissionPage(Page):
             # ensure that when we re-draw the page, the cursor stays at its
             # current absolute position. Do this by turning off inversion and
             # applying an offset to the top item.
-            window = self._subwindows[-1]
+            window = self._subwindows[-1][0]
             n_rows, _ = window.getmaxyx()
             self.nav.flip(len(self._subwindows) - 1)
             self.nav.top_item_height = n_rows

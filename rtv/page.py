@@ -351,8 +351,9 @@ class Page(object):
             subwin_n_rows = min(available_rows, data['n_rows'])
             subwin_inverted = inverted
             if top_item_height is not None:
-                # Special case when top_item_height is given. This will only
-                # be applied to the first item that is drawn.
+                # Special case: draw the page as non-inverted, except for the
+                # top element. This element will be drawn as inverted with a
+                # restricted height
                 subwin_n_rows = min(subwin_n_rows, top_item_height)
                 subwin_inverted = True
                 top_item_height = None
@@ -419,7 +420,7 @@ class Page(object):
         if self.nav.cursor_index >= len(self._subwindows):
             self.nav.cursor_index = len(self._subwindows) - 1
 
-        window, attr, _ = self._subwindows[self.nav.cursor_index]
+        window, attr = self._subwindows[self.nav.cursor_index]
         if attr is not None:
             attribute |= attr
 
