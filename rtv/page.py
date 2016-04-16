@@ -314,21 +314,8 @@ class Page(object):
         Loop through submissions and fill up the content page.
         """
 
-        # Case 1. Inverted, hiding the bottom element
-        # Case 2. Inverted, hiding or expanding middle elements
-        # Case 1+2. Inverted, hiding or expanding elements
-
-        # In both cases the screen jumps and is re-aligned with the selected
-        # item at the bottom of the screen. What we need to do is
-        # 1.) Grab the height of the top row (subwin.getmaxyx())
-        # 2.) Draw the page as non inverted, except for the top element. This
-        #     element will be drawn as inverted with the smaller height
-        # 3.) If expanding and the bottom element also doesn't fit, redraw
-        #     everything inverted as normal.
-        # 4.) Otherwise, this should ensure that the bottom element is always
-        #     full visible and the cursor doesn't jump lines.
-
         # TODO: If only one comment, add (Not enough space to display)
+        # TODO: Jumps up one space sometimes
 
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(
@@ -376,7 +363,7 @@ class Page(object):
             cancel_inverted = True
 
         if cancel_inverted and self.nav.inverted:
-            # In some special cases we need to make sure that the screen is NOT
+            # In some cases we need to make sure that the screen is NOT
             # inverted. Unfortunately, this currently means drawing the whole
             # page over again. Could not think of a better way to pre-determine
             # if the content will fill up the page, given that it is dependent

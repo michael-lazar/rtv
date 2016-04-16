@@ -92,6 +92,7 @@ class Content(object):
             data['type'] = 'MoreComments'
             data['count'] = comment.count
             data['body'] = 'More comments'
+            data['hidden'] = True
         else:
             author = getattr(comment, 'author', '[deleted]')
             name = getattr(author, 'name', '[deleted]')
@@ -114,6 +115,7 @@ class Content(object):
             data['gold'] = comment.gilded > 0
             data['permalink'] = permalink
             data['stickied'] = stickied
+            data['hidden'] = False
 
         return data
 
@@ -154,6 +156,7 @@ class Content(object):
         data['gold'] = sub.gilded > 0
         data['nsfw'] = sub.over_18
         data['stickied'] = sub.stickied
+        data['hidden'] = False
         data['index'] = None  # This is filled in later by the method caller
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:
@@ -317,7 +320,8 @@ class SubmissionContent(Content):
                 'cache': cache,
                 'count': count,
                 'level': data['level'],
-                'body': 'Hidden'}
+                'body': 'Hidden',
+                'hidden': True}
 
             self._comment_data[index:index + len(cache)] = [comment]
 

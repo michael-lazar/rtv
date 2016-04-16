@@ -33,15 +33,19 @@ class SubmissionPage(Page):
 
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
+
+        # This logic handles a display edge case after a comment toggle. We want
+        # to make sure that when we re-draw the page, the cursor stays at its
+        # current absolute position on the screen. In order to do this, apply
+        # a fixed offset if, while inverted, we either try to hide the bottom
+        # comment or toggle any of the middle comments.
         if self.nav.inverted:
-            # Special case when inverted and toggling a comment. We want to
-            # ensure that when we re-draw the page, the cursor stays at its
-            # current absolute position. Do this by turning off inversion and
-            # applying an offset to the top item.
-            window = self._subwindows[-1][0]
-            n_rows, _ = window.getmaxyx()
-            self.nav.flip(len(self._subwindows) - 1)
-            self.nav.top_item_height = n_rows
+            data = self.content.get(current_index)
+            if data['hidden'] or self.nav.cursor_index != 0:
+                window = self._subwindows[-1][0]
+                n_rows, _ = window.getmaxyx()
+                self.nav.flip(len(self._subwindows) - 1)
+                self.nav.top_item_height = n_rows
 
     @SubmissionController.register(Command('SUBMISSION_EXIT'))
     def exit_submission(self):
