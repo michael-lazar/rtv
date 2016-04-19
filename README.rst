@@ -42,6 +42,21 @@ or clone the repository.
     $ cd rtv
     $ python3 setup.py install
 
+Arch Linux or Arch based distros...
+
+.. code:: bash
+
+    $ yaourt -S rtv
+
+This includes Arch Linux, Antergos, Manjaro, etc. `List`_
+You will need an aur helper such as yaourt shown above. If you are not fimilar with aur helper's,
+you can find a list `here`_. There is also a *rtv-git* package if you wish to keep up to date with current code
+before any releases are made.
+
+.. _List: https://wiki.archlinux.org/index.php/Arch_based_distributions_(active)
+.. _here: https://wiki.archlinux.org/index.php/AUR_helpers#AUR_search.2Fbuild_helpers
+
+
 =====
 Usage
 =====
