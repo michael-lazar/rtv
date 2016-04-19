@@ -214,3 +214,25 @@ class SubredditPage(Page):
             if data['flair']:
                 text = ' {flair}'.format(**data)
                 self.term.add_line(win, text, attr=Color.RED)
+
+    def _draw_image(self):
+
+        import requests
+        from tempfile import NamedTemporaryFile
+        import os
+        from .config import PACKAGE
+        # TODO: Going to draw multiple thumbnails on the page
+
+        data = self.content.get(self.nav.absolute_index)
+
+        if data['thumb'] in ('self', '', None):
+            filename = os.path.join(PACKAGE, 'templates', 'thumbs', 'self.png')
+        else:
+            fp = NamedTemporaryFile(suffix='jpg')
+            response = requests.get(data['thumb'])
+            fp.write(response.content)
+            fp.flush()
+            filename = fp.name
+
+        self.term.clear_image()
+        self.term.add_image(filename)

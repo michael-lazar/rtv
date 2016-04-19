@@ -8,6 +8,8 @@ import logging
 import praw
 import tornado
 
+
+from .packages.img_display import W3MImageDisplayer
 from . import docs
 from .config import Config, copy_default_config
 from .oauth import OAuthHelper
@@ -16,7 +18,6 @@ from .objects import curses_session, Color
 from .subreddit import SubredditPage
 from .exceptions import ConfigError
 from .__version__ import __version__
-
 
 _logger = logging.getLogger(__name__)
 
@@ -78,6 +79,18 @@ def main():
         # Add an empty handler so the logger doesn't complain
         logging.root.addHandler(logging.NullHandler())
 
+    image_displayer = None
+    if config['preview_images']:
+        try:
+            _image_displayer = W3MImageDisplayer()
+            _image_displayer.initialize()
+        except RuntimeError as e:
+            _logger.warning(e)
+            _logger.warning('Could not initialize w3m display, falling back to'
+                            'preview_images==False')
+        else:
+            image_displayer = _image_displayer
+
     # Construct the reddit user agent
     user_agent = docs.AGENT.format(version=__version__)
 
@@ -88,7 +101,7 @@ def main():
             if not config['monochrome']:
                 Color.init()
 
-            term = Terminal(stdscr, config['ascii'])
+            term = Terminal(stdscr, image_displayer, config['ascii'])
             with term.loader('Initializing', catch_exception=False):
                 reddit = praw.Reddit(user_agent=user_agent,
                                      decode_html_entities=False,

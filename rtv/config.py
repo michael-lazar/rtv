@@ -50,6 +50,9 @@ def build_parser():
         '--monochrome', action='store_const', const=True,
         help='Disable color')
     parser.add_argument(
+        '--preview-images', dest='preview_images', action='store_const',
+        const=True, help='Preview submission thumbnails using w3m')
+    parser.add_argument(
         '--non-persistent', dest='persistent', action='store_const',
         const=False,
         help='Forget the authenticated user when the program exits')

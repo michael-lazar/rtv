@@ -37,10 +37,11 @@ class Terminal(object):
     RETURN = 10
     SPACE = 32
 
-    def __init__(self, stdscr, ascii=False):
+    def __init__(self, stdscr, image_displayer=None, ascii=False):
 
         self.stdscr = stdscr
         self.ascii = ascii
+        self.image_displayer = image_displayer
         self.loader = LoadScreen(self)
         self._display = None
 
@@ -249,6 +250,12 @@ class Terminal(object):
         text = self.clean(text, n_cols)
         params = [] if attr is None else [attr]
         window.addstr(row, col, text, *params)
+
+    def add_image(self, path):
+        self.image_displayer.draw(path, 10, 10, 50, 50)
+
+    def clear_image(self):
+        self.image_displayer.clear(10, 10, 50, 50)
 
     def show_notification(self, message, timeout=None):
         """

@@ -260,6 +260,7 @@ class Page(object):
         self._draw_header()
         self._draw_banner()
         self._draw_content()
+        self._draw_image()
         self._add_cursor()
         self.term.stdscr.touchwin()
         self.term.stdscr.refresh()
@@ -352,6 +353,9 @@ class Page(object):
                 self._draw_content()
 
         self._row = n_rows
+
+    def _draw_image(self):
+        pass
 
     def _add_cursor(self):
         self._edit_cursor(curses.A_REVERSE)
