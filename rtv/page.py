@@ -314,9 +314,6 @@ class Page(object):
         Loop through submissions and fill up the content page.
         """
 
-        # TODO: If only one comment, add (Not enough space to display)
-        # TODO: Jumps up one space sometimes
-
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(
             n_rows - self._row, n_cols, self._row, 0)
