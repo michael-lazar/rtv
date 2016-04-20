@@ -101,7 +101,8 @@ def test_content_submission(reddit, terminal):
     assert content.get(40)['type'] == 'Comment'
 
     for data in content.iterate(-1, 1):
-        assert all(k in data for k in ('object', 'n_rows', 'offset', 'type'))
+        assert all(k in data for k in ('object', 'n_rows', 'offset', 'type',
+                                       'hidden'))
         # All text should be converted to unicode by this point
         for val in data.values():
             assert not isinstance(val, six.binary_type)
@@ -121,11 +122,14 @@ def test_content_submission(reddit, terminal):
     data = content.get(2)
     assert data['type'] == 'HiddenComment'
     assert data['count'] == 3
+    assert data['hidden'] is True
     assert data['level'] >= content.get(3)['level']
     assert len(content._comment_data) == 43
 
     # Toggling again expands the children
     content.toggle(2)
+    data = content.get(2)
+    assert data['hidden'] is False
     assert len(content._comment_data) == 45
 
 
@@ -195,8 +199,9 @@ def test_content_subreddit(reddit, terminal):
     assert content.get(0)['type'] == 'Submission'
 
     for data in content.iterate(0, 1):
-        assert all(k in data for k in ('object', 'n_rows', 'offset', 'type',
-                                       'index', 'title', 'split_title'))
+        assert all(k in data for k in (
+            'object', 'n_rows', 'offset', 'type', 'index', 'title',
+            'split_title', 'hidden'))
         # All text should be converted to unicode by this point
         for val in data.values():
             assert not isinstance(val, six.binary_type)
@@ -226,6 +231,7 @@ def test_content_subreddit_load_more(reddit, terminal):
         # Index be appended to each title, starting at "1." and incrementing
         assert data['index'] == i + 1
         assert data['title'].startswith(six.text_type(i + 1))
+
 
 def test_content_subreddit_from_name(reddit, terminal):
 
