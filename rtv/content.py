@@ -443,7 +443,6 @@ class SubredditContent(Content):
                 raise IndexError
             else:
                 data = self.strip_praw_submission(submission)
-                #data['index'] = len(self._submission_data)
                 data['index'] = len(self._submission_data) + 1
                 # Add the post number to the beginning of the title
                 data['title'] = '{0}. {1}'.format(data['index'], data['title'])
