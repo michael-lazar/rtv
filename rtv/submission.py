@@ -163,13 +163,15 @@ class SubmissionPage(Page):
         valid_rows = range(0, n_rows)
         offset = 0 if not inverted else -(data['n_rows'] - n_rows)
 
-        # Cut off the comment if we are only displaying one comment on the
-        # screen and there still isn't enough space to fit it
+        # If there isn't enough space to fit the comment body on the screen,
+        # replace the last line with a notification.
         split_body = data['split_body']
-        if data['n_rows'] > n_rows and len(self._subwindows) == 0:
-            cutoff = data['n_rows'] - n_rows + 1
-            split_body = split_body[:-cutoff]
-            split_body.append('(Not enough space to display)')
+        if data['n_rows'] > n_rows:
+            # Only when there is a single comment on the page and not inverted
+            if not inverted and len(self._subwindows) == 0:
+                cutoff = data['n_rows'] - n_rows + 1
+                split_body = split_body[:-cutoff]
+                split_body.append('(Not enough space to display)')
 
         row = offset
         if row in valid_rows:
