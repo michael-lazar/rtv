@@ -13,8 +13,7 @@ except ImportError:
 
 def test_submission_page_construct(reddit, terminal, config, oauth):
     window = terminal.stdscr.subwin
-    url = ('https://www.reddit.com/r/Python/comments/2xmo63/'
-           'a_python_terminal_viewer_for_browsing_reddit')
+    url = ('https://www.reddit.com/r/Python/comments/2xmo63')
 
     with terminal.loader():
         page = SubmissionPage(reddit, terminal, config, oauth, url=url)
@@ -109,6 +108,23 @@ def test_submission_pager(submission_page, terminal):
     with mock.patch.object(terminal, 'open_pager'):
         submission_page.controller.trigger('l')
         assert terminal.open_pager.called
+
+
+def test_submission_comment_not_enough_space(submission_page, terminal):
+
+    # The first comment is 10 lines, shrink the screen so that it won't fit.
+    # Setting the terminal to 10 lines means that there will only be 8 lines
+    # available (after subtracting the header and footer) to draw the comment.
+    terminal.stdscr.nlines = 10
+
+    # Select the first comment
+    with mock.patch.object(submission_page, 'clear_input_queue'):
+        submission_page.move_cursor_down()
+
+    submission_page.draw()
+
+    text = '(Not enough space to display)'
+    terminal.stdscr.subwin.addstr.assert_called_with(7, 1, text)
 
 
 def test_submission_vote(submission_page, refresh_token):
