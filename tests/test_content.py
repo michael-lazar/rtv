@@ -216,13 +216,16 @@ def test_content_subreddit_load_more(reddit, terminal):
     assert content.get(50)['type'] == 'Submission'
     assert len(content._submission_data) == 51
 
-    for data in islice(content.iterate(0, 1), 0, 50):
+    for i, data in enumerate(islice(content.iterate(0, 1), 0, 50)):
         assert all(k in data for k in ('object', 'n_rows', 'offset', 'type',
                                        'index', 'title', 'split_title'))
         # All text should be converted to unicode by this point
         for val in data.values():
             assert not isinstance(val, six.binary_type)
 
+        # Index be appended to each title, starting at "1." and incrementing
+        assert data['index'] == i + 1
+        assert data['title'].startswith(six.text_type(i + 1))
 
 def test_content_subreddit_from_name(reddit, terminal):
 
