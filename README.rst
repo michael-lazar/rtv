@@ -28,19 +28,28 @@ RTV is built in **python** using the **curses** library.
 Installation
 ============
 
-Install using pip...
+Install using pip (**recommended**)
 
 .. code-block:: bash
 
     $ pip install rtv
 
-or clone the repository.
+or clone the repository
 
 .. code-block:: bash
 
     $ git clone https://github.com/michael-lazar/rtv.git
     $ cd rtv
     $ python3 setup.py install
+
+on Arch Linux or Arch based distros (Antergos, Manjaro, `etc.`_) you can install directly using an `aur helper`_ such as yaourt. There's also an *rtv-git* package if you wish to keep up to date with the latest development code.
+
+.. code:: bash
+
+    $ yaourt -S rtv
+
+.. _etc.: https://wiki.archlinux.org/index.php/Arch_based_distributions_(active)
+.. _aur helper: https://wiki.archlinux.org/index.php/AUR_helpers#AUR_search.2Fbuild_helpers
 
 =====
 Usage
@@ -62,16 +71,16 @@ Move the cursor using either the arrow keys or *Vim* style movement
 - Press **right** to view the selected submission and **left** to return.
 - Press **?** to open the help screen.
 
-See `CONTROLS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of available commands.
+See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of available commands.
 
 --------------
 Authentication
 --------------
 
-RTV enables you to login to your reddit account in order to perform actions like voting and leave comments.
+RTV enables you to login to your reddit account in order to perform actions like voting and leaving comments.
 The login process uses OAuth [#]_ and follows these steps:
 
-1. Initiate a login by pressing the ``u`` key.
+1. Initiate the login by pressing the ``u`` key.
 2. Open a new webpage where reddit will ask you to authorize the application.
 3. Click **Accept**.
 
@@ -180,7 +189,7 @@ How do I run the tests?
 =========
 Changelog
 =========
-Please see `CHANGELOG.rst <https://github.com/michael-lazar/rtv/blob/master/CHANGELOG.rst>`_.
+Please see `CHANGELOG <https://github.com/michael-lazar/rtv/blob/master/CHANGELOG.rst>`_
 
 =======
 License
