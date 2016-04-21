@@ -315,7 +315,8 @@ class Navigator(object):
             valid_page_cb,
             page_index=0,
             cursor_index=0,
-            inverted=False):
+            inverted=False,
+            top_item_height=None):
         """
         Params:
             valid_page_callback (func): This function, usually `Content.get`,
@@ -331,11 +332,16 @@ class Navigator(object):
                 inverted - The page is drawn from the bottom of the screen,
                     starting with the page index, up to the top of the
                     screen.
+            top_item_height (int): If this is set to a non-null value
+            The number of columns that the top-most item
+                should utilize if non-inverted. This is used for a special mode
+                where all items are drawn non-inverted except for the top one.
         """
 
         self.page_index = page_index
         self.cursor_index = cursor_index
         self.inverted = inverted
+        self.top_item_height = top_item_height
         self._page_cb = valid_page_cb
 
     @property
@@ -396,15 +402,21 @@ class Navigator(object):
                     # Flip the orientation and reset the cursor
                     self.flip(self.cursor_index)
                     self.cursor_index = 0
+                    self.top_item_height = None
                     redraw = True
         else:
             if self.cursor_index > 0:
                 self.cursor_index -= 1
+                if self.top_item_height and self.cursor_index == 0:
+                    # Selecting the partially displayed item
+                    self.top_item_height = None
+                    redraw = True
             else:
                 self.page_index -= self.step
                 if self._is_valid(self.absolute_index):
                     # We have reached the beginning of the page - move the
                     # index
+                    self.top_item_height = None
                     redraw = True
                 else:
                     self.page_index += self.step
@@ -478,6 +490,7 @@ class Navigator(object):
         self.page_index += (self.step * n_windows)
         self.cursor_index = n_windows
         self.inverted = not self.inverted
+        self.top_item_height = None
 
     def _is_valid(self, page_index):
         """

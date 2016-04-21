@@ -111,6 +111,24 @@ def test_submission_pager(submission_page, terminal):
         assert terminal.open_pager.called
 
 
+def test_submission_comment_not_enough_space(submission_page, terminal):
+
+    # The first comment is 10 lines, shrink the screen so that it won't fit.
+    # Setting the terminal to 10 lines means that there will only be 8 lines
+    # available (after subtracting the header and footer) to draw the comment.
+    terminal.stdscr.nlines = 10
+
+    # Select the first comment
+    with mock.patch.object(submission_page, 'clear_input_queue'):
+        submission_page.move_cursor_down()
+
+    submission_page.draw()
+
+    text = '(Not enough space to display)'.encode('ascii')
+    window = terminal.stdscr.subwin
+    window.subwin.addstr.assert_any_call(7, 1, text)
+
+
 def test_submission_vote(submission_page, refresh_token):
 
     # Log in

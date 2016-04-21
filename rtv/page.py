@@ -327,29 +327,46 @@ class Page(object):
         # If not inverted, align the first submission with the top and draw
         # downwards. If inverted, align the first submission with the bottom
         # and draw upwards.
+        cancel_inverted = True
         current_row = (win_n_rows - 1) if inverted else 0
         available_rows = (win_n_rows - 1) if inverted else win_n_rows
+        top_item_height = None if inverted else self.nav.top_item_height
         for data in self.content.iterate(page_index, step, win_n_cols - 2):
             subwin_n_rows = min(available_rows, data['n_rows'])
+            subwin_inverted = inverted
+            if top_item_height is not None:
+                # Special case: draw the page as non-inverted, except for the
+                # top element. This element will be drawn as inverted with a
+                # restricted height
+                subwin_n_rows = min(subwin_n_rows, top_item_height)
+                subwin_inverted = True
+                top_item_height = None
             subwin_n_cols = win_n_cols - data['offset']
             start = current_row - subwin_n_rows if inverted else current_row
             subwindow = window.derwin(
                 subwin_n_rows, subwin_n_cols, start, data['offset'])
-            attr = self._draw_item(subwindow, data, inverted)
+            attr = self._draw_item(subwindow, data, subwin_inverted)
             self._subwindows.append((subwindow, attr))
             available_rows -= (subwin_n_rows + 1)  # Add one for the blank line
             current_row += step * (subwin_n_rows + 1)
             if available_rows <= 0:
+                # Indicate the page is full and we can keep the inverted screen.
+                cancel_inverted = False
                 break
-        else:
-            # If the page is not full we need to make sure that it is NOT
+
+        if len(self._subwindows) == 1:
+            # Never draw inverted if only one subwindow. The top of the
+            # subwindow should always be aligned with the top of the screen.
+            cancel_inverted = True
+
+        if cancel_inverted and self.nav.inverted:
+            # In some cases we need to make sure that the screen is NOT
             # inverted. Unfortunately, this currently means drawing the whole
             # page over again. Could not think of a better way to pre-determine
             # if the content will fill up the page, given that it is dependent
             # on the size of the terminal.
-            if self.nav.inverted:
-                self.nav.flip((len(self._subwindows) - 1))
-                self._draw_content()
+            self.nav.flip((len(self._subwindows) - 1))
+            self._draw_content()
 
         self._row = n_rows
 

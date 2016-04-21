@@ -33,11 +33,19 @@ class SubmissionPage(Page):
 
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
+
+        # This logic handles a display edge case after a comment toggle. We want
+        # to make sure that when we re-draw the page, the cursor stays at its
+        # current absolute position on the screen. In order to do this, apply
+        # a fixed offset if, while inverted, we either try to hide the bottom
+        # comment or toggle any of the middle comments.
         if self.nav.inverted:
-            # Reset the navigator so that the cursor is at the bottom of the
-            # page. This is a workaround to handle if folding the comment
-            # causes the cursor index to go out of bounds.
-            self.nav.page_index, self.nav.cursor_index = current_index, 0
+            data = self.content.get(current_index)
+            if data['hidden'] or self.nav.cursor_index != 0:
+                window = self._subwindows[-1][0]
+                n_rows, _ = window.getmaxyx()
+                self.nav.flip(len(self._subwindows) - 1)
+                self.nav.top_item_height = n_rows
 
     @SubmissionController.register(Command('SUBMISSION_EXIT'))
     def exit_submission(self):
@@ -155,6 +163,16 @@ class SubmissionPage(Page):
         valid_rows = range(0, n_rows)
         offset = 0 if not inverted else -(data['n_rows'] - n_rows)
 
+        # If there isn't enough space to fit the comment body on the screen,
+        # replace the last line with a notification.
+        split_body = data['split_body']
+        if data['n_rows'] > n_rows:
+            # Only when there is a single comment on the page and not inverted
+            if not inverted and len(self._subwindows) == 0:
+                cutoff = data['n_rows'] - n_rows + 1
+                split_body = split_body[:-cutoff]
+                split_body.append('(Not enough space to display)')
+
         row = offset
         if row in valid_rows:
 
@@ -178,7 +196,7 @@ class SubmissionPage(Page):
                 text, attr = self.term.stickied
                 self.term.add_line(win, text, attr=attr)
 
-        for row, text in enumerate(data['split_body'], start=offset+1):
+        for row, text in enumerate(split_body, start=offset+1):
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1)
 

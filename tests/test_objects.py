@@ -346,11 +346,13 @@ def test_objects_navigator_properties():
     assert nav.step == 1
     assert nav.position == (0, 0, False)
     assert nav.absolute_index == 0
+    assert nav.top_item_height is None
 
-    nav = Navigator(valid_page_cb, 5, 2, True)
+    nav = Navigator(valid_page_cb, 5, 2, True, 10)
     assert nav.step == -1
     assert nav.position == (5, 2, True)
     assert nav.absolute_index == 3
+    assert nav.top_item_height == 10
 
 
 def test_objects_navigator_move():
@@ -360,6 +362,7 @@ def test_objects_navigator_move():
             raise IndexError()
 
     nav = Navigator(valid_page_cb)
+    nav.top_item_height = 5
 
     # Try to scroll up past the first item
     valid, redraw = nav.move(-1, 2)
@@ -375,6 +378,7 @@ def test_objects_navigator_move():
 
     # Scroll down, reach last item on the page and flip the screen
     valid, redraw = nav.move(1, 3)
+    assert nav.top_item_height is None
     assert nav.page_index == 2
     assert nav.cursor_index == 0
     assert nav.inverted
