@@ -251,12 +251,6 @@ class Terminal(object):
         params = [] if attr is None else [attr]
         window.addstr(row, col, text, *params)
 
-    def add_image(self, path):
-        self.image_displayer.draw(path, 10, 10, 50, 50)
-
-    def clear_image(self):
-        self.image_displayer.clear(10, 10, 50, 50)
-
     def show_notification(self, message, timeout=None):
         """
         Overlay a message box on the center of the screen and wait for input.

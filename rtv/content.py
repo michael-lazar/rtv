@@ -92,6 +92,7 @@ class Content(object):
             data['type'] = 'MoreComments'
             data['count'] = comment.count
             data['body'] = 'More comments'
+            data['hidden'] = True
         else:
             author = getattr(comment, 'author', '[deleted]')
             name = getattr(author, 'name', '[deleted]')
@@ -114,6 +115,7 @@ class Content(object):
             data['gold'] = comment.gilded > 0
             data['permalink'] = permalink
             data['stickied'] = stickied
+            data['hidden'] = False
 
         return data
 
@@ -155,6 +157,7 @@ class Content(object):
         data['nsfw'] = sub.over_18
         data['stickied'] = sub.stickied
         data['thumb'] = sub.thumbnail
+        data['hidden'] = False
         data['index'] = None  # This is filled in later by the method caller
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:
@@ -318,7 +321,8 @@ class SubmissionContent(Content):
                 'cache': cache,
                 'count': count,
                 'level': data['level'],
-                'body': 'Hidden'}
+                'body': 'Hidden',
+                'hidden': True}
 
             self._comment_data[index:index + len(cache)] = [comment]
 
@@ -440,17 +444,16 @@ class SubredditContent(Content):
                 raise IndexError
             else:
                 data = self.strip_praw_submission(submission)
-                data['index'] = index
+                data['index'] = len(self._submission_data) + 1
                 # Add the post number to the beginning of the title
-                data['title'] = '{0}. {1}'.format(index+1, data['title'])
+                data['title'] = '{0}. {1}'.format(data['index'], data['title'])
                 self._submission_data.append(data)
 
         # Modifies the original dict, faster than copying
         data = self._submission_data[index]
-        data['split_title'] = self.wrap_text(data['title'], width=n_cols)
+        data['split_title'] = self.wrap_text(data['title'], width=n_cols-12)
         data['n_rows'] = len(data['split_title']) + 3
         data['offset'] = 0
-
         return data
 
 

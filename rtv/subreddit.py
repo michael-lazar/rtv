@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 import time
 import curses
+from tempfile import NamedTemporaryFile
 
 from . import docs
+from .config import PACKAGE
 from .content import SubredditContent
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Color, Command
 from .submission import SubmissionPage
 from .subscription import SubscriptionPage
+
+import requests
 
 
 class SubredditController(PageController):
@@ -165,6 +170,8 @@ class SubredditPage(Page):
 
     def _draw_item(self, win, data, inverted):
 
+        start = 13
+
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1  # Leave space for the cursor in the first column
 
@@ -175,18 +182,18 @@ class SubredditPage(Page):
         n_title = len(data['split_title'])
         for row, text in enumerate(data['split_title'], start=offset):
             if row in valid_rows:
-                self.term.add_line(win, text, row, 1, curses.A_BOLD)
+                self.term.add_line(win, text, row, start, curses.A_BOLD)
 
         row = n_title + offset
         if row in valid_rows:
             seen = (data['url_full'] in self.config.history)
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
-            self.term.add_line(win, '{url}'.format(**data), row, 1, attr)
+            self.term.add_line(win, '{url}'.format(**data), row, start, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
-            self.term.add_line(win, '{score} '.format(**data), row, 1)
+            self.term.add_line(win, '{score} '.format(**data), row, start)
             text, attr = self.term.get_arrow(data['likes'])
             self.term.add_line(win, text, attr=attr)
             self.term.add_line(win, ' {created} '.format(**data))
@@ -208,22 +215,12 @@ class SubredditPage(Page):
         row = n_title + offset + 2
         if row in valid_rows:
             text = '{author}'.format(**data)
-            self.term.add_line(win, text, row, 1, curses.A_BOLD)
+            self.term.add_line(win, text, row, start, curses.A_BOLD)
             text = ' /r/{subreddit}'.format(**data)
             self.term.add_line(win, text, attr=Color.YELLOW)
             if data['flair']:
                 text = ' {flair}'.format(**data)
                 self.term.add_line(win, text, attr=Color.RED)
-
-    def _draw_image(self):
-
-        import requests
-        from tempfile import NamedTemporaryFile
-        import os
-        from .config import PACKAGE
-        # TODO: Going to draw multiple thumbnails on the page
-
-        data = self.content.get(self.nav.absolute_index)
 
         if data['thumb'] in ('self', '', None):
             filename = os.path.join(PACKAGE, 'templates', 'thumbs', 'self.png')
@@ -234,5 +231,5 @@ class SubredditPage(Page):
             fp.flush()
             filename = fp.name
 
-        self.term.clear_image()
-        self.term.add_image(filename)
+        y_offset, x_offset = win.getbegyx()
+        self.term.image_displayer.draw(filename, x_offset+1, y_offset, 12, n_rows)
