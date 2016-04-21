@@ -13,7 +13,8 @@ except ImportError:
 
 def test_submission_page_construct(reddit, terminal, config, oauth):
     window = terminal.stdscr.subwin
-    url = ('https://www.reddit.com/r/Python/comments/2xmo63')
+    url = ('https://www.reddit.com/r/Python/comments/2xmo63/'
+           'a_python_terminal_viewer_for_browsing_reddit')
 
     with terminal.loader():
         page = SubmissionPage(reddit, terminal, config, oauth, url=url)
@@ -123,8 +124,9 @@ def test_submission_comment_not_enough_space(submission_page, terminal):
 
     submission_page.draw()
 
-    text = '(Not enough space to display)'
-    terminal.stdscr.subwin.addstr.assert_called_with(7, 1, text)
+    text = '(Not enough space to display)'.encode('ascii')
+    window = terminal.stdscr.subwin
+    window.subwin.addstr.assert_any_call(7, 1, text)
 
 
 def test_submission_vote(submission_page, refresh_token):

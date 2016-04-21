@@ -488,7 +488,7 @@ class Navigator(object):
 
         assert n_windows >= 0
         self.page_index += (self.step * n_windows)
-        self.cursor_index = n_windows - self.cursor_index
+        self.cursor_index = n_windows
         self.inverted = not self.inverted
         self.top_item_height = None
 
