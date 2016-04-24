@@ -196,7 +196,7 @@ class SubmissionPage(Page):
                 text, attr = self.term.stickied
                 self.term.add_line(win, text, attr=attr)
 
-        for row, text in enumerate(split_body, start=offset+1):
+        for row, text in enumerate(split_body, start=offset + 1):
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1)
 
@@ -215,7 +215,8 @@ class SubmissionPage(Page):
         n_cols -= 1
 
         self.term.add_line(win, '{body}'.format(**data), 0, 1)
-        self.term.add_line(win, ' [{count}]'.format(**data), attr=curses.A_BOLD)
+        self.term.add_line(win, ' [{count}]'.format(
+            **data), attr=curses.A_BOLD)
 
         attr = Color.get_level(data['level'])
         self.term.addch(win, 0, 0, self.term.vline, attr)
