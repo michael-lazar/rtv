@@ -222,14 +222,14 @@ class SubredditPage(Page):
                 text = ' {flair}'.format(**data)
                 self.term.add_line(win, text, attr=Color.RED)
 
-        if data['thumb'] in ('self', '', None):
-            filename = os.path.join(PACKAGE, 'templates', 'thumbs', 'self.png')
-        else:
-            fp = NamedTemporaryFile(suffix='jpg')
-            response = requests.get(data['thumb'])
-            fp.write(response.content)
-            fp.flush()
-            filename = fp.name
-
-        y_offset, x_offset = win.getbegyx()
-        self.term.image_displayer.draw(filename, x_offset+1, y_offset, 12, n_rows)
+        # if data['thumb'] in ('self', '', None):
+        #     filename = os.path.join(PACKAGE, 'resources', 'thumbs', 'self.png')
+        # else:
+        #     fp = NamedTemporaryFile(suffix='jpg')
+        #     response = requests.get(data['thumb'])
+        #     fp.write(response.content)
+        #     fp.flush()
+        #     filename = fp.name
+        #
+        # y_offset, x_offset = win.getbegyx()
+        # self.term.image_displayer.draw(filename, x_offset+1, y_offset, 12, n_rows)

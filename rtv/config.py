@@ -6,6 +6,7 @@ import codecs
 import shutil
 import argparse
 from functools import partial
+from tempfile import gettempdir
 
 import six
 from six.moves import configparser
@@ -15,12 +16,14 @@ from .objects import KeyMap
 
 PACKAGE = os.path.dirname(__file__)
 HOME = os.path.expanduser('~')
-TEMPLATE = os.path.join(PACKAGE, 'templates')
+TEMPLATE = os.path.join(PACKAGE, 'resources', 'templates')
+THUMBS = os.path.join(PACKAGE, 'resources', 'thumbs')
 DEFAULT_CONFIG = os.path.join(PACKAGE, 'rtv.cfg')
 XDG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
 CONFIG = os.path.join(XDG_HOME, 'rtv', 'rtv.cfg')
 TOKEN = os.path.join(XDG_HOME, 'rtv', 'refresh-token')
 HISTORY = os.path.join(XDG_HOME, 'rtv', 'history.log')
+THUMBS_CACHE = os.path.join(gettempdir(), 'rtv_thumbs')
 
 
 def build_parser():

@@ -9,6 +9,7 @@ import praw
 from kitchen.text.display import wrap
 
 from . import exceptions
+from .thumbnails import ThumbnailManager
 
 
 class Content(object):
@@ -356,6 +357,8 @@ class SubredditContent(Content):
         self._loader = loader
         self._submissions = submissions
         self._submission_data = []
+
+        self.thumb_manager = ThumbnailManager()
 
         # Verify that content exists for the given submission generator.
         # This is necessary because PRAW loads submissions lazily, and
