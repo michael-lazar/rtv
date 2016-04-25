@@ -439,6 +439,7 @@ class SubredditContent(Content):
 
         while index >= len(self._submission_data):
             try:
+                # TODO: fetch with limit = 0 to get the thumbs
                 with self._loader('Loading more submissions'):
                     submission = next(self._submissions)
                 if self._loader.exception:
@@ -447,6 +448,7 @@ class SubredditContent(Content):
                 raise IndexError
             else:
                 data = self.strip_praw_submission(submission)
+                self.thumb_manager.preload([data['thumb']])
                 data['index'] = len(self._submission_data) + 1
                 # Add the post number to the beginning of the title
                 data['title'] = '{0}. {1}'.format(data['index'], data['title'])

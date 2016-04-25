@@ -80,16 +80,16 @@ def main():
         logging.root.addHandler(logging.NullHandler())
 
     image_displayer = None
-    if config['preview_images']:
-        try:
-            _image_displayer = W3MImageDisplayer()
-            _image_displayer.initialize()
-        except RuntimeError as e:
-            _logger.warning(e)
-            _logger.warning('Could not initialize w3m display, falling back to'
-                            'preview_images==False')
-        else:
-            image_displayer = _image_displayer
+    # if config['preview_images']:
+    #     try:
+    #         _image_displayer = W3MImageDisplayer()
+    #         _image_displayer.initialize()
+    #     except RuntimeError as e:
+    #         _logger.warning(e)
+    #         _logger.warning('Could not initialize w3m display, falling back to'
+    #                         'preview_images==False')
+    #     else:
+    #         image_displayer = _image_displayer
 
     # Construct the reddit user agent
     user_agent = docs.AGENT.format(version=__version__)

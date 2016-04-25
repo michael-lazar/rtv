@@ -257,7 +257,6 @@ class Page(object):
             return
 
         self._row = 0
-        self.term.image_displayer.clear(0, 0, n_cols, n_rows)
         self._draw_header()
         self._draw_banner()
         self._draw_content()
