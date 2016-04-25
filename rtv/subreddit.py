@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os
 import time
 import curses
-from tempfile import NamedTemporaryFile
 
 from . import docs
-from .config import PACKAGE
 from .content import SubredditContent
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Color, Command
 from .submission import SubmissionPage
 from .subscription import SubscriptionPage
-
-import requests
 
 
 class SubredditController(PageController):
