@@ -37,12 +37,15 @@ class Terminal(object):
     RETURN = 10
     SPACE = 32
 
-    def __init__(self, stdscr, ascii=False):
+    def __init__(self, stdscr, image_display=None, ascii=False):
 
         self.stdscr = stdscr
         self.ascii = ascii
         self.loader = LoadScreen(self)
         self._display = None
+
+        self.image_display = image_display
+        self._images = []
 
     @property
     def up_arrow(self):
@@ -546,3 +549,29 @@ class Terminal(object):
 
         out = '\n'.join(stack)
         return out
+
+    def add_image(self, path, start_x, start_y, width, height):
+        """
+        Draw a single image on the screen.
+
+        Args:
+            path (str): filepath of the image to be drawn
+            start_x (int): starting x position, in characters
+            start_y (int): starting y position, in characters
+            width (int): Maximum width of the image, in characters
+            height (int): Maximum height of the image, in characters
+        """
+
+        if self.image_display:
+            self.image_display.draw(path, start_x, start_y, width, height)
+            self._images.append((start_x, start_y, width, height))
+
+    def clear_images(self):
+        """
+        Clear all images that are currently displayed on the screen
+        """
+
+        if self.image_display:
+            for coordinates in self._images:
+                self.image_display.clear(*coordinates)
+            self._images = []

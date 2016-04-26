@@ -15,6 +15,7 @@ from .terminal import Terminal
 from .objects import curses_session, Color
 from .subreddit import SubredditPage
 from .exceptions import ConfigError
+from .packages.img_display import W3MImageDisplayer
 from .__version__ import __version__
 
 
@@ -78,6 +79,19 @@ def main():
         # Add an empty handler so the logger doesn't complain
         logging.root.addHandler(logging.NullHandler())
 
+    image_display = None
+    if config['preview_images']:
+        try:
+            _image_display = W3MImageDisplayer()
+            _image_display.initialize()
+        except RuntimeError as e:
+            _logger.warning(e)
+            _logger.warning('Could not initialize w3m display, falling back to'
+                            'preview_images==False')
+            config['preview_images'] = False
+        else:
+            image_display = _image_display
+
     # Construct the reddit user agent
     user_agent = docs.AGENT.format(version=__version__)
 
@@ -88,7 +102,7 @@ def main():
             if not config['monochrome']:
                 Color.init()
 
-            term = Terminal(stdscr, config['ascii'])
+            term = Terminal(stdscr, image_display, config['ascii'])
             with term.loader('Initializing', catch_exception=False):
                 reddit = praw.Reddit(user_agent=user_agent,
                                      decode_html_entities=False,
