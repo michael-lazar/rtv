@@ -587,5 +587,5 @@ class Terminal(object):
 
         for image in self._image_buffer:
             if image['drawn']:
-                self.image_display.clear(*image['date'][1:])
+                self.image_display.clear(*image['data'][1:])
         self._image_buffer = []
