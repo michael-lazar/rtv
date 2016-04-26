@@ -291,6 +291,20 @@ def test_open_editor(terminal):
         assert curses.doupdate.called
 
 
+def test_open_image(terminal):
+
+    url = 'http://www.test.com/image.png'
+
+    terminal._display = True
+    terminal.config = {'image_view': 'echo'}
+    with mock.patch('subprocess.call', autospec=True) as call:
+        return_value = terminal.open_image(url)
+        assert not return_value
+
+    terminal._display = False
+    assert not terminal.open_image(url)
+
+
 def test_open_browser(terminal):
 
     url = 'http://www.test.com'

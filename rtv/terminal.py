@@ -37,11 +37,11 @@ class Terminal(object):
     RETURN = 10
     SPACE = 32
 
-    def __init__(self, stdscr, config):
+    def __init__(self, stdscr, ascii, config=None):
 
         self.stdscr = stdscr
         self.config = config
-        self.ascii = config['ascii']
+        self.ascii = ascii
         self.loader = LoadScreen(self)
         self._display = None
 
@@ -310,10 +310,9 @@ class Terminal(object):
             command = self.config['image_view'].split() + [url]
             with self.loader('Opening page in a new window'), \
                     open(os.devnull, 'ab+', 0) as null:
-                p = subprocess.call(command, stdout=null, stderr=null)
+                return not subprocess.call(command, stdout=null, stderr=null)
         else:
             return False
-        return True
 
     def open_browser(self, url):
         """
@@ -346,7 +345,7 @@ class Terminal(object):
                 if self.open_image(url):
                     return
             except:
-                # FAiled to open local. Keep opening with browser
+                # Failed to open local. Keep opening with browser
                 pass
 
         if self.display:
