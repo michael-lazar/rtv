@@ -95,6 +95,10 @@ def main():
             image_display = _image_display
             media_cache = MediaCache()
 
+    # TODO: Attach as a global for now, later find a better place for this
+    from .content import SubredditContent
+    SubredditContent.media_cache = media_cache
+
     # Construct the reddit user agent
     user_agent = docs.AGENT.format(version=__version__)
 

@@ -6,6 +6,7 @@ import sys
 import time
 import codecs
 import curses
+import logging
 import webbrowser
 import subprocess
 import curses.ascii
@@ -26,6 +27,8 @@ except ImportError:
     from six.moves import html_parser
     unescape = html_parser.HTMLParser().unescape
 
+_logger = logging.getLogger(__name__)
+
 
 class Terminal(object):
 
@@ -45,7 +48,7 @@ class Terminal(object):
         self._display = None
 
         self.image_display = image_display
-        self._images = []
+        self._image_buffer = []
 
     @property
     def up_arrow(self):
@@ -563,15 +566,26 @@ class Terminal(object):
         """
 
         if self.image_display:
-            self.image_display.draw(path, start_x, start_y, width, height)
-            self._images.append((start_x, start_y, width, height))
+            data = (path, start_x, start_y, width, height)
+            self._image_buffer.append({'data': data, 'drawn': False})
+
+    def draw_images(self):
+        """
+        Draw all of the images stored in the buffer.
+        """
+
+        for image in self._image_buffer:
+            if not image['drawn']:
+                _logger.debug(image['data'])
+                self.image_display.draw(*image['data'])
+                image['drawn'] = True
 
     def clear_images(self):
         """
         Clear all images that are currently displayed on the screen
         """
 
-        if self.image_display:
-            for coordinates in self._images:
-                self.image_display.clear(*coordinates)
-            self._images = []
+        for image in self._image_buffer:
+            if image['drawn']:
+                self.image_display.clear(*image['date'][1:])
+        self._image_buffer = []

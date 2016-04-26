@@ -37,23 +37,22 @@ class MediaCache(object):
         if not os.path.exists(self._cache_dir):
             os.makedirs(self._cache_dir)
 
-    def __del__(self):
-        for fp in self._cache.values():
-            if hasattr(fp, 'close'):
-                fp.close()  # Clean up the temporary file
+    # def __del__(self):
+    #     for fp in self._cache.values():
+    #         if hasattr(fp, 'close'):
+    #             fp.close()  # Clean up the temporary file
 
-    def preload(self, urls):
+    def preload(self, url):
         """
         Initiate batch loading of images in the background. This should be
         called as soon as the image urls become available.
         """
 
-        for url in urls:
-            if url in self._cache:
-                # Move the entry to the front of the cache
-                self._cache[url] = self._cache.pop(url)
-            else:
-                self._cache[url] = self._pool.submit(self._load_url, url)
+        if url in self._cache:
+            # Move the entry to the front of the cache
+            self._cache[url] = self._cache.pop(url)
+        else:
+            self._cache[url] = self._pool.submit(self._load_url, url)
 
         # Trim the oldest entries from the cache
         while len(self._cache) >= self._cache_size:
@@ -61,27 +60,20 @@ class MediaCache(object):
             if hasattr(fp, 'close'):
                 fp.close()  # Clean up the temporary file
 
-    def get_image_files(self, urls):
+    def get_file(self, url):
         """
-        Return a list of temporary images files corresponding to the given urls.
-        This will block until all of the requested files have finished loading.
+        Return a temporary image file corresponding to the given url. This will
+        block until the requested url has finished loading or times out.
         """
 
-        self.preload(urls)
+        self.preload(url)
 
-        out = []
-        for url in urls:
-            try:
-                fp = self._cache[url].result(timeout=3)
-            except TimeoutError:
-                filename = self.default_thumbs['default']
-            else:
-                if hasattr(fp, 'name'):
-                    filename = fp.name
-                else:
-                    filename = fp
-            out.append(filename)
-        return out
+        try:
+            fp = self._cache[url].result(timeout=3)
+        except TimeoutError:
+            return self.default_thumbs['default']
+        else:
+            return fp.name if hasattr(fp, 'name') else fp
 
     def _load_url(self, url):
 
@@ -107,5 +99,5 @@ class MediaCache(object):
         notify when a new batch of submissions is loaded.
         """
         submission = Submission.from_api_response_(*args, **kwargs)
-        self.preload([submission.thumbnail])
+        self.preload(submission.thumbnail)
         return submission

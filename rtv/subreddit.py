@@ -214,3 +214,8 @@ class SubredditPage(Page):
             if data['flair']:
                 text = ' {flair}'.format(**data)
                 self.term.add_line(win, text, attr=Color.RED)
+
+        if self.config['preview_images'] and n_rows == data['n_rows']:
+            start_y, start_x = win.getbegyx()
+            path = self.content.media_cache.get_file(data['thumbnail'])
+            self.term.add_image(path, start_x+2, start_y, 12, n_rows)

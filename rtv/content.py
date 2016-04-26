@@ -156,6 +156,7 @@ class Content(object):
         data['gold'] = sub.gilded > 0
         data['nsfw'] = sub.over_18
         data['stickied'] = sub.stickied
+        data['thumbnail'] = sub.thumbnail
         data['hidden'] = False
         data['index'] = None  # This is filled in later by the method caller
 

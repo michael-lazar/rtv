@@ -256,6 +256,8 @@ class Page(object):
             # small at startup because self._subwindows will never be populated
             return
 
+        self.term.clear_images()
+
         self._row = 0
         self._draw_header()
         self._draw_banner()
@@ -263,6 +265,7 @@ class Page(object):
         self._add_cursor()
         self.term.stdscr.touchwin()
         self.term.stdscr.refresh()
+        self.term.draw_images()
 
     def _draw_header(self):
 
