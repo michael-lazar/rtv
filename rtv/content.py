@@ -358,8 +358,6 @@ class SubredditContent(Content):
         self._submissions = submissions
         self._submission_data = []
 
-        self.thumb_manager = ThumbnailManager()
-
         # Verify that content exists for the given submission generator.
         # This is necessary because PRAW loads submissions lazily, and
         # there is is no other way to check things like multireddits that
@@ -448,7 +446,6 @@ class SubredditContent(Content):
                 raise IndexError
             else:
                 data = self.strip_praw_submission(submission)
-                self.thumb_manager.preload([data['thumb']])
                 data['index'] = len(self._submission_data) + 1
                 # Add the post number to the beginning of the title
                 data['title'] = '{0}. {1}'.format(data['index'], data['title'])

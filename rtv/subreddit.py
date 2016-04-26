@@ -18,7 +18,7 @@ class SubredditController(PageController):
 
 class SubredditPage(Page):
 
-    def __init__(self, reddit, term, config, oauth, name):
+    def __init__(self, reddit, term, config, oauth, name, thumbs):
         """
         Params:
             name (string): Name of subreddit to open
@@ -29,6 +29,7 @@ class SubredditPage(Page):
         self.controller = SubredditController(self, keymap=config.keymap)
         self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.nav = Navigator(self.content.get)
+        self.thumbs = thumbs
 
     @SubredditController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
@@ -216,6 +217,10 @@ class SubredditPage(Page):
             if data['flair']:
                 text = ' {flair}'.format(**data)
                 self.term.add_line(win, text, attr=Color.RED)
+
+        if self.thumbs.active:
+            y_offset, x_offset = win.getbegyx()
+
 
         # if data['thumb'] in ('self', '', None):
         #     filename = os.path.join(PACKAGE, 'resources', 'thumbs', 'self.png')
