@@ -12,7 +12,6 @@ import six
 from six.moves import configparser
 
 from . import docs, __version__
-from .objects import KeyMap
 
 PACKAGE = os.path.dirname(__file__)
 HOME = os.path.expanduser('~')
@@ -24,6 +23,9 @@ CONFIG = os.path.join(XDG_HOME, 'rtv', 'rtv.cfg')
 TOKEN = os.path.join(XDG_HOME, 'rtv', 'refresh-token')
 HISTORY = os.path.join(XDG_HOME, 'rtv', 'history.log')
 MEDIA_CACHE = os.path.join(gettempdir(), 'rtv_cache')
+
+# This is intentionally imported below the PATHS to prevent circular imports
+from .objects import KeyMap
 
 
 def build_parser():

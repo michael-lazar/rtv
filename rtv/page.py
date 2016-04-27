@@ -44,6 +44,7 @@ class Page(object):
         self.active = True
         self._row = 0
         self._subwindows = None
+        self._item_offset = 1
 
     def refresh_content(self, order=None, name=None):
         raise NotImplementedError
@@ -334,7 +335,8 @@ class Page(object):
         current_row = (win_n_rows - 1) if inverted else 0
         available_rows = (win_n_rows - 1) if inverted else win_n_rows
         top_item_height = None if inverted else self.nav.top_item_height
-        for data in self.content.iterate(page_index, step, win_n_cols - 2):
+        n_cols = win_n_cols - self._item_offset - 1
+        for data in self.content.iterate(page_index, step, n_cols):
             subwin_n_rows = min(available_rows, data['n_rows'])
             subwin_inverted = inverted
             if top_item_height is not None:

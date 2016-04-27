@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import re
 import os
 import time
+import errno
 import signal
 import inspect
 import weakref
@@ -11,14 +12,18 @@ import logging
 import threading
 import curses
 import curses.ascii
+from collections import OrderedDict
 from contextlib import contextmanager
+from tempfile import NamedTemporaryFile
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 import six
-import praw
 import requests
+import praw
+from praw.objects import Submission
 
 from . import exceptions
-
+from .config import THUMBS, MEDIA_CACHE
 
 _logger = logging.getLogger(__name__)
 
@@ -676,3 +681,117 @@ class KeyMap(object):
         except (AttributeError, ValueError, TypeError):
             raise exceptions.ConfigError('Invalid configuration! "%s" is not a '
                                          'valid key' % key)
+
+
+class MediaCache(object):
+
+    default_thumbs = {
+        '': None,
+        'default': os.path.join(THUMBS, 'default.png'),
+        'nsfw': os.path.join(THUMBS, 'nsfw.png'),
+        'self': os.path.join(THUMBS, 'self.png'),
+    }
+
+    def __init__(self, cache_size=200, cache_dir=MEDIA_CACHE, pool_size=15):
+
+        self.active = False
+        self._cache_size = cache_size
+        self._cache_dir = cache_dir
+        self._cache = OrderedDict()
+        self._pool = ThreadPoolExecutor(max_workers=pool_size)
+
+    def __del__(self):
+        """
+        Clean up all of the temporary files that may still be open.
+        """
+        for fp in self._cache.values():
+            if hasattr(fp, 'close'):
+                fp.close()  # Clean up the temporary file
+
+    def initialize(self):
+        """
+        Hook into the praw submission loader and setup the media cache.
+        """
+        # http://stackoverflow.com/a/5032238
+        try:
+            os.makedirs(self._cache_dir)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+
+        self._hook_submission_load()
+        self.active = True
+
+    def preload(self, url):
+        """
+        Initiate batch loading of images in the background. This should be
+        called as soon as the image urls become available.
+        """
+        if not self.active:
+            return
+
+        if url in self._cache:
+            # Move the entry to the front of the cache
+            self._cache[url] = self._cache.pop(url)
+        else:
+            self._cache[url] = self._pool.submit(self._load_url, url)
+
+        # Trim the oldest entries from the cache
+        while len(self._cache) >= self._cache_size:
+            fp = self._cache.popitem(last=False)
+            if hasattr(fp, 'close'):
+                fp.close()  # Clean up the temporary file
+
+    def get_file(self, url):
+        """
+        Return a temporary image file corresponding to the given url. This will
+        block until the requested url has finished loading or times out.
+        """
+        if not self.active:
+            return
+
+        self.preload(url)
+
+        try:
+            fp = self._cache[url].result(timeout=3)
+        except TimeoutError:
+            return self.default_thumbs['default']
+        else:
+            return fp.name if hasattr(fp, 'name') else fp
+
+    def _load_url(self, url):
+        """
+        This method should be called from a thread, and will load an image from
+        the given url and save it to a temporary file.
+        """
+
+        if url in self.default_thumbs:
+            return self.default_thumbs[url]
+
+        try:
+            resp = requests.get(url, timeout=5)
+        except requests.RequestException:
+            return self.default_thumbs['default']
+
+        suffix = os.path.splitext(url)[1]
+        fp = NamedTemporaryFile(suffix=suffix, dir=self._cache_dir)
+        fp.write(resp.content)
+        fp.flush()
+        return fp
+
+    def _hook_submission_load(self):
+        """
+        Hook into the Submission.from_api_response in order to trigger an
+        immediate action for every loaded submission. This is a workaround to
+        deal with the limitation that reddit.get_content() generators don't
+        notify when a new batch of submissions is loaded.
+        """
+
+        def _hook_from_api_response(*args, **kwargs):
+            submission = Submission.from_api_response_(*args, **kwargs)
+            self.preload(submission.thumbnail)
+            return submission
+
+        if not hasattr(Submission, 'backup_from_api_response'):
+            Submission.backup_from_api_response = Submission.from_api_response
+        Submission.from_api_response = _hook_from_api_response

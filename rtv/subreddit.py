@@ -7,7 +7,7 @@ import curses
 from . import docs
 from .content import SubredditContent
 from .page import Page, PageController, logged_in
-from .objects import Navigator, Color, Command
+from .objects import Navigator, Color, Command, MediaCache
 from .submission import SubmissionPage
 from .subscription import SubscriptionPage
 
@@ -29,6 +29,11 @@ class SubredditPage(Page):
         self.controller = SubredditController(self, keymap=config.keymap)
         self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.nav = Navigator(self.content.get)
+
+        self.media_cache = MediaCache()
+        if self.config['preview_images']:
+            self.media_cache.initialize()
+            self._item_offset = 13
 
     @SubredditController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
@@ -175,18 +180,21 @@ class SubredditPage(Page):
         n_title = len(data['split_title'])
         for row, text in enumerate(data['split_title'], start=offset):
             if row in valid_rows:
-                self.term.add_line(win, text, row, 1, curses.A_BOLD)
+                attr = curses.A_BOLD
+                self.term.add_line(win, text, row, self._item_offset, attr)
 
         row = n_title + offset
         if row in valid_rows:
             seen = (data['url_full'] in self.config.history)
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
-            self.term.add_line(win, '{url}'.format(**data), row, 1, attr)
+            text = '{url}'.format(**data)
+            self.term.add_line(win, text, row, self._item_offset, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
-            self.term.add_line(win, '{score} '.format(**data), row, 1)
+            text = '{score} '.format(**data)
+            self.term.add_line(win, text, row, self._item_offset)
             text, attr = self.term.get_arrow(data['likes'])
             self.term.add_line(win, text, attr=attr)
             self.term.add_line(win, ' {created} '.format(**data))
@@ -208,14 +216,16 @@ class SubredditPage(Page):
         row = n_title + offset + 2
         if row in valid_rows:
             text = '{author}'.format(**data)
-            self.term.add_line(win, text, row, 1, curses.A_BOLD)
+            self.term.add_line(win, text, row, self._item_offset, curses.A_BOLD)
             text = ' /r/{subreddit}'.format(**data)
             self.term.add_line(win, text, attr=Color.YELLOW)
             if data['flair']:
                 text = ' {flair}'.format(**data)
                 self.term.add_line(win, text, attr=Color.RED)
 
+        # Add the image thumbnail to the buffer so it will be drawn
         if self.config['preview_images'] and n_rows == data['n_rows']:
             start_y, start_x = win.getbegyx()
-            path = self.content.media_cache.get_file(data['thumbnail'])
-            self.term.add_image(path, start_x+2, start_y, 12, n_rows)
+            path = self.media_cache.get_file(data['thumbnail'])
+            self.term.add_image(
+                path, start_x + 2, start_y, self._item_offset, n_rows)

@@ -565,7 +565,7 @@ class Terminal(object):
             height (int): Maximum height of the image, in characters
         """
 
-        if self.image_display:
+        if self.image_display and path:
             data = (path, start_x, start_y, width, height)
             self._image_buffer.append({'data': data, 'drawn': False})
 

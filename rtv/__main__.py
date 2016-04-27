@@ -7,11 +7,11 @@ import logging
 
 import praw
 import tornado
+from six.moves import input
 
 from . import docs
 from .config import Config, copy_default_config
 from .oauth import OAuthHelper
-from .media import MediaCache
 from .terminal import Terminal
 from .objects import curses_session, Color
 from .subreddit import SubredditPage
@@ -81,23 +81,16 @@ def main():
         logging.root.addHandler(logging.NullHandler())
 
     image_display = None
-    media_cache = None
     if config['preview_images']:
         try:
             _image_display = W3MImageDisplayer()
             _image_display.initialize()
-        except RuntimeError as e:
-            _logger.warning(e)
-            _logger.warning('Could not initialize w3m display, falling back to'
-                            'preview_images==False')
+        except RuntimeError:
             config['preview_images'] = False
+            input('Could not initialize w3m display, falling back to'
+                  'preview_images==False. Press any key to continue...')
         else:
             image_display = _image_display
-            media_cache = MediaCache()
-
-    # TODO: Attach as a global for now, later find a better place for this
-    from .content import SubredditContent
-    SubredditContent.media_cache = media_cache
 
     # Construct the reddit user agent
     user_agent = docs.AGENT.format(version=__version__)
