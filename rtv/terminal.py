@@ -37,11 +37,11 @@ class Terminal(object):
     RETURN = 10
     SPACE = 32
 
-    def __init__(self, stdscr, ascii, config=None):
+    def __init__(self, stdscr, config):
 
         self.stdscr = stdscr
         self.config = config
-        self.ascii = ascii
+        self.ascii = config['ascii']
         self.loader = LoadScreen(self)
         self._display = None
 
