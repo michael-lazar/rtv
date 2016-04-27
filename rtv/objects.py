@@ -787,8 +787,9 @@ class MediaCache(object):
         notify when a new batch of submissions is loaded.
         """
 
-        def _hook_from_api_response(*args, **kwargs):
-            submission = Submission._from_api_response(*args, **kwargs)
+        @classmethod
+        def _hook_from_api_response(cls, *args, **kwargs):
+            submission = cls._from_api_response(*args, **kwargs)
             self.preload(submission.thumbnail)
             return submission
 
