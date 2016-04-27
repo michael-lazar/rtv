@@ -139,8 +139,6 @@ def main():
     finally:
         # Try to save the browsing history
         config.save_history()
-        # Close any temporary image files
-        page.media_cache.clear()
         # Ensure sockets are closed to prevent a ResourceWarning
         if 'reddit' in locals():
             reddit.handler.http.close()

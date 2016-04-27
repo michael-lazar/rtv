@@ -26,14 +26,14 @@ class SubredditPage(Page):
         """
         super(SubredditPage, self).__init__(reddit, term, config, oauth)
 
-        self.controller = SubredditController(self, keymap=config.keymap)
-        self.content = SubredditContent.from_name(reddit, name, term.loader)
-        self.nav = Navigator(self.content.get)
-
         self.media_cache = MediaCache()
         if self.config['preview_images']:
             self.media_cache.initialize()
             self._item_offset = 13
+
+        self.controller = SubredditController(self, keymap=config.keymap)
+        self.content = SubredditContent.from_name(reddit, name, term.loader)
+        self.nav = Navigator(self.content.get)
 
     @SubredditController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
