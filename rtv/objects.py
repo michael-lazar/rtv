@@ -700,14 +700,6 @@ class MediaCache(object):
         self._cache = OrderedDict()
         self._pool = ThreadPoolExecutor(max_workers=pool_size)
 
-    def __del__(self):
-        """
-        Clean up all of the temporary files that may still be open.
-        """
-        for fp in self._cache.values():
-            if hasattr(fp, 'close'):
-                fp.close()  # Clean up the temporary file
-
     def initialize(self):
         """
         Hook into the praw submission loader and setup the media cache.
@@ -721,6 +713,14 @@ class MediaCache(object):
 
         self._hook_submission_load()
         self.active = True
+
+    def clear(self):
+        """
+        Clean up all of the temporary files that may still be open.
+        """
+        for fp in self._cache.values():
+            if hasattr(fp, 'close'):
+                fp.close()  # Clean up the temporary file
 
     def preload(self, url):
         """
@@ -788,10 +788,10 @@ class MediaCache(object):
         """
 
         def _hook_from_api_response(*args, **kwargs):
-            submission = Submission.from_api_response_(*args, **kwargs)
+            submission = Submission._from_api_response(*args, **kwargs)
             self.preload(submission.thumbnail)
             return submission
 
         if not hasattr(Submission, 'backup_from_api_response'):
-            Submission.backup_from_api_response = Submission.from_api_response
+            Submission._from_api_response = Submission.from_api_response
         Submission.from_api_response = _hook_from_api_response

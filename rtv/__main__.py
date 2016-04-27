@@ -13,10 +13,10 @@ from . import docs
 from .config import Config, copy_default_config
 from .oauth import OAuthHelper
 from .terminal import Terminal
-from .objects import curses_session, Color
+from .objects import curses_session, Color, MediaCache
 from .subreddit import SubredditPage
 from .exceptions import ConfigError
-from .packages.img_display import W3MImageDisplayer
+from .packages.img_display import W3MImageDisplayer, W3MException
 from .__version__ import __version__
 
 
@@ -85,10 +85,12 @@ def main():
         try:
             _image_display = W3MImageDisplayer()
             _image_display.initialize()
-        except RuntimeError:
+            _image_display.draw(MediaCache.default_thumbs['self'], 1, 1, 1, 1)
+            _image_display.clear(1, 1, 1, 1)
+        except W3MException as e:
+            _logger.warning(e)
+            input('{} Press any key to continue.'.format(e))
             config['preview_images'] = False
-            input('Could not initialize w3m display, falling back to'
-                  'preview_images==False. Press any key to continue...')
         else:
             image_display = _image_display
 
@@ -137,6 +139,8 @@ def main():
     finally:
         # Try to save the browsing history
         config.save_history()
+        # Close any temporary image files
+        page.media_cache.clear()
         # Ensure sockets are closed to prevent a ResourceWarning
         if 'reddit' in locals():
             reddit.handler.http.close()

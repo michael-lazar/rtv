@@ -228,4 +228,8 @@ class SubredditPage(Page):
             start_y, start_x = win.getbegyx()
             path = self.media_cache.get_file(data['thumbnail'])
             self.term.add_image(
-                path, start_x + 2, start_y, self._item_offset, n_rows)
+                path,
+                start_x + 2,
+                start_y,
+                self._item_offset - 2,
+                n_rows)

@@ -32,8 +32,10 @@ W3MIMGDISPLAY_PATHS = [
     '/usr/libexec64/w3m/w3mimgdisplay'
 ]
 
-class ImgDisplayUnsupportedException(Exception):
+
+class W3MException(Exception):
     pass
+
 
 class ImageDisplayer(object):
     """Image display provider functions for drawing images in the terminal"""
@@ -48,6 +50,7 @@ class ImageDisplayer(object):
     def quit(self):
         """Cleanup and close"""
         pass
+
 
 class W3MImageDisplayer(ImageDisplayer):
     """Implementation of ImageDisplayer using w3mimgdisplay, an utilitary
@@ -71,9 +74,9 @@ class W3MImageDisplayer(ImageDisplayer):
         for path in paths:
             if path is not None and os.path.exists(path):
                 return path
-        raise RuntimeError("No w3mimgdisplay executable found.  Please set "
-            "the path manually by setting the %s environment variable.  (see "
-            "man page)" % W3MIMGDISPLAY_ENV)
+        raise W3MException(
+            "No w3mimgdisplay executable found. Please set the path manually "
+            "by setting the %s environment variable." % W3MIMGDISPLAY_ENV)
 
     def _get_font_dimensions(self):
         # Get the height and width of a character displayed in the terminal in
@@ -129,7 +132,8 @@ class W3MImageDisplayer(ImageDisplayer):
         """
         fontw, fonth = self._get_font_dimensions()
         if fontw == 0 or fonth == 0:
-            raise ImgDisplayUnsupportedException()
+            raise W3MException(
+                "w3m detected unsupported terminal, disabling image preview.")
 
         max_width_pixels = max_width * fontw
         max_height_pixels = max_height * fonth - 2
@@ -139,12 +143,17 @@ class W3MImageDisplayer(ImageDisplayer):
         # get image size
         cmd = "5;{}\n".format(path)
 
-        self.process.stdin.write(cmd)
-        self.process.stdin.flush()
-        output = self.process.stdout.readline().split()
+        try:
+            self.process.stdin.write(cmd)
+            self.process.stdin.flush()
+            output = self.process.stdout.readline().split()
+        except IOError:
+            raise W3MException(
+                "w3m detected unsupported terminal, disabling image preview.")
 
         if len(output) != 2:
-            raise Exception('Failed to execute w3mimgdisplay', output)
+            raise W3MException(
+                "w3m detected unsupported terminal, disabling image preview.")
 
         width = int(output[0])
         height = int(output[1])
@@ -158,8 +167,8 @@ class W3MImageDisplayer(ImageDisplayer):
             height = max_height_pixels
 
         return "0;1;{x};{y};{w};{h};;;;;{filename}\n4;\n3;\n".format(
-                x = int((start_x - 0.2) * fontw),
-                y = start_y * fonth,
+                x = int((start_x - 0.2) * fontw) + int((max_width_pixels - width) / 2),
+                y = start_y * fonth + int((max_height_pixels - height) / 2),
                 # y = (start_y + 1) * fonth, # (for tmux top status bar)
                 w = width,
                 h = height,
