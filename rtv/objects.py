@@ -692,13 +692,14 @@ class MediaCache(object):
         'self': os.path.join(THUMBS, 'self.png'),
     }
 
-    def __init__(self, cache_size=200, cache_dir=MEDIA_CACHE, pool_size=15):
+    def __init__(self, cache_size=200, cache_dir=MEDIA_CACHE, pool_size=10):
 
         self.active = False
         self._cache_size = cache_size
         self._cache_dir = cache_dir
+        self._pool_size = pool_size
         self._cache = OrderedDict()
-        self._pool = ThreadPoolExecutor(max_workers=pool_size)
+        self._pool = None
 
     def initialize(self):
         """
@@ -711,16 +712,23 @@ class MediaCache(object):
             if e.errno != errno.EEXIST:
                 raise
 
+        self._pool = ThreadPoolExecutor(max_workers=self._pool_size)
         self._hook_submission_load()
         self.active = True
 
-    def clear(self):
+    def destroy(self):
         """
-        Clean up all of the temporary files that may still be open.
+        Stop downloading and clean up all of the temporary files that may
+        still be open.
         """
+
         for fp in self._cache.values():
-            if hasattr(fp, 'close'):
-                fp.close()  # Clean up the temporary file
+            if hasattr(fp, 'cancel'):
+                fp.cancel()
+
+        self._pool.shutdown()
+        self._pool = None
+        self.active = False
 
     def preload(self, url):
         """
@@ -739,8 +747,8 @@ class MediaCache(object):
         # Trim the oldest entries from the cache
         while len(self._cache) >= self._cache_size:
             fp = self._cache.popitem(last=False)
-            if hasattr(fp, 'close'):
-                fp.close()  # Clean up the temporary file
+            if hasattr(fp, 'cancel'):
+                fp.cancel()
 
     def get_file(self, url):
         """
@@ -753,11 +761,11 @@ class MediaCache(object):
         self.preload(url)
 
         try:
-            fp = self._cache[url].result(timeout=3)
+            filename = self._cache[url].result(timeout=3)
         except TimeoutError:
             return self.default_thumbs['default']
         else:
-            return fp.name if hasattr(fp, 'name') else fp
+            return filename
 
     def _load_url(self, url):
         """
@@ -774,10 +782,11 @@ class MediaCache(object):
             return self.default_thumbs['default']
 
         suffix = os.path.splitext(url)[1]
-        fp = NamedTemporaryFile(suffix=suffix, dir=self._cache_dir)
-        fp.write(resp.content)
-        fp.flush()
-        return fp
+        dir = self._cache_dir
+        with NamedTemporaryFile(suffix=suffix, dir=dir, delete=False) as fp:
+            fp.write(resp.content)
+            fp.flush()
+        return fp.name
 
     def _hook_submission_load(self):
         """

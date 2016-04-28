@@ -18,22 +18,25 @@ class SubredditController(PageController):
 
 class SubredditPage(Page):
 
-    def __init__(self, reddit, term, config, oauth, name):
+    def __init__(self, reddit, term, config, oauth, cache, name):
         """
         Params:
+            reddit (praw.Reddit): Initialized reddit instance
+            term (rtv.terminal.Terminal): Initialized terminal instance
+            config (rtv.config.Config): Initialized config instance
+            oauth (rtv.oauth.OAuthHelper): Initialized oauth helper
+            cache (rtv.objects.MediaCache): Initialized cache instance
             name (string): Name of subreddit to open
-            url (string): Optional submission to load upon start
         """
         super(SubredditPage, self).__init__(reddit, term, config, oauth)
-
-        self.media_cache = MediaCache()
-        if self.config['preview_images']:
-            self.media_cache.initialize()
-            self._item_offset = 13
 
         self.controller = SubredditController(self, keymap=config.keymap)
         self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.nav = Navigator(self.content.get)
+
+        self.cache = cache
+        if self.cache.active:
+            self._item_offset = 13
 
     @SubredditController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
@@ -223,10 +226,11 @@ class SubredditPage(Page):
                 text = ' {flair}'.format(**data)
                 self.term.add_line(win, text, attr=Color.RED)
 
-        # Add the image thumbnail to the buffer so it will be drawn
+        # Add the image thumbnail to the buffer to be drawn. Only draw the
+        # image if row is fully visible.
         if self.config['preview_images'] and n_rows == data['n_rows']:
             start_y, start_x = win.getbegyx()
-            path = self.media_cache.get_file(data['thumbnail'])
+            path = self.cache.get_file(data['thumbnail'])
             self.term.add_image(
                 path,
                 start_x + 2,

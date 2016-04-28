@@ -94,6 +94,10 @@ def main():
         else:
             image_display = _image_display
 
+    cache = MediaCache()
+    if config['preview_images']:
+        cache.initialize()
+
     # Construct the reddit user agent
     user_agent = docs.AGENT.format(version=__version__)
 
@@ -117,7 +121,7 @@ def main():
 
             name = config['subreddit']
             with term.loader('Loading subreddit'):
-                page = SubredditPage(reddit, term, config, oauth, name)
+                page = SubredditPage(reddit, term, config, oauth, cache, name)
             if term.loader.exception:
                 return
 
@@ -142,6 +146,9 @@ def main():
         # Ensure sockets are closed to prevent a ResourceWarning
         if 'reddit' in locals():
             reddit.handler.http.close()
+        # Close the cache and delete temporary files
+        if 'cache' in locals():
+            cache.destroy()
         # Explicitly close file descriptors opened by Tornado's IOLoop
         tornado.ioloop.IOLoop.current().close(all_fds=True)
 
