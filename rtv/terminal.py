@@ -555,17 +555,17 @@ class Terminal(object):
 
     def add_image(self, path, start_x, start_y, width, height):
         """
-        Draw a single image on the screen.
+        Add a single image to the buffer to be drawn on the screen.
 
         Args:
-            path (str): filepath of the image to be drawn
+            path (callback): function that will return the image to be drawn
             start_x (int): starting x position, in characters
             start_y (int): starting y position, in characters
             width (int): Maximum width of the image, in characters
             height (int): Maximum height of the image, in characters
         """
 
-        if self.image_display and path:
+        if self.image_display:
             data = (path, start_x, start_y, width, height)
             self._image_buffer.append({'data': data, 'drawn': False})
 
@@ -576,9 +576,10 @@ class Terminal(object):
 
         for image in self._image_buffer:
             if not image['drawn']:
-                _logger.debug(image['data'])
-                self.image_display.draw(*image['data'])
-                image['drawn'] = True
+                filename = image['data'][0]()
+                if filename:
+                    self.image_display.draw(filename, *image['data'][1:])
+                    image['drawn'] = True
 
     def clear_images(self):
         """

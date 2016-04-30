@@ -6,15 +6,17 @@ import os
 import time
 import errno
 import signal
+import shutil
 import inspect
 import weakref
 import logging
 import threading
+import functools
 import curses
 import curses.ascii
 from collections import OrderedDict
 from contextlib import contextmanager
-from tempfile import NamedTemporaryFile
+from tempfile import NamedTemporaryFile, mkdtemp
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 import six
@@ -683,6 +685,17 @@ class KeyMap(object):
                                          'valid key' % key)
 
 
+def _is_active(method):
+    """
+    Decorator that turns methods into no-ops if the self.active flag is false.
+    """
+    @functools.wraps(method)
+    def inner(self, *args, **kwargs):
+        if self.active:
+            return method(self, *args, **kwargs)
+    return inner
+
+
 class MediaCache(object):
 
     default_thumbs = {
@@ -692,51 +705,53 @@ class MediaCache(object):
         'self': os.path.join(THUMBS, 'self.png'),
     }
 
-    def __init__(self, cache_size=200, cache_dir=MEDIA_CACHE, pool_size=10):
+    def __init__(self, cache_size=200, pool_size=10):
 
         self.active = False
+        self._cache_dir = None
         self._cache_size = cache_size
-        self._cache_dir = cache_dir
         self._pool_size = pool_size
         self._cache = OrderedDict()
         self._pool = None
 
     def initialize(self):
         """
-        Hook into the praw submission loader and setup the media cache.
+        Initialize a new directory to store this instance's cached media and
+        setup a thread pool to download images in parallel.
         """
-        # http://stackoverflow.com/a/5032238
+
         try:
-            os.makedirs(self._cache_dir)
+            os.makedirs(MEDIA_CACHE)
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
 
+        self._cache_dir = mkdtemp(dir=MEDIA_CACHE)
         self._pool = ThreadPoolExecutor(max_workers=self._pool_size)
-        self._hook_submission_load()
         self.active = True
 
+    @_is_active
     def destroy(self):
         """
-        Stop downloading and clean up all of the temporary files that may
-        still be open.
+        Stop downloading and clean up all of the temporary files.
         """
 
-        for fp in self._cache.values():
-            if hasattr(fp, 'cancel'):
-                fp.cancel()
-
+        for future in self._cache.values():
+            future.cancel()
         self._pool.shutdown()
         self._pool = None
+
+        shutil.rmtree(self._cache_dir, ignore_errors=True)
+        self._cache_dir = None
+
         self.active = False
 
+    @_is_active
     def preload(self, url):
         """
         Initiate batch loading of images in the background. This should be
         called as soon as the image urls become available.
         """
-        if not self.active:
-            return
 
         if url in self._cache:
             # Move the entry to the front of the cache
@@ -744,28 +759,30 @@ class MediaCache(object):
         else:
             self._cache[url] = self._pool.submit(self._load_url, url)
 
-        # Trim the oldest entries from the cache
+        # Trim the oldest entry from the cache
         while len(self._cache) >= self._cache_size:
-            fp = self._cache.popitem(last=False)
-            if hasattr(fp, 'cancel'):
-                fp.cancel()
+            future = self._cache.popitem(last=False)
+            try:
+                filename = future.result(timeout=3)
+            except TimeoutError:
+                _logger.warning('Timeout trimming future from Cache')
+            else:
+                if filename not in self.default_thumbs.values():
+                    os.remove(filename)
 
+    @_is_active
     def get_file(self, url):
         """
         Return a temporary image file corresponding to the given url. This will
         block until the requested url has finished loading or times out.
         """
-        if not self.active:
-            return
 
         self.preload(url)
-
         try:
             filename = self._cache[url].result(timeout=3)
         except TimeoutError:
-            return self.default_thumbs['default']
-        else:
-            return filename
+            filename = self.default_thumbs['default']
+        return filename
 
     def _load_url(self, url):
         """
@@ -782,10 +799,11 @@ class MediaCache(object):
             return self.default_thumbs['default']
 
         suffix = os.path.splitext(url)[1]
-        dir = self._cache_dir
-        with NamedTemporaryFile(suffix=suffix, dir=dir, delete=False) as fp:
+        with NamedTemporaryFile(
+                suffix=suffix,
+                dir=self._cache_dir,
+                delete=False) as fp:
             fp.write(resp.content)
-            fp.flush()
         return fp.name
 
     def _hook_submission_load(self):
@@ -794,6 +812,11 @@ class MediaCache(object):
         immediate action for every loaded submission. This is a workaround to
         deal with the limitation that reddit.get_content() generators don't
         notify when a new batch of submissions is loaded.
+
+        Note:
+            This was disabled because it triggers ~100 loading thumbnails at a
+            time, which is a bit too many and can cause delays when you try to
+            quit or quickly switch subreddits.
         """
 
         @classmethod

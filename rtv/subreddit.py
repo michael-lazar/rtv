@@ -7,7 +7,7 @@ import curses
 from . import docs
 from .content import SubredditContent
 from .page import Page, PageController, logged_in
-from .objects import Navigator, Color, Command, MediaCache
+from .objects import Navigator, Color, Command
 from .submission import SubmissionPage
 from .subscription import SubscriptionPage
 
@@ -230,9 +230,9 @@ class SubredditPage(Page):
         # image if row is fully visible.
         if self.config['preview_images'] and n_rows == data['n_rows']:
             start_y, start_x = win.getbegyx()
-            path = self.cache.get_file(data['thumbnail'])
+            self.cache.preload(data['thumbnail'])
             self.term.add_image(
-                path,
+                lambda: self.cache.get_file(data['thumbnail']),
                 start_x + 2,
                 start_y,
                 self._item_offset - 2,

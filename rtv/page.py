@@ -45,6 +45,7 @@ class Page(object):
         self._row = 0
         self._subwindows = None
         self._item_offset = 1
+        self._redraw = True
 
     def refresh_content(self, order=None, name=None):
         raise NotImplementedError
@@ -257,7 +258,11 @@ class Page(object):
             # small at startup because self._subwindows will never be populated
             return
 
-        self.term.clear_images()
+        if self._redraw:
+            # Skip redrawing images if we're moving the cursor without shifting
+            # the images. This prevents the screen from flickering.
+            self.term.clear_images()
+        self._redraw = True
 
         self._row = 0
         self._draw_header()
@@ -385,7 +390,7 @@ class Page(object):
         self._remove_cursor()
         # Note: ACS_VLINE doesn't like changing the attribute, so disregard the
         # redraw flag and opt to always redraw
-        valid, redraw = self.nav.move(direction, len(self._subwindows))
+        valid, self._redraw = self.nav.move(direction, len(self._subwindows))
         if not valid:
             self.term.flash()
         self._add_cursor()
