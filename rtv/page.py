@@ -87,36 +87,31 @@ class Page(object):
 
     @PageController.register(Command('SORT_TOP'))
     def sort_content_top(self):
-        if self.content.name == u'/r/front':
-            self.refresh_content(order='top')
-        else:
-            links_from = [
-                '  links from:  ',
-                '  [1]  past hour  ',
-                '  [2]  past 24 hours  ',
-                '  [3]  past week  ',
-                '  [4]  past month  ',
-                '  [5]  past year  ',
-                '  [6]  all time  '
-            ]
-            ch = self.term.show_notification(links_from)
-            if ch not in range(49, 55):
-                self.term.show_notification('invalid option')
-                return
-            elif ch == 49:
-                order = 'top-hour'
-            elif ch == 50:
-                order = 'top'
-            elif ch == 51:
-                order = 'top-week'
-            elif ch == 52:
-                order = 'top-month'
-            elif ch == 53:
-                order = 'top-year'
-            elif ch == 54:
-                order = 'top-all'
+        self.refresh_content(order='top')
 
-            self.refresh_content(order=order)
+    @PageController.register(Command('SHOW_LINKS_FROM'))
+    def show_links_from(self):
+        if self.content.order not in ('top'):
+            return
+        ch = self.term.show_notification(
+            docs.LINKS_FROM_MENU.strip('\n').splitlines())
+        if ch not in range(ord('1'), ord('6') + 1):
+            self.term.show_notification('Invalid option')
+            return
+        elif ch == ord('1'):
+            order = 'hour'
+        elif ch == ord('2'):
+            order = 'day'
+        elif ch == ord('3'):
+            order = 'week'
+        elif ch == ord('4'):
+            order = 'month'
+        elif ch == ord('5'):
+            order = 'year'
+        elif ch == ord('6'):
+            order = 'all'
+
+        self.refresh_content(order=self.content.order, links_from=order)
 
     @PageController.register(Command('SORT_RISING'))
     def sort_content_rising(self):

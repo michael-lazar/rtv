@@ -22,6 +22,7 @@ HELP = """
   `m/n` or `PgUp/PgDn`: Jump to the previous/next page
   `o` or `ENTER`      : Open the selected item as a webpage
   `1`-`5`             : Toggle post order
+  `x`                 : Show links from
   `r` or `F5`         : Refresh page content
   `u`                 : Log in or switch accounts
   `?`                 : Show the help screen
@@ -76,4 +77,14 @@ SUBMISSION_EDIT_FILE = """{content}
 # and an empty message aborts the submission.
 #
 # Editing {name}
+"""
+
+LINKS_FROM_MENU = """
+Links from:
+  [1] Past hour
+  [2] Past 24 hours
+  [3] Past week
+  [4] Past month
+  [5] Past year
+  [6] All time
 """

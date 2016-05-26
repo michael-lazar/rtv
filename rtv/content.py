@@ -366,7 +366,8 @@ class SubredditContent(Content):
             raise exceptions.SubredditError('No submissions')
 
     @classmethod
-    def from_name(cls, reddit, name, loader, order=None, query=None):
+    def from_name(cls, reddit, name, loader, order=None, query=None,
+                  links_from=None):
 
         # Strip leading and trailing backslashes
         name = name.strip(' /')
@@ -380,10 +381,7 @@ class SubredditContent(Content):
             order = order or name_order
         display_name = '/r/{0}'.format(name)
 
-        if order not in [
-            'hot', 'top', 'top-hour', 'top-week', 'top-month', 'top-year',
-            'top-all', 'rising', 'new', 'controversial', None
-        ]:
+        if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
             raise exceptions.SubredditError('Unrecognized order "%s"' % order)
 
         if name == 'me':
@@ -415,15 +413,22 @@ class SubredditContent(Content):
                 # For special subreddits like /r/random we want to replace the
                 # display name with the one returned by the request.
                 display_name = '/r/{0}'.format(subreddit.display_name)
+                if order == 'top':
+                    dispatch = {
+                        None: subreddit.get_top,
+                        'hour': subreddit.get_top_from_hour,
+                        'day': subreddit.get_top_from_day,
+                        'week': subreddit.get_top_from_week,
+                        'month': subreddit.get_top_from_month,
+                        'year': subreddit.get_top_from_year,
+                        'all': subreddit.get_top_from_all,
+                        }
+                    submissions = dispatch[links_from](limit=None)
+                    return cls(display_name, submissions, loader, order=order)
+
                 dispatch = {
                     None: subreddit.get_hot,
                     'hot': subreddit.get_hot,
-                    'top-hour': subreddit.get_top_from_hour,
-                    'top': subreddit.get_top,
-                    'top-week': subreddit.get_top_from_week,
-                    'top-month': subreddit.get_top_from_month,
-                    'top-year': subreddit.get_top_from_year,
-                    'top-all': subreddit.get_top_from_all,
                     'rising': subreddit.get_rising,
                     'new': subreddit.get_new,
                     'controversial': subreddit.get_controversial,
