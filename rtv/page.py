@@ -87,7 +87,36 @@ class Page(object):
 
     @PageController.register(Command('SORT_TOP'))
     def sort_content_top(self):
-        self.refresh_content(order='top')
+        if self.content.name == u'/r/front':
+            self.refresh_content(order='top')
+        else:
+            links_from = [
+                '  links from:  ',
+                '  [1]  past hour  ',
+                '  [2]  past 24 hours  ',
+                '  [3]  past week  ',
+                '  [4]  past month  ',
+                '  [5]  past year  ',
+                '  [6]  all time  '
+            ]
+            ch = self.term.show_notification(links_from)
+            if ch not in range(49, 55):
+                self.term.show_notification('invalid option')
+                return
+            elif ch == 49:
+                order = 'top-hour'
+            elif ch == 50:
+                order = 'top'
+            elif ch == 51:
+                order = 'top-week'
+            elif ch == 52:
+                order = 'top-month'
+            elif ch == 53:
+                order = 'top-year'
+            elif ch == 54:
+                order = 'top-all'
+
+            self.refresh_content(order=order)
 
     @PageController.register(Command('SORT_RISING'))
     def sort_content_rising(self):
@@ -304,7 +333,10 @@ class Page(object):
         text = spacing.join(items)
         self.term.add_line(window, text, 0, 0)
         if self.content.order is not None:
-            col = text.find(self.content.order) - 3
+            if 'top' in self.content.order:
+                col = text.find('top') - 3
+            else:
+                col = text.find(self.content.order) - 3
             window.chgat(0, col, 3, attr | curses.A_REVERSE)
 
         self._row += 1

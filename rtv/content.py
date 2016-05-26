@@ -380,7 +380,10 @@ class SubredditContent(Content):
             order = order or name_order
         display_name = '/r/{0}'.format(name)
 
-        if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
+        if order not in [
+            'hot', 'top', 'top-hour', 'top-week', 'top-month', 'top-year',
+            'top-all', 'rising', 'new', 'controversial', None
+        ]:
             raise exceptions.SubredditError('Unrecognized order "%s"' % order)
 
         if name == 'me':
@@ -415,7 +418,12 @@ class SubredditContent(Content):
                 dispatch = {
                     None: subreddit.get_hot,
                     'hot': subreddit.get_hot,
+                    'top-hour': subreddit.get_top_from_hour,
                     'top': subreddit.get_top,
+                    'top-week': subreddit.get_top_from_week,
+                    'top-month': subreddit.get_top_from_month,
+                    'top-year': subreddit.get_top_from_year,
+                    'top-all': subreddit.get_top_from_all,
                     'rising': subreddit.get_rising,
                     'new': subreddit.get_new,
                     'controversial': subreddit.get_controversial,
