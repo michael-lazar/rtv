@@ -45,7 +45,7 @@ class Page(object):
         self._row = 0
         self._subwindows = None
 
-    def refresh_content(self, order=None, name=None):
+    def refresh_content(self, order=None, name=None, links_from=None):
         raise NotImplementedError
 
     def _draw_item(self, window, data, inverted):
