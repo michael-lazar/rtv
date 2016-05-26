@@ -31,7 +31,7 @@ class SubredditPage(Page):
         self.nav = Navigator(self.content.get)
 
     @SubredditController.register(Command('REFRESH'))
-    def refresh_content(self, order=None, name=None):
+    def refresh_content(self, order=None, name=None, links_from=None):
         "Re-download all submissions and reset the page index"
 
         order = order or self.content.order
@@ -44,7 +44,8 @@ class SubredditPage(Page):
 
         with self.term.loader('Refreshing page'):
             self.content = SubredditContent.from_name(
-                self.reddit, name, self.term.loader, order=order)
+                self.reddit, name, self.term.loader, order=order,
+                links_from=links_from)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 

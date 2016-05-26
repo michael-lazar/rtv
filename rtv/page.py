@@ -45,7 +45,7 @@ class Page(object):
         self._row = 0
         self._subwindows = None
 
-    def refresh_content(self, order=None, name=None):
+    def refresh_content(self, order=None, name=None, links_from=None):
         raise NotImplementedError
 
     def _draw_item(self, window, data, inverted):
@@ -88,6 +88,30 @@ class Page(object):
     @PageController.register(Command('SORT_TOP'))
     def sort_content_top(self):
         self.refresh_content(order='top')
+
+    @PageController.register(Command('SHOW_LINKS_FROM'))
+    def show_links_from(self):
+        if self.content.order not in ('top'):
+            return
+        ch = self.term.show_notification(
+            docs.LINKS_FROM_MENU.strip('\n').splitlines())
+        if ch not in range(ord('1'), ord('6') + 1):
+            self.term.show_notification('Invalid option')
+            return
+        elif ch == ord('1'):
+            order = 'hour'
+        elif ch == ord('2'):
+            order = 'day'
+        elif ch == ord('3'):
+            order = 'week'
+        elif ch == ord('4'):
+            order = 'month'
+        elif ch == ord('5'):
+            order = 'year'
+        elif ch == ord('6'):
+            order = 'all'
+
+        self.refresh_content(order=self.content.order, links_from=order)
 
     @PageController.register(Command('SORT_RISING'))
     def sort_content_rising(self):
@@ -304,7 +328,10 @@ class Page(object):
         text = spacing.join(items)
         self.term.add_line(window, text, 0, 0)
         if self.content.order is not None:
-            col = text.find(self.content.order) - 3
+            if 'top' in self.content.order:
+                col = text.find('top') - 3
+            else:
+                col = text.find(self.content.order) - 3
             window.chgat(0, col, 3, attr | curses.A_REVERSE)
 
         self._row += 1
