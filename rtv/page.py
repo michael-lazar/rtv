@@ -91,13 +91,13 @@ class Page(object):
             self.refresh_content(order='top')
         else:
             links_from = [
-                'links from:',
-                '1.  past hour',
-                '2.  past 24 hours',
-                '3.  past week',
-                '4.  past month',
-                '5.  past year',
-                '6.  all time'
+                '  links from:  ',
+                '  [1]  past hour  ',
+                '  [2]  past 24 hours  ',
+                '  [3]  past week  ',
+                '  [4]  past month  ',
+                '  [5]  past year  ',
+                '  [6]  all time  '
             ]
             ch = self.term.show_notification(links_from)
             if ch not in range(49, 55):
