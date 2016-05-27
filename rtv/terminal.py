@@ -6,10 +6,16 @@ import sys
 import time
 import codecs
 import curses
+import mailcap
+import mimetypes
+import itertools
 import webbrowser
 import subprocess
 import curses.ascii
+from re import search
 from curses import textpad
+from xdg import BaseDirectory
+from xdg import DesktopEntry
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
 
@@ -25,6 +31,9 @@ try:
 except ImportError:
     from six.moves import html_parser
     unescape = html_parser.HTMLParser().unescape
+
+# programs that don't support open file by url
+black_list_programs = ['gpicview.desktop', 'pinta.desktop']
 
 
 class Terminal(object):
@@ -145,6 +154,40 @@ class Terminal(object):
             yield
         finally:
             curses.doupdate()
+
+    @staticmethod
+    def select_program(file_url):
+        """
+        If there is a valid program to open the link, will return it, otherwise
+        returns None and the link will be opened with browser.
+        """
+        mimetype = mimetypes.guess_type(file_url)[0]
+        d = mailcap.getcaps()
+        try:
+            m = mailcap.findmatch(d, mimetype)
+        except AttributeError:
+            return None
+        candidates = []
+        if m[0] == None:
+            for key in d.keys():
+                if search(mimetype, key):
+                    candidates += d[key][0].items()
+                    candidates += d[key][0].keys()
+
+        candidates = list(itertools.chain(*candidates))
+        candidates = list(filter(None, candidates))
+        for app in candidates:
+            if search('\w.desktop', app) and app not in black_list_programs:
+                try:
+                    call = list(BaseDirectory.load_data_paths(
+                        'applications', app))[0]
+                except IndexError:  # if any app don't exist or isn't valid
+                    continue
+                if os.path.exists(call):
+                    app = DesktopEntry.DesktopEntry(
+                        call).getExec().split(' %')[0]
+                    return app, call
+        return None
 
     @contextmanager
     def no_delay(self):
@@ -307,7 +350,8 @@ class Terminal(object):
 
         if self.display:
 
-            command = self.config['image_view'].split() + [url]
+            command = [Terminal.select_program(str(url))[0]] + [url]
+            # command = self.config['image_view'].split() + [url]
             with self.loader('Opening page in a new window'), \
                     open(os.devnull, 'ab+', 0) as null:
                 return not subprocess.call(command, stdout=null, stderr=null)
@@ -339,8 +383,7 @@ class Terminal(object):
         but are not detected here.
         """
 
-        images_pattner = ['.jpg', '.png', 'gif', 'jpeg', 'bmp']
-        if any(patt in str(url) for patt in images_pattner):
+        if Terminal.select_program(str(url)):
             try:
                 if self.open_image(url):
                     return

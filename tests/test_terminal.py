@@ -346,3 +346,23 @@ def test_open_pager(terminal, stdscr):
         terminal.open_pager(data)
         message = 'Could not open pager fake'.encode('ascii')
         assert stdscr.addstr.called_with(0, 0, message)
+
+
+@pytest.mark.xfail(reason="Some extensions may not have default application defined")
+def test_select_program(terminal):
+    urls = ['http://www.test.com/image.png',
+            'http://www.test.com/image.jpg',
+            'http://www.test.com/image.jpeg',
+            'http://www.test.com/image.gif',
+            'http://www.test.com/image.gifv']
+
+    # should be valid ones
+    for url in urls:
+        assert terminal.select_program(url)
+
+    # should return None
+    urls = ['http://www.test.com/not_image',
+            'http://www.test.com/not_image.html',
+            'not a valid url', ]
+    for url in urls:
+        assert not terminal.select_program(url)
