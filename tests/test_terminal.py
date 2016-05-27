@@ -10,6 +10,7 @@ import pytest
 
 from rtv.docs import HELP, COMMENT_EDIT_FILE
 from rtv.objects import Color
+from rtv.terminal import Terminal
 
 try:
     from unittest import mock
@@ -291,6 +292,8 @@ def test_open_editor(terminal):
         assert curses.doupdate.called
 
 
+@pytest.mark.skipif(Terminal.select_program('http://www.test.com/image.png') == None,
+                    reason="PNG extension not have default program on travis")
 def test_open_image(terminal):
 
     url = 'http://www.test.com/image.png'
