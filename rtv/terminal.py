@@ -6,10 +6,16 @@ import sys
 import time
 import codecs
 import curses
+import mailcap
+import mimetypes
+import itertools
 import webbrowser
 import subprocess
 import curses.ascii
+from re import search
 from curses import textpad
+from xdg import BaseDirectory
+from xdg import DesktopEntry
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
 
@@ -26,6 +32,9 @@ except ImportError:
     from six.moves import html_parser
     unescape = html_parser.HTMLParser().unescape
 
+# programs that don't support open file by url
+black_list_programs = ['gpicview.desktop', 'pinta.desktop']
+
 
 class Terminal(object):
 
@@ -37,10 +46,11 @@ class Terminal(object):
     RETURN = 10
     SPACE = 32
 
-    def __init__(self, stdscr, ascii=False):
+    def __init__(self, stdscr, config):
 
         self.stdscr = stdscr
-        self.ascii = ascii
+        self.config = config
+        self.ascii = config['ascii']
         self.loader = LoadScreen(self)
         self._display = None
 
@@ -144,6 +154,40 @@ class Terminal(object):
             yield
         finally:
             curses.doupdate()
+
+    @staticmethod
+    def select_program(file_url):
+        """
+        If there is a valid program to open the link, will return it, otherwise
+        returns None and the link will be opened with browser.
+        """
+        mimetype = mimetypes.guess_type(file_url)[0]
+        d = mailcap.getcaps()
+        try:
+            m = mailcap.findmatch(d, mimetype)
+        except AttributeError:
+            return None
+        candidates = []
+        if m[0] == None:
+            for key in d.keys():
+                if search(mimetype, key):
+                    candidates += d[key][0].items()
+                    candidates += d[key][0].keys()
+
+        candidates = list(itertools.chain(*candidates))
+        candidates = list(filter(None, candidates))
+        for app in candidates:
+            if search('\w.desktop', app) and app not in black_list_programs:
+                try:
+                    call = list(BaseDirectory.load_data_paths(
+                        'applications', app))[0]
+                except IndexError:  # if any app don't exist or isn't valid
+                    continue
+                if os.path.exists(call):
+                    app = DesktopEntry.DesktopEntry(
+                        call).getExec().split(' %')[0]
+                    return app, call
+        return None
 
     @contextmanager
     def no_delay(self):
@@ -271,7 +315,7 @@ class Terminal(object):
         # Cut off the lines of the message that don't fit on the screen
         box_width = min(box_width, n_cols)
         box_height = min(box_height, n_rows)
-        message = message[:box_height-2]
+        message = message[:box_height - 2]
 
         s_row = (n_rows - box_height) // 2
         s_col = (n_cols - box_width) // 2
@@ -299,6 +343,21 @@ class Terminal(object):
 
         return ch
 
+    def open_image(self, url):
+        """
+        Open the given image url with default image viewer
+        """
+
+        if self.display:
+
+            command = [Terminal.select_program(str(url))[0]] + [url]
+            # command = self.config['image_view'].split() + [url]
+            with self.loader('Opening page in a new window'), \
+                    open(os.devnull, 'ab+', 0) as null:
+                return not subprocess.call(command, stdout=null, stderr=null)
+        else:
+            return False
+
     def open_browser(self, url):
         """
         Open the given url using the default webbrowser. The preferred browser
@@ -324,6 +383,14 @@ class Terminal(object):
         but are not detected here.
         """
 
+        if Terminal.select_program(str(url)):
+            try:
+                if self.open_image(url):
+                    return
+            except:
+                # Failed to open local. Keep opening with browser
+                pass
+
         if self.display:
             command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
             args = [sys.executable, '-c', command]
@@ -344,7 +411,8 @@ class Terminal(object):
                                 'Browser exited with status=%s' % code)
                         time.sleep(0.01)
                     else:
-                        raise exceptions.BrowserError('Timeout opening browser')
+                        raise exceptions.BrowserError(
+                            'Timeout opening browser')
                 finally:
                     # Can't check the loader exception because the oauth module
                     # supersedes this loader and we need to always kill the
@@ -405,7 +473,8 @@ class Terminal(object):
             # in order to read the changes made by some editors (gedit). w+
             # mode does not work!
             with codecs.open(fp.name, 'r', 'utf-8') as fp2:
-                text = ''.join(line for line in fp2 if not line.startswith('#'))
+                text = ''.join(
+                    line for line in fp2 if not line.startswith('#'))
                 text = text.rstrip()
                 return text
 
@@ -466,16 +535,17 @@ class Terminal(object):
 
         n_rows, n_cols = self.stdscr.getmaxyx()
         attr = curses.A_BOLD | Color.CYAN
-        prompt = self.clean(prompt, n_cols-1)
+        prompt = self.clean(prompt, n_cols - 1)
 
         # Create a new window to draw the text at the bottom of the screen,
         # so we can erase it when we're done.
-        prompt_win = curses.newwin(1, len(prompt)+1, n_rows-1, 0)
+        prompt_win = curses.newwin(1, len(prompt) + 1, n_rows - 1, 0)
         self.add_line(prompt_win, prompt, attr=attr)
         prompt_win.refresh()
 
         # Create a separate window for text input
-        input_win = curses.newwin(1, n_cols-len(prompt), n_rows-1, len(prompt))
+        input_win = curses.newwin(
+            1, n_cols - len(prompt), n_rows - 1, len(prompt))
         input_win.attrset(attr)
 
         if key:

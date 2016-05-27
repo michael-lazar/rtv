@@ -10,6 +10,7 @@ import pytest
 
 from rtv.docs import HELP, COMMENT_EDIT_FILE
 from rtv.objects import Color
+from rtv.terminal import Terminal
 
 try:
     from unittest import mock
@@ -291,6 +292,22 @@ def test_open_editor(terminal):
         assert curses.doupdate.called
 
 
+@pytest.mark.skipif(Terminal.select_program('http://www.test.com/image.png') == None,
+                    reason="PNG extension not have default program on travis")
+def test_open_image(terminal):
+
+    url = 'http://www.test.com/image.png'
+
+    terminal._display = True
+    terminal.config = {'image_view': 'echo'}
+    with mock.patch('subprocess.call', autospec=True) as call:
+        return_value = terminal.open_image(url)
+        assert not return_value
+
+    terminal._display = False
+    assert not terminal.open_image(url)
+
+
 def test_open_browser(terminal):
 
     url = 'http://www.test.com'
@@ -332,3 +349,23 @@ def test_open_pager(terminal, stdscr):
         terminal.open_pager(data)
         message = 'Could not open pager fake'.encode('ascii')
         assert stdscr.addstr.called_with(0, 0, message)
+
+
+@pytest.mark.xfail(reason="Some extensions may not have default application defined")
+def test_select_program(terminal):
+    urls = ['http://www.test.com/image.png',
+            'http://www.test.com/image.jpg',
+            'http://www.test.com/image.jpeg',
+            'http://www.test.com/image.gif',
+            'http://www.test.com/image.gifv']
+
+    # should be valid ones
+    for url in urls:
+        assert terminal.select_program(url)
+
+    # should return None
+    urls = ['http://www.test.com/not_image',
+            'http://www.test.com/not_image.html',
+            'not a valid url', ]
+    for url in urls:
+        assert not terminal.select_program(url)

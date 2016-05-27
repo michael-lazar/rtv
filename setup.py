@@ -3,7 +3,8 @@ import setuptools
 
 from version import __version__ as version
 
-requirements = ['tornado', 'praw==3.4.0', 'six', 'requests', 'kitchen']
+requirements = ['tornado', 'praw==3.4.0',
+                'six', 'requests', 'kitchen', 'pyxdg']
 
 # Python 2: add required concurrent.futures backport from Python 3.2
 if sys.version_info.major <= 2:
@@ -37,5 +38,5 @@ setuptools.setup(
         'Topic :: Terminals',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Message Boards',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content :: News/Diary',
-        ],
+    ],
 )
