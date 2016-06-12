@@ -73,7 +73,7 @@ class SubmissionPage(Page):
         data = self.content.get(self.nav.absolute_index)
         url = data.get('permalink')
         if url:
-            self.term.open_browser(url)
+            self.term.open_link(url)
         else:
             self.term.flash()
 

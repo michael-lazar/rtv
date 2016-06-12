@@ -40,12 +40,13 @@ def main():
     sys.stdout.write('\x1b]2;{0}\x07'.format(title))
 
     args = Config.get_args()
-    fargs, bindings = Config.get_file(args.get('config'))
+    fargs, bindings, handlers = Config.get_file(args.get('config'))
 
     # Apply the file config first, then overwrite with any command line args
     config = Config()
     config.update(**fargs)
     config.update(**args)
+    config.set_mime_handlers(handlers)
 
     # If key bindings are supplied in the config file, overwrite the defaults
     if bindings:
@@ -88,7 +89,7 @@ def main():
             if not config['monochrome']:
                 Color.init()
 
-            term = Terminal(stdscr, config['ascii'])
+            term = Terminal(stdscr, config)
             with term.loader('Initializing', catch_exception=False):
                 reddit = praw.Reddit(user_agent=user_agent,
                                      decode_html_entities=False,
