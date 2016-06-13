@@ -97,11 +97,13 @@ def test_config_from_file():
 
     with NamedTemporaryFile(suffix='.cfg') as fp:
 
-        fargs, fbindings = Config.get_file(filename=fp.name)
+        fargs, fbindings, handlers = Config.get_file(filename=fp.name)
         config = Config(**fargs)
         config.keymap.set_bindings(fbindings)
+        config.set_mime_handlers(handlers)
         assert config.config == {}
         assert config.keymap._keymap == {}
+        assert config.handlers == {}
 
         # [rtv]
         rows = ['{0}={1}'.format(key, val) for key, val in args.items()]
@@ -114,12 +116,14 @@ def test_config_from_file():
         fp.write(codecs.encode(data, 'utf-8'))
 
         fp.flush()
-        fargs, fbindings = Config.get_file(filename=fp.name)
+        fargs, fbindings, handlers = Config.get_file(filename=fp.name)
         config.update(**fargs)
         config.keymap.set_bindings(fbindings)
+        config.set_mime_handlers(handlers)
         assert config.config == args
         assert config.keymap.get('REFRESH') == ['r', '<KEY_F5>']
         assert config.keymap.get('UPVOTE') == ['']
+        assert config.handlers == {}
 
 
 def test_config_refresh_token():

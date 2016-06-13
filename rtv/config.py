@@ -123,6 +123,7 @@ class Config(object):
         default, bindings, handlers = self.get_file(DEFAULT_CONFIG)
         self.default = default
         self.keymap = KeyMap(bindings)
+        self.set_mime_handlers(handlers)
 
         # `refresh_token` and `history` are saved/loaded at separate locations,
         # so they are treated differently from the rest of the config options.
