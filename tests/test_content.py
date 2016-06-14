@@ -264,7 +264,8 @@ def test_content_subreddit_from_name(reddit, terminal):
     for name in names:
         with terminal.loader():
             SubredditContent.from_name(reddit, name, terminal.loader)
-        assert isinstance(terminal.loader.exception, exceptions.SubredditError)
+        assert isinstance(terminal.loader.exception,
+                          praw.errors.InvalidSubreddit)
 
     # Front page alias
     name = '/r/front/rising'
