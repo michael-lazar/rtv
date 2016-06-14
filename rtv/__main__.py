@@ -38,6 +38,7 @@ def main():
     # Set the terminal title
     title = 'rtv {0}'.format(__version__)
     sys.stdout.write('\x1b]2;{0}\x07'.format(title))
+    sys.stdout.flush()
 
     args = Config.get_args()
     fargs, bindings = Config.get_file(args.get('config'))
