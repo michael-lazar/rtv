@@ -6,6 +6,7 @@ from datetime import datetime
 
 import six
 import praw
+from praw.errors import InvalidSubreddit
 from kitchen.text.display import wrap
 
 from . import exceptions
@@ -398,6 +399,11 @@ class SubredditContent(Content):
                 submissions = reddit.search(query, subreddit=name, sort=order)
 
         else:
+            if name == '':
+                # Praw does not correctly handle empty strings
+                # https://github.com/praw-dev/praw/issues/615
+                raise InvalidSubreddit()
+
             if name == 'front':
                 dispatch = {
                     None: reddit.get_front_page,
