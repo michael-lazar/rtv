@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.9.1: http://github.com/michael-lazar/rtv/releases/tag/v1.9.1
 .. _1.9.0: http://github.com/michael-lazar/rtv/releases/tag/v1.9.0
 .. _1.8.1: http://github.com/michael-lazar/rtv/releases/tag/v1.8.1
 .. _1.8.0: http://github.com/michael-lazar/rtv/releases/tag/v1.8.0
@@ -16,6 +17,28 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+-------------------
+1.9.1_ (2016-06-13)
+-------------------
+Features
+
+* Better support for */r/random*.
+* Added a ``monochrome`` config setting to disable all color.
+* Improved cursor positioning when expanding/hiding comments.
+* Show ``(not enough space)`` when comments are too large.
+
+Bugfixes
+
+* Fixed permissions when copying the config file.
+* Fixed bug where submission indicies were duplicated when paging.
+* Specify praw v3.4.0 to avoid installing praw 4.
+
+Documentation
+
+* Added section to the readme on Arch Linux installation.
+* Updated a few argument descriptions.
+* Added a proper ascii logo.
 
 -------------------
 1.9.0_ (2016-04-05)

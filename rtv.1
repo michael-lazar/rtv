@@ -1,8 +1,8 @@
-.TH "RTV" "1" "April 06, 2016" "Version 1.9.0" "Usage and Commands"
+.TH "RTV" "1" "June 14, 2016" "Version 1.9.1" "Usage and Commands"
 .SH NAME
 RTV - Reddit Terminal Viewer
 .SH SYNOPSIS
-rtv [\-h] [\-V] [\-s SUBREDDIT] [\-l LINK] [\-\-log FILE] [\-\-config FILE] [\-\-ascii] [\-\-non\-persistent] [\-\-clear\-auth] [\-\-copy\-config]
+rtv [\-h] [\-V] [\-s SUBREDDIT] [\-l LINK] [\-\-log FILE] [\-\-config FILE] [\-\-ascii] [\-\-monochrome] [\-\-non\-persistent] [\-\-clear\-auth] [\-\-copy\-config]
 .SH DESCRIPTION
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
 terminal window.
@@ -17,15 +17,15 @@ show program's version number and exit
 
 .TP
 \fB\-s SUBREDDIT\fR
-name of the subreddit that will be opened on start
+Name of the subreddit that will be opened on start
 
 .TP
 \fB\-l LINK\fR
-full URL of a submission that will be opened on start
+Full URL of a submission that will be opened on start
 
 .TP
 \fB\-\-log FILE\fR
-log HTTP requests to the given file
+Log HTTP requests to the given file
 
 .TP
 \fB\-\-config FILE\fR
@@ -33,7 +33,11 @@ Load configuration settings from the given file
 
 .TP
 \fB\-\-ascii\fR
-enable ascii\-only mode
+Enable ascii\-only mode
+
+.TP
+\fB\-\-monochrome\fR
+Disable color
 
 .TP
 \fB\-\-non\-persistent\fR
