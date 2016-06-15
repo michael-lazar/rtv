@@ -6,6 +6,7 @@ import sys
 import time
 import codecs
 import curses
+import mimetypes
 import webbrowser
 import subprocess
 import curses.ascii
@@ -37,10 +38,11 @@ class Terminal(object):
     RETURN = 10
     SPACE = 32
 
-    def __init__(self, stdscr, ascii=False):
+    def __init__(self, stdscr, config):
 
         self.stdscr = stdscr
-        self.ascii = ascii
+        self.config = config
+        self.ascii = self.config['ascii']
         self.loader = LoadScreen(self)
         self._display = None
 
@@ -298,6 +300,16 @@ class Terminal(object):
         self.stdscr.refresh()
 
         return ch
+
+    def open_link(self, link):
+        """Open a link with the appropriate handler."""
+        mimetype, _ = mimetypes.guess_type(link)
+        handler = self.config.handlers.get(mimetype)
+        if handler is None:
+            # Fall back to browser.
+            self.open_browser(link)
+        else:
+            handler(self, link)
 
     def open_browser(self, url):
         """

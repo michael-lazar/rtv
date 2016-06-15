@@ -6,11 +6,13 @@ import codecs
 import shutil
 import argparse
 from functools import partial
+from importlib import import_module
 
 import six
 from six.moves import configparser
 
 from . import docs, __version__
+from .exceptions import ConfigError
 from .objects import KeyMap
 
 PACKAGE = os.path.dirname(__file__)
@@ -118,14 +120,34 @@ class Config(object):
         self.token_file = token_file
         self.config = kwargs
 
-        default, bindings = self.get_file(DEFAULT_CONFIG)
+        default, bindings, handlers = self.get_file(DEFAULT_CONFIG)
         self.default = default
         self.keymap = KeyMap(bindings)
+        self.set_mime_handlers(handlers)
 
         # `refresh_token` and `history` are saved/loaded at separate locations,
         # so they are treated differently from the rest of the config options.
         self.refresh_token = None
         self.history = OrderedSet()
+
+    def set_mime_handlers(self, mime_handler_mapping):
+        handlers = {}
+        for mimetype in mime_handler_mapping:
+            handler_name = mime_handler_mapping[mimetype]
+            try:
+                module_name, func_name = handler_name.rsplit('.', 1)
+                module = import_module(module_name)
+            except ImportError:
+                raise ConfigError(
+                    'failed to import handler for mimetype %s: %s'
+                    % (mimetype, handler_name))
+            try:
+                handlers[mimetype] = getattr(module, func_name)
+            except AttributeError:
+                raise ConfigError(
+                    'no such handler for mimetype %s named %s in module %s.'
+                    % (mimetype, func_name, module_name))
+        self.handlers = handlers
 
     def __getitem__(self, item):
         if item in self.config:
@@ -230,7 +252,18 @@ class Config(object):
         for name, keys in bindings.items():
             bindings[name] = [key.strip() for key in keys.split(',')]
 
-        return rtv, bindings
+        handlers = {}
+        if config.has_section('handlers'):
+            for handler_name, types in config.items('handlers'):
+                for t in types.split(','):
+                    t = t.strip()
+                    if t in handlers:
+                        raise ConfigError(
+                            'Duplicate handlers for same mimetype %s: %s, %s'
+                            % (t, handlers[t], handler_name))
+                    handlers[t] = handler_name
+
+        return rtv, bindings, handlers
 
     @staticmethod
     def _ensure_filepath(filename):
