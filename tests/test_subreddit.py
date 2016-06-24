@@ -150,7 +150,7 @@ def test_subreddit_post(subreddit_page, terminal, reddit, refresh_token):
     with mock.patch.object(terminal, 'open_editor'):
         terminal.open_editor.return_value.__enter__.return_value = 'title'
         subreddit_page.controller.trigger('c')
-        text = 'Canceled'.encode('utf-8')
+        text = 'Missing body'.encode('utf-8')
         terminal.stdscr.subwin.addstr.assert_called_with(1, 1, text)
 
     # Post a fake submission
