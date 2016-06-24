@@ -10,6 +10,7 @@ from kitchen.text.display import textual_width
 
 from . import docs
 from .objects import Controller, Color, Command
+from .exceptions import TemporaryFileError
 
 
 def logged_in(f):
@@ -217,16 +218,20 @@ class Page(object):
             self.term.flash()
             return
 
-        text = self.term.open_editor(info)
-        if text == content:
-            self.term.show_notification('Canceled')
-            return
+        with self.term.open_editor(info) as text:
+            if text == content:
+                self.term.show_notification('Canceled')
+                return
 
-        with self.term.loader('Editing', delay=0):
-            data['object'].edit(text)
-            time.sleep(2.0)
-        if self.term.loader.exception is None:
-            self.refresh_content()
+            with self.term.loader('Editing', delay=0):
+                data['object'].edit(text)
+                time.sleep(2.0)
+
+            if self.term.loader.exception is None:
+                self.refresh_content()
+            else:
+                raise TemporaryFileError()
+
 
     @PageController.register(Command('INBOX'))
     @logged_in

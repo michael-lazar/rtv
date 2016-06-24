@@ -6,12 +6,14 @@ import sys
 import time
 import codecs
 import curses
+import logging
+import tempfile
 import webbrowser
 import subprocess
 import curses.ascii
 from curses import textpad
+from datetime import datetime
 from contextlib import contextmanager
-from tempfile import NamedTemporaryFile
 
 import six
 from kitchen.text.display import textual_width_chop
@@ -25,6 +27,9 @@ try:
 except ImportError:
     from six.moves import html_parser
     unescape = html_parser.HTMLParser().unescape
+
+
+_logger = logging.getLogger(__name__)
 
 
 class Terminal(object):
@@ -377,37 +382,54 @@ class Terminal(object):
         except OSError:
             self.show_notification('Could not open pager %s' % pager)
 
+    @contextmanager
     def open_editor(self, data=''):
         """
         Open a temporary file using the system's default editor.
 
         The data string will be written to the file before opening. This
         function will block until the editor has closed. At that point the file
-        will be read and and lines starting with '#' will be stripped.
+        will be read and and lines starting with '#' will be stripped. If no
+        errors occur, the file will be deleted when the context manager closes.
         """
 
-        with NamedTemporaryFile(prefix='rtv-', suffix='.txt', mode='wb') as fp:
+        filename = 'rtv_{:%Y%m%d_%H%M%S}.txt'.format(datetime.now())
+        filepath = os.path.join(tempfile.gettempdir(), filename)
+
+        with codecs.open(filepath, 'w', 'utf-8') as fp:
             fp.write(self.clean(data))
-            fp.flush()
-            editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
+        _logger.info('File created: {}'.format(filepath))
 
+        editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
+        try:
+            with self.suspend():
+                p = subprocess.Popen([editor, filepath])
+                try:
+                    p.wait()
+                except KeyboardInterrupt:
+                    p.terminate()
+        except OSError:
+            self.show_notification('Could not open file with %s' % editor)
+
+        with codecs.open(filepath, 'r', 'utf-8') as fp:
+            text = ''.join(line for line in fp if not line.startswith('#'))
+            text = text.rstrip()
+
+        try:
+            yield text
+        except exceptions.TemporaryFileError:
+            # All exceptions will cause the file to *not* be removed, but these
+            # ones should also be swallowed
+            _logger.info('Caught TemporaryFileError')
+            self.show_notification('File saved as: {}'.format(text))
+        else:
+            # If no errors occurred, try to remove the file
             try:
-                with self.suspend():
-                    p = subprocess.Popen([editor, fp.name])
-                    try:
-                        p.wait()
-                    except KeyboardInterrupt:
-                        p.terminate()
-            except OSError:
-                self.show_notification('Could not open file with %s' % editor)
-
-            # Open a second file object to read. This appears to be necessary
-            # in order to read the changes made by some editors (gedit). w+
-            # mode does not work!
-            with codecs.open(fp.name, 'r', 'utf-8') as fp2:
-                text = ''.join(line for line in fp2 if not line.startswith('#'))
-                text = text.rstrip()
-                return text
+                os.remove(filepath)
+            except OSError as e:
+                _logger.exception(e)
+            else:
+                _logger.info('File deleted: {}'.format(filepath))
 
     def text_input(self, window, allow_resize=False):
         """
