@@ -405,7 +405,7 @@ class Terminal(object):
 
         with codecs.open(filepath, 'w', 'utf-8') as fp:
             fp.write(data)
-        _logger.info('File created: {}'.format(filepath))
+        _logger.info('File created: %s', filepath)
 
         editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
         try:
@@ -428,15 +428,15 @@ class Terminal(object):
             # All exceptions will cause the file to *not* be removed, but these
             # ones should also be swallowed
             _logger.info('Caught TemporaryFileError')
-            self.show_notification('Post saved as: {}'.format(filepath))
+            self.show_notification('Post saved as: %s', filepath)
         else:
             # If no errors occurred, try to remove the file
             try:
                 os.remove(filepath)
             except OSError:
-                _logger.warning('Could not delete: {}'.format(filepath))
+                _logger.warning('Could not delete: %', filepath)
             else:
-                _logger.info('File deleted: {}'.format(filepath))
+                _logger.info('File deleted: %', filepath)
 
     def text_input(self, window, allow_resize=False):
         """

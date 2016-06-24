@@ -78,7 +78,7 @@ def main():
             level=logging.DEBUG,
             filename=config['log'],
             format='%(asctime)s:%(levelname)s:%(filename)s:%(lineno)d:%(message)s')
-        _logger.info('Starting new session, RTV v{}'.format(__version__))
+        _logger.info('Starting new session, RTV v%s', __version__)
     else:
         # Add an empty handler so the logger doesn't complain
         logging.root.addHandler(logging.NullHandler())
