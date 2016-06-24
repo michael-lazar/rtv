@@ -428,7 +428,7 @@ class Terminal(object):
             # All exceptions will cause the file to *not* be removed, but these
             # ones should also be swallowed
             _logger.info('Caught TemporaryFileError')
-            self.show_notification('File saved as: {}'.format(text))
+            self.show_notification('Post saved as: {}'.format(filepath))
         else:
             # If no errors occurred, try to remove the file
             try:

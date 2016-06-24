@@ -120,8 +120,11 @@ class SubredditPage(Page):
 
         submission_info = docs.SUBMISSION_FILE.format(name=name)
         with self.term.open_editor(submission_info) as text:
-            if not text or '\n' not in text:
+            if not text:
                 self.term.show_notification('Canceled')
+                return
+            elif '\n' not in text:
+                self.term.show_notification('Missing body')
                 return
 
             title, content = text.split('\n', 1)
