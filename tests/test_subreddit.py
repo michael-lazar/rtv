@@ -148,7 +148,7 @@ def test_subreddit_post(subreddit_page, terminal, reddit, refresh_token):
     # Post a submission with a title but with no body
     subreddit_page.refresh_content(name='python')
     with mock.patch.object(terminal, 'open_editor'):
-        terminal.open_editor.return_value = 'title'
+        terminal.open_editor.return_value.__enter__.return_value = 'title'
         subreddit_page.controller.trigger('c')
         text = 'Canceled'.encode('utf-8')
         terminal.stdscr.subwin.addstr.assert_called_with(1, 1, text)
@@ -160,7 +160,7 @@ def test_subreddit_post(subreddit_page, terminal, reddit, refresh_token):
             mock.patch.object(reddit, 'submit'),      \
             mock.patch('rtv.page.Page.loop') as loop, \
             mock.patch('time.sleep'):
-        terminal.open_editor.return_value = 'test\ncontent'
+        terminal.open_editor.return_value.__enter__.return_value = 'test\ncont'
         reddit.submit.return_value = submission
         subreddit_page.controller.trigger('c')
         assert reddit.submit.called

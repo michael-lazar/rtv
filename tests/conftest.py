@@ -27,7 +27,9 @@ except ImportError:
 patch = partial(mock.patch, autospec=True)
 
 # Turn on logging, but disable vcr from spamming
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s:%(levelname)s:%(filename)s:%(lineno)d:%(message)s')
 for name in ['vcr.matchers', 'vcr.stubs']:
     logging.getLogger(name).disabled = True
 

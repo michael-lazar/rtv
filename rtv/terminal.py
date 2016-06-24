@@ -385,19 +385,26 @@ class Terminal(object):
     @contextmanager
     def open_editor(self, data=''):
         """
-        Open a temporary file using the system's default editor.
+        Open a file for editing using the system's default editor.
 
-        The data string will be written to the file before opening. This
-        function will block until the editor has closed. At that point the file
-        will be read and and lines starting with '#' will be stripped. If no
-        errors occur, the file will be deleted when the context manager closes.
+        After the file has been altered, the text will be read back and lines
+        starting with '#' will be stripped. If an error occurs inside of the
+        context manager, the file will be preserved. Otherwise, the file will
+        be deleted when the context manager closes.
+
+        Params:
+            data (str): If provided, text will be written to the file before
+                opening it with the editor.
+
+        Returns:
+            text (str): The text that the user entered into the editor.
         """
 
         filename = 'rtv_{:%Y%m%d_%H%M%S}.txt'.format(datetime.now())
         filepath = os.path.join(tempfile.gettempdir(), filename)
 
         with codecs.open(filepath, 'w', 'utf-8') as fp:
-            fp.write(self.clean(data))
+            fp.write(data)
         _logger.info('File created: {}'.format(filepath))
 
         editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
@@ -426,8 +433,8 @@ class Terminal(object):
             # If no errors occurred, try to remove the file
             try:
                 os.remove(filepath)
-            except OSError as e:
-                _logger.exception(e)
+            except OSError:
+                _logger.warning('Could not delete: {}'.format(filepath))
             else:
                 _logger.info('File deleted: {}'.format(filepath))
 

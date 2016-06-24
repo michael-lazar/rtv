@@ -178,7 +178,7 @@ def test_submission_comment(submission_page, terminal, refresh_token):
     with mock.patch('praw.objects.Submission.add_comment') as add_comment, \
             mock.patch.object(terminal, 'open_editor') as open_editor,     \
             mock.patch('time.sleep'):
-        open_editor.return_value = 'comment text'
+        open_editor.return_value.__enter__.return_value = 'comment text'
 
         submission_page.controller.trigger('c')
         assert open_editor.called
@@ -233,7 +233,7 @@ def test_submission_edit(submission_page, terminal, refresh_token):
     with mock.patch('praw.objects.Submission.edit') as edit,           \
             mock.patch.object(terminal, 'open_editor') as open_editor, \
             mock.patch('time.sleep'):
-        open_editor.return_value = 'submission text'
+        open_editor.return_value.__enter__.return_value = 'submission text'
 
         submission_page.controller.trigger('e')
         assert open_editor.called
@@ -249,7 +249,7 @@ def test_submission_edit(submission_page, terminal, refresh_token):
     with mock.patch('praw.objects.Comment.edit') as edit,              \
             mock.patch.object(terminal, 'open_editor') as open_editor, \
             mock.patch('time.sleep'):
-        open_editor.return_value = 'comment text'
+        open_editor.return_value.__enter__.return_value = 'comment text'
 
         submission_page.controller.trigger('e')
         assert open_editor.called
