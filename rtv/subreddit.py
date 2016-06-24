@@ -136,6 +136,7 @@ class SubredditPage(Page):
             if self.term.loader.exception:
                 raise TemporaryFileError()
 
+        if not self.term.loader.exception:
             # Open the newly created post
             with self.term.loader('Loading submission'):
                 page = SubmissionPage(
