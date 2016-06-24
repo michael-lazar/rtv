@@ -6,12 +6,14 @@ import sys
 import time
 import codecs
 import curses
+import logging
+import tempfile
 import webbrowser
 import subprocess
 import curses.ascii
 from curses import textpad
+from datetime import datetime
 from contextlib import contextmanager
-from tempfile import NamedTemporaryFile
 
 import six
 from kitchen.text.display import textual_width_chop
@@ -25,6 +27,9 @@ try:
 except ImportError:
     from six.moves import html_parser
     unescape = html_parser.HTMLParser().unescape
+
+
+_logger = logging.getLogger(__name__)
 
 
 class Terminal(object):
@@ -377,37 +382,61 @@ class Terminal(object):
         except OSError:
             self.show_notification('Could not open pager %s' % pager)
 
+    @contextmanager
     def open_editor(self, data=''):
         """
-        Open a temporary file using the system's default editor.
+        Open a file for editing using the system's default editor.
 
-        The data string will be written to the file before opening. This
-        function will block until the editor has closed. At that point the file
-        will be read and and lines starting with '#' will be stripped.
+        After the file has been altered, the text will be read back and lines
+        starting with '#' will be stripped. If an error occurs inside of the
+        context manager, the file will be preserved. Otherwise, the file will
+        be deleted when the context manager closes.
+
+        Params:
+            data (str): If provided, text will be written to the file before
+                opening it with the editor.
+
+        Returns:
+            text (str): The text that the user entered into the editor.
         """
 
-        with NamedTemporaryFile(prefix='rtv-', suffix='.txt', mode='wb') as fp:
-            fp.write(self.clean(data))
-            fp.flush()
-            editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
+        filename = 'rtv_{:%Y%m%d_%H%M%S}.txt'.format(datetime.now())
+        filepath = os.path.join(tempfile.gettempdir(), filename)
 
+        with codecs.open(filepath, 'w', 'utf-8') as fp:
+            fp.write(data)
+        _logger.info('File created: %s', filepath)
+
+        editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
+        try:
+            with self.suspend():
+                p = subprocess.Popen([editor, filepath])
+                try:
+                    p.wait()
+                except KeyboardInterrupt:
+                    p.terminate()
+        except OSError:
+            self.show_notification('Could not open file with %s' % editor)
+
+        with codecs.open(filepath, 'r', 'utf-8') as fp:
+            text = ''.join(line for line in fp if not line.startswith('#'))
+            text = text.rstrip()
+
+        try:
+            yield text
+        except exceptions.TemporaryFileError:
+            # All exceptions will cause the file to *not* be removed, but these
+            # ones should also be swallowed
+            _logger.info('Caught TemporaryFileError')
+            self.show_notification('Post saved as: %s', filepath)
+        else:
+            # If no errors occurred, try to remove the file
             try:
-                with self.suspend():
-                    p = subprocess.Popen([editor, fp.name])
-                    try:
-                        p.wait()
-                    except KeyboardInterrupt:
-                        p.terminate()
+                os.remove(filepath)
             except OSError:
-                self.show_notification('Could not open file with %s' % editor)
-
-            # Open a second file object to read. This appears to be necessary
-            # in order to read the changes made by some editors (gedit). w+
-            # mode does not work!
-            with codecs.open(fp.name, 'r', 'utf-8') as fp2:
-                text = ''.join(line for line in fp2 if not line.startswith('#'))
-                text = text.rstrip()
-                return text
+                _logger.warning('Could not delete: %s', filepath)
+            else:
+                _logger.info('File deleted: %s', filepath)
 
     def text_input(self, window, allow_resize=False):
         """

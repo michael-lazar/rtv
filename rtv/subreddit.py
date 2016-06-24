@@ -10,6 +10,7 @@ from .page import Page, PageController, logged_in
 from .objects import Navigator, Color, Command
 from .submission import SubmissionPage
 from .subscription import SubscriptionPage
+from .exceptions import TemporaryFileError
 
 
 class SubredditController(PageController):
@@ -118,31 +119,35 @@ class SubredditPage(Page):
             return
 
         submission_info = docs.SUBMISSION_FILE.format(name=name)
-        text = self.term.open_editor(submission_info)
-        if not text or '\n' not in text:
-            self.term.show_notification('Canceled')
-            return
+        with self.term.open_editor(submission_info) as text:
+            if not text:
+                self.term.show_notification('Canceled')
+                return
+            elif '\n' not in text:
+                self.term.show_notification('Missing body')
+                return
 
-        title, content = text.split('\n', 1)
-        with self.term.loader('Posting', delay=0):
-            submission = self.reddit.submit(name, title, text=content,
-                                            raise_captcha_exception=True)
-            # Give reddit time to process the submission
-            time.sleep(2.0)
-        if self.term.loader.exception:
-            return
+            title, content = text.split('\n', 1)
+            with self.term.loader('Posting', delay=0):
+                submission = self.reddit.submit(name, title, text=content,
+                                                raise_captcha_exception=True)
+                # Give reddit time to process the submission
+                time.sleep(2.0)
+            if self.term.loader.exception:
+                raise TemporaryFileError()
 
-        # Open the newly created post
-        with self.term.loader('Loading submission'):
-            page = SubmissionPage(
-                self.reddit, self.term, self.config, self.oauth,
-                submission=submission)
-        if self.term.loader.exception:
-            return
+        if not self.term.loader.exception:
+            # Open the newly created post
+            with self.term.loader('Loading submission'):
+                page = SubmissionPage(
+                    self.reddit, self.term, self.config, self.oauth,
+                    submission=submission)
+            if self.term.loader.exception:
+                return
 
-        page.loop()
+            page.loop()
 
-        self.refresh_content()
+            self.refresh_content()
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_SUBSCRIPTIONS'))
     @logged_in

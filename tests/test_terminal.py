@@ -10,6 +10,7 @@ import pytest
 
 from rtv.docs import HELP, COMMENT_EDIT_FILE
 from rtv.objects import Color
+from rtv.exceptions import TemporaryFileError
 
 try:
     from unittest import mock
@@ -269,7 +270,10 @@ def test_prompt_y_or_n(terminal, stdscr):
     assert curses.flash.called
 
 
-def test_open_editor(terminal):
+@pytest.mark.parametrize('ascii', [True, False])
+def test_open_editor(terminal, ascii):
+
+    terminal.ascii = ascii
 
     comment = COMMENT_EDIT_FILE.format(content='#| This is a comment! ❤')
     data = {'filename': None}
@@ -284,11 +288,57 @@ def test_open_editor(terminal):
     with mock.patch('subprocess.Popen', autospec=True) as Popen:
         Popen.side_effect = side_effect
 
-        reply_text = terminal.open_editor(comment)
-        assert reply_text == 'This is an amended comment! ❤'
+        with terminal.open_editor(comment) as reply_text:
+            assert reply_text == 'This is an amended comment! ❤'
+            assert os.path.isfile(data['filename'])
+            assert curses.endwin.called
+            assert curses.doupdate.called
         assert not os.path.isfile(data['filename'])
-        assert curses.endwin.called
-        assert curses.doupdate.called
+
+
+def test_open_editor_error(terminal):
+
+    with mock.patch('subprocess.Popen', autospec=True) as Popen, \
+            mock.patch.object(terminal, 'show_notification'):
+
+        # Invalid editor
+        Popen.side_effect = OSError
+        with terminal.open_editor('hello') as text:
+            assert text == 'hello'
+        assert 'Could not open' in terminal.show_notification.call_args[0][0]
+
+        data = {'filename': None}
+
+        def side_effect(args):
+            data['filename'] = args[1]
+            return mock.Mock()
+
+        # Temporary File Errors don't delete the file
+        Popen.side_effect = side_effect
+        with terminal.open_editor('test'):
+            assert os.path.isfile(data['filename'])
+            raise TemporaryFileError()
+        assert os.path.isfile(data['filename'])
+        os.remove(data['filename'])
+
+        # Other Exceptions don't delete the file *and* are propagated
+        Popen.side_effect = side_effect
+        with pytest.raises(ValueError):
+            with terminal.open_editor('test'):
+                assert os.path.isfile(data['filename'])
+                raise ValueError()
+        assert os.path.isfile(data['filename'])
+        os.remove(data['filename'])
+
+        # Gracefully handle the case when we can't remove the file
+        with mock.patch.object(os, 'remove'):
+            os.remove.side_effect = OSError
+            with terminal.open_editor():
+                pass
+            assert os.remove.called
+
+        assert os.path.isfile(data['filename'])
+        os.remove(data['filename'])
 
 
 def test_open_browser(terminal):

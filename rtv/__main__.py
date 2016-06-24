@@ -74,7 +74,11 @@ def main():
         #     if args[0] != "header:":
         #         _http_logger.info(' '.join(args))
         # client.print = print_to_file
-        logging.basicConfig(level=logging.DEBUG, filename=config['log'])
+        logging.basicConfig(
+            level=logging.DEBUG,
+            filename=config['log'],
+            format='%(asctime)s:%(levelname)s:%(filename)s:%(lineno)d:%(message)s')
+        _logger.info('Starting new session, RTV v%s', __version__)
     else:
         # Add an empty handler so the logger doesn't complain
         logging.root.addHandler(logging.NullHandler())

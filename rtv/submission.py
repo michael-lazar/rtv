@@ -8,6 +8,7 @@ from . import docs
 from .content import SubmissionContent
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Color, Command
+from .exceptions import TemporaryFileError
 
 
 class SubmissionController(PageController):
@@ -121,17 +122,20 @@ class SubmissionPage(Page):
             type=data['type'].lower(),
             content=content)
 
-        comment = self.term.open_editor(comment_info)
-        if not comment:
-            self.term.show_notification('Canceled')
-            return
+        with self.term.open_editor(comment_info) as comment:
+            if not comment:
+                self.term.show_notification('Canceled')
+                return
 
-        with self.term.loader('Posting', delay=0):
-            reply(comment)
-            # Give reddit time to process the submission
-            time.sleep(2.0)
-        if not self.term.loader.exception:
-            self.refresh_content()
+            with self.term.loader('Posting', delay=0):
+                reply(comment)
+                # Give reddit time to process the submission
+                time.sleep(2.0)
+
+            if self.term.loader.exception is None:
+                self.refresh_content()
+            else:
+                raise TemporaryFileError()
 
     @SubmissionController.register(Command('DELETE'))
     @logged_in
