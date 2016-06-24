@@ -434,9 +434,9 @@ class Terminal(object):
             try:
                 os.remove(filepath)
             except OSError:
-                _logger.warning('Could not delete: %', filepath)
+                _logger.warning('Could not delete: %s', filepath)
             else:
-                _logger.info('File deleted: %', filepath)
+                _logger.info('File deleted: %s', filepath)
 
     def text_input(self, window, allow_resize=False):
         """
