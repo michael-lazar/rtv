@@ -87,36 +87,36 @@ class Content(object):
 
         data = {}
         data['object'] = comment
-        data['level'] = comment.nested_level
+        data['level']  = comment.nested_level
 
         if isinstance(comment, praw.objects.MoreComments):
-            data['type'] = 'MoreComments'
-            data['count'] = comment.count
-            data['body'] = 'More comments'
+            data['type']   = 'MoreComments'
+            data['count']  = comment.count
+            data['body']   = 'More comments'
             data['hidden'] = True
         else:
-            author = getattr(comment, 'author', '[deleted]')
-            name = getattr(author, 'name', '[deleted]')
-            sub = getattr(comment, 'submission', '[deleted]')
+            author     = getattr(comment, 'author', '[deleted]')
+            name       = getattr(author, 'name', '[deleted]')
+            sub        = getattr(comment, 'submission', '[deleted]')
             sub_author = getattr(sub, 'author', '[deleted]')
-            sub_name = getattr(sub_author, 'name', '[deleted]')
-            flair = getattr(comment, 'author_flair_text', '')
-            permalink = getattr(comment, 'permalink', None)
-            stickied = getattr(comment, 'stickied', False)
+            sub_name   = getattr(sub_author, 'name', '[deleted]')
+            flair      = getattr(comment, 'author_flair_text', '')
+            permalink  = getattr(comment, 'permalink', None)
+            stickied   = getattr(comment, 'stickied', False)
 
-            data['type'] = 'Comment'
-            data['body'] = comment.body
+            data['type']    = 'Comment'
+            data['body']    = comment.body
             data['created'] = cls.humanize_timestamp(comment.created_utc)
-            data['score'] = '{0} pts'.format(
-                '-' if comment.score_hidden else comment.score)
-            data['author'] = name
+            data['score']   = '{0} pts'.format(
+                                '-' if comment.score_hidden else comment.score)
+            data['author']    = name
             data['is_author'] = (name == sub_name)
-            data['flair'] = flair
-            data['likes'] = comment.likes
-            data['gold'] = comment.gilded > 0
+            data['flair']     = flair
+            data['likes']     = comment.likes
+            data['gold']      = comment.gilded > 0
             data['permalink'] = permalink
-            data['stickied'] = stickied
-            data['hidden'] = False
+            data['stickied']  = stickied
+            data['hidden']    = False
 
         return data
 
@@ -136,40 +136,40 @@ class Content(object):
         reddit_link = re.compile(
             r'https?://(www\.)?(np\.)?redd(it\.com|\.it)/r/.*')
         author = getattr(sub, 'author', '[deleted]')
-        name = getattr(author, 'name', '[deleted]')
-        flair = getattr(sub, 'link_flair_text', '')
+        name   = getattr(author, 'name', '[deleted]')
+        flair  = getattr(sub, 'link_flair_text', '')
 
         data = {}
-        data['object'] = sub
-        data['type'] = 'Submission'
-        data['title'] = sub.title
-        data['text'] = sub.selftext
-        data['created'] = cls.humanize_timestamp(sub.created_utc)
+        data['object']   = sub
+        data['type']     = 'Submission'
+        data['title']    = sub.title
+        data['text']     = sub.selftext
+        data['created']  = cls.humanize_timestamp(sub.created_utc)
         data['comments'] = '{0} comments'.format(sub.num_comments)
-        data['score'] = '{0} pts'.format(
-            '-' if sub.hide_score else sub.score)
-        data['author'] = name
+        data['score']    = '{0} pts'.format(
+                                        '-' if sub.hide_score else sub.score)
+        data['author']    = name
         data['permalink'] = sub.permalink
         data['subreddit'] = six.text_type(sub.subreddit)
-        data['flair'] = '[{0}]'.format(flair.strip(' []')) if flair else ''
-        data['url_full'] = sub.url
-        data['likes'] = sub.likes
-        data['gold'] = sub.gilded > 0
-        data['nsfw'] = sub.over_18
-        data['stickied'] = sub.stickied
-        data['hidden'] = False
-        data['index'] = None  # This is filled in later by the method caller
+        data['flair']     = '[{0}]'.format(flair.strip(' []')) if flair else ''
+        data['url_full']  = sub.url
+        data['likes']     = sub.likes
+        data['gold']      = sub.gilded > 0
+        data['nsfw']      = sub.over_18
+        data['stickied']  = sub.stickied
+        data['hidden']    = False
+        data['index']     = None # This is filled in later by the method caller
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:
-            data['url'] = 'self.{0}'.format(data['subreddit'])
+            data['url']      = 'self.{0}'.format(data['subreddit'])
             data['url_type'] = 'selfpost'
         elif reddit_link.match(sub.url):
             # Strip the subreddit name from the permalink to avoid having
             # submission.subreddit.url make a separate API call
-            data['url'] = 'self.{0}'.format(sub.url.split('/')[4])
+            data['url']      = 'self.{0}'.format(sub.url.split('/')[4])
             data['url_type'] = 'x-post'
         else:
-            data['url'] = sub.url
+            data['url']      = sub.url
             data['url_type'] = 'external'
 
         return data
@@ -183,9 +183,9 @@ class Content(object):
 
         data = {}
         data['object'] = subscription
-        data['type'] = 'Subscription'
-        data['name'] = "/r/" + subscription.display_name
-        data['title'] = subscription.title
+        data['type']   = 'Subscription'
+        data['name']   = "/r/" + subscription.display_name
+        data['title']  = subscription.title
         return data
 
     @staticmethod
@@ -240,16 +240,16 @@ class SubmissionContent(Content):
                  order=None):
 
         submission_data = self.strip_praw_submission(submission)
-        comments = self.flatten_comments(submission.comments)
+        comments        = self.flatten_comments(submission.comments)
 
-        self.indent_size = indent_size
+        self.indent_size      = indent_size
         self.max_indent_level = max_indent_level
-        self.name = submission_data['permalink']
-        self.order = order
-        self._loader = loader
-        self._submission = submission
+        self.name             = submission_data['permalink']
+        self.order            = order
+        self._loader          = loader
+        self._submission      = submission
         self._submission_data = submission_data
-        self._comment_data = [self.strip_praw_comment(c) for c in comments]
+        self._comment_data    = [self.strip_praw_comment(c) for c in comments]
 
     @classmethod
     def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=8,
@@ -258,8 +258,8 @@ class SubmissionContent(Content):
         url = url.replace('http:', 'https:')  # Reddit forces SSL
         # Sometimes reddit will return a 403 FORBIDDEN when trying to access an
         # np link while using OAUTH. Cause is unknown.
-        url = url.replace('https://np.', 'https://www.')
-        submission = reddit.get_submission(url, comment_sort=order)
+        url        = url.replace('https://np.', 'https://www.')
+        submission = reddit.get_submission(url, comment_sort    = order)
         return cls(submission, loader, indent_size, max_indent_level, order)
 
     def get(self, index, n_cols=70):
@@ -272,11 +272,12 @@ class SubmissionContent(Content):
             raise IndexError
 
         elif index == -1:
-            data = self._submission_data
+            data                = self._submission_data
             data['split_title'] = self.wrap_text(data['title'], width=n_cols-2)
-            data['split_text'] = self.wrap_text(data['text'], width=n_cols-2)
-            data['n_rows'] = len(data['split_title'] + data['split_text']) + 5
-            data['offset'] = 0
+            data['split_text']  = self.wrap_text(data['text'], width=n_cols-2)
+            data['n_rows']      = len(data['split_title'] +\
+                                                        data['split_text']) + 5
+            data['offset']      = 0
 
         else:
             data = self._comment_data[index]
@@ -317,12 +318,12 @@ class SubmissionContent(Content):
                 cache.append(d)
 
             comment = {
-                'type': 'HiddenComment',
-                'cache': cache,
-                'count': count,
-                'level': data['level'],
-                'body': 'Hidden',
-                'hidden': True}
+                'type'   : 'HiddenComment',
+                'cache'  : cache,
+                'count'  : count,
+                'level'  : data['level'],
+                'body'   : 'Hidden',
+                'hidden' : True}
 
             self._comment_data[index:index + len(cache)] = [comment]
 
@@ -335,7 +336,7 @@ class SubmissionContent(Content):
                 assert self._loader.depth == 1
                 comments = data['object'].comments(update=True)
             if not self._loader.exception:
-                comments = self.flatten_comments(comments, data['level'])
+                comments     = self.flatten_comments(comments, data['level'])
                 comment_data = [self.strip_praw_comment(c) for c in comments]
                 self._comment_data[index:index + 1] = comment_data
 
@@ -351,10 +352,10 @@ class SubredditContent(Content):
 
     def __init__(self, name, submissions, loader, order=None):
 
-        self.name = name
-        self.order = order
-        self._loader = loader
-        self._submissions = submissions
+        self.name             = name
+        self.order            = order
+        self._loader          = loader
+        self._submissions     = submissions
         self._submission_data = []
 
         # Verify that content exists for the given submission generator.
@@ -406,12 +407,12 @@ class SubredditContent(Content):
 
             if name == 'front':
                 dispatch = {
-                    None: reddit.get_front_page,
-                    'hot': reddit.get_front_page,
-                    'top': reddit.get_top,
-                    'rising': reddit.get_rising,
-                    'new': reddit.get_new,
-                    'controversial': reddit.get_controversial,
+                    None            : reddit.get_front_page,
+                    'hot'           : reddit.get_front_page,
+                    'top'           : reddit.get_top,
+                    'rising'        : reddit.get_rising,
+                    'new'           : reddit.get_new,
+                    'controversial' : reddit.get_controversial,
                     }
             else:
                 subreddit = reddit.get_subreddit(name)
@@ -419,12 +420,12 @@ class SubredditContent(Content):
                 # display name with the one returned by the request.
                 display_name = '/r/{0}'.format(subreddit.display_name)
                 dispatch = {
-                    None: subreddit.get_hot,
-                    'hot': subreddit.get_hot,
-                    'top': subreddit.get_top,
-                    'rising': subreddit.get_rising,
-                    'new': subreddit.get_new,
-                    'controversial': subreddit.get_controversial,
+                    None            : subreddit.get_hot,
+                    'hot'           : subreddit.get_hot,
+                    'top'           : subreddit.get_top,
+                    'rising'        : subreddit.get_rising,
+                    'new'           : subreddit.get_new,
+                    'controversial' : subreddit.get_controversial,
                     }
             submissions = dispatch[order](limit=None)
 
@@ -455,10 +456,10 @@ class SubredditContent(Content):
                 self._submission_data.append(data)
 
         # Modifies the original dict, faster than copying
-        data = self._submission_data[index]
+        data                = self._submission_data[index]
         data['split_title'] = self.wrap_text(data['title'], width=n_cols)
-        data['n_rows'] = len(data['split_title']) + 3
-        data['offset'] = 0
+        data['n_rows']      = len(data['split_title']) + 3
+        data['offset']      = 0
 
         return data
 
@@ -504,9 +505,9 @@ class SubscriptionContent(Content):
                 data = self.strip_praw_subscription(subscription)
                 self._subscription_data.append(data)
 
-        data = self._subscription_data[index]
+        data                = self._subscription_data[index]
         data['split_title'] = self.wrap_text(data['title'], width=n_cols)
-        data['n_rows'] = len(data['split_title']) + 1
-        data['offset'] = 0
+        data['n_rows']      = len(data['split_title']) + 1
+        data['offset']      = 0
 
         return data
