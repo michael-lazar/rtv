@@ -6,7 +6,7 @@ from datetime import datetime
 
 import six
 import praw
-from praw.errors import InvalidSubreddit
+from praw.errors import InvalidSubreddit, NotFound
 from kitchen.text.display import wrap
 
 from . import exceptions
@@ -349,10 +349,13 @@ class SubredditContent(Content):
     list for repeat access.
     """
 
-    def __init__(self, name, submissions, loader, order=None):
+    def __init__(self, name, submissions, loader, order=None, listing='r',
+                 period=None):
 
+        self.listing = listing
         self.name = name
         self.order = order
+        self.period = period
         self._loader = loader
         self._submissions = submissions
         self._submission_data = []
@@ -367,52 +370,80 @@ class SubredditContent(Content):
             raise exceptions.SubredditError('No submissions')
 
     @classmethod
-    def from_name(cls, reddit, name, loader, order=None, query=None):
+    def from_name(cls, reddit, name, loader, order=None, query=None,
+                  listing='r', period=None):
 
         # Strip leading and trailing backslashes
-        name = name.strip(' /')
-        if name.startswith('r/'):
-            name = name[2:]
-
-        # If the order is not given explicitly, it will be searched for and
-        # stripped out of the subreddit name e.g. python/new.
-        if '/' in name:
-            name, name_order = name.split('/')
+        name = name.strip(' /').split('/')
+        if name[0] in ['r', 'u', 'user', 'domain']:
+            listing, *name = name
+        if len(name) > 1:
+            name, name_order = name
             order = order or name_order
-        display_name = '/r/{0}'.format(name)
+        else:
+            name = name[0]
+        listing = 'u' if name == 'me' else listing
+        display_name = '/{0}/{1}'.format(listing, name)
 
-        if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
+        time = {t: '_from_' + t for t in ['all', 'day', 'hour',
+                                          'month', 'week', 'year']}
+        time[None] = ''
+
+        if period not in time.keys():
+            raise exceptions.SubredditError('Unrecognized period "%s"'
+                                            % period)
+
+        elif order not in ['hot', 'top', 'rising', 'new',
+                           'controversial', None]:
             raise exceptions.SubredditError('Unrecognized order "%s"' % order)
 
-        if name == 'me':
-            if not reddit.is_oauth_session():
-                raise exceptions.AccountError('Not logged in')
-            elif order:
-                submissions = reddit.user.get_submitted(sort=order)
-            else:
-                submissions = reddit.user.get_submitted()
+        if query:
+            loc = None
+            if listing == 'r' and name != 'front':
+                loc = name
 
-        elif query:
-            if name == 'front':
-                submissions = reddit.search(query, subreddit=None, sort=order)
-            else:
-                submissions = reddit.search(query, subreddit=name, sort=order)
+            elif listing == 'domain':
+                query = 'site:{0} {1}'.format(name, query)
 
-        else:
+            elif listing in ['u', 'user']:
+                query = 'author:{0} {1}'.format(name, query)
+
+            submissions = reddit.search(query, subreddit=loc, sort=order,
+                                        period=period)
+
+        elif listing == 'domain':
+            submissions = reddit.get_domain_listing(name,
+                                          sort=(order or 'hot'), period=period)
+
+        elif listing in ['u', 'user']:
+            if name == 'me':
+                if not reddit.is_oauth_session():
+                    raise  exceptions.AccountError('Not logged in')
+                else:
+                    submissions = reddit.user.get_submitted( \
+                                                         sort=(order or 'new'))
+            else:
+                redditor = reddit.get_redditor(name)
+                submissions = redditor.get_submitted(sort=(order or 'new'),
+                                                        time=(period or 'all'))
+
+        elif listing == 'r':
             if name == '':
                 # Praw does not correctly handle empty strings
                 # https://github.com/praw-dev/praw/issues/615
                 raise InvalidSubreddit()
 
-            if name == 'front':
+            elif name == 'front':
                 dispatch = {
                     None: reddit.get_front_page,
                     'hot': reddit.get_front_page,
-                    'top': reddit.get_top,
+                    'top': eval('reddit.get_top' + time[period]),
                     'rising': reddit.get_rising,
                     'new': reddit.get_new,
-                    'controversial': reddit.get_controversial,
+                    'controversial': eval('reddit.get_controversial' \
+                                                               + time[period]),
                     }
+
             else:
                 subreddit = reddit.get_subreddit(name)
                 # For special subreddits like /r/random we want to replace the
@@ -421,14 +452,16 @@ class SubredditContent(Content):
                 dispatch = {
                     None: subreddit.get_hot,
                     'hot': subreddit.get_hot,
-                    'top': subreddit.get_top,
+                    'top': eval('subreddit.get_top' + time[period]),
                     'rising': subreddit.get_rising,
                     'new': subreddit.get_new,
-                    'controversial': subreddit.get_controversial,
+                    'controversial': eval('subreddit.get_controversial' \
+                                                               + time[period]),
                     }
             submissions = dispatch[order](limit=None)
 
-        return cls(display_name, submissions, loader, order=order)
+        return cls(display_name, submissions, loader, order=order,
+                   listing=listing, period=period)
 
     def get(self, index, n_cols=70):
         """
