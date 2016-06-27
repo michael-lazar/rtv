@@ -13,14 +13,14 @@ from six.moves import configparser
 from . import docs, __version__
 from .objects import KeyMap
 
-PACKAGE = os.path.dirname(__file__)
-HOME = os.path.expanduser('~')
-TEMPLATE = os.path.join(PACKAGE, 'templates')
+PACKAGE        = os.path.dirname(__file__)
+HOME           = os.path.expanduser('~')
+TEMPLATE       = os.path.join(PACKAGE, 'templates')
 DEFAULT_CONFIG = os.path.join(PACKAGE, 'rtv.cfg')
-XDG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
-CONFIG = os.path.join(XDG_HOME, 'rtv', 'rtv.cfg')
-TOKEN = os.path.join(XDG_HOME, 'rtv', 'refresh-token')
-HISTORY = os.path.join(XDG_HOME, 'rtv', 'history.log')
+XDG_HOME       = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
+CONFIG         = os.path.join(XDG_HOME, 'rtv', 'rtv.cfg')
+TOKEN          = os.path.join(XDG_HOME, 'rtv', 'refresh-token')
+HISTORY        = os.path.join(XDG_HOME, 'rtv', 'history.log')
 
 
 def build_parser():
@@ -92,8 +92,8 @@ class OrderedSet(object):
     """
 
     def __init__(self, elements=None):
-        elements = elements or []
-        self._set = set(elements)
+        elements   = elements or []
+        self._set  = set(elements)
         self._list = elements
 
     def __contains__(self, item):
@@ -115,17 +115,17 @@ class Config(object):
     def __init__(self, history_file=HISTORY, token_file=TOKEN, **kwargs):
 
         self.history_file = history_file
-        self.token_file = token_file
-        self.config = kwargs
+        self.token_file   = token_file
+        self.config       = kwargs
 
         default, bindings = self.get_file(DEFAULT_CONFIG)
-        self.default = default
-        self.keymap = KeyMap(bindings)
+        self.default      = default
+        self.keymap       = KeyMap(bindings)
 
         # `refresh_token` and `history` are saved/loaded at separate locations,
         # so they are treated differently from the rest of the config options.
         self.refresh_token = None
-        self.history = OrderedSet()
+        self.history       = OrderedSet()
 
     def __getitem__(self, item):
         if item in self.config:
@@ -211,13 +211,13 @@ class Config(object):
             rtv = dict(config.items('rtv'))
 
         params = {
-            'ascii': partial(config.getboolean, 'rtv'),
-            'monochrome': partial(config.getboolean, 'rtv'),
-            'clear_auth': partial(config.getboolean, 'rtv'),
-            'persistent': partial(config.getboolean, 'rtv'),
-            'history_size': partial(config.getint, 'rtv'),
-            'oauth_redirect_port': partial(config.getint, 'rtv'),
-            'oauth_scope': lambda x: rtv[x].split(',')
+            'ascii'               : partial(config.getboolean, 'rtv'),
+            'monochrome'          : partial(config.getboolean, 'rtv'),
+            'clear_auth'          : partial(config.getboolean, 'rtv'),
+            'persistent'          : partial(config.getboolean, 'rtv'),
+            'history_size'        : partial(config.getint, 'rtv'),
+            'oauth_redirect_port' : partial(config.getint, 'rtv'),
+            'oauth_scope'         : lambda x: rtv[x].split(',')
         }
         for key, func in params.items():
             if key in rtv:
