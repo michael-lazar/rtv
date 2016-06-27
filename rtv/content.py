@@ -6,7 +6,7 @@ from datetime import datetime
 
 import six
 import praw
-from praw.errors import InvalidSubreddit, NotFound
+from praw.errors import InvalidSubreddit
 from kitchen.text.display import wrap
 
 from . import exceptions
@@ -382,7 +382,7 @@ class SubredditContent(Content):
         # Strip leading and trailing backslashes
         name = name.strip(' /').split('/')
         if name[0] in ['r', 'u', 'user', 'domain']:
-            listing, *name = name
+            listing, name = name[0], name[1:]
         if len(name) > 1:
             name, name_order = name
             order = order or name_order
