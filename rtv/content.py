@@ -438,7 +438,7 @@ class SubredditContent(Content):
             if '/m/' in name:
                 multireddit = reddit.get_multireddit(*name.split('/')[::2])
                 submissions = eval('multireddit.get_{0}{1}(limit=None)' \
-                                       .format((order or 'top'), time[period]))
+                                       .format((order or 'hot'), time[period]))
 
             elif name == 'me':
                 if not reddit.is_oauth_session():
