@@ -374,7 +374,7 @@ class SubredditContent(Content):
     def from_name(cls, reddit, name, loader, order=None, query=None,
                   listing='r', period=None):
 
-        # Strip leading, trailing and redundant backslashes
+        # Strip leading, trailing, and redundant backslashes
         n = ''
         n = ''.join([n + ''.join(list(g)) if k != '/' else '/' \
                                        for k, g in groupby(name)]).strip(' /')
@@ -431,8 +431,12 @@ class SubredditContent(Content):
         elif listing in ['u', 'user']:
             if '/m/' in name:
                 multireddit = reddit.get_multireddit(*name.split('/')[::2])
-                submissions = eval('multireddit.get_{0}{1}(limit=None)' \
-                                       .format((order or 'hot'), time[period]))
+                if order in ['top', 'controversial']:
+                    submissions = eval('multireddit.get_{0}{1}(limit=None)' \
+                                       .format((order), time[period]))
+                else:
+                    submissions = eval('multireddit.get_{0}(limit=None)' \
+                                       .format((order or 'hot')))
 
             elif name == 'me':
                 if not reddit.is_oauth_session():
