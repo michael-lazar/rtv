@@ -69,7 +69,7 @@ class SubredditPage(Page):
     def prompt_subreddit(self):
         "Open a prompt to navigate to a different subreddit"
 
-        name = self.term.prompt_input('Enter Subreddit: /r/')
+        name = self.term.prompt_input('Enter reddit page: ')
         if name is not None:
             self.refresh_content(order='ignore', name=name)
 
