@@ -240,6 +240,16 @@ def test_content_subreddit_from_name(reddit, terminal):
     assert content.name == '/r/python'
     assert content.order is None
 
+    name = '/domain/python.org'
+    content = SubredditContent.from_name(reddit, name, terminal.loader)
+    assert content.name == '/domain/python.org'
+    assert content.order is None
+
+    name = '/user/spez'
+    content = SubredditContent.from_name(reddit, name, terminal.loader)
+    assert content.name == '/user/spez'
+    assert content.order is None
+
     # Can submit without the /r/ and with the order in the name
     name = 'python/top/'
     content = SubredditContent.from_name(reddit, name, terminal.loader)
