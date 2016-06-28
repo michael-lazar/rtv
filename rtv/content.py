@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 from datetime import datetime
+from itertools import groupby
 
 import six
 import praw
@@ -379,15 +380,27 @@ class SubredditContent(Content):
     def from_name(cls, reddit, name, loader, order=None, query=None,
                   listing='r', period=None):
 
-        # Strip leading and trailing backslashes
-        name = name.strip(' /').split('/')
-        if name[0] in ['r', 'u', 'user', 'domain']:
-            listing, name = name[0], name[1:]
-        if len(name) > 1:
-            name, name_order = name
-            order = order or name_order
+        # Strip leading, trailing and redundant backslashes
+        n = ''
+        n = ''.join([n + ''.join(list(g)) if k != '/' else '/' \
+                                       for k, g in groupby(name)]).strip(' /')
+        name_list = n.split('/')
+        name_order = None
+        if name_list[0] in ['r', 'u', 'user', 'domain'] and len(name_list) > 1:
+            listing, name_list = name_list[0], name_list[1:]
+        if len(name_list) == 2:
+            name, name_order = name_list
+        elif len(name_list) in [3, 4] and name_list[1] == 'm':
+            name_order = name_list[3] if name_list[3:4] else name_order
+            name = '{0}/m/{2}'.format(*name_list)
+        elif len(name_list) == 1 and name_list[0] != '':
+            name = name_list[0]
         else:
-            name = name[0]
+            # Praw does not correctly handle empty strings
+            # https://github.com/praw-dev/praw/issues/615
+            raise InvalidSubreddit()
+
+        order = order or name_order
         listing = 'u' if name == 'me' else listing
         display_name = '/{0}/{1}'.format(listing, name)
 
@@ -422,7 +435,12 @@ class SubredditContent(Content):
                                           sort=(order or 'hot'), period=period)
 
         elif listing in ['u', 'user']:
-            if name == 'me':
+            if '/m/' in name:
+                multireddit = reddit.get_multireddit(*name.split('/')[::2])
+                submissions = eval('multireddit.get_{0}{1}(limit=None)' \
+                                       .format((order or 'top'), time[period]))
+
+            elif name == 'me':
                 if not reddit.is_oauth_session():
                     raise  exceptions.AccountError('Not logged in')
                 else:
@@ -434,12 +452,7 @@ class SubredditContent(Content):
                                                         time=(period or 'all'))
 
         elif listing == 'r':
-            if name == '':
-                # Praw does not correctly handle empty strings
-                # https://github.com/praw-dev/praw/issues/615
-                raise InvalidSubreddit()
-
-            elif name == 'front':
+            if name == 'front':
                 dispatch = {
                     None: reddit.get_front_page,
                     'hot': reddit.get_front_page,
