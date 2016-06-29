@@ -9,6 +9,7 @@ from .content import SubredditContent
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Color, Command
 from .submission import SubmissionPage
+from .multireddits import MultiredditPage
 from .subscription import SubscriptionPage
 from .exceptions import TemporaryFileError
 
@@ -167,6 +168,27 @@ class SubredditPage(Page):
         if page.subreddit_data is not None:
             self.refresh_content(order='ignore',
                                  name=page.subreddit_data['name'])
+
+    @SubredditController.register(Command('MULTIREDDIT_OPEN_SUBSCRIPTIONS'))
+    @logged_in
+    def open_multireddit_subscriptions(self):
+        "Open user multireddit subscriptions page"
+
+        with self.term.loader('Loading multireddits'):
+            page = MultiredditPage(
+                self.reddit, self.reddit.get_my_multireddits(),
+                self.term, self.config)
+        if self.term.loader.exception:
+            return
+
+        page.loop()
+
+        # When the user has chosen a subreddit in the subscriptions list,
+        # refresh content with the selected subreddit
+        if page.multireddit_data is not None:
+            self.refresh_content(order='ignore',
+                                 name=page.multireddit_data['name'])
+
 
     def _draw_item(self, win, data, inverted):
 
