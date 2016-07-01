@@ -284,7 +284,12 @@ class Page(object):
         self.term.add_line(window, sub_name, 0, 0)
 
         # Set the terminal title
-        title = sub_name + ' - rtv {0}'.format(__version__)
+        if len(sub_name) > 50:
+            title = sub_name.strip('/').rsplit('/', 1)[1].replace('_', ' ')
+        else:
+            title = sub_name
+
+        title = title + ' - rtv {0}'.format(__version__)
         sys.stdout.write('\x1b]2;{0}\x07'.format(title))
         sys.stdout.flush()
 
