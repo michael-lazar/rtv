@@ -53,7 +53,7 @@ The ``/`` prompt accepts subreddits in the following formats
 * ``/u/me`` will display your submissions
 * ``/u/spez`` will display submissions from any other user
 * ``/u/multi-mod/m/android`` display a multireddit curated by a user
-* ``/domain/python.org`` dispaly submissions to stated domain
+* ``/domain/python.org`` display submissions to stated domain
 
 ---------------
 Submission Mode
