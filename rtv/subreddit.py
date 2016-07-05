@@ -30,6 +30,7 @@ class SubredditPage(Page):
         self.controller = SubredditController(self, keymap=config.keymap)
         self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.nav = Navigator(self.content.get)
+        self._toggled_subreddit = ''
 
     @SubredditController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
@@ -72,6 +73,24 @@ class SubredditPage(Page):
         name = self.term.prompt_input('Enter Subreddit: /r/')
         if name is not None:
             self.refresh_content(order='ignore', name=name)
+
+    @SubredditController.register(Command('SUBREDDIT_FRONTPAGE'))
+    def show_frontpage(self):
+        """
+        If on a subreddit, remeber it and head back to the front page.
+        If this was pressed on the front page, go back to the last subreddit.
+        """
+
+        target =''
+        if not self.on_frontpage():
+            target = '/r/front'
+            self.set_last_subreddit()
+        else:
+            target = self.get_last_subreddit()
+
+        # target still may be emptystring if this command hasn't yet been used
+        if not target == '': 
+            self.refresh_content(order='ignore',name=target)
 
     @SubredditController.register(Command('SUBREDDIT_OPEN'))
     def open_submission(self, url=None):
@@ -169,6 +188,16 @@ class SubredditPage(Page):
         if page.subreddit_data is not None:
             self.refresh_content(order='ignore',
                                  name=page.subreddit_data['name'])
+
+    def on_frontpage(self):
+        "Returns whether the current page is the front page"
+        return self.content.name == '/r/front'
+
+    def set_last_subreddit(self):
+        self._toggled_subreddit = self.content.name
+
+    def get_last_subreddit(self):
+        return self._toggled_subreddit
 
     def _draw_item(self, win, data, inverted):
 
