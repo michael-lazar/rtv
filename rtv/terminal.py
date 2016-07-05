@@ -349,7 +349,8 @@ class Terminal(object):
                                 'Browser exited with status=%s' % code)
                         time.sleep(0.01)
                     else:
-                        raise exceptions.BrowserError('Timeout opening browser')
+                        raise exceptions.BrowserError(
+                            'Timeout opening browser')
                 finally:
                     # Can't check the loader exception because the oauth module
                     # supersedes this loader and we need to always kill the
@@ -437,6 +438,20 @@ class Terminal(object):
                 _logger.warning('Could not delete: %s', filepath)
             else:
                 _logger.info('File deleted: %s', filepath)
+
+    def open_urlview(self, data):
+        urlview = os.getenv('RTV_URLVIEWER') or 'urlview'
+        try:
+            with self.suspend():
+                p = subprocess.Popen([urlview],
+                                     stdin=subprocess.PIPE)
+                try:
+                    p.communicate(input=six.b(data))
+                except KeyboardInterrupt:
+                    p.terminate()
+        except OSError:
+            self.show_notification(
+                'Could not open urls with {}'.format(urlview))
 
     def text_input(self, window, allow_resize=False):
         """

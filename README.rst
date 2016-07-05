@@ -136,6 +136,34 @@ If you prefer the complete terminal experience, set ``$BROWSER`` to a console-ba
 
 `w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices.
 
+----------
+Url Viewer
+----------
+
+You can open comment links using a url extraction binary.
+The ``$RTV_URLVIEWER`` environment variable can be used to set the url viewer.
+
+.. code-block:: bash
+
+    $ export RTV_URLVIEWER=urlview
+
+The default program is ``urlview``, but most systems do not come with it installed by default.
+
+Ubuntu
+------
+.. code-block:: bash
+
+    $ sudo apt-get install urlview
+
+Mac with Homebrew
+-----------------
+.. code-block:: bash
+
+    $ brew install urlview
+
+
+`urlview <https://github.com/sigpipe/urlview>`_, `urlscan <https://github.com/firecat53/urlscan>`_, are known to be compatible, but any program that accepts text via a stdin pipe will do
+
 ===
 FAQ
 ===
