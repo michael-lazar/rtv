@@ -11,6 +11,7 @@ from kitchen.text.display import textual_width
 from . import docs
 from .objects import Controller, Color, Command
 from .exceptions import TemporaryFileError
+from .__version__ import __version__
 
 
 def logged_in(f):
@@ -281,6 +282,16 @@ class Page(object):
 
         sub_name = self.content.name.replace('/r/front', 'Front Page')
         self.term.add_line(window, sub_name, 0, 0)
+
+        # Set the terminal title
+        if len(sub_name) > 50:
+            title = sub_name.strip('/').rsplit('/', 1)[1].replace('_', ' ')
+        else:
+            title = sub_name
+
+        title = title + ' - rtv {0}'.format(__version__)
+        sys.stdout.write('\x1b]2;{0}\x07'.format(title))
+        sys.stdout.flush()
 
         if self.reddit.user is not None:
             # The starting position of the name depends on if we're converting
