@@ -254,3 +254,28 @@ def test_submission_edit(submission_page, terminal, refresh_token):
         submission_page.controller.trigger('e')
         assert open_editor.called
         edit.assert_called_with('comment text')
+
+
+def test_submission_urlview(submission_page, terminal, refresh_token):
+
+    # Log in
+    submission_page.config.refresh_token = refresh_token
+    submission_page.oauth.authorize()
+
+    # Positive Case
+    data = submission_page.content.get(submission_page.nav.absolute_index)
+    TEST_BODY = 'test comment body'
+    data['body'] = TEST_BODY
+    with mock.patch.object(terminal, 'open_urlview') as open_urlview, \
+            mock.patch('subprocess.Popen'):
+        submission_page.controller.trigger('b')
+        open_urlview.assert_called_with(TEST_BODY)
+
+    # Negative Case
+    data = submission_page.content.get(submission_page.nav.absolute_index)
+    TEST_NO_BODY = ''
+    data['body'] = TEST_NO_BODY
+    with mock.patch.object(terminal, 'open_urlview') as open_urlview, \
+            mock.patch('subprocess.Popen'):
+        submission_page.controller.trigger('b')
+        assert not open_urlview.called
