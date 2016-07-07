@@ -35,11 +35,11 @@ class SubmissionPage(Page):
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
 
-        # This logic handles a display edge case after a comment toggle. We want
-        # to make sure that when we re-draw the page, the cursor stays at its
-        # current absolute position on the screen. In order to do this, apply
-        # a fixed offset if, while inverted, we either try to hide the bottom
-        # comment or toggle any of the middle comments.
+        # This logic handles a display edge case after a comment toggle. We
+        # want to make sure that when we re-draw the page, the cursor stays at
+        # its current absolute position on the screen. In order to do this,
+        # apply a fixed offset if, while inverted, we either try to hide the
+        # bottom comment or toggle any of the middle comments.
         if self.nav.inverted:
             data = self.content.get(current_index)
             if data['hidden'] or self.nav.cursor_index != 0:
@@ -147,6 +147,15 @@ class SubmissionPage(Page):
         else:
             self.term.flash()
 
+    @SubmissionController.register(Command('SUBMISSION_OPEN_IN_URLVIEWER'))
+    def comment_urlview(self):
+        data = self.content.get(self.nav.absolute_index)
+        comment = data.get('body', '')
+        if comment:
+            self.term.open_urlview(comment)
+        else:
+            self.term.flash()
+
     def _draw_item(self, win, data, inverted):
 
         if data['type'] == 'MoreComments':
@@ -219,7 +228,8 @@ class SubmissionPage(Page):
         n_cols -= 1
 
         self.term.add_line(win, '{body}'.format(**data), 0, 1)
-        self.term.add_line(win, ' [{count}]'.format(**data), attr=curses.A_BOLD)
+        self.term.add_line(
+            win, ' [{count}]'.format(**data), attr=curses.A_BOLD)
 
         attr = Color.get_level(data['level'])
         self.term.addch(win, 0, 0, self.term.vline, attr)
