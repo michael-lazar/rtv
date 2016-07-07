@@ -60,4 +60,4 @@ In submission mode you can view the self text for a submission and browse commen
 :``l`` or ``►``: Open the selected comment in a new window
 :``o`` or ``ENTER``: Open the comment permalink with your web browser
 :``SPACE``: Fold the selected comment, or load additional comments
-:``b``: Displays URLs with urlview
+:``b``: Display URLs with urlview
