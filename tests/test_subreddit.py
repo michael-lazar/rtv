@@ -177,3 +177,32 @@ def test_subreddit_open_subscriptions(subreddit_page, refresh_token):
     with mock.patch('rtv.page.Page.loop') as loop:
         subreddit_page.controller.trigger('s')
         assert loop.called
+
+
+def test_subreddit_draw_header(subreddit_page, refresh_token, terminal):
+
+    # /r/front alias should be renamed in the header
+    subreddit_page.refresh_content(name='/r/front')
+    subreddit_page.draw()
+    text = 'Front Page'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    subreddit_page.refresh_content(name='/r/front/new')
+    subreddit_page.draw()
+    text = 'Front Page'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    # Log in to check the user submissions page
+    subreddit_page.config.refresh_token = refresh_token
+    subreddit_page.oauth.authorize()
+
+    # /r/me alias should be renamed in the header
+    subreddit_page.refresh_content(name='/r/me')
+    subreddit_page.draw()
+    text = 'My Submissions'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    subreddit_page.refresh_content(name='/r/me/new')
+    subreddit_page.draw()
+    text = 'My Submissions'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)

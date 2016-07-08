@@ -280,7 +280,9 @@ class Page(object):
         ch, attr = str(' '), curses.A_REVERSE | curses.A_BOLD | Color.CYAN
         window.bkgd(ch, attr)
 
-        sub_name = self.content.name.replace('/r/front', 'Front Page')
+        sub_name = self.content.name
+        sub_name = sub_name.replace('/r/front', 'Front Page')
+        sub_name = sub_name.replace('/r/me', 'My Submissions')
         self.term.add_line(window, sub_name, 0, 0)
 
         # Set the terminal title
