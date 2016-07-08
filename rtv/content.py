@@ -158,6 +158,7 @@ class Content(object):
         data['nsfw'] = sub.over_18
         data['stickied'] = sub.stickied
         data['hidden'] = False
+        data['xpost_subreddit'] = None
         data['index'] = None  # This is filled in later by the method caller
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:
@@ -167,6 +168,7 @@ class Content(object):
             # Strip the subreddit name from the permalink to avoid having
             # submission.subreddit.url make a separate API call
             url_parts = sub.url.split('/')
+            data['xpost_subreddit'] = url_parts[4]
             data['url'] = 'self.{0}'.format(url_parts[4])
             if 'comments' in url_parts:
                 data['url_type'] = 'x-post submission'
