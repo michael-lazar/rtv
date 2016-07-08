@@ -100,7 +100,7 @@ class SubredditPage(Page):
         data = self.content.get(self.nav.absolute_index)
         if data['url_type'] == 'selfpost':
             self.open_submission()
-        elif data['url_type'] == 'x-post':
+        elif data['url_type'] == 'x-post comment':
             self.open_submission(url=data['url_full'])
             self.config.history.add(data['url_full'])
         else:
