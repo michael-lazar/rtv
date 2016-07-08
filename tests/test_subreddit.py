@@ -116,6 +116,26 @@ def test_subreddit_open(subreddit_page, terminal, config):
         assert subreddit_page.open_submission.called
 
 
+def test_subreddit_open_xpost(subreddit_page, config):
+
+    data = subreddit_page.content.get(subreddit_page.nav.absolute_index)
+
+    # Open an x-post subreddit, see /r/TinySubredditoftheDay for an example
+    with mock.patch.object(subreddit_page, 'refresh_content'):
+        data['url_type'] = 'x-post subreddit'
+        data['xpost_subreddit'] = 'goodbye'
+        subreddit_page.controller.trigger('o')
+        subreddit_page.refresh_content.assert_called_with(
+            name='goodbye', order='ignore')
+
+    # Open an x-post submission, see /r/bestof for an example
+    with mock.patch.object(subreddit_page, 'open_submission'):
+        data['url_type'] = 'x-post submission'
+        data['url_full'] = 'www.test.com'
+        subreddit_page.controller.trigger('o')
+        subreddit_page.open_submission.assert_called_with(url='www.test.com')
+
+
 def test_subreddit_unauthenticated(subreddit_page, terminal):
 
     # Unauthenticated commands

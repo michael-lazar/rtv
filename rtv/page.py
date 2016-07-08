@@ -291,7 +291,7 @@ class Page(object):
         else:
             title = sub_name
 
-        title = title + ' - rtv {0}'.format(__version__)
+        title += ' - rtv {0}'.format(__version__)
         sys.stdout.write('\x1b]2;{0}\x07'.format(title))
         sys.stdout.flush()
 
