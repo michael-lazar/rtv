@@ -51,7 +51,7 @@ def test_terminal_properties(terminal, config):
     assert terminal.get_arrow(None) is not None
     assert terminal.get_arrow(True) is not None
     assert terminal.get_arrow(False) is not None
-    assert terminal.ascii == config['ascii']
+    assert terminal.config == config
     assert terminal.loader is not None
 
     assert terminal.MIN_HEIGHT is not None
@@ -93,7 +93,7 @@ def test_terminal_functions(terminal):
 
 def test_terminal_clean_ascii(terminal):
 
-    terminal.ascii = True
+    terminal.config['ascii'] = True
 
     # unicode returns ascii
     text = terminal.clean('hello ❤')
@@ -113,7 +113,7 @@ def test_terminal_clean_ascii(terminal):
 
 def test_terminal_clean_unicode(terminal):
 
-    terminal.ascii = False
+    terminal.config['ascii'] = False
 
     # unicode returns utf-8
     text = terminal.clean('hello ❤')
@@ -146,20 +146,20 @@ def test_terminal_clean_ncols(terminal):
     assert text.decode('utf-8') == 'ｈｅｌｌ'
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_terminal_clean_unescape_html(terminal, ascii):
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_terminal_clean_unescape_html(terminal, use_ascii):
 
     # HTML characters get decoded
-    terminal.ascii = ascii
+    terminal.config['ascii'] = use_ascii
     text = terminal.clean('&lt;')
     assert isinstance(text, six.binary_type)
     assert text.decode('ascii' if ascii else 'utf-8') == '<'
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_terminal_add_line(terminal, stdscr, ascii):
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_terminal_add_line(terminal, stdscr, use_ascii):
 
-    terminal.ascii = ascii
+    terminal.config['ascii'] = use_ascii
 
     terminal.add_line(stdscr, 'hello')
     assert stdscr.addstr.called_with(0, 0, 'hello'.encode('ascii'))
@@ -176,10 +176,10 @@ def test_terminal_add_line(terminal, stdscr, ascii):
     stdscr.reset_mock()
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_show_notification(terminal, stdscr, ascii):
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_show_notification(terminal, stdscr, use_ascii):
 
-    terminal.ascii = ascii
+    terminal.config['ascii'] = use_ascii
 
     # The whole message should fit in 40x80
     text = HELP.strip().splitlines()
@@ -198,10 +198,10 @@ def test_show_notification(terminal, stdscr, ascii):
     assert stdscr.subwin.addstr.call_count == 13
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_text_input(terminal, stdscr, ascii):
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_text_input(terminal, stdscr, use_ascii):
 
-    terminal.ascii = ascii
+    terminal.config['ascii'] = use_ascii
     stdscr.nlines = 1
 
     # Text will be wrong because stdscr.inch() is not implemented
@@ -219,10 +219,10 @@ def test_text_input(terminal, stdscr, ascii):
     assert terminal.text_input(stdscr, allow_resize=False) is None
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_prompt_input(terminal, stdscr, ascii):
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_prompt_input(terminal, stdscr, use_ascii):
 
-    terminal.ascii = ascii
+    terminal.config['ascii'] = use_ascii
     window = stdscr.derwin()
 
     window.getch.side_effect = [ord('h'), ord('i'), terminal.RETURN]
@@ -270,10 +270,10 @@ def test_prompt_y_or_n(terminal, stdscr):
     assert curses.flash.called
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_open_editor(terminal, ascii):
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_open_editor(terminal, use_ascii):
 
-    terminal.ascii = ascii
+    terminal.config['ascii'] = use_ascii
 
     comment = COMMENT_EDIT_FILE.format(content='#| This is a comment! ❤')
     data = {'filename': None}

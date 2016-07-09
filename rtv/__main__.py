@@ -93,7 +93,7 @@ def main():
             if not config['monochrome']:
                 Color.init()
 
-            term = Terminal(stdscr, config['ascii'])
+            term = Terminal(stdscr, config)
             with term.loader('Initializing', catch_exception=False):
                 reddit = praw.Reddit(user_agent=user_agent,
                                      decode_html_entities=False,

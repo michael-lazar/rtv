@@ -18,9 +18,9 @@ except ImportError:
     import mock
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     # Ensure the thread is properly started/stopped
     with terminal.loader(delay=0, message=u'Hello', trail=u'...'):
@@ -32,9 +32,9 @@ def test_objects_load_screen(terminal, stdscr, ascii):
     assert stdscr.subwin.nlines == 3
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_exception_unhandled(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_exception_unhandled(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     # Raising an exception should clean up the loader properly
     with pytest.raises(Exception):
@@ -45,9 +45,9 @@ def test_objects_load_screen_exception_unhandled(terminal, stdscr, ascii):
     assert not terminal.loader._animator.is_alive()
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_exception_handled(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_exception_handled(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     # Raising a handled exception should get stored on the loaders
     with terminal.loader(delay=0):
@@ -60,9 +60,9 @@ def test_objects_load_screen_exception_handled(terminal, stdscr, ascii):
     stdscr.subwin.addstr.assert_called_with(1, 1, error_message)
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_exception_not_caught(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_exception_not_caught(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     with pytest.raises(KeyboardInterrupt):
         with terminal.loader(delay=0, catch_exception=False):
@@ -73,9 +73,9 @@ def test_objects_load_screen_exception_not_caught(terminal, stdscr, ascii):
     assert terminal.loader.exception is None
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_keyboard_interrupt(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_keyboard_interrupt(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     # Raising a KeyboardInterrupt should be also be stored
     with terminal.loader(delay=0):
@@ -86,9 +86,9 @@ def test_objects_load_screen_keyboard_interrupt(terminal, stdscr, ascii):
     assert isinstance(terminal.loader.exception, KeyboardInterrupt)
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_escape(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_escape(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     stdscr.getch.return_value = terminal.ESCAPE
 
@@ -109,9 +109,9 @@ def test_objects_load_screen_escape(terminal, stdscr, ascii):
     assert kill.called
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_initial_delay(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_initial_delay(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     # If we don't reach the initial delay nothing should be drawn
     with terminal.loader(delay=0.1):
@@ -119,9 +119,9 @@ def test_objects_load_screen_initial_delay(terminal, stdscr, ascii):
     assert not stdscr.subwin.addstr.called
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_nested(terminal, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_nested(terminal, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     with terminal.loader(message='Outer'):
         with terminal.loader(message='Inner'):
@@ -134,9 +134,9 @@ def test_objects_load_screen_nested(terminal, ascii):
     assert not terminal.loader._animator.is_alive()
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_nested_complex(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_nested_complex(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     with terminal.loader(message='Outer') as outer_loader:
         assert outer_loader.depth == 1

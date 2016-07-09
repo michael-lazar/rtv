@@ -42,28 +42,28 @@ class Terminal(object):
     RETURN = 10
     SPACE = 32
 
-    def __init__(self, stdscr, ascii=False):
+    def __init__(self, stdscr, config):
 
         self.stdscr = stdscr
-        self.ascii = ascii
+        self.config = config
         self.loader = LoadScreen(self)
         self._display = None
 
     @property
     def up_arrow(self):
-        symbol = '^' if self.ascii else '▲'
+        symbol = '^' if self.config['ascii'] else '▲'
         attr = curses.A_BOLD | Color.GREEN
         return symbol, attr
 
     @property
     def down_arrow(self):
-        symbol = 'v' if self.ascii else '▼'
+        symbol = 'v' if self.config['ascii'] else '▼'
         attr = curses.A_BOLD | Color.RED
         return symbol, attr
 
     @property
     def neutral_arrow(self):
-        symbol = 'o' if self.ascii else '•'
+        symbol = 'o' if self.config['ascii'] else '•'
         attr = curses.A_BOLD
         return symbol, attr
 
@@ -75,7 +75,7 @@ class Terminal(object):
 
     @property
     def guilded(self):
-        symbol = '*' if self.ascii else '✪'
+        symbol = '*' if self.config['ascii'] else '✪'
         attr = curses.A_BOLD | Color.YELLOW
         return symbol, attr
 
@@ -215,7 +215,7 @@ class Terminal(object):
         if isinstance(string, six.text_type):
             string = unescape(string)
 
-        if self.ascii:
+        if self.config['ascii']:
             if isinstance(string, six.binary_type):
                 string = string.decode('utf-8')
             string = string.encode('ascii', 'replace')
