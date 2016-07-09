@@ -7,6 +7,7 @@ import time
 import codecs
 import curses
 import logging
+import mailcap
 import tempfile
 import webbrowser
 import subprocess
@@ -19,7 +20,9 @@ import six
 from kitchen.text.display import textual_width_chop
 
 from . import exceptions
+from . import mime_handlers
 from .objects import LoadScreen, Color
+
 
 try:
     # Added in python 3.4+
@@ -48,6 +51,9 @@ class Terminal(object):
         self.config = config
         self.loader = LoadScreen(self)
         self._display = None
+
+        # TODO: Load from custom location
+        self._mailcap_dict = mailcap.getcaps()
 
     @property
     def up_arrow(self):
@@ -304,6 +310,49 @@ class Terminal(object):
 
         return ch
 
+    def open_link(self, url):
+
+        _logger.info('Opening link %s', url)
+        if not self.config['enable_media']:
+            return self.open_browser(url)
+
+        command = None
+        for handler in mime_handlers.handlers:
+            if handler.pattern.match(url):
+                modified_url, content_type = handler.get_mimetype(url)
+                _logger.info('MIME type: %s', content_type)
+                _logger.info('Modified url: %s', modified_url)
+                if not content_type or content_type == 'text/html':
+                    # Could not figure out the Content-Type
+                    return self.open_browser(modified_url)
+
+                # http://bugs.python.org/issue14977
+                command, entry = mailcap.findmatch(
+                    self._mailcap_dict, content_type, filename=modified_url)
+                if not entry:
+                    _logger.info('Could not find a valid mailcap entry')
+                    return self.open_browser(modified_url)
+
+                break
+
+        with self.loader('Opening page in a new window', delay=0):
+            args = [command]
+            _logger.info('Running command: %s', args)
+            # Non-blocking, run with a full shell to support pipes
+            p = subprocess.Popen(
+                args, shell=True, universal_newlines=True,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            # Wait a little while to make sure that the command doesn't exit
+            # with an error. This isn't perfect, but it should be good enough
+            # to catch invalid commands.
+            time.sleep(1.0)
+            code = p.poll()
+            if code is not None and code != 0:
+                stdout, stderr = p.communicate()
+                _logger.warning(stderr)
+                raise exceptions.BrowserError(
+                    'Program exited with status=%s' % code)
+
     def open_browser(self, url):
         """
         Open the given url using the default webbrowser. The preferred browser
@@ -346,7 +395,7 @@ class Terminal(object):
                             break  # Success
                         elif code is not None:
                             raise exceptions.BrowserError(
-                                'Browser exited with status=%s' % code)
+                                'Program exited with status=%s' % code)
                         time.sleep(0.01)
                     else:
                         raise exceptions.BrowserError(

@@ -59,6 +59,9 @@ def build_parser():
     parser.add_argument(
         '--copy-config', dest='copy_config', action='store_const', const=True,
         help='Copy the default configuration to {HOME}/.config/rtv/rtv.cfg')
+    parser.add_argument(
+        '--enable-media', dest='enable_media', action='store_const', const=True,
+        help='Open external links using programs defined in the mailcap config')
     return parser
 
 

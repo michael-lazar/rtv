@@ -106,7 +106,7 @@ class SubredditPage(Page):
             self.open_submission(url=data['url_full'])
             self.config.history.add(data['url_full'])
         else:
-            self.term.open_browser(data['url_full'])
+            self.term.open_link(data['url_full'])
             self.config.history.add(data['url_full'])
 
     @SubredditController.register(Command('SUBREDDIT_POST'))

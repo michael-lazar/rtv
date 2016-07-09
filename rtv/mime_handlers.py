@@ -1,7 +1,7 @@
 import re
 import mimetypes
-from html.parser import HTMLParser
 
+from six.moves.html_parser import HTMLParser
 import requests
 
 
@@ -116,7 +116,8 @@ class ImgurHandler(BaseHandler):
     def get_mimetype(url):
         imgur_page = requests.get(url)
         try:
-            ImgurHTMLParser().feed(imgur_page.text)
+            # convert_charrefs will be true by default in python 3.5
+            ImgurHTMLParser(convert_charrefs=True).feed(imgur_page.text)
         except HTMLParsed as data:
             # We found a link
             url = data.data
