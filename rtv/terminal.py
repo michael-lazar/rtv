@@ -7,7 +7,6 @@ import time
 import codecs
 import curses
 import logging
-import mailcap
 import tempfile
 import webbrowser
 import subprocess
@@ -18,6 +17,7 @@ from contextlib import contextmanager
 
 import six
 from kitchen.text.display import textual_width_chop
+from mailcap_fix import mailcap
 
 from . import exceptions
 from . import mime_handlers
