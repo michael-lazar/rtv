@@ -125,7 +125,7 @@ class RedditUploadsMIMEParser(BaseMIMEParser):
     Reddit uploads do not have a file extension, but we can grab the mime-type
     from the page header.
     """
-    pattern = re.compile(r'https://i.reddituploads.com/.+$')
+    pattern = re.compile(r'https://i\.reddituploads\.com/.+$')
 
     @staticmethod
     def get_mimetype(url):
