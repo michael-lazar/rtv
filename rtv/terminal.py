@@ -317,9 +317,9 @@ class Terminal(object):
             return self.open_browser(url)
 
         command = None
-        for handler in mime_handlers.handlers:
-            if handler.pattern.match(url):
-                modified_url, content_type = handler.get_mimetype(url)
+        for parser in mime_handlers.parsers:
+            if parser.pattern.match(url):
+                modified_url, content_type = parser.get_mimetype(url)
                 _logger.info('MIME type: %s', content_type)
                 _logger.info('Modified url: %s', modified_url)
                 if not content_type or content_type == 'text/html':

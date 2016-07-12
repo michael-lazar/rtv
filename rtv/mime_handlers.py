@@ -1,86 +1,18 @@
 import re
+import logging
 import mimetypes
 
-from six.moves.html_parser import HTMLParser
 import requests
+from six.moves.html_parser import HTMLParser
+from html import parser
 
+_logger = logging.getLogger(__name__)
+
+# HTML Parsers
 
 class HTMLParsed(Exception):
     def __init__(self, data):
         self.data = data
-
-
-class BaseHandler(object):
-    """
-    BaseHandler can be sub-classed to define custom handlers for determining
-    the MIME type of external urls.
-    """
-
-    # URL regex pattern that the handler will be triggered on
-    pattern = re.compile(r'.*$')
-
-    @staticmethod
-    def get_mimetype(url):
-        """
-        Args:
-            url (text): Web url that was linked to by a reddit submission.
-
-        Returns:
-            modified_url (text): The url (or filename) that will be used when
-                constructing the command to run.
-            content_type (text): The mime-type that will be used when
-                constructing the command to run. If the mime-type is unknown,
-                return None and the program will fallback to using the web
-                browser.
-        """
-
-        # Guess based on the file extension
-        filename = url.split('?')[0]
-        content_type, _ = mimetypes.guess_type(filename)
-        return url, content_type
-
-
-class YoutubeHandler(BaseHandler):
-    """
-    Youtube videos can be streamed with vlc or downloaded with youtube-dl.
-    Assign a custom mime-type so they can be referenced in mailcap.
-    """
-
-    pattern = re.compile(
-            r'(?:https?://)?(m\.)?(?:youtu\.be/|(?:www\.)?youtube\.com/watch'
-            r'(?:\.php)?\'?.*v=)([a-zA-Z0-9\-_]+)')
-
-    @staticmethod
-    def get_mimetype(url):
-        return url, 'video/x-youtube'
-
-
-class GifvHandler(BaseHandler):
-    """
-    Special case for .gifv, which is a custom video format for imgur that is
-    incorrectly (or on purpose?) returned with a Content-Type of text/html.
-    """
-    pattern = re.compile(r'.*[.]gifv$')
-
-    @staticmethod
-    def get_mimetype(url):
-        modified_url = url[:-4] + 'webm'
-        return modified_url, 'video/webm'
-
-
-class RedditUploadsHandler(BaseHandler):
-    """
-    Reddit uploads do not have a file extension, but we can grab the mime-type
-    from the page header.
-    """
-    pattern = re.compile(r'https://i.reddituploads.com/.+$')
-
-    @staticmethod
-    def get_mimetype(url):
-        page = requests.head(url)
-        content_type = page.headers.get('Content-Type', '')
-        content_type = content_type.split(';')[0]  # Strip out the encoding
-        return url, content_type
 
 
 class ImgurHTMLParser(HTMLParser):
@@ -96,19 +28,117 @@ class ImgurHTMLParser(HTMLParser):
 
     Note:
         BeautifulSoup or lxml would be faster here but I wanted to skip adding
-        an extra dependency for something as trivial as this.
+        an extra dependency for something this trivial.
     """
-
     def handle_starttag(self, tag, attr):
         if tag == 'meta' and attr[0] == ('name', 'twitter:image'):
             raise HTMLParsed(attr[1][1])
 
 
-class ImgurHandler(BaseHandler):
+class ImgurAlbumHTMLParser(HTMLParser):
+    """
+    Scrape the complete list of images from an imgur album. The HTML parser is
+    very limited, so this assumes the following html structure:
+
+        <div class="post-image">
+            <a href="//i.imgur.com/L3Lfp1O.jpg" class="zoom">
+                <img class="post-image-placeholder"
+                     src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
+                <img class="js-post-image-thumb"
+                     src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
+            </a>
+        </div>
+    """
+    def reset(self):
+        super(ImgurAlbumHTMLParser, self).reset()
+        self.primed = False
+        self.hrefs = []
+
+    def handle_starttag(self, tag, attr):
+        if tag == 'div' and ('class', 'post-image') in attr:
+            self.primed = True
+        elif self.primed:
+            self.primed = False
+            if tag == 'a' and attr[0][0] == 'href':
+                self.hrefs.append(attr[0][1])
+
+
+# MIME Parsers
+
+class BaseMIMEParser(object):
+    """
+    BaseMIMEParser can be sub-classed to define custom handlers for determining
+    the MIME type of external urls.
+    """
+    pattern = re.compile(r'.*$')
+
+    @staticmethod
+    def get_mimetype(url):
+        """
+        Guess based on the file extension.
+
+        Args:
+            url (text): Web url that was linked to by a reddit submission.
+
+        Returns:
+            modified_url (text): The url (or filename) that will be used when
+                constructing the command to run.
+            content_type (text): The mime-type that will be used when
+                constructing the command to run. If the mime-type is unknown,
+                return None and the program will fallback to using the web
+                browser.
+        """
+        filename = url.split('?')[0]
+        content_type, _ = mimetypes.guess_type(filename)
+        return url, content_type
+
+
+class YoutubeMIMEParser(BaseMIMEParser):
+    """
+    Youtube videos can be streamed with vlc or downloaded with youtube-dl.
+    Assign a custom mime-type so they can be referenced in mailcap.
+    """
+    pattern = re.compile(
+            r'(?:https?://)?(m\.)?(?:youtu\.be/|(?:www\.)?youtube\.com/watch'
+            r'(?:\.php)?\'?.*v=)([a-zA-Z0-9\-_]+)')
+
+    @staticmethod
+    def get_mimetype(url):
+        return url, 'video/x-youtube'
+
+
+class GifvMIMEParser(BaseMIMEParser):
+    """
+    Special case for .gifv, which is a custom video format for imgur that is
+    incorrectly (or on purpose?) returned with a Content-Type of text/html.
+    """
+    pattern = re.compile(r'.*[.]gifv$')
+
+    @staticmethod
+    def get_mimetype(url):
+        modified_url = url[:-4] + 'webm'
+        return modified_url, 'image/webm'
+
+
+class RedditUploadsMIMEParser(BaseMIMEParser):
+    """
+    Reddit uploads do not have a file extension, but we can grab the mime-type
+    from the page header.
+    """
+    pattern = re.compile(r'https://i.reddituploads.com/.+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.head(url)
+        content_type = page.headers.get('Content-Type', '')
+        content_type = content_type.split(';')[0]  # Strip out the encoding
+        return url, content_type
+
+
+class ImgurMIMEParser(BaseMIMEParser):
     """
     The majority of imgur links don't point directly to the image, so we need
-    to open the provided url and scrape the page for the link. For galleries,
-    this method only returns the first image.
+    to open the provided url and scrape the page for the link.
     """
     pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/[^.]+$')
 
@@ -121,16 +151,43 @@ class ImgurHandler(BaseHandler):
         except HTMLParsed as data:
             # We found a link
             url = data.data
-            if GifvHandler.pattern.match(url):
-                return GifvHandler.get_mimetype(url)
+            if GifvMIMEParser.pattern.match(url):
+                return GifvMIMEParser.get_mimetype(url)
 
-        return BaseHandler.get_mimetype(url)
+        return BaseMIMEParser.get_mimetype(url)
 
 
-# Handlers should be defined in the order they will be checked
-handlers = [
-    ImgurHandler,
-    RedditUploadsHandler,
-    YoutubeHandler,
-    GifvHandler,
-    BaseHandler]
+class ImgurAlbumMIMEParser(BaseMIMEParser):
+    """
+    Imgur albums can contain several images, which need to be scraped from the
+    landing page.
+    """
+    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/a/[^.]+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        imgur_page = requests.get(url)
+        parser = ImgurAlbumHTMLParser(convert_charrefs=True)
+
+        try:
+            parser.feed(imgur_page.text)
+        except Exception as e:
+            _logger.warning(e)
+            urls = []
+        else:
+            urls = ['http:' + href for href in parser.hrefs]
+
+        if urls:
+            return "' '".join(urls), 'image/x-imgur-album'
+        else:
+            return url, None
+
+
+# Parsers should be listed in the order they will be checked
+parsers = [
+    ImgurAlbumMIMEParser,
+    ImgurMIMEParser,
+    RedditUploadsMIMEParser,
+    YoutubeMIMEParser,
+    GifvMIMEParser,
+    BaseMIMEParser]
