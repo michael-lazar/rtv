@@ -489,11 +489,16 @@ class Terminal(object):
                 _logger.info('File deleted: %s', filepath)
 
     def open_urlview(self, data):
+        """
+        Pipe a block of text to urlview, which displays a list of urls
+        contained in the text and allows the user to open them with their
+        web browser.
+        """
+
         urlview = os.getenv('RTV_URLVIEWER') or 'urlview'
         try:
             with self.suspend():
-                p = subprocess.Popen([urlview],
-                                     stdin=subprocess.PIPE)
+                p = subprocess.Popen([urlview], stdin=subprocess.PIPE)
                 try:
                     p.communicate(input=six.b(data))
                 except KeyboardInterrupt:
