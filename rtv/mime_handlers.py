@@ -162,7 +162,7 @@ class ImgurAlbumMIMEParser(BaseMIMEParser):
     Imgur albums can contain several images, which need to be scraped from the
     landing page.
     """
-    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/a/[^.]+$')
+    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/a(lbum)?/[^.]+$')
 
     @staticmethod
     def get_mimetype(url):
