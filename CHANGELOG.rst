@@ -24,16 +24,16 @@ RTV Changelog
 --------------------
 Features
 
-* New key added, `b` extracts urls from comments with using urlviewer.
-* Comment files are saved to **/tmp** if rtv encounters an error while posting.
-* The terminal title now displays the subreddit name or submission url.
+* New command, `b` extracts urls from comments using urlviewer.
+* Comment files will no longer be destroyed if RTV encounters an error while posting.
+* The terminal title now displays the subreddit name/url.
 
 Bugfixes
 
-* Fixed ia bug where the terminal title wasn't getting set.
 * Fixed crash when entering empty or invalid subreddit name.
-* **/r/me** is now displayed as "My Submissions" in the header.
-* x-posts that link to subreddits should no longer crash.
+* Fixed crash when opening x-posts linked to subreddits.
+* Fixed a bug where the terminal title wasn't getting set.
+* **/r/me** is now displayed as *My Submissions* in the header.
 
 -------------------
 1.9.1_ (2016-06-13)
