@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.10.0: http://github.com/michael-lazar/rtv/releases/tag/v1.10.0
 .. _1.9.1: http://github.com/michael-lazar/rtv/releases/tag/v1.9.1
 .. _1.9.0: http://github.com/michael-lazar/rtv/releases/tag/v1.9.0
 .. _1.8.1: http://github.com/michael-lazar/rtv/releases/tag/v1.8.1
@@ -17,6 +18,22 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.10.0_ (2016-07-11)
+--------------------
+Features
+
+* New key added, `b` extracts urls from comments with using urlviewer.
+* Comment files are saved to **/tmp** if rtv encounters an error while posting.
+* The terminal title now displays the subreddit name or submission url.
+
+Bugfixes
+
+* Fixed ia bug where the terminal title wasn't getting set.
+* Fixed crash when entering empty or invalid subreddit name.
+* **/r/me** is now displayed as "My Submissions" in the header.
+* x-posts that link to subreddits should no longer crash.
 
 -------------------
 1.9.1_ (2016-06-13)
