@@ -316,7 +316,7 @@ class Terminal(object):
         if not self.config['enable_media']:
             return self.open_browser(url)
 
-        command = None
+        command, entry = None, None
         for parser in mime_handlers.parsers:
             if parser.pattern.match(url):
                 modified_url, content_type = parser.get_mimetype(url)
@@ -335,23 +335,33 @@ class Terminal(object):
 
                 break
 
-        with self.loader('Opening page in a new window', delay=0):
-            args = [command]
-            _logger.info('Running command: %s', args)
-            # Non-blocking, run with a full shell to support pipes
-            p = subprocess.Popen(
-                args, shell=True, universal_newlines=True,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            # Wait a little while to make sure that the command doesn't exit
-            # with an error. This isn't perfect, but it should be good enough
-            # to catch invalid commands.
-            time.sleep(1.0)
-            code = p.poll()
-            if code is not None and code != 0:
-                stdout, stderr = p.communicate()
-                _logger.warning(stderr)
+        args = [command]
+        _logger.info('Running command: %s', args)
+
+        if 'needsterminal' in entry:
+            with self.suspend():
+                # Blocking, pause rtv until the process returns
+                p = subprocess.Popen(args, shell=True)
+                code = p.wait()
+            if code != 0:
                 raise exceptions.BrowserError(
                     'Program exited with status=%s' % code)
+        else:
+            with self.loader('Opening page in a new window', delay=0):
+                # Non-blocking, run with a full shell to support pipes
+                p = subprocess.Popen(
+                    args, shell=True, universal_newlines=True,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                # Wait a little while to make sure that the command doesn't
+                # exit with an error. This isn't perfect, but it should be good
+                # enough to catch invalid commands.
+                time.sleep(1.0)
+                code = p.poll()
+                if code is not None and code != 0:
+                    stdout, stderr = p.communicate()
+                    _logger.warning(stderr)
+                    raise exceptions.BrowserError(
+                        'Program exited with status=%s' % code)
 
     def open_browser(self, url):
         """

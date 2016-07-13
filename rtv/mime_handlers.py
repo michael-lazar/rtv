@@ -117,7 +117,7 @@ class GifvMIMEParser(BaseMIMEParser):
     @staticmethod
     def get_mimetype(url):
         modified_url = url[:-4] + 'webm'
-        return modified_url, 'image/webm'
+        return modified_url, 'video/webm'
 
 
 class RedditUploadsMIMEParser(BaseMIMEParser):
