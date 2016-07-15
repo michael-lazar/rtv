@@ -128,10 +128,11 @@ class Content(object):
         displayed through the terminal.
 
         Definitions:
-            permalink - Full URL to the submission comments.
-            url_full - Link that the submission points to.
-            url - URL that is displayed on the subreddit page, may be
-                  "selfpost" or "x-post" or a link.
+            permalink - URL to the reddit page with submission comments.
+            url_full - URL that the submission points to.
+            url - URL that will be displayed on the subreddit page, may be
+                "selfpost", "x-post submission", "x-post subreddit", or an
+                external link.
         """
 
         reddit_link = re.compile(
@@ -147,8 +148,7 @@ class Content(object):
         data['text'] = sub.selftext
         data['created'] = cls.humanize_timestamp(sub.created_utc)
         data['comments'] = '{0} comments'.format(sub.num_comments)
-        data['score'] = '{0} pts'.format(
-            '-' if sub.hide_score else sub.score)
+        data['score'] = '{0} pts'.format('-' if sub.hide_score else sub.score)
         data['author'] = name
         data['permalink'] = sub.permalink
         data['subreddit'] = six.text_type(sub.subreddit)
@@ -159,6 +159,7 @@ class Content(object):
         data['nsfw'] = sub.over_18
         data['stickied'] = sub.stickied
         data['hidden'] = False
+        data['xpost_subreddit'] = None
         data['index'] = None  # This is filled in later by the method caller
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:
@@ -167,8 +168,13 @@ class Content(object):
         elif reddit_link.match(sub.url):
             # Strip the subreddit name from the permalink to avoid having
             # submission.subreddit.url make a separate API call
-            data['url'] = 'self.{0}'.format(sub.url.split('/')[4])
-            data['url_type'] = 'x-post'
+            url_parts = sub.url.split('/')
+            data['xpost_subreddit'] = url_parts[4]
+            data['url'] = 'self.{0}'.format(url_parts[4])
+            if 'comments' in url_parts:
+                data['url_type'] = 'x-post submission'
+            else:
+                data['url_type'] = 'x-post subreddit'
         else:
             data['url'] = sub.url
             data['url_type'] = 'external'
