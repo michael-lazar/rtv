@@ -4,11 +4,11 @@ import mimetypes
 
 import requests
 from six.moves.html_parser import HTMLParser
-from html import parser
 
 _logger = logging.getLogger(__name__)
 
 # HTML Parsers
+
 
 class HTMLParsed(Exception):
     def __init__(self, data):
@@ -93,6 +93,27 @@ class BaseMIMEParser(object):
         return url, content_type
 
 
+class GfycatMIMEParser(BaseMIMEParser):
+    """
+    Gfycat provides a primitive json api to generate image links. URLs can be
+    downloaded as either gif, webm, or mjpg. Webm was selected because it's
+    fast and works with VLC.
+
+    https://gfycat.com/api
+        https://gfycat.com/UntidyAcidicIberianemeraldlizard -->
+        https://giant.gfycat.com/UntidyAcidicIberianemeraldlizard.webm
+    """
+    pattern = re.compile(r'https?://(www\.)?gfycat\.com/[^.]+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        parts = url.split('/')
+        api_url = '/'.join(parts[:-1] + ['cajax', 'get'] + parts[-1:])
+        resp = requests.get(api_url)
+        image_url = resp.json()['gfyItem']['webmUrl']
+        return image_url, 'video/webm'
+
+
 class YoutubeMIMEParser(BaseMIMEParser):
     """
     Youtube videos can be streamed with vlc or downloaded with youtube-dl.
@@ -109,15 +130,17 @@ class YoutubeMIMEParser(BaseMIMEParser):
 
 class GifvMIMEParser(BaseMIMEParser):
     """
-    Special case for .gifv, which is a custom video format for imgur that is
-    incorrectly (or on purpose?) returned with a Content-Type of text/html.
+    Special case for .gifv, which is a custom video format for imgur serves
+    as html with a special <video> frame. Note that attempting for download as
+    .webm also returns this html page. However, .mp4 appears to return the raw
+    video file.
     """
     pattern = re.compile(r'.*[.]gifv$')
 
     @staticmethod
     def get_mimetype(url):
-        modified_url = url[:-4] + 'webm'
-        return modified_url, 'video/webm'
+        modified_url = url[:-4] + 'mp4'
+        return modified_url, 'video/mp4'
 
 
 class RedditUploadsMIMEParser(BaseMIMEParser):
@@ -185,6 +208,7 @@ class ImgurAlbumMIMEParser(BaseMIMEParser):
 
 # Parsers should be listed in the order they will be checked
 parsers = [
+    GfycatMIMEParser,
     ImgurAlbumMIMEParser,
     ImgurMIMEParser,
     RedditUploadsMIMEParser,
