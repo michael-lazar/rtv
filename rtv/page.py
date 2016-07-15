@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 import sys
 import time
 import curses
@@ -233,7 +234,6 @@ class Page(object):
             else:
                 raise TemporaryFileError()
 
-
     @PageController.register(Command('INBOX'))
     @logged_in
     def get_inbox(self):
@@ -291,9 +291,10 @@ class Page(object):
         else:
             title = sub_name
 
-        title += ' - rtv {0}'.format(__version__)
-        sys.stdout.write('\x1b]2;{0}\x07'.format(title))
-        sys.stdout.flush()
+        if os.getenv('DISPLAY'):
+            title += ' - rtv {0}'.format(__version__)
+            sys.stdout.write('\x1b]2;{0}\x07'.format(title))
+            sys.stdout.flush()
 
         if self.reddit.user is not None:
             # The starting position of the name depends on if we're converting
