@@ -344,8 +344,11 @@ class Terminal(object):
                 p = subprocess.Popen(args, shell=True)
                 code = p.wait()
             if code != 0:
-                raise exceptions.BrowserError(
-                    'Program exited with status=%s' % code)
+                stdout, stderr = p.communicate()
+                # TODO: Need to get the error somehow, e.g. fbi without sudo
+                _logger.warning(stdout)
+                _logger.warning(stderr)
+                self.show_notification('Program exited with status=%s' % code)
         else:
             with self.loader('Opening page in a new window', delay=0):
                 # Non-blocking, run with a full shell to support pipes
