@@ -5,6 +5,7 @@ import os
 import curses
 import logging
 from functools import partial
+from tempfile import NamedTemporaryFile
 
 import praw
 import pytest
@@ -124,8 +125,16 @@ def refresh_token(request):
 
 @pytest.yield_fixture()
 def config():
-    with patch('rtv.config.Config.save_refresh_token'), \
-            patch('rtv.config.Config.save_history'):
+    with patch('rtv.config.Config.save_history'),          \
+            patch('rtv.config.Config.delete_history'),     \
+            patch('rtv.config.Config.save_refresh_token'), \
+            patch('rtv.config.Config.delete_refresh_token'):
+
+        def delete_refresh_token(self):
+            # Skip the os.remove
+            self.refresh_token = None
+        Config.delete_refresh_token.side_effect = delete_refresh_token
+
         yield Config()
 
 
