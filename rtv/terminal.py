@@ -105,7 +105,14 @@ class Terminal(object):
         if self._display is None:
             if sys.platform == 'darwin':
                 # OSX doesn't always set DISPLAY so we can't use this to check
-                display = True
+                # Note: Disabling for now, with the hope that if this
+                # is a widespread issue then people will complain and we can
+                # come up with a better solution. Checking for $DISPLAY is
+                # used extensively in mailcap files, so it really *should* be
+                # set properly. I don't have a mac anymore so I can't test.
+
+                #  display = True
+                display = bool(os.environ.get("DISPLAY"))
             else:
                 display = bool(os.environ.get("DISPLAY"))
 
