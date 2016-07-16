@@ -194,7 +194,9 @@ How do I run the repository code directly?
 ============
 Contributing
 ============
-Please read the `Contributor Guidelines <https://github.com/michael-lazar/rtv/blob/master/CONTRIBUTING.rst>`_
+All feedback and suggestions are welcome, just post an issue!
+
+Before writing any code, please read the `Contributor Guidelines <https://github.com/michael-lazar/rtv/blob/master/CONTRIBUTING.rst>`_.
 
 =======
 License
