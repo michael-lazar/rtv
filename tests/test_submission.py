@@ -223,6 +223,8 @@ def test_submission_edit(submission_page, terminal, refresh_token):
     submission_page.oauth.authorize()
 
     # Try to edit the submission - wrong author
+    data = submission_page.content.get(submission_page.nav.absolute_index)
+    data['author'] = 'some other person'
     curses.flash.reset_mock()
     submission_page.controller.trigger('e')
     assert curses.flash.called
