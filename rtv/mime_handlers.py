@@ -14,6 +14,10 @@ class HTMLParsed(Exception):
     def __init__(self, data):
         self.data = data
 
+# TODO: open temp file, close after 60 seconds with thread.timer()
+# TODO: switch to bs4 with "html.parser"
+# TODO: Add media_readme.rst
+# TODO: Add environment variables to config
 
 class ImgurHTMLParser(HTMLParser):
     """

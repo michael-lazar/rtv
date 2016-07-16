@@ -318,49 +318,62 @@ class Terminal(object):
         return ch
 
     def open_link(self, url):
+        """
+        Open a media link using the definitions from the user's mailcap file.
 
-        _logger.info('Opening link %s', url)
+        Most urls are parsed using their file extension, but special cases
+        exist for websites that are prevalent on reddit such as Imgur and
+        Gfycat. If there are no valid mailcap definitions, RTV will fall back
+        to using the default webbrowser.
+
+        RTV checks for certain mailcap fields to determine how to open a link:
+            - If ``copiousoutput`` is specified, the curses application will
+              be paused and stdout will be piped to the system pager.
+            - If `needsterminal`` is specified, the curses application will
+              yield terminal control to the subprocess until it has exited.
+            - Otherwise, we assume that the subprocess is meant to open a new
+              x-window, and we swallow all stdout output.
+
+        Examples:
+            Stream youtube videos with VLC
+            Browse images and imgur albums with feh
+            Watch .webm videos through your terminal with mplayer
+            View images directly in your terminal with fbi or w3m
+            Play .mp3 files with sox player
+            Send HTML pages your pager using to html2text
+            ...anything is possible!
+        """
+
         if not self.config['enable_media']:
             return self.open_browser(url)
 
-        command, entry = None, None
-        for parser in mime_handlers.parsers:
-            if parser.pattern.match(url):
-                modified_url, content_type = parser.get_mimetype(url)
-                _logger.info('MIME type: %s', content_type)
-                _logger.info('Modified url: %s', modified_url)
-                if not content_type or content_type == 'text/html':
-                    # Could not figure out the Content-Type
-                    return self.open_browser(modified_url)
+        try:
+            with self.loader('Checking link', catch_exception=False):
+                command, entry = self.get_mailcap_entry(url)
+        except exceptions.MailcapEntryNotFound:
+            return self.open_browser(url)
 
-                # http://bugs.python.org/issue14977
-                command, entry = mailcap.findmatch(
-                    self._mailcap_dict, content_type, filename=modified_url)
-                if not entry:
-                    _logger.info('Could not find a valid mailcap entry')
-                    return self.open_browser(modified_url)
-
-                break
-
-        args = [command]
-        _logger.info('Running command: %s', args)
-
-        if 'needsterminal' in entry:
+        _logger.info('Executing command: %s', command)
+        if 'copiousoutput' in entry:
+            # TODO: open in pager
+            pass
+        elif 'needsterminal' in entry:
+            # Blocking, pause rtv until the process returns
             with self.suspend():
-                # Blocking, pause rtv until the process returns
-                p = subprocess.Popen(args, shell=True)
+                p = subprocess.Popen(
+                    [command], stderr=subprocess.PIPE,
+                    universal_newlines=True, shell=True)
                 code = p.wait()
             if code != 0:
-                stdout, stderr = p.communicate()
-                # TODO: Need to get the error somehow, e.g. fbi without sudo
-                _logger.warning(stdout)
+                _, stderr = p.communicate()
                 _logger.warning(stderr)
-                self.show_notification('Program exited with status=%s' % code)
+                self.show_notification(
+                    'Program exited with status=%s\n%s' % (code, stderr))
         else:
-            with self.loader('Opening page in a new window', delay=0):
-                # Non-blocking, run with a full shell to support pipes
+            # Non-blocking, open a background process
+            with self.loader('Opening page', delay=0):
                 p = subprocess.Popen(
-                    args, shell=True, universal_newlines=True,
+                    [command], shell=True, universal_newlines=True,
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 # Wait a little while to make sure that the command doesn't
                 # exit with an error. This isn't perfect, but it should be good
@@ -368,10 +381,50 @@ class Terminal(object):
                 time.sleep(1.0)
                 code = p.poll()
                 if code is not None and code != 0:
-                    stdout, stderr = p.communicate()
-                    _logger.warning(stderr)
+                    _, stderr = p.communicate()
                     raise exceptions.BrowserError(
-                        'Program exited with status=%s' % code)
+                        'Program exited with status=%s\n%s' % (code, stderr))
+
+    def get_mailcap_entry(self, url):
+        """
+        Search through the mime handlers list and attempt to find the
+        appropriate command to open the provided url with.
+
+        Will raise a MailcapEntryNotFound exception if no valid command exists.
+
+        Params:
+            url (text): URL that will be checked
+
+        Returns:
+            command (text): The string of the command that should be executed
+                in a subprocess to open the resource.
+            entry (dict): The full mailcap entry for the corresponding command
+        """
+
+        for parser in mime_handlers.parsers:
+            if parser.pattern.match(url):
+                # modified_url may be the same as the original url, but it
+                # could also be updated to point to a different page, or it
+                # could refer to the location of a temporary file with the
+                # page's downloaded content.
+                modified_url, content_type = parser.get_mimetype(url)
+                if not content_type:
+                    _logger.info('Content type could not be determined')
+                    raise exceptions.MailcapEntryNotFound()
+                elif content_type == 'text/html':
+                    _logger.info('Content type text/html, deferring to browser')
+                    raise exceptions.MailcapEntryNotFound()
+
+                command, entry = mailcap.findmatch(
+                    self._mailcap_dict, content_type, filename=modified_url)
+                if not entry:
+                    _logger.info('Could not find a valid mailcap entry')
+                    raise exceptions.MailcapEntryNotFound()
+
+                return command, entry
+
+        # No parsers matched the url
+        raise exceptions.MailcapEntryNotFound()
 
     def open_browser(self, url):
         """
