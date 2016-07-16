@@ -21,7 +21,7 @@ RTV is built in **python** using the **curses** library.
 * `Usage`_
 * `Settings`_
 * `FAQ`_
-* `Changelog`_
+* `Contributing`_
 * `License`_
 
 ============
@@ -190,33 +190,11 @@ How do I run the repository code directly?
 
     $ cd ~/rtv_project
     $ python3 -m rtv
-
-How do I run the tests?
-  This project uses `pytest <http://pytest.org/>`_ and `VCR.py <https://vcrpy.readthedocs.org/>`_.
-
-  .. code-block:: bash
-    
-    $ pip3 install pytest
-    $ # The pip release for VCR.py is out-of-date
-    $ pip3 install git+https://github.com/kevin1024/vcrpy.git
-    $ cd ~/rtv_project
-    $ # Run the full suite
-    $ PYTHONPATH=. py.test
-    $ # or a single test
-    $ PYTHONPATH=. py.test tests/test_config.py::test_copy_default_config
-
-  VCR.py will record HTTP requests made during the test run and store
-  them in *tests/cassettes/*. By default these cassettes are read-only,
-  if you would like to record new cassettes you must provide your own refresh token.
-
-  .. code-block:: bash
-
-     $ PYTHONPATH=. py.test --record-mode=once --refresh-token=~/.config/rtv/refresh-token
   
-=========
-Changelog
-=========
-Please see `CHANGELOG <https://github.com/michael-lazar/rtv/blob/master/CHANGELOG.rst>`_
+============
+Contributing
+============
+Please read the `Contributor Guidelines <https://github.com/michael-lazar/rtv/blob/master/CONTRIBUTING.rst>`_
 
 =======
 License
