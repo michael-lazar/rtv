@@ -28,8 +28,13 @@ for future sessions. You can disable this behavior by setting the option
 Text editor to use when editing comments and submissions. Will fallback to
 \fI$EDITOR\fR. 
 .TP
+.BR RTV_URLVIEWER
+Url Viewer to use to extract links from comments.  Requires a compatible 
+Url Viewer to be installed
+.TP
 .BR BROWSER
 Web browser to use when opening links.
+.TP
 .BR PAGER
 Pager to use when expanding individual comments and submissions. 
 .SH AUTHOR

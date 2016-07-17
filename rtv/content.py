@@ -6,6 +6,7 @@ from datetime import datetime
 
 import six
 import praw
+from praw.errors import InvalidSubreddit
 from kitchen.text.display import wrap
 
 from . import exceptions
@@ -96,6 +97,7 @@ class Content(object):
             data['type'] = 'MoreComments'
             data['count'] = comment.count
             data['body'] = 'More comments'
+            data['hidden'] = True
         else:
             author = getattr(comment, 'author', '[deleted]')
             name = getattr(author, 'name', '[deleted]')
@@ -118,6 +120,7 @@ class Content(object):
             data['gold'] = comment.gilded > 0
             data['permalink'] = permalink
             data['stickied'] = stickied
+            data['hidden'] = False
             data['saved'] = comment.saved
 
         return data
@@ -129,10 +132,11 @@ class Content(object):
         displayed through the terminal.
 
         Definitions:
-            permalink - Full URL to the submission comments.
-            url_full - Link that the submission points to.
-            url - URL that is displayed on the subreddit page, may be
-                  "selfpost" or "x-post" or a link.
+            permalink - URL to the reddit page with submission comments.
+            url_full - URL that the submission points to.
+            url - URL that will be displayed on the subreddit page, may be
+                "selfpost", "x-post submission", "x-post subreddit", or an
+                external link.
         """
 
         reddit_link = re.compile(
@@ -148,8 +152,7 @@ class Content(object):
         data['text'] = sub.selftext
         data['created'] = cls.humanize_timestamp(sub.created_utc)
         data['comments'] = '{0} comments'.format(sub.num_comments)
-        data['score'] = '{0} pts'.format(
-            '-' if sub.hide_score else sub.score)
+        data['score'] = '{0} pts'.format('-' if sub.hide_score else sub.score)
         data['author'] = name
         data['permalink'] = sub.permalink
         data['subreddit'] = six.text_type(sub.subreddit)
@@ -159,6 +162,8 @@ class Content(object):
         data['gold'] = sub.gilded > 0
         data['nsfw'] = sub.over_18
         data['stickied'] = sub.stickied
+        data['hidden'] = False
+        data['xpost_subreddit'] = None
         data['index'] = None  # This is filled in later by the method caller
         data['saved'] = sub.saved
 
@@ -168,8 +173,13 @@ class Content(object):
         elif reddit_link.match(sub.url):
             # Strip the subreddit name from the permalink to avoid having
             # submission.subreddit.url make a separate API call
-            data['url'] = 'self.{0}'.format(sub.url.split('/')[4])
-            data['url_type'] = 'x-post'
+            url_parts = sub.url.split('/')
+            data['xpost_subreddit'] = url_parts[4]
+            data['url'] = 'self.{0}'.format(url_parts[4])
+            if 'comments' in url_parts:
+                data['url_type'] = 'x-post submission'
+            else:
+                data['url_type'] = 'x-post subreddit'
         else:
             data['url'] = sub.url
             data['url_type'] = 'external'
@@ -324,7 +334,8 @@ class SubmissionContent(Content):
                 'cache': cache,
                 'count': count,
                 'level': data['level'],
-                'body': 'Hidden'}
+                'body': 'Hidden',
+                'hidden': True}
 
             self._comment_data[index:index + len(cache)] = [comment]
 
@@ -409,6 +420,11 @@ class SubredditContent(Content):
                 submissions = reddit.search(query, subreddit=name, sort=order)
 
         else:
+            if name == '':
+                # Praw does not correctly handle empty strings
+                # https://github.com/praw-dev/praw/issues/615
+                raise InvalidSubreddit()
+
             if name == 'front':
                 dispatch = {
                     None: reddit.get_front_page,
@@ -420,6 +436,9 @@ class SubredditContent(Content):
                     }
             else:
                 subreddit = reddit.get_subreddit(name)
+                # For special subreddits like /r/random we want to replace the
+                # display name with the one returned by the request.
+                display_name = '/r/{0}'.format(subreddit.display_name)
                 dispatch = {
                     None: subreddit.get_hot,
                     'hot': subreddit.get_hot,
@@ -456,9 +475,10 @@ class SubredditContent(Content):
                     data = self.strip_praw_submission(submission)
                 except:
                     continue
-                data['index'] = index
+
+                data['index'] = len(self._submission_data) + 1
                 # Add the post number to the beginning of the title
-                data['title'] = '{0}. {1}'.format(index+1, data.get('title'))
+                data['title'] = '{0}. {1}'.format(data['index'], data['title'])
                 self._submission_data.append(data)
 
         # Modifies the original dict, faster than copying

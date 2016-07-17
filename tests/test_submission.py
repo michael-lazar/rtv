@@ -111,6 +111,24 @@ def test_submission_pager(submission_page, terminal):
         assert terminal.open_pager.called
 
 
+def test_submission_comment_not_enough_space(submission_page, terminal):
+
+    # The first comment is 10 lines, shrink the screen so that it won't fit.
+    # Setting the terminal to 10 lines means that there will only be 8 lines
+    # available (after subtracting the header and footer) to draw the comment.
+    terminal.stdscr.nlines = 10
+
+    # Select the first comment
+    with mock.patch.object(submission_page, 'clear_input_queue'):
+        submission_page.move_cursor_down()
+
+    submission_page.draw()
+
+    text = '(Not enough space to display)'.encode('ascii')
+    window = terminal.stdscr.subwin
+    window.subwin.addstr.assert_any_call(7, 1, text)
+
+
 def test_submission_vote(submission_page, refresh_token):
 
     # Log in
@@ -160,7 +178,7 @@ def test_submission_comment(submission_page, terminal, refresh_token):
     with mock.patch('praw.objects.Submission.add_comment') as add_comment, \
             mock.patch.object(terminal, 'open_editor') as open_editor,     \
             mock.patch('time.sleep'):
-        open_editor.return_value = 'comment text'
+        open_editor.return_value.__enter__.return_value = 'comment text'
 
         submission_page.controller.trigger('c')
         assert open_editor.called
@@ -205,6 +223,8 @@ def test_submission_edit(submission_page, terminal, refresh_token):
     submission_page.oauth.authorize()
 
     # Try to edit the submission - wrong author
+    data = submission_page.content.get(submission_page.nav.absolute_index)
+    data['author'] = 'some other person'
     curses.flash.reset_mock()
     submission_page.controller.trigger('e')
     assert curses.flash.called
@@ -215,7 +235,7 @@ def test_submission_edit(submission_page, terminal, refresh_token):
     with mock.patch('praw.objects.Submission.edit') as edit,           \
             mock.patch.object(terminal, 'open_editor') as open_editor, \
             mock.patch('time.sleep'):
-        open_editor.return_value = 'submission text'
+        open_editor.return_value.__enter__.return_value = 'submission text'
 
         submission_page.controller.trigger('e')
         assert open_editor.called
@@ -231,8 +251,33 @@ def test_submission_edit(submission_page, terminal, refresh_token):
     with mock.patch('praw.objects.Comment.edit') as edit,              \
             mock.patch.object(terminal, 'open_editor') as open_editor, \
             mock.patch('time.sleep'):
-        open_editor.return_value = 'comment text'
+        open_editor.return_value.__enter__.return_value = 'comment text'
 
         submission_page.controller.trigger('e')
         assert open_editor.called
         edit.assert_called_with('comment text')
+
+
+def test_submission_urlview(submission_page, terminal, refresh_token):
+
+    # Log in
+    submission_page.config.refresh_token = refresh_token
+    submission_page.oauth.authorize()
+
+    # Positive Case
+    data = submission_page.content.get(submission_page.nav.absolute_index)
+    TEST_BODY = 'test comment body'
+    data['body'] = TEST_BODY
+    with mock.patch.object(terminal, 'open_urlview') as open_urlview, \
+            mock.patch('subprocess.Popen'):
+        submission_page.controller.trigger('b')
+        open_urlview.assert_called_with(TEST_BODY)
+
+    # Negative Case
+    data = submission_page.content.get(submission_page.nav.absolute_index)
+    TEST_NO_BODY = ''
+    data['body'] = TEST_NO_BODY
+    with mock.patch.object(terminal, 'open_urlview') as open_urlview, \
+            mock.patch('subprocess.Popen'):
+        submission_page.controller.trigger('b')
+        assert not open_urlview.called

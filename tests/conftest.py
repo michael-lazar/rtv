@@ -5,6 +5,7 @@ import os
 import curses
 import logging
 from functools import partial
+from tempfile import NamedTemporaryFile
 
 import praw
 import pytest
@@ -27,7 +28,9 @@ except ImportError:
 patch = partial(mock.patch, autospec=True)
 
 # Turn on logging, but disable vcr from spamming
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s:%(levelname)s:%(filename)s:%(lineno)d:%(message)s')
 for name in ['vcr.matchers', 'vcr.stubs']:
     logging.getLogger(name).disabled = True
 
@@ -122,9 +125,18 @@ def refresh_token(request):
 
 @pytest.yield_fixture()
 def config():
-    with patch('rtv.config.Config.save_refresh_token'), \
-            patch('rtv.config.Config.save_history'):
-        yield Config()
+    conf = Config()
+    with mock.patch.object(conf, 'save_history'),          \
+            mock.patch.object(conf, 'delete_history'),     \
+            mock.patch.object(conf, 'save_refresh_token'), \
+            mock.patch.object(conf, 'delete_refresh_token'):
+ 
+        def delete_refresh_token():
+            # Skip the os.remove
+            conf.refresh_token = None
+        conf.delete_refresh_token.side_effect = delete_refresh_token
+
+        yield conf
 
 
 @pytest.yield_fixture()

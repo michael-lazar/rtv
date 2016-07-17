@@ -53,9 +53,10 @@ def test_config_get_args():
             '--log', 'logfile.log',
             '--config', 'configfile.cfg',
             '--ascii',
+            '--monochrome',
             '--non-persistent',
             '--clear-auth',
-            '--copy-config']
+            '--copy-config',]
 
     with mock.patch('sys.argv', ['rtv']):
         config_dict = Config.get_args()
@@ -67,6 +68,7 @@ def test_config_get_args():
 
         config = Config(**config_dict)
         assert config['ascii'] is True
+        assert config['monochrome'] is True
         assert config['subreddit'] == 'cfb'
         assert config['log'] == 'logfile.log'
         assert config['ascii'] is True
@@ -82,6 +84,7 @@ def test_config_from_file():
 
     args = {
         'ascii': True,
+        'monochrome': True,
         'persistent': False,
         'clear_auth': True,
         'log': 'logfile.log',

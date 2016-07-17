@@ -36,3 +36,7 @@ class ProgramError(RTVError):
 
 class BrowserError(RTVError):
     "Could not open a web browser tab"
+
+
+class TemporaryFileError(RTVError):
+    "Indicates that an error has occurred and the file should not be deleted"

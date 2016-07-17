@@ -116,6 +116,26 @@ def test_subreddit_open(subreddit_page, terminal, config):
         assert subreddit_page.open_submission.called
 
 
+def test_subreddit_open_xpost(subreddit_page, config):
+
+    data = subreddit_page.content.get(subreddit_page.nav.absolute_index)
+
+    # Open an x-post subreddit, see /r/TinySubredditoftheDay for an example
+    with mock.patch.object(subreddit_page, 'refresh_content'):
+        data['url_type'] = 'x-post subreddit'
+        data['xpost_subreddit'] = 'goodbye'
+        subreddit_page.controller.trigger('o')
+        subreddit_page.refresh_content.assert_called_with(
+            name='goodbye', order='ignore')
+
+    # Open an x-post submission, see /r/bestof for an example
+    with mock.patch.object(subreddit_page, 'open_submission'):
+        data['url_type'] = 'x-post submission'
+        data['url_full'] = 'www.test.com'
+        subreddit_page.controller.trigger('o')
+        subreddit_page.open_submission.assert_called_with(url='www.test.com')
+
+
 def test_subreddit_unauthenticated(subreddit_page, terminal):
 
     # Unauthenticated commands
@@ -148,9 +168,9 @@ def test_subreddit_post(subreddit_page, terminal, reddit, refresh_token):
     # Post a submission with a title but with no body
     subreddit_page.refresh_content(name='python')
     with mock.patch.object(terminal, 'open_editor'):
-        terminal.open_editor.return_value = 'title'
+        terminal.open_editor.return_value.__enter__.return_value = 'title'
         subreddit_page.controller.trigger('c')
-        text = 'Canceled'.encode('utf-8')
+        text = 'Missing body'.encode('utf-8')
         terminal.stdscr.subwin.addstr.assert_called_with(1, 1, text)
 
     # Post a fake submission
@@ -160,7 +180,7 @@ def test_subreddit_post(subreddit_page, terminal, reddit, refresh_token):
             mock.patch.object(reddit, 'submit'),      \
             mock.patch('rtv.page.Page.loop') as loop, \
             mock.patch('time.sleep'):
-        terminal.open_editor.return_value = 'test\ncontent'
+        terminal.open_editor.return_value.__enter__.return_value = 'test\ncont'
         reddit.submit.return_value = submission
         subreddit_page.controller.trigger('c')
         assert reddit.submit.called
@@ -177,3 +197,32 @@ def test_subreddit_open_subscriptions(subreddit_page, refresh_token):
     with mock.patch('rtv.page.Page.loop') as loop:
         subreddit_page.controller.trigger('s')
         assert loop.called
+
+
+def test_subreddit_draw_header(subreddit_page, refresh_token, terminal):
+
+    # /r/front alias should be renamed in the header
+    subreddit_page.refresh_content(name='/r/front')
+    subreddit_page.draw()
+    text = 'Front Page'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    subreddit_page.refresh_content(name='/r/front/new')
+    subreddit_page.draw()
+    text = 'Front Page'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    # Log in to check the user submissions page
+    subreddit_page.config.refresh_token = refresh_token
+    subreddit_page.oauth.authorize()
+
+    # /r/me alias should be renamed in the header
+    subreddit_page.refresh_content(name='/r/me')
+    subreddit_page.draw()
+    text = 'My Submissions'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    subreddit_page.refresh_content(name='/r/me/new')
+    subreddit_page.draw()
+    text = 'My Submissions'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 import sys
 import locale
 import logging
@@ -12,7 +13,7 @@ from . import docs
 from .config import Config, copy_default_config
 from .oauth import OAuthHelper
 from .terminal import Terminal
-from .objects import curses_session
+from .objects import curses_session, Color
 from .subreddit import SubredditPage
 from .exceptions import ConfigError
 from .__version__ import __version__
@@ -29,15 +30,17 @@ _logger = logging.getLogger(__name__)
 
 
 def main():
-    "Main entry point"
+    """Main entry point"""
 
     # Squelch SSL warnings
     logging.captureWarnings(True)
     locale.setlocale(locale.LC_ALL, '')
 
     # Set the terminal title
-    title = 'rtv {0}'.format(__version__)
-    sys.stdout.write('\x1b]2;{0}\x07'.format(title))
+    if os.getenv('DISPLAY'):
+        title = 'rtv {0}'.format(__version__)
+        sys.stdout.write('\x1b]2;{0}\x07'.format(title))
+        sys.stdout.flush()
 
     args = Config.get_args()
     fargs, bindings = Config.get_file(args.get('config'))
@@ -73,7 +76,19 @@ def main():
         #     if args[0] != "header:":
         #         _http_logger.info(' '.join(args))
         # client.print = print_to_file
-        logging.basicConfig(level=logging.DEBUG, filename=config['log'])
+        logging.basicConfig(
+            level=logging.DEBUG,
+            filename=config['log'],
+            format='%(asctime)s:%(levelname)s:%(filename)s:%(lineno)d:%(message)s')
+        _logger.info('Starting new session, RTV v%s', __version__)
+        env = [
+            ('$DISPLAY', os.getenv('DISPLAY')),
+            ('$XDG_CONFIG_HOME', os.getenv('XDG_CONFIG_HOME')),
+            ('$BROWSER', os.getenv('BROWSER')),
+            ('$PAGER', os.getenv('PAGER')),
+            ('$RTV_EDITOR', os.getenv('RTV_EDITOR')),
+            ('$RTV_URLVIEWER', os.getenv('RTV_URLVIEWER'))]
+        _logger.info('Environment: %s', env)
     else:
         # Add an empty handler so the logger doesn't complain
         logging.root.addHandler(logging.NullHandler())
@@ -83,6 +98,11 @@ def main():
 
     try:
         with curses_session() as stdscr:
+
+            # Initialize global color-pairs with curses
+            if not config['monochrome']:
+                Color.init()
+
             term = Terminal(stdscr, config['ascii'])
             with term.loader('Initializing', catch_exception=False):
                 reddit = praw.Reddit(user_agent=user_agent,

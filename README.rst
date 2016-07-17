@@ -1,8 +1,8 @@
-===========================
-RTV: Reddit Terminal Viewer
-===========================
+============================
+RTV (Reddit Terminal Viewer)
+============================
 
-| RTV allows you to view and interact with reddit from your terminal.
+| RTV provides an interface to view and interact with reddit from your terminal.
 | It's compatible with *most* terminal emulators on Linux and OSX.
 
 .. image:: http://i.imgur.com/Ek13lqM.png
@@ -21,26 +21,35 @@ RTV is built in **python** using the **curses** library.
 * `Usage`_
 * `Settings`_
 * `FAQ`_
-* `Changelog`_
+* `Contributing`_
 * `License`_
 
 ============
 Installation
 ============
 
-Install using pip...
+Install using pip (**recommended**)
 
 .. code-block:: bash
 
     $ pip install rtv
 
-or clone the repository.
+or clone the repository
 
 .. code-block:: bash
 
     $ git clone https://github.com/michael-lazar/rtv.git
     $ cd rtv
     $ python3 setup.py install
+
+on Arch Linux or Arch based distros (Antergos, Manjaro, `etc.`_) you can install directly using an `aur helper`_ such as yaourt. There's also an *rtv-git* package if you wish to keep up to date with the latest development code.
+
+.. code:: bash
+
+    $ yaourt -S rtv
+
+.. _etc.: https://wiki.archlinux.org/index.php/Arch_based_distributions_(active)
+.. _aur helper: https://wiki.archlinux.org/index.php/AUR_helpers#AUR_search.2Fbuild_helpers
 
 =====
 Usage
@@ -62,16 +71,16 @@ Move the cursor using either the arrow keys or *Vim* style movement
 - Press **right** to view the selected submission and **left** to return.
 - Press **?** to open the help screen.
 
-See `CONTROLS.rst <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of available commands.
+See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of available commands.
 
 --------------
 Authentication
 --------------
 
-RTV enables you to login to your reddit account in order to perform actions like voting and leave comments.
+RTV enables you to login to your reddit account in order to perform actions like voting and leaving comments.
 The login process uses OAuth [#]_ and follows these steps:
 
-1. Initiate a login by pressing the ``u`` key.
+1. Initiate the login by pressing the ``u`` key.
 2. Open a new webpage where reddit will ask you to authorize the application.
 3. Click **Accept**.
 
@@ -127,6 +136,33 @@ If you prefer the complete terminal experience, set ``$BROWSER`` to a console-ba
 
 `w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices.
 
+----------
+Url Viewer
+----------
+
+You can open links displayed inside of comments by taking advantage of a url extraction program.
+Use ``$RTV_URLVIEWER`` to specify a custom url viewer.
+
+.. code-block:: bash
+
+    $ export RTV_URLVIEWER=urlview
+
+`urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible, but any program that accepts text via a stdin pipe will do.
+These applications do not come pre-installed on most systems.
+
+**Ubuntu**
+
+.. code-block:: bash
+
+    $ sudo apt-get install urlview
+
+**Mac with Homebrew**
+
+.. code-block:: bash
+
+    $ brew install urlview
+
+
 ===
 FAQ
 ===
@@ -154,33 +190,13 @@ How do I run the repository code directly?
 
     $ cd ~/rtv_project
     $ python3 -m rtv
-
-How do I run the tests?
-  This project uses `pytest <http://pytest.org/>`_ and `VCR.py <https://vcrpy.readthedocs.org/>`_.
-
-  .. code-block:: bash
-    
-    $ pip3 install pytest
-    $ # The pip release for VCR.py is out-of-date
-    $ pip3 install git+https://github.com/kevin1024/vcrpy.git
-    $ cd ~/rtv_project
-    $ # Run the full suite
-    $ PYTHONPATH=. py.test
-    $ # or a single test
-    $ PYTHONPATH=. py.test tests/test_config.py::test_copy_default_config
-
-  VCR.py will record HTTP requests made during the test run and store
-  them in *tests/cassettes/*. By default these cassettes are read-only,
-  if you would like to record new cassettes you must provide your own refresh token.
-
-  .. code-block:: bash
-
-     $ PYTHONPATH=. py.test --record-mode=once --refresh-token=~/.config/rtv/refresh-token
   
-=========
-Changelog
-=========
-Please see `CHANGELOG.rst <https://github.com/michael-lazar/rtv/blob/master/CHANGELOG.rst>`_.
+============
+Contributing
+============
+All feedback and suggestions are welcome, just post an issue!
+
+Before writing any code, please read the `Contributor Guidelines <https://github.com/michael-lazar/rtv/blob/master/CONTRIBUTING.rst>`_.
 
 =======
 License

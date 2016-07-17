@@ -8,6 +8,7 @@ from . import docs
 from .content import SubmissionContent
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Color, Command
+from .exceptions import TemporaryFileError
 
 
 class SubmissionController(PageController):
@@ -33,11 +34,19 @@ class SubmissionPage(Page):
 
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
+
+        # This logic handles a display edge case after a comment toggle. We
+        # want to make sure that when we re-draw the page, the cursor stays at
+        # its current absolute position on the screen. In order to do this,
+        # apply a fixed offset if, while inverted, we either try to hide the
+        # bottom comment or toggle any of the middle comments.
         if self.nav.inverted:
-            # Reset the navigator so that the cursor is at the bottom of the
-            # page. This is a workaround to handle if folding the comment
-            # causes the cursor index to go out of bounds.
-            self.nav.page_index, self.nav.cursor_index = current_index, 0
+            data = self.content.get(current_index)
+            if data['hidden'] or self.nav.cursor_index != 0:
+                window = self._subwindows[-1][0]
+                n_rows, _ = window.getmaxyx()
+                self.nav.flip(len(self._subwindows) - 1)
+                self.nav.top_item_height = n_rows
 
     @SubmissionController.register(Command('SUBMISSION_EXIT'))
     def exit_submission(self):
@@ -113,17 +122,20 @@ class SubmissionPage(Page):
             type=data['type'].lower(),
             content=content)
 
-        comment = self.term.open_editor(comment_info)
-        if not comment:
-            self.term.show_notification('Canceled')
-            return
+        with self.term.open_editor(comment_info) as comment:
+            if not comment:
+                self.term.show_notification('Canceled')
+                return
 
-        with self.term.loader('Posting', delay=0):
-            reply(comment)
-            # Give reddit time to process the submission
-            time.sleep(2.0)
-        if not self.term.loader.exception:
-            self.refresh_content()
+            with self.term.loader('Posting', delay=0):
+                reply(comment)
+                # Give reddit time to process the submission
+                time.sleep(2.0)
+
+            if self.term.loader.exception is None:
+                self.refresh_content()
+            else:
+                raise TemporaryFileError()
 
     @SubmissionController.register(Command('DELETE'))
     @logged_in
@@ -132,6 +144,15 @@ class SubmissionPage(Page):
 
         if self.nav.absolute_index != -1:
             self.delete_item()
+        else:
+            self.term.flash()
+
+    @SubmissionController.register(Command('SUBMISSION_OPEN_IN_URLVIEWER'))
+    def comment_urlview(self):
+        data = self.content.get(self.nav.absolute_index)
+        comment = data.get('body', '')
+        if comment:
+            self.term.open_urlview(comment)
         else:
             self.term.flash()
 
@@ -154,6 +175,16 @@ class SubmissionPage(Page):
         # Handle the case where the window is not large enough to fit the text.
         valid_rows = range(0, n_rows)
         offset = 0 if not inverted else -(data['n_rows'] - n_rows)
+
+        # If there isn't enough space to fit the comment body on the screen,
+        # replace the last line with a notification.
+        split_body = data['split_body']
+        if data['n_rows'] > n_rows:
+            # Only when there is a single comment on the page and not inverted
+            if not inverted and len(self._subwindows) == 0:
+                cutoff = data['n_rows'] - n_rows + 1
+                split_body = split_body[:-cutoff]
+                split_body.append('(Not enough space to display)')
 
         row = offset
         if row in valid_rows:
@@ -182,7 +213,7 @@ class SubmissionPage(Page):
                 text, attr = self.term.saved
                 self.term.add_line(win, text, attr=attr)
 
-        for row, text in enumerate(data['split_body'], start=offset+1):
+        for row, text in enumerate(split_body, start=offset+1):
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1)
 
@@ -201,7 +232,8 @@ class SubmissionPage(Page):
         n_cols -= 1
 
         self.term.add_line(win, '{body}'.format(**data), 0, 1)
-        self.term.add_line(win, ' [{count}]'.format(**data), attr=curses.A_BOLD)
+        self.term.add_line(
+            win, ' [{count}]'.format(**data), attr=curses.A_BOLD)
 
         attr = Color.get_level(data['level'])
         self.term.addch(win, 0, 0, self.term.vline, attr)
