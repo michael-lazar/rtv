@@ -1,0 +1,270 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [rtv test suite PRAW/3.4.0 Python/3.5.1 b'Linux-4.6.2-1-ARCH-x86_64-with-arch']
+    method: GET
+    uri: https://www.reddit.com/r/Python/comments/2xmo63.json
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      CF-RAY: [2c3f7fe332073bdb-CDG]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Length: ['7685']
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sun, 17 Jul 2016 17:44:02 GMT']
+      Server: [cloudflare-nginx]
+      Set-Cookie: ['__cfduid=dd32aa93669a16567cab64306806300741468777441; expires=Mon,
+          17-Jul-17 17:44:01 GMT; path=/; domain=.reddit.com; HttpOnly', 'loid=YzaUhgAsKkrH59gUMn;
+          Domain=reddit.com; Max-Age=63071999; Path=/; expires=Tue, 17-Jul-2018 17:44:02
+          GMT; secure', 'loidcreated=2016-07-17T17%3A44%3A02.393Z; Domain=reddit.com;
+          Max-Age=63071999; Path=/; expires=Tue, 17-Jul-2018 17:44:02 GMT; secure']
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
+      Vary: [accept-encoding]
+      X-Moose: [majestic]
+      access-control-allow-origin: ['*']
+      access-control-expose-headers: ['X-Reddit-Tracking, X-Moose']
+      cache-control: ['max-age=0, must-revalidate']
+      set-cookie: ['__cfduid=dd32aa93669a16567cab64306806300741468777441; expires=Mon,
+          17-Jul-17 17:44:01 GMT; path=/; domain=.reddit.com; HttpOnly', 'loid=YzaUhgAsKkrH59gUMn;
+          Domain=reddit.com; Max-Age=63071999; Path=/; expires=Tue, 17-Jul-2018 17:44:02
+          GMT; secure', 'loidcreated=2016-07-17T17%3A44%3A02.393Z; Domain=reddit.com;
+          Max-Age=63071999; Path=/; expires=Tue, 17-Jul-2018 17:44:02 GMT; secure']
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-reddit-tracking: ['https://pixel.redditmedia.com/pixel/of_destiny.png?v=IvxE%2Bt5biKp1Mp7unlca2tdKSpkhZjF%2F7YtQYFCt3O6H33arFa7jy%2BJRqak%2FIMPRfbaQM8ikrCs%3D']
+      x-ua-compatible: [IE=edge]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: grant_type=refresh_token&redirect_uri=http%3A%2F%2F127.0.0.1%3A65000%2F&refresh_token=**********
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: ['**********']
+      Connection: [keep-alive]
+      Content-Length: ['121']
+      Content-Type: [application/x-www-form-urlencoded]
+      Cookie: [__cfduid=dd32aa93669a16567cab64306806300741468777441; loidcreated=2016-07-17T17%3A44%3A02.393Z;
+          loid=YzaUhgAsKkrH59gUMn]
+      User-Agent: [rtv test suite PRAW/3.4.0 Python/3.5.1 b'Linux-4.6.2-1-ARCH-x86_64-with-arch']
+    method: POST
+    uri: https://api.reddit.com/api/v1/access_token/
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAyWMsYrDMBAFf2VR7cIkwcWVV6QK5g7SG1l6OBtjy+yuhXUh/37ornowzLyX8yFA
+        dbA0Y3Uf5PZLO8vluJ/m76/Pn74se55u1/Lsusk15P68wcqGKo/wAqk8InPAwLHiPq2oEMfGAh24
+        Pp+7tm3IaUj/LSIbPVgtSSGOWI2t0FJ0HwUxsiltwtkbFqj6CUoCH0mwJTFSn0G6jwtbHQ3CIygn
+        g3v/AurAm4HWAAAA
+    headers:
+      CF-RAY: [2c3f7fefe10e048b-CDG]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sun, 17 Jul 2016 17:44:04 GMT']
+      Server: [cloudflare-nginx]
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
+      X-Moose: [majestic]
+      cache-control: ['max-age=0, must-revalidate']
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: ['**********']
+      Connection: [keep-alive]
+      User-Agent: [rtv test suite PRAW/3.4.0 Python/3.5.1 b'Linux-4.6.2-1-ARCH-x86_64-with-arch']
+    method: GET
+    uri: https://oauth.reddit.com/api/v1/me.json
+  response:
+    body:
+      string: !!binary |
+        H4sIAObDi1cC/31U23KcMAz9lQzPnU42yXa3/RmNMIJ1MTYj22xoJv9eiWWDaSZ9A+tIOjq6vFU2
+        Ag2jCzNR9euhRRfp20N1wQgDWlc8eRwUUaX5N/aVPBgmTNTI2+FwPp4PL6fn0/dHdbYNQcthAA51
+        SLEIItlijiP5ZnG8P6+hICezhjudjz/v4ZRLaP7l46zvoUceUF00toeakv59hA3DQD5tKIW1kioz
+        Kas38ZEwBHbAjmBkmixdI7jQdcIm5CSgxFljMXU2JmJRS3hA68IVEkVFvFUTskWv35W+Qcchj6oR
+        vY7EdiFhteCn5/eF+kRwwVF0sL4DH65bHmwi8SR5mMbASeyb7b9srd+Ajjo0M0RCNhdFtpttCLV1
+        BFeqISF3tE+BzR/iHpogrBIkRtNvxpis6WdYZVUFV0MeO0Zpugmht4u0WzWAOQWpps1eFdgZTLKh
+        oG2HLjN0tpVAXjSIO6toiV6I0bRPTnnNC2Nw1sybpQ1sROiUxgK+1u8xaRdq9J54s35V+OwoXohS
+        1PQ8Xy/Eug2rXSalDlIfGCHQL877xi0dy7JmUvf27Om6dk9m16C5fC5hIS/qNZbJFOMYZWXI6wB8
+        0mPEHAl2ibpl4KKwlz7twErhNmnQWBQypVC4CrGrJeZa6DQ2AWdX9jrJnIsQn6WOlHTICsMsuFyL
+        xTCOpfwoEzHZpKPLk5XmXdmmQuiPeaLXROU8jUHWjoZ6OSt3sABvQwODCIiwUV8plYFrF0x/X+mv
+        6MiduifQRQ66qIfz5iD3rQuu4GCX21UVF1B/qicc/EkPhKKlmNEyrrtwOJ5/PJ5fHl+OivZ1eJXx
+        zstxuV9DyWpbKzu/3KIi+BLN3GpUudXhdm91lYo866X12bn3v94SvBcEBgAA
+    headers:
+      CF-RAY: [2c3f7ffc8f493c47-CDG]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Length: ['672']
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sun, 17 Jul 2016 17:44:06 GMT']
+      Server: [cloudflare-nginx]
+      Set-Cookie: ['__cfduid=dd8a87686314451f8d2767d9bc6afed7e1468777445; expires=Mon,
+          17-Jul-17 17:44:05 GMT; path=/; domain=.reddit.com; HttpOnly', 'loid=omR4WbIUL3kOiotAHT;
+          Domain=reddit.com; Max-Age=63071999; Path=/; expires=Tue, 17-Jul-2018 17:44:06
+          GMT; secure', 'loidcreated=2016-07-17T17%3A44%3A06.156Z; Domain=reddit.com;
+          Max-Age=63071999; Path=/; expires=Tue, 17-Jul-2018 17:44:06 GMT; secure']
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
+      Vary: [accept-encoding]
+      X-Moose: [majestic]
+      cache-control: ['private, s-maxage=0, max-age=0, must-revalidate', 'max-age=0,
+          must-revalidate']
+      expires: ['-1']
+      set-cookie: ['__cfduid=dd8a87686314451f8d2767d9bc6afed7e1468777445; expires=Mon,
+          17-Jul-17 17:44:05 GMT; path=/; domain=.reddit.com; HttpOnly', 'loid=omR4WbIUL3kOiotAHT;
+          Domain=reddit.com; Max-Age=63071999; Path=/; expires=Tue, 17-Jul-2018 17:44:06
+          GMT; secure', 'loidcreated=2016-07-17T17%3A44%3A06.156Z; Domain=reddit.com;
+          Max-Age=63071999; Path=/; expires=Tue, 17-Jul-2018 17:44:06 GMT; secure']
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-ratelimit-remaining: ['599.0']
+      x-ratelimit-reset: ['354']
+      x-ratelimit-used: ['1']
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+version: 1
