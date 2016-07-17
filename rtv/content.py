@@ -395,10 +395,7 @@ class SubredditContent(Content):
                   listing='r', period=None):
 
         # Strip leading, trailing, and redundant backslashes
-        n = ''
-        n = ''.join([n + ''.join(list(g)) if k != '/' else '/' \
-                                       for k, g in groupby(name)]).strip(' /')
-        name_list = n.split('/')
+        name_list = [seg for seg in name.strip(' /').split('/') if seg]
         name_order = None
         if name_list[0] in ['r', 'u', 'user', 'domain'] and len(name_list) > 1:
             listing, name_list = name_list[0], name_list[1:]
