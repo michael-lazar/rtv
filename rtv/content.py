@@ -430,7 +430,10 @@ class SubredditContent(Content):
         if query:
             if listing in ['u', 'user'] and '/m/' not in name:
                 reddit.config.API_PATHS['search'] = 'r/{subreddit}/search'
-                query = 'author:{0} {1}'.format(name, query)
+                if name == 'me' and reddit.is_oauth_session():
+                    query = 'author:{0} {1}'.format(reddit.get_me().name, query)
+                else:
+                    query = 'author:{0} {1}'.format(name, query)
                 location = None
             else:
                 reddit.config.API_PATHS['search'] = \
