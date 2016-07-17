@@ -291,6 +291,7 @@ def test_content_subreddit_from_name(reddit, terminal):
     # Queries
     SubredditContent.from_name(reddit, 'front', terminal.loader, query='pea')
     SubredditContent.from_name(reddit, 'python', terminal.loader, query='pea')
+    SubredditContent.from_name(reddit, 'me', terminal.loader, query='pea')
 
 
 def test_content_subreddit_multireddit(reddit, terminal):
