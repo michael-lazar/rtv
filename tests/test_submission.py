@@ -175,7 +175,7 @@ def test_submission_save(submission_page, refresh_token):
     submission_page.config.refresh_token = refresh_token
     submission_page.oauth.authorize()
 
-    # Test voting on the submission
+    # Test save on the submission
     with mock.patch('praw.objects.Submission.save') as save,            \
             mock.patch('praw.objects.Submission.unsave') as unsave:
 
@@ -189,6 +189,47 @@ def test_submission_save(submission_page, refresh_token):
         # Unsave
         submission_page.controller.trigger('w')
         assert unsave.called
+        assert data['saved'] is False
+
+        # Save - exception
+        save.side_effect = KeyboardInterrupt
+        submission_page.controller.trigger('w')
+        assert data['saved'] is False
+
+
+def test_submission_comment_save(submission_page, terminal, refresh_token):
+
+    # Log in
+    submission_page.config.refresh_token = refresh_token
+    submission_page.oauth.authorize()
+
+    # View a submission with the pager
+    with mock.patch.object(terminal, 'open_pager'):
+        submission_page.controller.trigger('l')
+        assert terminal.open_pager.called
+
+    # Move down to the first comment
+    with mock.patch.object(submission_page, 'clear_input_queue'):
+        submission_page.controller.trigger('j')
+
+    data = submission_page.content.get(submission_page.nav.absolute_index)
+    # Test save on the coment submission
+    with mock.patch('praw.objects.Comment.save') as save,            \
+            mock.patch('praw.objects.Comment.unsave') as unsave:
+
+        # Save
+        submission_page.controller.trigger('w')
+        assert save.called
+        assert data['saved'] is True
+
+        # Unsave
+        submission_page.controller.trigger('w')
+        assert unsave.called
+        assert data['saved'] is False
+
+        # Save - exception
+        save.side_effect = KeyboardInterrupt
+        submission_page.controller.trigger('w')
         assert data['saved'] is False
 
 
