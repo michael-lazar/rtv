@@ -16,7 +16,7 @@ from rtv.config import Config
 from rtv.terminal import Terminal
 from rtv.subreddit import SubredditPage
 from rtv.submission import SubmissionPage
-from rtv.subscription import SubscriptionPage
+from rtv.reddits import ListRedditsPage
 
 try:
     from unittest import mock
@@ -210,13 +210,14 @@ def subreddit_page(reddit, terminal, config, oauth):
 
 
 @pytest.fixture()
-def subscription_page(reddit, terminal, config, oauth, refresh_token):
-    # Must be logged in to view your subscriptions
-    config.refresh_token = refresh_token
-    oauth.authorize()
+def reddits(reddit, terminal, config, oauth):
+    return reddit.get_popular_subreddits()
 
+
+@pytest.fixture()
+def list_reddits_page(reddit, name, reddits, terminal, config, oauth):
     with terminal.loader():
-        page = SubscriptionPage(reddit, terminal, config, oauth)
+        page = ListRedditsPage(reddit, name, reddits, terminal, config, oauth)
     assert terminal.loader.exception is None
     page.draw()
     return page
