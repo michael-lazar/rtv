@@ -79,6 +79,7 @@ def test_submission_unauthenticated(submission_page, terminal):
         'c',  # Comment
         'e',  # Edit
         'd',  # Delete
+        'w',  # Save
     ]
     for ch in methods:
         submission_page.controller.trigger(ch)
@@ -166,6 +167,29 @@ def test_submission_vote(submission_page, refresh_token):
         downvote.side_effect = KeyboardInterrupt
         submission_page.controller.trigger('a')
         assert data['likes'] is None
+
+
+def test_submission_save(submission_page, refresh_token):
+
+    # Log in
+    submission_page.config.refresh_token = refresh_token
+    submission_page.oauth.authorize()
+
+    # Test voting on the submission
+    with mock.patch('praw.objects.Submission.save') as save,            \
+            mock.patch('praw.objects.Submission.unsave') as unsave:
+
+        data = submission_page.content.get(submission_page.nav.absolute_index)
+
+        # Save
+        submission_page.controller.trigger('w')
+        assert save.called
+        assert data['saved'] is True
+
+        # Unsave
+        submission_page.controller.trigger('w')
+        assert unsave.called
+        assert data['saved'] is False
 
 
 def test_submission_comment(submission_page, terminal, refresh_token):

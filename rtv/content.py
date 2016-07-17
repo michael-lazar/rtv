@@ -123,6 +123,24 @@ class Content(object):
             data['hidden'] = False
             data['saved'] = comment.saved
 
+
+        return data
+
+    @classmethod
+    def coerce_saved_comment(cls, comment, data):
+        """
+        Parse through a submission comment saved and return a dict with data ready to
+        be displayed through the terminal.
+        """
+
+        data['title'] = data['body']
+        data['comments'] = ''
+        data['url_full'] = data['permalink']
+        data['url'] = data['permalink']
+        data['nsfw'] = comment.over_18
+        data['subreddit'] = six.text_type(comment.subreddit)
+        data['url_type'] = 'selfpost'
+
         return data
 
     @classmethod
@@ -409,7 +427,7 @@ class SubredditContent(Content):
             if not reddit.is_oauth_session():
                 raise exceptions.AccountError('Not logged in')
             elif order:
-                submissions = reddit.user.get_submitted(sort=order)
+                submissions = reddit.user.get_saved(sort=order)
             else:
                 submissions = reddit.user.get_saved()
 
@@ -469,12 +487,12 @@ class SubredditContent(Content):
             except StopIteration:
                 raise IndexError
             else:
-                # TODO: In order to display saved comment, we need to
-                # coerce the comment into a submission
-                try:
+                if hasattr(submission,'title'):
                     data = self.strip_praw_submission(submission)
-                except:
-                    continue
+                # when submission is a saved commment
+                else:
+                    data = self.strip_praw_comment(submission)
+                    data = self.coerce_saved_comment(submission, data)
 
                 data['index'] = len(self._submission_data) + 1
                 # Add the post number to the beginning of the title

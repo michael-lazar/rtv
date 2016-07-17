@@ -277,6 +277,49 @@ def test_content_subreddit_from_name(reddit, terminal):
     SubredditContent.from_name(reddit, 'front', terminal.loader, query='pea')
     SubredditContent.from_name(reddit, 'python', terminal.loader, query='pea')
 
+def test_content_subreddit_from_saved(reddit, terminal, oauth, refresh_token):
+
+    # Not logged in
+    with terminal.loader():
+        SubredditContent.from_name(reddit, '/r/saved', terminal.loader)
+    assert isinstance(terminal.loader.exception, exceptions.AccountError)
+
+    # Logged in
+    name = 'saved'
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
+    with terminal.loader():
+        content = SubredditContent.from_name(reddit, name, terminal.loader)
+    assert content.name == '/r/saved'
+    assert content.order is None
+
+    # Can submit without the /r/ and with the order in the name
+    name = 'saved/top/'
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
+    with terminal.loader():
+        content = SubredditContent.from_name(reddit, name, terminal.loader)
+    assert content.name == '/r/saved'
+    assert content.order == 'top'
+
+    # Explicit order trumps implicit
+    name = '/r/saved'
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
+    with terminal.loader():
+        content = SubredditContent.from_name(
+            reddit, name, terminal.loader, order='new')
+    assert content.name == '/r/saved'
+    assert content.order == 'new'
+
+    # Invalid order raises an exception
+    name = '/r/saved/fake'
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
+    with terminal.loader():
+        SubredditContent.from_name(reddit, name, terminal.loader)
+    assert isinstance(terminal.loader.exception, exceptions.SubredditError)
+
 
 def test_content_subreddit_multireddit(reddit, terminal):
 
