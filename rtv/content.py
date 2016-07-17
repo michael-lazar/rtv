@@ -431,18 +431,18 @@ class SubredditContent(Content):
             raise exceptions.SubredditError('Unrecognized order "%s"' % order)
 
         if query:
-            loc = None
-            if listing == 'r' and name != 'front':
-                loc = name
-
-            elif listing == 'domain':
-                query = 'site:{0} {1}'.format(name, query)
-
-            elif listing in ['u', 'user']:
+            if listing in ['u', 'user'] and '/m/' not in name:
+                reddit.config.API_PATHS['search'] = 'r/{subreddit}/search'
                 query = 'author:{0} {1}'.format(name, query)
+                location = None
+            else:
+                reddit.config.API_PATHS['search'] = \
+                            '{}/{{subreddit}}/search'.format(listing)
+                location = None if name == 'front' else name
 
-            submissions = reddit.search(query, subreddit=loc, sort=order,
+            submissions = reddit.search(query, subreddit=location, sort=order,
                                         period=period)
+
 
         elif listing == 'domain':
             submissions = reddit.get_domain_listing(name,
