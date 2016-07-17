@@ -182,31 +182,22 @@ class Content(object):
         return data
 
     @staticmethod
-    def strip_praw_subscription(subscription):
+    def strip_praw_reddit(reddit):
         """
-        Parse through a subscription and return a dict with data ready to be
+        Parse through a reddit object and return a dict with data ready to be
         displayed through the terminal.
         """
 
         data = {}
-        data['object'] = subscription
-        data['type'] = 'Subscription'
-        data['name'] = "/r/" + subscription.display_name
-        data['title'] = subscription.title
-        return data
-
-    @staticmethod
-    def strip_praw_multireddit(multireddit):
-        """
-        Parse through a multireddits and return a dict with data ready to be
-        displayed through the terminal.
-        """
-
-        data = {}
-        data['object'] = multireddit
-        data['type'] = 'Multireddit'
-        data['name'] = multireddit.path
-        data['title'] = multireddit.description_md
+        data['object'] = reddit
+        if isinstance(reddit, praw.objects.Subreddit):
+            data['type'] = 'Subreddit'
+            data['name'] = "/r/" + reddit.display_name
+            data['title'] = reddit.title
+        elif isinstance(reddit, praw.objects.Multireddit):
+            data['type'] = 'Multireddit'
+            data['name'] = reddit.path
+            data['title'] = reddit.description_md
         return data
 
     @staticmethod
@@ -533,97 +524,48 @@ class SubredditContent(Content):
         return data
 
 
-class SubscriptionContent(Content):
+class ListRedditsContent(Content):
 
-    def __init__(self, subscriptions, loader):
+    def __init__(self, name, reddits, loader):
 
-        self.name = "Subscriptions"
+        self.name = name
         self.order = None
         self._loader = loader
-        self._subscriptions = subscriptions
-        self._subscription_data = []
+        self._reddits = reddits
+        self._reddit_data = []
 
         try:
             self.get(0)
         except IndexError:
-            raise exceptions.SubscriptionError('No subscriptions')
+            raise exceptions.ListRedditsError('No {}'.format(self.name))
 
     @classmethod
-    def from_user(cls, reddit, loader):
-        subscriptions = reddit.get_my_subreddits(limit=None)
-        return cls(subscriptions, loader)
+    def from_user(cls, name, reddits, loader):
+        reddits = (r for r in reddits)
+        return cls(name, reddits, loader)
 
     def get(self, index, n_cols=70):
         """
-        Grab the `i`th subscription, with the title field formatted to fit
+        Grab the `i`th reddit, with the title field formatted to fit
         inside of a window of width `n_cols`
         """
 
         if index < 0:
             raise IndexError
 
-        while index >= len(self._subscription_data):
+        while index >= len(self._reddit_data):
             try:
-                with self._loader('Loading subscriptions'):
-                    subscription = next(self._subscriptions)
+                with self._loader('Loading {}'.format(self.name)):
+                    reddit = next(self._reddits)
                 if self._loader.exception:
                     raise IndexError
             except StopIteration:
                 raise IndexError
             else:
-                data = self.strip_praw_subscription(subscription)
-                self._subscription_data.append(data)
+                data = self.strip_praw_reddit(reddit)
+                self._reddit_data.append(data)
 
-        data = self._subscription_data[index]
-        data['split_title'] = self.wrap_text(data['title'], width=n_cols)
-        data['n_rows'] = len(data['split_title']) + 1
-        data['offset'] = 0
-
-        return data
-
-
-class MultiredditContent(Content):
-
-    def __init__(self, multireddits, loader):
-
-        self.name = "Multireddits"
-        self.order = None
-        self._loader = loader
-        self._multireddits = multireddits
-        self._multireddit_data = []
-
-        try:
-            self.get(0)
-        except IndexError:
-            raise exceptions.SubscriptionError('No multireddits')
-
-    @classmethod
-    def from_user(cls, reddit, multireddits, loader):
-        multireddits = (m for m in multireddits)
-        return cls(multireddits, loader)
-
-    def get(self, index, n_cols=70):
-        """
-        Grab the `i`th subscription, with the title field formatted to fit
-        inside of a window of width `n_cols`
-        """
-
-        if index < 0:
-            raise IndexError
-
-        while index >= len(self._multireddit_data):
-            try:
-                with self._loader('Loading multireddits'):
-                    multireddit = next(self._multireddits)
-                if self._loader.exception:
-                    raise IndexError
-            except StopIteration:
-                raise IndexError
-            else:
-                data = self.strip_praw_multireddit(multireddit)
-                self._multireddit_data.append(data)
-
-        data = self._multireddit_data[index]
+        data = self._reddit_data[index]
         data['split_title'] = self.wrap_text(data['title'], width=n_cols)
         data['n_rows'] = len(data['split_title']) + 1
         data['offset'] = 0

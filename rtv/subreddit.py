@@ -9,8 +9,7 @@ from .content import SubredditContent
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Color, Command
 from .submission import SubmissionPage
-from .multireddits import MultiredditPage
-from .subscription import SubscriptionPage
+from .reddits import ListRedditsPage
 from .exceptions import TemporaryFileError
 
 
@@ -158,8 +157,9 @@ class SubredditPage(Page):
         "Open user subscriptions page"
 
         with self.term.loader('Loading subscriptions'):
-            page = SubscriptionPage(
-                self.reddit, self.term, self.config, self.oauth)
+            page = ListRedditsPage(self.reddit, 'My Subscriptions',
+                self.reddit.get_my_subreddits(limit=None), self.term,
+                self.config, self.oauth)
         if self.term.loader.exception:
             return
 
@@ -167,9 +167,9 @@ class SubredditPage(Page):
 
         # When the user has chosen a subreddit in the subscriptions list,
         # refresh content with the selected subreddit
-        if page.subreddit_data is not None:
+        if page.reddit_data is not None:
             self.refresh_content(order='ignore',
-                                 name=page.subreddit_data['name'])
+                                 name=page.reddit_data['name'])
 
     @SubredditController.register(Command('MULTIREDDIT_OPEN_SUBSCRIPTIONS'))
     @logged_in
@@ -177,9 +177,9 @@ class SubredditPage(Page):
         "Open user multireddit subscriptions page"
 
         with self.term.loader('Loading multireddits'):
-            page = MultiredditPage(
-                self.reddit, self.reddit.get_my_multireddits(),
-                self.term, self.config)
+            page = ListRedditsPage(self.reddit,
+                'My Multireddits', self.reddit.get_my_multireddits(),
+                self.term, self.config, self.oauth)
         if self.term.loader.exception:
             return
 
@@ -187,10 +187,9 @@ class SubredditPage(Page):
 
         # When the user has chosen a subreddit in the subscriptions list,
         # refresh content with the selected subreddit
-        if page.multireddit_data is not None:
+        if page.reddit_data is not None:
             self.refresh_content(order='ignore',
-                                 name=page.multireddit_data['name'])
-
+                                 name=page.reddit_data['name'])
 
     def _draw_item(self, win, data, inverted):
 

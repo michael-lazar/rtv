@@ -26,8 +26,8 @@ class SubredditError(RTVError):
     "Subreddit could not be reached"
 
 
-class SubscriptionError(RTVError):
-    "Subscriptions could not be fetched"
+class ListRedditsError(RTVError):
+    "List of reddits could not be fetched"
 
 
 class ProgramError(RTVError):
