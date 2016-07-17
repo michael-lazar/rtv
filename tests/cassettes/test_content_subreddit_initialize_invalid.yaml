@@ -13,14 +13,14 @@ interactions:
         \ <h1>302 Found</h1>\n  The resource was found at <a href=\"https://api.reddit.com/subreddits/search.json?q=invalidsubreddit7\">https://api.reddit.com/subreddits/search.json?q=invalidsubreddit7</a>;\nyou
         should be redirected automatically.\n\n\n </body>\n</html>"}
     headers:
-      CF-RAY: [2c3e84d19f2508de-CDG]
+      CF-RAY: [2c3eff9ea1543bff-CDG]
       Connection: [keep-alive]
       Content-Length: ['313']
       Content-Type: [text/html; charset=UTF-8]
-      Date: ['Sun, 17 Jul 2016 14:52:38 GMT']
+      Date: ['Sun, 17 Jul 2016 16:16:28 GMT']
       Server: [cloudflare-nginx]
-      Set-Cookie: ['__cfduid=d3fa12abe0b5763d7bf124874970191e51468767158; expires=Mon,
-          17-Jul-17 14:52:38 GMT; path=/; domain=.reddit.com; HttpOnly']
+      Set-Cookie: ['__cfduid=d0f997f8b2eda9968b5821a8696a2aa861468772187; expires=Mon,
+          17-Jul-17 16:16:27 GMT; path=/; domain=.reddit.com; HttpOnly']
       Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
       X-Content-Type-Options: [nosniff]
       X-Moose: [majestic]
