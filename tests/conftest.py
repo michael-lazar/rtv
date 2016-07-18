@@ -228,3 +228,19 @@ def list_reddits_page(reddit, terminal, config, oauth):
     assert terminal.loader.exception is None
     page.draw()
     return page
+
+
+@pytest.fixture()
+def subscription_page(reddit, terminal, config, oauth, refresh_token):
+    # Must be logged in to view your subscriptions
+    config.refresh_token = refresh_token
+    oauth.authorize()
+
+    title = 'My Subreddits'
+    func = lambda : reddit.get_my_subreddits(limit=None)
+
+    with terminal.loader():
+        page = ListRedditsPage(reddit, title, func, terminal, config, oauth)
+    assert terminal.loader.exception is None
+    page.draw()
+    return page

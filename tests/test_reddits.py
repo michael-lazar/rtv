@@ -16,7 +16,11 @@ except ImportError:
 
 def test_list_reddits_page_construct(reddit, terminal, config,
                                      oauth, refresh_token):
-    window = terminal.stdscr.subwin
+
+    # Log in
+    config.refresh_token = refresh_token
+    oauth.authorize()
+
     title = 'Popular Subreddits'
     func = reddit.get_popular_subreddits
 
@@ -26,6 +30,7 @@ def test_list_reddits_page_construct(reddit, terminal, config,
 
     page.draw()
 
+    window = terminal.stdscr.subwin
     # Header - Title
     window.addstr.assert_any_call(0, 0, title.encode('utf-8'))
 
@@ -121,7 +126,7 @@ def test_list_reddits_close(list_reddits_page):
     assert list_reddits_page.active is False
 
 
-def test_list_reddits_page_invalid(list_reddits_page):
+def test_subscription_page_invalid(subscription_page):
 
     # Test that other commands don't crash
     methods = [
@@ -132,5 +137,5 @@ def test_list_reddits_page_invalid(list_reddits_page):
     ]
     for ch in methods:
         curses.flash.reset_mock()
-        list_reddits_page.controller.trigger(ch)
+        subscription_page.controller.trigger(ch)
         assert curses.flash.called
