@@ -223,6 +223,7 @@ def subreddit_page(reddit, terminal, config, oauth):
 def list_reddits_page(reddit, terminal, config, oauth):
     title = 'Popular Subreddits'
     func = reddit.get_popular_subreddits
+
     with terminal.loader():
         page = ListRedditsPage(reddit, title, func, terminal, config, oauth)
     assert terminal.loader.exception is None
