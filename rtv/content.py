@@ -388,7 +388,7 @@ class SubredditContent(Content):
         # Strip leading, trailing, and redundant backslashes
         name_list = [seg for seg in name.strip(' /').split('/') if seg]
         name_order = None
-        if name_list[0] in ['r', 'u', 'user', 'domain'] and len(name_list) > 1:
+        if len(name_list) > 1 and name_list[0] in ['r', 'u', 'user', 'domain']:
             listing, name_list = name_list[0], name_list[1:]
         if len(name_list) == 2:
             name, name_order = name_list
@@ -540,8 +540,8 @@ class ListRedditsContent(Content):
             raise exceptions.ListRedditsError('No {}'.format(self.name))
 
     @classmethod
-    def from_user(cls, name, reddits, loader):
-        reddits = (r for r in reddits)
+    def from_func(cls, name, func, loader):
+        reddits = (r for r in func())
         return cls(name, reddits, loader)
 
     def get(self, index, n_cols=70):

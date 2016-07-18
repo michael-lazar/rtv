@@ -156,10 +156,10 @@ class SubredditPage(Page):
     def open_subscriptions(self):
         "Open user subscriptions page"
 
+        func = lambda : self.reddit.get_my_subreddits(limit=None)
         with self.term.loader('Loading subscriptions'):
-            page = ListRedditsPage(self.reddit, 'My Subscriptions',
-                self.reddit.get_my_subreddits(limit=None), self.term,
-                self.config, self.oauth)
+            page = ListRedditsPage(self.reddit, 'My Subscriptions', func,
+                                   self.term, self.config, self.oauth)
         if self.term.loader.exception:
             return
 
@@ -176,10 +176,10 @@ class SubredditPage(Page):
     def open_multireddit_subscriptions(self):
         "Open user multireddit subscriptions page"
 
+        func = lambda : self.reddit.get_my_multireddits()
         with self.term.loader('Loading multireddits'):
             page = ListRedditsPage(self.reddit,
-                'My Multireddits', self.reddit.get_my_multireddits(),
-                self.term, self.config, self.oauth)
+                'My Multireddits', func, self.term, self.config, self.oauth)
         if self.term.loader.exception:
             return
 
