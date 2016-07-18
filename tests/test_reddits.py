@@ -14,13 +14,14 @@ except ImportError:
     import mock
 
 
-def test_list_reddits_page_construct(reddit, reddits, terminal, config,
+def test_list_reddits_page_construct(reddit, terminal, config,
                                      oauth, refresh_token):
     window = terminal.stdscr.subwin
-    title = 'Subscriptions'
+    title = 'Popular Subreddits'
+    func = reddit.get_popular_subreddits
 
     with terminal.loader():
-        page = ListRedditsPage(reddit, title, reddits, terminal, config, oauth)
+        page = ListRedditsPage(reddit, title, func, terminal, config, oauth)
     assert terminal.loader.exception is None
 
     page.draw()
@@ -49,7 +50,7 @@ def test_list_reddits_page_construct(reddit, reddits, terminal, config,
     terminal.stdscr.ncols = 20
     terminal.stdscr.nlines = 10
     with terminal.loader():
-        page = ListRedditsPage(reddit, title, reddits, terminal, config, oauth)
+        page = ListRedditsPage(reddit, title, func, terminal, config, oauth)
     assert terminal.loader.exception is None
 
     page.draw()

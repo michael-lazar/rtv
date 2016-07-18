@@ -14,12 +14,13 @@ class ListRedditsController(PageController):
 
 class ListRedditsPage(Page):
 
-    def __init__(self, reddit, name, reddits, term, config, oauth):
+    def __init__(self, reddit, name, func, term, config, oauth):
         super(ListRedditsPage, self).__init__(reddit, term, config, oauth)
 
         self.controller = ListRedditsController(self, keymap=config.keymap)
         self.name = name
-        self.content = ListRedditsContent.from_user(name, reddits, term.loader)
+        self.func = func
+        self.content = ListRedditsContent.from_func(name, func, term.loader)
         self.nav = Navigator(self.content.get)
         self.reddit_data = None
 
@@ -33,8 +34,8 @@ class ListRedditsPage(Page):
             return
 
         with self.term.loader():
-            self.content = ListRedditsContent.from_user(self.name, self.reddit,
-                                                         self.term.loader)
+            self.content = ListRedditsContent.from_func(self.name,
+                                             self.func, self.term.loader)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 

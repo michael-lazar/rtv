@@ -9,7 +9,7 @@ import praw
 import pytest
 
 from rtv.content import (
-    Content, SubmissionContent, SubredditContent, SubscriptionContent)
+    Content, SubmissionContent, SubredditContent, ListRedditsContent)
 from rtv import exceptions
 
 
@@ -291,7 +291,6 @@ def test_content_subreddit_from_name(reddit, terminal):
     # Queries
     SubredditContent.from_name(reddit, 'front', terminal.loader, query='pea')
     SubredditContent.from_name(reddit, 'python', terminal.loader, query='pea')
-    SubredditContent.from_name(reddit, 'me', terminal.loader, query='pea')
 
 
 def test_content_subreddit_multireddit(reddit, terminal):
@@ -333,23 +332,16 @@ def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):
         assert isinstance(terminal.loader.exception, exceptions.SubredditError)
 
 
-def test_content_subscription(reddit, oauth, refresh_token, terminal):
+def test_content_list_reddits(reddit, oauth, refresh_token, terminal):
 
-    # Not logged in
+    title = 'Popular Subreddits'
+    func = reddit.get_popular_subreddits
     with terminal.loader():
-        SubscriptionContent.from_user(reddit, terminal.loader)
-    assert isinstance(
-        terminal.loader.exception, praw.errors.LoginOrScopeRequired)
-
-    # Logged in
-    oauth.config.refresh_token = refresh_token
-    oauth.authorize()
-    with terminal.loader():
-        content = SubscriptionContent.from_user(reddit, terminal.loader)
+        content = ListRedditsContent.from_func(title, func, terminal.loader)
     assert terminal.loader.exception is None
 
     # These are static
-    assert content.name == 'Subscriptions'
+    assert content.name == title
     assert content.order is None
 
     # Validate content
@@ -361,11 +353,11 @@ def test_content_subscription(reddit, oauth, refresh_token, terminal):
             assert not isinstance(val, six.binary_type)
 
 
-def test_content_subscription_empty(terminal):
+def test_content_list_reddits_empty(terminal):
 
-    # Simulate an empty subscription generator
-    subscriptions = iter([])
+    # Simulate an empty list of reddits
+    func = lambda : iter([])
 
     with terminal.loader():
-        SubscriptionContent(subscriptions, terminal.loader)
-    assert isinstance(terminal.loader.exception, exceptions.SubscriptionError)
+        ListRedditsContent('test', func(), terminal.loader())
+    assert isinstance(terminal.loader.exception, exceptions.ListRedditsError)
