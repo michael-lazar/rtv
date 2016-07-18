@@ -282,7 +282,7 @@ class Page(object):
 
         sub_name = self.content.name
         sub_name = sub_name.replace('/r/front', 'Front Page')
-        sub_name = sub_name.replace('/r/me', 'My Submissions')
+        sub_name = sub_name.replace('/u/me', 'My Submissions')
         self.term.add_line(window, sub_name, 0, 0)
 
         # Set the terminal title
