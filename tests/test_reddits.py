@@ -36,7 +36,8 @@ def test_list_reddits_page_construct(reddit, terminal, config,
 
     # Header - Name
     name = reddit.user.name.encode('utf-8')
-    window.addstr.assert_any_call(0, 59, name)
+    assert name in [args[0][2] for args in window.addstr.call_args_list]
+
 
     # Banner shouldn't be drawn
     menu = ('[1]hot         '
