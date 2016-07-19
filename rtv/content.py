@@ -361,12 +361,18 @@ class SubredditContent(Content):
     list for repeat access.
     """
 
-    def __init__(self, name, submissions, loader, order=None, listing='r',
-                 period=None):
+    def __init__(
+            self,
+            name,
+            submissions,
+            loader,
+            order=None,
+            listing='r',
+            period=None):
 
-        self.listing = listing
         self.name = name
         self.order = order
+        self.listing = listing
         self.period = period
         self._loader = loader
         self._submissions = submissions
