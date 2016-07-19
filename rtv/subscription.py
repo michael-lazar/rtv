@@ -14,36 +14,36 @@ class SubscriptionController(PageController):
 
 class SubscriptionPage(Page):
 
-    def __init__(self, reddit, name, func, term, config, oauth):
+    def __init__(self, reddit, term, config, oauth, content_type='subreddit'):
         super(SubscriptionPage, self).__init__(reddit, term, config, oauth)
 
         self.controller = SubscriptionController(self, keymap=config.keymap)
-        self.name = name
-        self.func = func
-        self.content = SubscriptionContent.from_func(name, func, term.loader)
+        self.content = SubscriptionContent.from_user(reddit, term.loader,
+                                                     content_type)
         self.nav = Navigator(self.content.get)
-        self.reddit_data = None
+        self.content_type = content_type
+        self.subreddit_data = None
 
     @SubscriptionController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
-        "Re-download all reddits and reset the page index"
+        "Re-download all subscriptions and reset the page index"
 
-        # reddit listings does not support sorting by order
+        # reddit.get_my_subreddits() does not support sorting by order
         if order:
             self.term.flash()
             return
 
         with self.term.loader():
-            self.content = SubscriptionContent.from_func(
-                self.name, self.func, self.term.loader)
+            self.content = SubscriptionContent.from_user(
+                self.reddit, self.term.loader, self.content_type)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
     @SubscriptionController.register(Command('SUBSCRIPTION_SELECT'))
-    def select_reddit(self):
-        "Store the selected reddit and return to the subreddit page"
+    def select_subreddit(self):
+        "Store the selected subreddit and return to the subreddit page"
 
-        self.reddit_data = self.content.get(self.nav.absolute_index)
+        self.subreddit_data = self.content.get(self.nav.absolute_index)
         self.active = False
 
     @SubscriptionController.register(Command('SUBSCRIPTION_EXIT'))

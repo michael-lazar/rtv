@@ -33,8 +33,8 @@ HELP = """
   `e`                 : Edit an existing post or comment
   `d`                 : Delete an existing post or comment
   `i`                 : Display new messages prompt
-  `s`                 : Open/close subscribed subreddits list
-  `S`                 : Open/close subscribed multireddits list
+  `s`                 : Open subscribed subreddits
+  `S`                 : Open subscribed multireddits
 
 [Subreddit Mode]
   `l` or `RIGHT`      : Enter the selected submission

@@ -69,7 +69,7 @@ class SubredditPage(Page):
     def prompt_subreddit(self):
         "Open a prompt to navigate to a different subreddit"
 
-        name = self.term.prompt_input('Enter reddit page: ')
+        name = self.term.prompt_input('Enter page: /')
         if name is not None:
             self.refresh_content(order='ignore', name=name)
 
@@ -156,10 +156,9 @@ class SubredditPage(Page):
     def open_subscriptions(self):
         "Open user subscriptions page"
 
-        func = lambda : self.reddit.get_my_subreddits(limit=None)
         with self.term.loader('Loading subscriptions'):
-            page = SubscriptionPage(self.reddit, 'My Subscriptions', func,
-                                   self.term, self.config, self.oauth)
+            page = SubscriptionPage(self.reddit, self.term, self.config,
+                                    self.oauth)
         if self.term.loader.exception:
             return
 
@@ -167,19 +166,18 @@ class SubredditPage(Page):
 
         # When the user has chosen a subreddit in the subscriptions list,
         # refresh content with the selected subreddit
-        if page.reddit_data is not None:
+        if page.subreddit_data is not None:
             self.refresh_content(order='ignore',
-                                 name=page.reddit_data['name'])
+                                 name=page.subreddit_data['name'])
 
     @SubredditController.register(Command('MULTIREDDIT_OPEN_SUBSCRIPTIONS'))
     @logged_in
     def open_multireddit_subscriptions(self):
         "Open user multireddit subscriptions page"
 
-        func = lambda : self.reddit.get_my_multireddits()
         with self.term.loader('Loading multireddits'):
-            page = SubscriptionPage(self.reddit,
-                'My Multireddits', func, self.term, self.config, self.oauth)
+            page = SubscriptionPage(self.reddit, self.term, self.config,
+                                    self.oauth, content_type='multireddit')
         if self.term.loader.exception:
             return
 
@@ -189,7 +187,7 @@ class SubredditPage(Page):
         # refresh content with the selected subreddit
         if page.reddit_data is not None:
             self.refresh_content(order='ignore',
-                                 name=page.reddit_data['name'])
+                                 name=page.subreddit_data['name'])
 
     def _draw_item(self, win, data, inverted):
 
