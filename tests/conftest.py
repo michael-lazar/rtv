@@ -17,7 +17,7 @@ from rtv.config import Config
 from rtv.terminal import Terminal
 from rtv.subreddit import SubredditPage
 from rtv.submission import SubmissionPage
-from rtv.reddits import SubscriptionPage
+from rtv.subscription import SubscriptionPage
 
 try:
     from unittest import mock

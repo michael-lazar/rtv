@@ -9,7 +9,7 @@ from .content import SubredditContent
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Color, Command
 from .submission import SubmissionPage
-from .reddits import SubscriptionPage
+from .subscription import SubscriptionPage
 from .exceptions import TemporaryFileError
 
 

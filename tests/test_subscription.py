@@ -6,7 +6,7 @@ import curses
 import praw
 import pytest
 
-from rtv.reddits import SubscriptionPage
+from rtv.subscription import SubscriptionPage
 
 try:
     from unittest import mock

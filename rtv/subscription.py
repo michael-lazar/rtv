@@ -4,27 +4,27 @@ from __future__ import unicode_literals
 import curses
 
 from .page import Page, PageController
-from .content import ListRedditsContent
+from .content import SubscriptionContent
 from .objects import Color, Navigator, Command
 
 
-class ListRedditsController(PageController):
+class SubscriptionController(PageController):
     character_map = {}
 
 
-class ListRedditsPage(Page):
+class SubscriptionPage(Page):
 
     def __init__(self, reddit, name, func, term, config, oauth):
-        super(ListRedditsPage, self).__init__(reddit, term, config, oauth)
+        super(SubscriptionPage, self).__init__(reddit, term, config, oauth)
 
-        self.controller = ListRedditsController(self, keymap=config.keymap)
+        self.controller = SubscriptionController(self, keymap=config.keymap)
         self.name = name
         self.func = func
-        self.content = ListRedditsContent.from_func(name, func, term.loader)
+        self.content = SubscriptionContent.from_func(name, func, term.loader)
         self.nav = Navigator(self.content.get)
         self.reddit_data = None
 
-    @ListRedditsController.register(Command('REFRESH'))
+    @SubscriptionController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
         "Re-download all reddits and reset the page index"
 
@@ -34,21 +34,21 @@ class ListRedditsPage(Page):
             return
 
         with self.term.loader():
-            self.content = ListRedditsContent.from_func(self.name,
-                                             self.func, self.term.loader)
+            self.content = SubscriptionContent.from_func(
+                self.name, self.func, self.term.loader)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
-    @ListRedditsController.register(Command('SUBSCRIPTION_SELECT'))
+    @SubscriptionController.register(Command('SUBSCRIPTION_SELECT'))
     def select_reddit(self):
         "Store the selected reddit and return to the subreddit page"
 
         self.reddit_data = self.content.get(self.nav.absolute_index)
         self.active = False
 
-    @ListRedditsController.register(Command('SUBSCRIPTION_EXIT'))
+    @SubscriptionController.register(Command('SUBSCRIPTION_EXIT'))
     def close_subscriptions(self):
-        "Close list of reddits and return to the subreddit page"
+        "Close subscriptions and return to the subreddit page"
 
         self.active = False
 
