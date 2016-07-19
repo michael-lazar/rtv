@@ -524,7 +524,7 @@ class SubredditContent(Content):
         return data
 
 
-class ListRedditsContent(Content):
+class SubscriptionContent(Content):
 
     def __init__(self, name, reddits, loader):
 
@@ -537,7 +537,7 @@ class ListRedditsContent(Content):
         try:
             self.get(0)
         except IndexError:
-            raise exceptions.ListRedditsError('No {}'.format(self.name))
+            raise exceptions.SubscriptionError('No {}'.format(self.name))
 
     @classmethod
     def from_func(cls, name, func, loader):

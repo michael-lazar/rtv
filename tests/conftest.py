@@ -17,7 +17,7 @@ from rtv.config import Config
 from rtv.terminal import Terminal
 from rtv.subreddit import SubredditPage
 from rtv.submission import SubmissionPage
-from rtv.reddits import ListRedditsPage
+from rtv.reddits import SubscriptionPage
 
 try:
     from unittest import mock
@@ -220,12 +220,12 @@ def subreddit_page(reddit, terminal, config, oauth):
 
 
 @pytest.fixture()
-def list_reddits_page(reddit, terminal, config, oauth):
+def subscription_page(reddit, terminal, config, oauth):
     title = 'Popular Subreddits'
     func = reddit.get_popular_subreddits
 
     with terminal.loader():
-        page = ListRedditsPage(reddit, title, func, terminal, config, oauth)
+        page = SubscriptionPage(reddit, title, func, terminal, config, oauth)
     assert terminal.loader.exception is None
     page.draw()
     return page
@@ -241,7 +241,7 @@ def subscription_page(reddit, terminal, config, oauth, refresh_token):
     func = lambda : reddit.get_my_subreddits(limit=None)
 
     with terminal.loader():
-        page = ListRedditsPage(reddit, title, func, terminal, config, oauth)
+        page = SubscriptionPage(reddit, title, func, terminal, config, oauth)
     assert terminal.loader.exception is None
     page.draw()
     return page

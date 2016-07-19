@@ -9,7 +9,7 @@ import praw
 import pytest
 
 from rtv.content import (
-    Content, SubmissionContent, SubredditContent, ListRedditsContent)
+    Content, SubmissionContent, SubredditContent, SubscriptionContent)
 from rtv import exceptions
 
 
@@ -332,12 +332,12 @@ def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):
         assert isinstance(terminal.loader.exception, exceptions.SubredditError)
 
 
-def test_content_list_reddits(reddit, oauth, refresh_token, terminal):
+def test_content_subscription(reddit, oauth, refresh_token, terminal):
 
     title = 'Popular Subreddits'
     func = reddit.get_popular_subreddits
     with terminal.loader():
-        content = ListRedditsContent.from_func(title, func, terminal.loader)
+        content = SubscriptionContent.from_func(title, func, terminal.loader)
     assert terminal.loader.exception is None
 
     # These are static
@@ -353,11 +353,11 @@ def test_content_list_reddits(reddit, oauth, refresh_token, terminal):
             assert not isinstance(val, six.binary_type)
 
 
-def test_content_list_reddits_empty(terminal):
+def test_content_subscription_empty(terminal):
 
-    # Simulate an empty list of reddits
-    func = lambda : iter([])
+    # Simulate an empty subscription list
+    func = lambda: iter([])
 
     with terminal.loader():
-        ListRedditsContent('test', func(), terminal.loader())
-    assert isinstance(terminal.loader.exception, exceptions.ListRedditsError)
+        SubscriptionContent('test', func(), terminal.loader())
+    assert isinstance(terminal.loader.exception, exceptions.SubscriptionError)

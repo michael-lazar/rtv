@@ -6,7 +6,7 @@ import curses
 import praw
 import pytest
 
-from rtv.reddits import ListRedditsPage
+from rtv.reddits import SubscriptionPage
 
 try:
     from unittest import mock
@@ -14,7 +14,7 @@ except ImportError:
     import mock
 
 
-def test_list_reddits_page_construct(reddit, terminal, config,
+def test_subscription_page_construct(reddit, terminal, config,
                                      oauth, refresh_token):
 
     # Log in
@@ -25,7 +25,7 @@ def test_list_reddits_page_construct(reddit, terminal, config,
     func = reddit.get_popular_subreddits
 
     with terminal.loader():
-        page = ListRedditsPage(reddit, title, func, terminal, config, oauth)
+        page = SubscriptionPage(reddit, title, func, terminal, config, oauth)
     assert terminal.loader.exception is None
 
     page.draw()
@@ -56,75 +56,75 @@ def test_list_reddits_page_construct(reddit, terminal, config,
     terminal.stdscr.ncols = 20
     terminal.stdscr.nlines = 10
     with terminal.loader():
-        page = ListRedditsPage(reddit, title, func, terminal, config, oauth)
+        page = SubscriptionPage(reddit, title, func, terminal, config, oauth)
     assert terminal.loader.exception is None
 
     page.draw()
 
 
-def test_list_reddits_refresh(list_reddits_page):
+def test_subscription_refresh(subscription_page):
 
     # Refresh content - invalid order
-    list_reddits_page.controller.trigger('2')
+    subscription_page.controller.trigger('2')
     assert curses.flash.called
     curses.flash.reset_mock()
 
     # Refresh content
-    list_reddits_page.controller.trigger('r')
+    subscription_page.controller.trigger('r')
     assert not curses.flash.called
 
 
-def test_list_reddits_move(list_reddits_page):
+def test_subscription_move(subscription_page):
 
     # Test movement
-    with mock.patch.object(list_reddits_page, 'clear_input_queue'):
+    with mock.patch.object(subscription_page, 'clear_input_queue'):
 
         # Move cursor to the bottom of the page
         while not curses.flash.called:
-            list_reddits_page.controller.trigger('j')
+            subscription_page.controller.trigger('j')
         curses.flash.reset_mock()
-        assert list_reddits_page.nav.inverted
-        assert (list_reddits_page.nav.absolute_index ==
-                len(list_reddits_page.content._reddit_data) - 1)
+        assert subscription_page.nav.inverted
+        assert (subscription_page.nav.absolute_index ==
+                len(subscription_page.content._reddit_data) - 1)
 
         # And back to the top
-        for i in range(list_reddits_page.nav.absolute_index):
-            list_reddits_page.controller.trigger('k')
+        for i in range(subscription_page.nav.absolute_index):
+            subscription_page.controller.trigger('k')
         assert not curses.flash.called
-        assert list_reddits_page.nav.absolute_index == 0
-        assert not list_reddits_page.nav.inverted
+        assert subscription_page.nav.absolute_index == 0
+        assert not subscription_page.nav.inverted
 
         # Can't go up any further
-        list_reddits_page.controller.trigger('k')
+        subscription_page.controller.trigger('k')
         assert curses.flash.called
-        assert list_reddits_page.nav.absolute_index == 0
-        assert not list_reddits_page.nav.inverted
+        assert subscription_page.nav.absolute_index == 0
+        assert not subscription_page.nav.inverted
 
         # Page down should move the last item to the top
-        n = len(list_reddits_page._subwindows)
-        list_reddits_page.controller.trigger('n')
-        assert list_reddits_page.nav.absolute_index == n - 1
+        n = len(subscription_page._subwindows)
+        subscription_page.controller.trigger('n')
+        assert subscription_page.nav.absolute_index == n - 1
 
         # And page up should move back up, but possibly not to the first item
-        list_reddits_page.controller.trigger('m')
+        subscription_page.controller.trigger('m')
 
 
-def test_list_reddits_select(list_reddits_page):
+def test_subscription_page_select(subscription_page):
 
     # Select a subreddit
-    list_reddits_page.controller.trigger(curses.KEY_ENTER)
-    assert list_reddits_page.reddit_data is not None
-    assert list_reddits_page.active is False
+    subscription_page.controller.trigger(curses.KEY_ENTER)
+    assert subscription_page.reddit_data is not None
+    assert subscription_page.active is False
 
 
-def test_list_reddits_close(list_reddits_page):
+def test_subscription_close(subscription_page):
 
     # Close the list of reddits page
-    list_reddits_page.reddit_data = None
-    list_reddits_page.active = None
-    list_reddits_page.controller.trigger('h')
-    assert list_reddits_page.reddit_data is None
-    assert list_reddits_page.active is False
+    subscription_page.reddit_data = None
+    subscription_page.active = None
+    subscription_page.controller.trigger('h')
+    assert subscription_page.reddit_data is None
+    assert subscription_page.active is False
 
 
 def test_subscription_page_invalid(subscription_page):
