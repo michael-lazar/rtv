@@ -76,8 +76,8 @@ def test_subscription_move(subscription_page):
     # Test movement
     with mock.patch.object(subscription_page, 'clear_input_queue'):
 
-        # Move cursor to the bottom of the page
-        while not curses.flash.called:
+        # Move cursor down for a little while
+        for _ in range(50):
             subscription_page.controller.trigger('j')
         curses.flash.reset_mock()
         assert subscription_page.nav.inverted
@@ -124,7 +124,10 @@ def test_subscription_close(subscription_page):
     assert subscription_page.active is False
 
 
-def test_subscription_page_invalid(subscription_page):
+def test_subscription_page_invalid(subscription_page, oauth, refresh_token):
+
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
 
     # Test that other commands don't crash
     methods = [

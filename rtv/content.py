@@ -462,7 +462,7 @@ class SubredditContent(Content):
                 query = 'author:{0} {1}'.format(author, query)
                 subreddit = None
             else:
-                search = resource_root + '/{{subreddit}}/search'
+                search = resource_root + '/{subreddit}/search'
                 subreddit = None if resource == 'front' else resource
 
             reddit.config.API_PATHS['search'] = search
