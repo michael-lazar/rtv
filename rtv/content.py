@@ -361,19 +361,10 @@ class SubredditContent(Content):
     list for repeat access.
     """
 
-    def __init__(
-            self,
-            name,
-            submissions,
-            loader,
-            order=None,
-            listing='r',
-            period=None):
+    def __init__(self, name, submissions, loader, order=None):
 
         self.name = name
         self.order = order
-        self.listing = listing
-        self.period = period
         self._loader = loader
         self._submissions = submissions
         self._submission_data = []
@@ -388,114 +379,136 @@ class SubredditContent(Content):
             raise exceptions.SubredditError('No submissions')
 
     @classmethod
-    def from_name(cls, reddit, name, loader, order=None, query=None,
-                  listing='r', period=None):
+    def from_name(cls, reddit, name, loader, order=None, query=None):
+        """
+        Params:
+            reddit (praw.Reddit): Instance of the reddit api.
+            name (text): The name of the desired subreddit, user, multireddit,
+                etc. In most cases this translates directly from the URL that
+                reddit itself uses. This is what users will type in the command
+                prompt when they navigate to a new location.
+            loader (terminal.loader): Handler for the load screen that will be
+                displayed when making http requests.
+            order (text): If specified, the order that posts will be sorted in.
+                For `top` and `controversial`, you can specify the time frame
+                by including a dash, e.g. "top-year". If an order is not
+                specified, it will be extracted from the name.
+            query (text): Content to search for on the given subreddit or
+                user's page.
+        """
 
         # Strip leading, trailing, and redundant backslashes
-        name_list = [seg for seg in name.strip(' /').split('/') if seg]
-        name_order = None
-        if len(name_list) > 1 and name_list[0] in ['r', 'u', 'user', 'domain']:
-            listing, name_list = name_list[0], name_list[1:]
-        if len(name_list) == 2:
-            name, name_order = name_list
-        elif len(name_list) in [3, 4] and name_list[1] == 'm':
-            name_order = name_list[3] if name_list[3:4] else name_order
-            name = '{0}/m/{2}'.format(*name_list)
-        elif len(name_list) == 1 and name_list[0] != '':
-            name = name_list[0]
+        parts = [seg for seg in name.strip(' /').split('/') if seg]
+
+        # Check for the resource type, assume /r/ as the default
+        if len(parts) > 3 and parts[2] == ['m']:
+            # E.g. /u/multi-mod/m/android
+            resource_root, parts = '/'.join(parts[:3]), parts[3:]
+        if len(parts) > 1 and parts[0] in ['r', 'u', 'user', 'domain']:
+            resource_root = parts.pop(0)
         else:
+            resource_root = 'r'
+
+        # There should at most two parts left, the resource and the order
+        if len(parts) == 1:
+            resource, resource_order = parts[0], None
+        elif len(parts) == 2:
+            resource, resource_order = parts
+        else:
+            raise InvalidSubreddit()
+
+        if not resource:
             # Praw does not correctly handle empty strings
             # https://github.com/praw-dev/praw/issues/615
             raise InvalidSubreddit()
 
-        order = order or name_order
-        listing = 'u' if name == 'me' else listing
-        display_name = '/{0}/{1}'.format(listing, name)
+        # If the order was explicitly passed in, it will take priority over
+        # the order that was extracted from the name
+        order = order or resource_order
 
-        time = {t: '_from_' + t for t in ['all', 'day', 'hour',
-                                          'month', 'week', 'year']}
-        time[None] = ''
+        display_order = order
+        display_name = '/'.join(['', resource_root, resource])
 
-        if period not in time.keys():
-            raise exceptions.SubredditError('Unrecognized period "%s"'
-                                            % period)
+        # Split the order from the period E.g. controversial-all, top-hour
+        if order and '-' in order:
+            order, period = order.split('-', 1)
+        else:
+            period = None
 
-        elif order not in ['hot', 'top', 'rising', 'new',
-                           'controversial', None]:
-            raise exceptions.SubredditError('Unrecognized order "%s"' % order)
+        if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
+            raise InvalidSubreddit('Invalid order "%s"' % order)
+        if period not in ['all', 'day', 'hour', 'month', 'week', 'year', None]:
+            raise InvalidSubreddit('Invalid period "%s"' % period)
+        if period and order not in ['top', 'controversial']:
+            raise InvalidSubreddit('"%s" order does not allow sorting by'
+                                   'period' % order)
 
+        # On some objects, praw doesn't allow you to pass arguments for the
+        # order and period. Instead you need to call special helper functions
+        # such as Multireddit.get_controversial_from_year(). Build the method
+        # name here for convenience.
+        if period:
+            method_alias = 'get_{0}_from_{1}'.format(order, period)
+        elif order:
+            method_alias = 'get_{0}'.format(order)
+        else:
+            method_alias = 'get_hot'
+
+        # Here's where we start to build the submission generators
         if query:
-            if listing in ['u', 'user'] and '/m/' not in name:
-                reddit.config.API_PATHS['search'] = 'r/{subreddit}/search'
-                if name == 'me' and reddit.is_oauth_session():
-                    query = 'author:{0} {1}'.format(reddit.get_me().name, query)
-                else:
-                    query = 'author:{0} {1}'.format(name, query)
-                location = None
+            if resource_root in ('u', 'user'):
+                search = '/r/{subreddit}/search'
+                author = reddit.user.name if resource == 'me' else resource
+                query = 'author:{0} {1}'.format(author, query)
+                subreddit = None
             else:
-                reddit.config.API_PATHS['search'] = \
-                            '{}/{{subreddit}}/search'.format(listing)
-                location = None if name == 'front' else name
+                search = resource_root + '/{{subreddit}}/search'
+                subreddit = None if resource == 'front' else resource
 
-            submissions = reddit.search(query, subreddit=location, sort=order,
-                                        period=period)
+            reddit.config.API_PATHS['search'] = search
+            submissions = reddit.search(query, subreddit=subreddit,
+                                        sort=order, period=period)
 
+        elif resource_root == 'domain':
+            order = order or 'hot'
+            submissions = reddit.get_domain_listing(
+                resource, sort=order, period=period, limit=None)
 
-        elif listing == 'domain':
-            submissions = reddit.get_domain_listing(name,
-                                          sort=(order or 'hot'), period=period)
+        elif resource_root.endswith('/m'):
+            redditor, _, multi = resource_root.split('/')
+            multireddit = reddit.get_multireddit(redditor, multi)
+            submissions = getattr(multireddit, method_alias)(limit=None)
 
-        elif listing in ['u', 'user']:
-            if '/m/' in name:
-                multireddit = reddit.get_multireddit(*name.split('/')[::2])
-                if order in ['top', 'controversial']:
-                    submissions = eval('multireddit.get_{0}{1}(limit=None)' \
-                                       .format((order), time[period]))
-                else:
-                    submissions = eval('multireddit.get_{0}(limit=None)' \
-                                       .format((order or 'hot')))
-
-            elif name == 'me':
-                if not reddit.is_oauth_session():
-                    raise  exceptions.AccountError('Not logged in')
-                else:
-                    submissions = reddit.user.get_submitted( \
-                                                         sort=(order or 'new'))
+        elif resource_root in ('u', 'user') and resource == 'me':
+            if not reddit.is_oauth_session():
+                raise exceptions.AccountError('Not logged in')
             else:
-                redditor = reddit.get_redditor(name)
-                submissions = redditor.get_submitted(sort=(order or 'new'),
-                                                        time=(period or 'all'))
+                order = order or 'new'
+                submissions = reddit.user.get_submitted(sort=order, limit=None)
 
-        elif listing == 'r':
-            if name == 'front':
-                dispatch = {
-                    None: reddit.get_front_page,
-                    'hot': reddit.get_front_page,
-                    'top': eval('reddit.get_top' + time[period]),
-                    'rising': reddit.get_rising,
-                    'new': reddit.get_new,
-                    'controversial': eval('reddit.get_controversial' \
-                                                               + time[period]),
-                    }
+        elif resource_root in ('u', 'user'):
+            order = order or 'new'
+            period = period or 'all'
+            redditor = reddit.get_redditor(resource)
+            submissions = redditor.get_submitted(
+                sort=order, time=period, limit=None)
 
+        elif resource == 'front':
+            if order in (None, 'hot'):
+                submissions = reddit.get_front_page(limit=None)
             else:
-                subreddit = reddit.get_subreddit(name)
-                # For special subreddits like /r/random we want to replace the
-                # display name with the one returned by the request.
-                display_name = '/r/{0}'.format(subreddit.display_name)
-                dispatch = {
-                    None: subreddit.get_hot,
-                    'hot': subreddit.get_hot,
-                    'top': eval('subreddit.get_top' + time[period]),
-                    'rising': subreddit.get_rising,
-                    'new': subreddit.get_new,
-                    'controversial': eval('subreddit.get_controversial' \
-                                                               + time[period]),
-                    }
-            submissions = dispatch[order](limit=None)
+                submissions = getattr(reddit, method_alias)(limit=None)
 
-        return cls(display_name, submissions, loader, order=order,
-                   listing=listing, period=period)
+        else:
+            subreddit = reddit.get_subreddit(resource)
+            submissions = getattr(subreddit, method_alias)(limit=None)
+
+            # For special subreddits like /r/random we want to replace the
+            # display name with the one returned by the request.
+            display_name = '/r/{0}'.format(subreddit.display_name)
+
+        # We made it!
+        return cls(display_name, submissions, loader, order=display_order)
 
     def get(self, index, n_cols=70):
         """

@@ -18,8 +18,8 @@ class SubscriptionPage(Page):
         super(SubscriptionPage, self).__init__(reddit, term, config, oauth)
 
         self.controller = SubscriptionController(self, keymap=config.keymap)
-        self.content = SubscriptionContent.from_user(reddit, term.loader,
-                                                     content_type)
+        self.content = SubscriptionContent.from_user(
+            reddit, term.loader, content_type)
         self.nav = Navigator(self.content.get)
         self.content_type = content_type
         self.subreddit_data = None
