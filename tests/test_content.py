@@ -234,33 +234,74 @@ def test_content_subreddit_load_more(reddit, terminal):
         assert data['title'].startswith(six.text_type(i + 1))
 
 
-def test_content_subreddit_from_name(reddit, terminal):
+@pytest.mark.parametrize('text,name,order', [
+        ('python', '/r/python', None),
+        ('python/', '/r/python', None),
+        ('r/python', '/r/python', None),
+        ('/r/python', '/r/python', None),
 
-    name = '/r/python'
-    content = SubredditContent.from_name(reddit, name, terminal.loader)
-    assert content.name == '/r/python'
-    assert content.order is None
+        ('/r/pics/new', '/r/pics', 'new'),
+        ('/r/pics/hot/', '/r/pics', 'hot'),
+        ('pics/top', '/r/pics', 'top'),
+        ('r/pics/rising', '/r/pics', 'rising'),
+        ('/r/pics/controversial', '/r/pics', 'controversial'),
 
-    name = '/domain/python.org'
-    content = SubredditContent.from_name(reddit, name, terminal.loader)
-    assert content.name == '/domain/python.org'
-    assert content.order is None
+        ('/r/pics/top-day', '/r/pics', 'top-day'),
+        ('/r/pics/top-hour', '/r/pics', 'top-hour'),
+        ('/r/pics/top-month', '/r/pics', 'top-month'),
+        ('/r/pics/top-week', '/r/pics', 'top-week'),
+        ('/r/pics/top-year', '/r/pics', 'top-year'),
+        ('/r/pics/top-all', '/r/pics', 'top-all'),
 
-    name = '/user/spez'
-    content = SubredditContent.from_name(reddit, name, terminal.loader)
-    assert content.name == '/user/spez'
-    assert content.order is None
+        ('/r/pics+linux', '/r/pics+linux', None),
+        ('/r/pics+linux/new', '/r/pics+linux', 'new'),
 
-    name = '/u/multi-mod/m/art'
-    content = SubredditContent.from_name(reddit, name, terminal.loader)
-    assert content.name == '/u/multi-mod/m/art'
-    assert content.order is None
+        ('front', '/r/front', None),
+        ('/r/front', '/r/front', None),
+        ('/r/front/new', '/r/front', 'new'),
+        ('/r/front/top-week', '/r/front', 'top-week'),
 
-    # Can submit without the /r/ and with the order in the name
-    name = 'python/top/'
-    content = SubredditContent.from_name(reddit, name, terminal.loader)
-    assert content.name == '/r/python'
-    assert content.order == 'top'
+        ('/user/spez', '/user/spez', None),
+        ('/u/spez', '/u/spez', None),
+        ('/u/spez/new', '/u/spez', 'new'),
+        ('/u/spez/top-all', '/u/spez', 'top-all'),
+
+        ('/user/multi-mod/m/art', '/user/multi-mod/m/art', None),
+        ('/u/multi-mod/m/art', '/u/multi-mod/m/art', None),
+        ('/u/multi-mod/m/art/new', '/u/multi-mod/m/art', 'top'),
+        ('/u/multi-mod/m/art/top-all', '/u/multi-mod/m/art', 'top-all'),
+
+        ('/domain/python.org', '/domain/python.org', None),
+        ('/domain/python.org/new', '/domain/python.org', 'new'),
+        ('/domain/python.org/top-week', '/domain/python.org', 'top-week')])
+def test_content_subreddit_from_name(text, name, order, reddit, terminal):
+
+    content = SubredditContent.from_name(reddit, text, terminal.loader)
+    assert content.name == name
+    assert content.order == order
+
+
+@pytest.mark.parametrize('text,name,order', [
+        ('/user/me', '/user/me', None),
+        ('/u/me', '/u/me', None),
+        ('/u/me/new', '/u/me', 'new'),
+        ('/u/me/top-week', '/u/me', 'top-week')])
+def test_content_subreddit_from_name_authenticated(
+        text, name, order, reddit, terminal, oauth, refresh_token):
+
+    with pytest.raises(exceptions.AccountError):
+        SubredditContent.from_name(reddit, text, terminal.loader)
+
+    # Login and try again
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
+
+    content = SubredditContent.from_name(reddit, text, terminal.loader)
+    assert content.name == name
+    assert content.order == order
+
+
+def test_content_subreddit_from_name_invalid(reddit, terminal):
 
     # Explicit order trumps implicit
     name = '/r/python/top'
@@ -269,11 +310,10 @@ def test_content_subreddit_from_name(reddit, terminal):
     assert content.name == '/r/python'
     assert content.order == 'new'
 
-    # Invalid order raises an exception
-    name = '/r/python/fake'
-    with terminal.loader():
-        SubredditContent.from_name(reddit, name, terminal.loader)
-    assert isinstance(terminal.loader.exception, exceptions.SubredditError)
+    for name in ['/r/python/fake', '/r/python/top-fake', '/r/python/new-all']:
+        with terminal.loader():
+            SubredditContent.from_name(reddit, name, terminal.loader)
+        assert isinstance(terminal.loader.exception, exceptions.SubredditError)
 
     # A couple of edge cases
     names = ['', '/', '//', '/////////////////']
@@ -283,15 +323,20 @@ def test_content_subreddit_from_name(reddit, terminal):
         assert isinstance(terminal.loader.exception,
                           praw.errors.InvalidSubreddit)
 
-    # Front page alias
-    name = '/r/front/rising'
-    content = SubredditContent.from_name(reddit, name, terminal.loader)
-    assert content.name == '/r/front'
-    assert content.order == 'rising'
 
-    # Queries
-    SubredditContent.from_name(reddit, 'front', terminal.loader, query='pea')
-    SubredditContent.from_name(reddit, 'python', terminal.loader, query='pea')
+@pytest.mark.parametrize('text', [
+        '/r/front',
+        '/r/python',
+        '/r/python/top-week',
+        '/u/spez',
+        '/user/spez/top-week',
+        '/u/multi-mod/m/art',
+        '/u/multi-mod/m/art/top-week',
+        '/domain/python.org',
+        '/domain/python.org/top-week'])
+def test_content_subreddit_from_name_query(text, reddit, terminal):
+
+    SubredditContent.from_name(reddit, text, terminal.loader, query='pea')
 
 
 def test_content_subreddit_multireddit(reddit, terminal):
