@@ -30,7 +30,7 @@ class SubredditPage(Page):
         self.controller = SubredditController(self, keymap=config.keymap)
         self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.nav = Navigator(self.content.get)
-        self._toggled_subreddit = ''
+        self._toggled_subreddit = None
 
     @SubredditController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
@@ -82,14 +82,14 @@ class SubredditPage(Page):
         """
 
         target =''
-        if not self.on_frontpage():
+        if not self.content.name == '/r/front':
             target = '/r/front'
-            self.set_last_subreddit()
+            self._toggled_subreddit = self.content.name
         else:
-            target = self.get_last_subreddit()
+            target = self._toggled_subreddit
 
         # target still may be emptystring if this command hasn't yet been used
-        if not target == '': 
+        if not target == None:
             self.refresh_content(order='ignore',name=target)
 
     @SubredditController.register(Command('SUBREDDIT_OPEN'))
@@ -188,16 +188,6 @@ class SubredditPage(Page):
         if page.subreddit_data is not None:
             self.refresh_content(order='ignore',
                                  name=page.subreddit_data['name'])
-
-    def on_frontpage(self):
-        "Returns whether the current page is the front page"
-        return self.content.name == '/r/front'
-
-    def set_last_subreddit(self):
-        self._toggled_subreddit = self.content.name
-
-    def get_last_subreddit(self):
-        return self._toggled_subreddit
 
     def _draw_item(self, win, data, inverted):
 

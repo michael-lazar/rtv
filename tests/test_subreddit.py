@@ -226,3 +226,11 @@ def test_subreddit_draw_header(subreddit_page, refresh_token, terminal):
     subreddit_page.draw()
     text = 'My Submissions'.encode('utf-8')
     terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+def test_subreddit_frontpage_toggle(subreddit_page, terminal):
+    with mock.patch.object(terminal, 'prompt_input'):
+        terminal.prompt_input.return_value = 'aww'
+        subreddit_page.controller.trigger('/')
+        assert subreddit_page.content.name == '/r/aww'
+        subreddit_page.controller.trigger('p')
+        assert subreddit_page.content.name == '/r/front'
