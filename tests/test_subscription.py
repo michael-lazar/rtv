@@ -14,35 +14,32 @@ except ImportError:
     import mock
 
 
-def test_subscription_page_construct(reddit, terminal, config,
-                                     oauth, refresh_token):
+def test_subscription_page_construct(reddit, terminal, config, oauth,
+                                     refresh_token):
+    window = terminal.stdscr.subwin
 
     # Log in
     config.refresh_token = refresh_token
     oauth.authorize()
 
-    title = 'Popular Subreddits'
-    func = reddit.get_popular_subreddits
-
     with terminal.loader():
-        page = SubscriptionPage(reddit, title, func, terminal, config, oauth)
+        page = SubscriptionPage(reddit, terminal, config, oauth, 'popular')
     assert terminal.loader.exception is None
 
     page.draw()
 
-    window = terminal.stdscr.subwin
     # Header - Title
-    window.addstr.assert_any_call(0, 0, title.encode('utf-8'))
+    title = 'Popular Subreddits'.encode('utf-8')
+    window.addstr.assert_any_call(0, 0, title)
 
     # Header - Name
     name = reddit.user.name.encode('utf-8')
     assert name in [args[0][2] for args in window.addstr.call_args_list]
 
-
     # Banner shouldn't be drawn
     menu = ('[1]hot         '
             '[2]top         '
-            '[3]rising      '
+            '[3]rising         '  # Whitespace is relevant
             '[4]new         '
             '[5]controversial').encode('utf-8')
     with pytest.raises(AssertionError):
@@ -56,7 +53,7 @@ def test_subscription_page_construct(reddit, terminal, config,
     terminal.stdscr.ncols = 20
     terminal.stdscr.nlines = 10
     with terminal.loader():
-        page = SubscriptionPage(reddit, title, func, terminal, config, oauth)
+        page = SubscriptionPage(reddit, terminal, config, oauth, 'popular')
     assert terminal.loader.exception is None
 
     page.draw()
@@ -85,7 +82,7 @@ def test_subscription_move(subscription_page):
         curses.flash.reset_mock()
         assert subscription_page.nav.inverted
         assert (subscription_page.nav.absolute_index ==
-                len(subscription_page.content._reddit_data) - 1)
+                len(subscription_page.content._subscription_data) - 1)
 
         # And back to the top
         for i in range(subscription_page.nav.absolute_index):
@@ -109,21 +106,21 @@ def test_subscription_move(subscription_page):
         subscription_page.controller.trigger('m')
 
 
-def test_subscription_page_select(subscription_page):
+def test_subscription_select(subscription_page):
 
     # Select a subreddit
     subscription_page.controller.trigger(curses.KEY_ENTER)
-    assert subscription_page.reddit_data is not None
+    assert subscription_page.subreddit_data is not None
     assert subscription_page.active is False
 
 
 def test_subscription_close(subscription_page):
 
-    # Close the list of reddits page
-    subscription_page.reddit_data = None
+    # Close the subscriptions page
+    subscription_page.subreddit_data = None
     subscription_page.active = None
     subscription_page.controller.trigger('h')
-    assert subscription_page.reddit_data is None
+    assert subscription_page.subreddit_data is None
     assert subscription_page.active is False
 
 

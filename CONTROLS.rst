@@ -52,8 +52,8 @@ The ``/`` prompt accepts subreddits in the following formats
 * ``/r/front`` will redirect to the front page
 * ``/u/me`` will display your submissions
 * ``/u/spez`` will display submissions from any other user
-* ``/u/multi-mod/m/android`` display a multireddit curated by a user
-* ``/domain/python.org`` display submissions to stated domain
+* ``/u/multi-mod/m/android`` will display a multireddit curated by a user
+* ``/domain/python.org`` will display submissions to the stated domain
 
 ---------------
 Submission Mode

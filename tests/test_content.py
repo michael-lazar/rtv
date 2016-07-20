@@ -6,6 +6,7 @@ from itertools import islice
 
 import six
 import praw
+import mock
 import pytest
 
 from rtv.content import (
@@ -332,16 +333,21 @@ def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):
         assert isinstance(terminal.loader.exception, exceptions.SubredditError)
 
 
-def test_content_subscription(reddit, oauth, refresh_token, terminal):
+def test_content_subscription(reddit, terminal):
 
-    title = 'Popular Subreddits'
-    func = reddit.get_popular_subreddits
+    # Not logged in
     with terminal.loader():
-        content = SubscriptionContent.from_func(title, func, terminal.loader)
+        SubscriptionContent.from_user(reddit, terminal.loader)
+    assert isinstance(
+        terminal.loader.exception, praw.errors.LoginOrScopeRequired)
+
+    with terminal.loader():
+        content = SubscriptionContent.from_user(
+            reddit, terminal.loader, 'popular')
     assert terminal.loader.exception is None
 
     # These are static
-    assert content.name == title
+    assert content.name == 'Popular Subreddits'
     assert content.order is None
 
     # Validate content
@@ -353,11 +359,11 @@ def test_content_subscription(reddit, oauth, refresh_token, terminal):
             assert not isinstance(val, six.binary_type)
 
 
-def test_content_subscription_empty(terminal):
+def test_content_subscription_empty(reddit, terminal):
 
     # Simulate an empty subscription list
-    func = lambda: iter([])
-
-    with terminal.loader():
-        SubscriptionContent('test', func(), terminal.loader())
+    with mock.patch.object(reddit, 'get_my_subreddits') as func:
+        func.return_value = iter([])
+        with terminal.loader():
+            SubscriptionContent(reddit, terminal.loader)
     assert isinstance(terminal.loader.exception, exceptions.SubscriptionError)
