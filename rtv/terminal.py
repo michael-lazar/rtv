@@ -20,7 +20,7 @@ from kitchen.text.display import textual_width_chop
 from mailcap_fix import mailcap
 
 from . import exceptions
-from . import mime_handlers
+from . import mime_parsers
 from .objects import LoadScreen, Color
 
 
@@ -401,7 +401,7 @@ class Terminal(object):
             entry (dict): The full mailcap entry for the corresponding command
         """
 
-        for parser in mime_handlers.parsers:
+        for parser in mime_parsers.parsers:
             if parser.pattern.match(url):
                 # modified_url may be the same as the original url, but it
                 # could also be updated to point to a different page, or it

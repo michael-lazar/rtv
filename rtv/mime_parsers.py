@@ -3,71 +3,10 @@ import logging
 import mimetypes
 
 import requests
-from six.moves.html_parser import HTMLParser
+from bs4 import BeautifulSoup
 
 _logger = logging.getLogger(__name__)
 
-# HTML Parsers
-
-
-class HTMLParsed(Exception):
-    def __init__(self, data):
-        self.data = data
-
-# TODO: open temp file, close after 60 seconds with thread.timer()
-# TODO: switch to bs4 with "html.parser"
-# TODO: Add media_readme.rst
-# TODO: Add environment variables to config
-
-class ImgurHTMLParser(HTMLParser):
-    """
-    Scrape the actual image url from an imgur landing page. Imgur intentionally
-    obscures this on most reddit links in order to draw more traffic for their
-    advertisements.
-
-    There are a couple of <meta> tags that supply the relevant info:
-        <meta name="twitter:image" content="https://i.imgur.com/xrqQ4LEh.jpg">
-        <meta property="og:image" content="http://i.imgur.com/xrqQ4LE.jpg?fb">
-        <link rel="image_src" href="http://i.imgur.com/xrqQ4LE.jpg">
-
-    Note:
-        BeautifulSoup or lxml would be faster here but I wanted to skip adding
-        an extra dependency for something this trivial.
-    """
-    def handle_starttag(self, tag, attr):
-        if tag == 'meta' and attr[0] == ('name', 'twitter:image'):
-            raise HTMLParsed(attr[1][1])
-
-
-class ImgurAlbumHTMLParser(HTMLParser):
-    """
-    Scrape the complete list of images from an imgur album. The HTML parser is
-    very limited, so this assumes the following html structure:
-
-        <div class="post-image">
-            <a href="//i.imgur.com/L3Lfp1O.jpg" class="zoom">
-                <img class="post-image-placeholder"
-                     src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
-                <img class="js-post-image-thumb"
-                     src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
-            </a>
-        </div>
-    """
-    def reset(self):
-        super(ImgurAlbumHTMLParser, self).reset()
-        self.primed = False
-        self.hrefs = []
-
-    def handle_starttag(self, tag, attr):
-        if tag == 'div' and ('class', 'post-image') in attr:
-            self.primed = True
-        elif self.primed:
-            self.primed = False
-            if tag == 'a' and attr[0][0] == 'href':
-                self.hrefs.append(attr[0][1])
-
-
-# MIME Parsers
 
 class BaseMIMEParser(object):
     """
@@ -103,7 +42,8 @@ class GfycatMIMEParser(BaseMIMEParser):
     downloaded as either gif, webm, or mjpg. Webm was selected because it's
     fast and works with VLC.
 
-    https://gfycat.com/api
+        https://gfycat.com/api
+
         https://gfycat.com/UntidyAcidicIberianemeraldlizard -->
         https://giant.gfycat.com/UntidyAcidicIberianemeraldlizard.webm
     """
@@ -166,43 +106,54 @@ class ImgurMIMEParser(BaseMIMEParser):
     """
     The majority of imgur links don't point directly to the image, so we need
     to open the provided url and scrape the page for the link.
+
+    Scrape the actual image url from an imgur landing page. Imgur intentionally
+    obscures this on most reddit links in order to draw more traffic for their
+    advertisements.
+
+    There are a couple of <meta> tags that supply the relevant info:
+        <meta name="twitter:image" content="https://i.imgur.com/xrqQ4LEh.jpg">
+        <meta property="og:image" content="http://i.imgur.com/xrqQ4LE.jpg?fb">
+        <link rel="image_src" href="http://i.imgur.com/xrqQ4LE.jpg">
     """
     pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/[^.]+$')
 
     @staticmethod
     def get_mimetype(url):
-        imgur_page = requests.get(url)
-        try:
-            # convert_charrefs will be true by default in python 3.5
-            ImgurHTMLParser(convert_charrefs=True).feed(imgur_page.text)
-        except HTMLParsed as data:
-            # We found a link
-            url = data.data
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        tag = soup.find('meta', attrs={'name': 'twitter:image'})
+        if tag:
+            url = tag.get('content')
             if GifvMIMEParser.pattern.match(url):
                 return GifvMIMEParser.get_mimetype(url)
-
         return BaseMIMEParser.get_mimetype(url)
 
 
 class ImgurAlbumMIMEParser(BaseMIMEParser):
     """
     Imgur albums can contain several images, which need to be scraped from the
-    landing page.
+    landing page. Assumes the following html structure:
+
+        <div class="post-image">
+            <a href="//i.imgur.com/L3Lfp1O.jpg" class="zoom">
+                <img class="post-image-placeholder"
+                     src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
+                <img class="js-post-image-thumb"
+                     src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
+            </a>
+        </div>
     """
     pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/a(lbum)?/[^.]+$')
 
     @staticmethod
     def get_mimetype(url):
-        imgur_page = requests.get(url)
-        parser = ImgurAlbumHTMLParser(convert_charrefs=True)
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
 
-        try:
-            parser.feed(imgur_page.text)
-        except Exception as e:
-            _logger.warning(e)
-            urls = []
-        else:
-            urls = ['http:' + href for href in parser.hrefs]
+        urls = []
+        for div in soup.find_all('div', class_='post-image'):
+            urls.append('http:' + div.find('img').get('src'))
 
         if urls:
             return "' '".join(urls), 'image/x-imgur-album'
