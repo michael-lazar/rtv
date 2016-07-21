@@ -77,20 +77,19 @@ class SubredditPage(Page):
     @SubredditController.register(Command('SUBREDDIT_FRONTPAGE'))
     def show_frontpage(self):
         """
-        If on a subreddit, remeber it and head back to the front page.
+        If on a subreddit, remember it and head back to the front page.
         If this was pressed on the front page, go back to the last subreddit.
         """
 
-        target =''
         if not self.content.name == '/r/front':
             target = '/r/front'
             self._toggled_subreddit = self.content.name
         else:
             target = self._toggled_subreddit
 
-        # target still may be emptystring if this command hasn't yet been used
-        if not target == None:
-            self.refresh_content(order='ignore',name=target)
+        # target still may be empty string if this command hasn't yet been used
+        if target is not None:
+            self.refresh_content(order='ignore', name=target)
 
     @SubredditController.register(Command('SUBREDDIT_OPEN'))
     def open_submission(self, url=None):
