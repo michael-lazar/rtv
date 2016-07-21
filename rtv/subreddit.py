@@ -158,7 +158,7 @@ class SubredditPage(Page):
 
         with self.term.loader('Loading subscriptions'):
             page = SubscriptionPage(self.reddit, self.term, self.config,
-                                    self.oauth)
+                                    self.oauth, content_type='subreddit')
         if self.term.loader.exception:
             return
 
@@ -170,7 +170,7 @@ class SubredditPage(Page):
             self.refresh_content(order='ignore',
                                  name=page.subreddit_data['name'])
 
-    @SubredditController.register(Command('MULTIREDDIT_OPEN_SUBSCRIPTIONS'))
+    @SubredditController.register(Command('SUBREDDIT_OPEN_MULTIREDDITS'))
     @logged_in
     def open_multireddit_subscriptions(self):
         "Open user multireddit subscriptions page"
