@@ -42,6 +42,7 @@ In subreddit mode you can browse through the top submissions on either the front
 :``o`` or ``ENTER``:  Open the submission link with your web browser
 :``/``: Open a prompt to switch subreddits
 :``f``: Open a prompt to search the current subreddit
+:``p``: Toggle between the front page and the last visited subreddit
 
 The ``/`` prompt accepts subreddits in the following formats
 

@@ -40,6 +40,7 @@ HELP = """
   `l` or `RIGHT`      : Enter the selected submission
   `/`                 : Open a prompt to switch subreddits
   `f`                 : Open a prompt to search the current subreddit
+  'p'                 : Toggle between the front page and last visited subreddit
 
 [Submission Mode]
   `h` or `LEFT`       : Return to subreddit mode
