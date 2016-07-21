@@ -55,7 +55,7 @@ class SubredditPage(Page):
 
         name = name or self.content.name
 
-        query = self.term.prompt_input('Search {0}:'.format(name))
+        query = self.term.prompt_input('Search {0}: '.format(name))
         if not query:
             return
 
@@ -185,7 +185,7 @@ class SubredditPage(Page):
 
         # When the user has chosen a subreddit in the subscriptions list,
         # refresh content with the selected subreddit
-        if page.reddit_data is not None:
+        if page.subreddit_data is not None:
             self.refresh_content(order='ignore',
                                  name=page.subreddit_data['name'])
 

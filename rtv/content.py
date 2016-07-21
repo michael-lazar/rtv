@@ -396,15 +396,16 @@ class SubredditContent(Content):
             query (text): Content to search for on the given subreddit or
                 user's page.
         """
+        # TODO: refactor this into smaller methods
 
         # Strip leading, trailing, and redundant backslashes
         parts = [seg for seg in name.strip(' /').split('/') if seg]
 
         # Check for the resource type, assume /r/ as the default
-        if len(parts) > 3 and parts[2] == ['m']:
+        if len(parts) >= 3 and parts[2] == 'm':
             # E.g. /u/multi-mod/m/android
             resource_root, parts = '/'.join(parts[:3]), parts[3:]
-        if len(parts) > 1 and parts[0] in ['r', 'u', 'user', 'domain']:
+        elif len(parts) > 1 and parts[0] in ['r', 'u', 'user', 'domain']:
             resource_root = parts.pop(0)
         else:
             resource_root = 'r'
@@ -475,8 +476,8 @@ class SubredditContent(Content):
                 resource, sort=order, period=period, limit=None)
 
         elif resource_root.endswith('/m'):
-            redditor, _, multi = resource_root.split('/')
-            multireddit = reddit.get_multireddit(redditor, multi)
+            redditor = resource_root.split('/')[1]
+            multireddit = reddit.get_multireddit(redditor, resource)
             submissions = getattr(multireddit, method_alias)(limit=None)
 
         elif resource_root in ('u', 'user') and resource == 'me':
@@ -496,6 +497,12 @@ class SubredditContent(Content):
         elif resource == 'front':
             if order in (None, 'hot'):
                 submissions = reddit.get_front_page(limit=None)
+            elif period:
+                # For the front page, praw makes you send the period as `t`
+                # instead of calling reddit.get_hot_from_week()
+                method_alias = 'get_{0}'.format(order)
+                method = getattr(reddit, method_alias)
+                submissions = method(limit=None, t=period)
             else:
                 submissions = getattr(reddit, method_alias)(limit=None)
 
@@ -565,7 +572,8 @@ class SubscriptionContent(Content):
             items = reddit.get_my_subreddits(limit=None)
         elif content_type == 'multireddit':
             name = 'My Multireddits'
-            items = reddit.get_my_multireddits(limit=None)
+            # Multireddits are returned as a list
+            items = iter(reddit.get_my_multireddits())
         elif content_type == 'popular':
             name = 'Popular Subreddits'
             items = reddit.get_popular_subreddits(limit=None)

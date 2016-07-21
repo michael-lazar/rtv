@@ -14,6 +14,72 @@ from rtv.content import (
 from rtv import exceptions
 
 
+SUBREDDIT_PROMPTS = [
+    ('python', '/r/python', None),
+    ('python/', '/r/python', None),
+    ('r/python', '/r/python', None),
+    ('/r/python', '/r/python', None),
+    ('/r/pics/new', '/r/pics', 'new'),
+    ('/r/pics/hot/', '/r/pics', 'hot'),
+    ('pics/top', '/r/pics', 'top'),
+    ('r/pics/rising', '/r/pics', 'rising'),
+    ('/r/pics/controversial', '/r/pics', 'controversial'),
+    ('/r/pics/top-day', '/r/pics', 'top-day'),
+    ('/r/pics/top-hour', '/r/pics', 'top-hour'),
+    ('/r/pics/top-month', '/r/pics', 'top-month'),
+    ('/r/pics/top-week', '/r/pics', 'top-week'),
+    ('/r/pics/top-year', '/r/pics', 'top-year'),
+    ('/r/pics/top-all', '/r/pics', 'top-all'),
+    ('/r/pics+linux', '/r/pics+linux', None),
+    ('/r/pics+linux/new', '/r/pics+linux', 'new'),
+    ('front', '/r/front', None),
+    ('/r/front', '/r/front', None),
+    ('/r/front/new', '/r/front', 'new'),
+    ('/r/front/top-week', '/r/front', 'top-week'),
+    ('/user/spez', '/user/spez', None),
+    ('/u/spez', '/u/spez', None),
+    ('/u/spez/new', '/u/spez', 'new'),
+    ('/u/spez/top-all', '/u/spez', 'top-all'),
+    ('/user/multi-mod/m/art', '/user/multi-mod/m/art', None),
+    ('/u/multi-mod/m/art', '/u/multi-mod/m/art', None),
+    ('/u/multi-mod/m/art/top', '/u/multi-mod/m/art', 'top'),
+    ('/u/multi-mod/m/art/top-all', '/u/multi-mod/m/art', 'top-all'),
+    ('/domain/python.org', '/domain/python.org', None),
+    pytest.mark.xfail(reason='Bug in api.reddit.com')(
+        ('/domain/python.org/top', '/domain/python.org', 'top')),
+    ('/domain/python.org/top-all', '/domain/python.org', 'top-all'),
+]
+
+SUBREDDIT_AUTH_PROMPTS = [
+    ('/user/me', '/user/me', None),
+    ('/u/me', '/u/me', None),
+    ('/u/me/top', '/u/me', 'top'),
+    ('/u/me/top-all', '/u/me', 'top-all'),
+]
+
+SUBREDDIT_INVALID_PROMPTS = [
+    '',
+    '/',
+    '//',
+    '/////////////////',
+    '/r/python/fake',
+    '/r/python/top-fake',
+    '/r/python/new-all',
+]
+
+SUBREDDIT_SEARCH_QUERIES = [
+    ('/r/front', 'reddit'),
+    ('/r/python', 'python'),
+    ('/r/python/top-all', 'guido'),
+    ('/u/spez', 'ama'),
+    ('/user/spez/top-all', 'ama'),
+    ('/u/multi-mod/m/art', 'PsBattle'),
+    ('/u/multi-mod/m/art/top-all', 'PsBattle'),
+    ('/domain/python.org', 'Python'),
+    ('/domain/python.org/top-all', 'Python'),
+]
+
+
 def test_content_humanize_timestamp():
 
     timestamp = time.time() - 30
@@ -234,74 +300,45 @@ def test_content_subreddit_load_more(reddit, terminal):
         assert data['title'].startswith(six.text_type(i + 1))
 
 
-@pytest.mark.parametrize('text,name,order', [
-        ('python', '/r/python', None),
-        ('python/', '/r/python', None),
-        ('r/python', '/r/python', None),
-        ('/r/python', '/r/python', None),
+@pytest.mark.parametrize('prompt,name,order', SUBREDDIT_PROMPTS)
+def test_content_subreddit_from_name(prompt, name, order, reddit, terminal):
 
-        ('/r/pics/new', '/r/pics', 'new'),
-        ('/r/pics/hot/', '/r/pics', 'hot'),
-        ('pics/top', '/r/pics', 'top'),
-        ('r/pics/rising', '/r/pics', 'rising'),
-        ('/r/pics/controversial', '/r/pics', 'controversial'),
-
-        ('/r/pics/top-day', '/r/pics', 'top-day'),
-        ('/r/pics/top-hour', '/r/pics', 'top-hour'),
-        ('/r/pics/top-month', '/r/pics', 'top-month'),
-        ('/r/pics/top-week', '/r/pics', 'top-week'),
-        ('/r/pics/top-year', '/r/pics', 'top-year'),
-        ('/r/pics/top-all', '/r/pics', 'top-all'),
-
-        ('/r/pics+linux', '/r/pics+linux', None),
-        ('/r/pics+linux/new', '/r/pics+linux', 'new'),
-
-        ('front', '/r/front', None),
-        ('/r/front', '/r/front', None),
-        ('/r/front/new', '/r/front', 'new'),
-        ('/r/front/top-week', '/r/front', 'top-week'),
-
-        ('/user/spez', '/user/spez', None),
-        ('/u/spez', '/u/spez', None),
-        ('/u/spez/new', '/u/spez', 'new'),
-        ('/u/spez/top-all', '/u/spez', 'top-all'),
-
-        ('/user/multi-mod/m/art', '/user/multi-mod/m/art', None),
-        ('/u/multi-mod/m/art', '/u/multi-mod/m/art', None),
-        ('/u/multi-mod/m/art/new', '/u/multi-mod/m/art', 'top'),
-        ('/u/multi-mod/m/art/top-all', '/u/multi-mod/m/art', 'top-all'),
-
-        ('/domain/python.org', '/domain/python.org', None),
-        ('/domain/python.org/new', '/domain/python.org', 'new'),
-        ('/domain/python.org/top-week', '/domain/python.org', 'top-week')])
-def test_content_subreddit_from_name(text, name, order, reddit, terminal):
-
-    content = SubredditContent.from_name(reddit, text, terminal.loader)
+    content = SubredditContent.from_name(reddit, prompt, terminal.loader)
     assert content.name == name
     assert content.order == order
 
 
-@pytest.mark.parametrize('text,name,order', [
-        ('/user/me', '/user/me', None),
-        ('/u/me', '/u/me', None),
-        ('/u/me/new', '/u/me', 'new'),
-        ('/u/me/top-week', '/u/me', 'top-week')])
+@pytest.mark.parametrize('prompt,name,order', SUBREDDIT_AUTH_PROMPTS)
 def test_content_subreddit_from_name_authenticated(
-        text, name, order, reddit, terminal, oauth, refresh_token):
+        prompt, name, order, reddit, terminal, oauth, refresh_token):
 
     with pytest.raises(exceptions.AccountError):
-        SubredditContent.from_name(reddit, text, terminal.loader)
+        SubredditContent.from_name(reddit, prompt, terminal.loader)
 
     # Login and try again
     oauth.config.refresh_token = refresh_token
     oauth.authorize()
 
-    content = SubredditContent.from_name(reddit, text, terminal.loader)
+    content = SubredditContent.from_name(reddit, prompt, terminal.loader)
     assert content.name == name
     assert content.order == order
 
 
-def test_content_subreddit_from_name_invalid(reddit, terminal):
+@pytest.mark.parametrize('prompt', SUBREDDIT_INVALID_PROMPTS)
+def test_content_subreddit_from_name_invalid(prompt, reddit, terminal):
+
+    with terminal.loader():
+        SubredditContent.from_name(reddit, prompt, terminal.loader)
+    assert isinstance(terminal.loader.exception, praw.errors.InvalidSubreddit)
+
+
+@pytest.mark.parametrize('prompt,query', SUBREDDIT_SEARCH_QUERIES)
+def test_content_subreddit_from_name_query(prompt, query, reddit, terminal):
+
+    SubredditContent.from_name(reddit, prompt, terminal.loader, query=query)
+
+
+def test_content_subreddit_from_name_order(reddit, terminal):
 
     # Explicit order trumps implicit
     name = '/r/python/top'
@@ -309,34 +346,6 @@ def test_content_subreddit_from_name_invalid(reddit, terminal):
         reddit, name, terminal.loader, order='new')
     assert content.name == '/r/python'
     assert content.order == 'new'
-
-    for name in ['/r/python/fake', '/r/python/top-fake', '/r/python/new-all']:
-        with terminal.loader():
-            SubredditContent.from_name(reddit, name, terminal.loader)
-        assert isinstance(terminal.loader.exception, exceptions.SubredditError)
-
-    # A couple of edge cases
-    names = ['', '/', '//', '/////////////////']
-    for name in names:
-        with terminal.loader():
-            SubredditContent.from_name(reddit, name, terminal.loader)
-        assert isinstance(terminal.loader.exception,
-                          praw.errors.InvalidSubreddit)
-
-
-@pytest.mark.parametrize('text', [
-        '/r/front',
-        '/r/python',
-        '/r/python/top-week',
-        '/u/spez',
-        '/user/spez/top-week',
-        '/u/multi-mod/m/art',
-        '/u/multi-mod/m/art/top-week',
-        '/domain/python.org',
-        '/domain/python.org/top-week'])
-def test_content_subreddit_from_name_query(text, reddit, terminal):
-
-    SubredditContent.from_name(reddit, text, terminal.loader, query='pea')
 
 
 def test_content_subreddit_multireddit(reddit, terminal):
@@ -364,14 +373,14 @@ def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):
 
     # Not logged in
     with terminal.loader():
-        SubredditContent.from_name(reddit, '/r/me', terminal.loader)
+        SubredditContent.from_name(reddit, '/u/me', terminal.loader)
     assert isinstance(terminal.loader.exception, exceptions.AccountError)
 
     # Logged in
     oauth.config.refresh_token = refresh_token
     oauth.authorize()
     with terminal.loader():
-        SubredditContent.from_name(reddit, 'me', terminal.loader)
+        SubredditContent.from_name(reddit, '/u/me', terminal.loader)
 
     # If there is no submitted content, an error should be raised
     if terminal.loader.exception:
@@ -396,7 +405,7 @@ def test_content_subscription(reddit, terminal):
     assert content.order is None
 
     # Validate content
-    for data in content.iterate(0, 1, 70):
+    for data in islice(content.iterate(0, 1), 20):
         assert all(k in data for k in ('object', 'n_rows', 'offset', 'type',
                                        'title', 'split_title'))
         # All text should be converted to unicode by this point
@@ -410,5 +419,5 @@ def test_content_subscription_empty(reddit, terminal):
     with mock.patch.object(reddit, 'get_my_subreddits') as func:
         func.return_value = iter([])
         with terminal.loader():
-            SubscriptionContent(reddit, terminal.loader)
+            SubscriptionContent.from_user(reddit, terminal.loader)
     assert isinstance(terminal.loader.exception, exceptions.SubscriptionError)
