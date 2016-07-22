@@ -69,9 +69,16 @@ Move the cursor using either the arrow keys or *Vim* style movement
 
 - Press **up** and **down** to scroll through submissions
 - Press **right** to view the selected submission and **left** to return
-- Press **u** to login using OAuth
+- Press **u** to login
 - Press **space** to expand/collapse comments
 - Press **?** to open the help screen
+- Press **/** to navigate to a different page
+
+   - /r/front
+   - /r/python/controversial-day
+   - /u/me
+   - /u/multi-mod/m/art
+   - /domain/python.org
 
 See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the full list of commands.
 
