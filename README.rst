@@ -133,7 +133,7 @@ If you prefer the complete terminal experience, set ``$BROWSER`` to a console-ba
 Url Viewer
 ----------
 
-You can open links displayed inside of comments by taking advantage of a url extraction program.
+You can extract links from inside of comments using urlview.
 Use ``$RTV_URLVIEWER`` to specify a custom url viewer.
 
 .. code-block:: bash
@@ -141,20 +141,7 @@ Use ``$RTV_URLVIEWER`` to specify a custom url viewer.
     $ export RTV_URLVIEWER=urlview
 
 `urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible, but any program that accepts text via a stdin pipe will do.
-These applications do not come pre-installed on most systems.
-
-**Ubuntu**
-
-.. code-block:: bash
-
-    $ sudo apt-get install urlview
-
-**Mac with Homebrew**
-
-.. code-block:: bash
-
-    $ brew install urlview
-
+These applications don't come pre-installed, but are available through most system's package manager
 
 ===
 FAQ
