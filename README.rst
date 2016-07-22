@@ -7,7 +7,8 @@ RTV (Reddit Terminal Viewer)
 
 .. image:: http://i.imgur.com/Ek13lqM.png
 
-RTV is built in **python** using the **curses** library.
+|
+| RTV is built in **python** using the **curses** library.
 
 ---------------
 
