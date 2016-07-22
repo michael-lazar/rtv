@@ -67,13 +67,13 @@ Controls
 
 Move the cursor using either the arrow keys or *Vim* style movement
 
-- Press **up** and **down** to scroll through submissions
-- Press **right** to view the selected submission and **left** to return
-- Press **space** to expand/collapse comments
-- Press **u** to login
-- Press **?** to open the help screen
+- Press ``up`` and ``down`` to scroll through submissions
+- Press ``right`` to view the selected submission and ``left`` to return
+- Press ``space`` to expand/collapse comments
+- Press ``u`` to login
+- Press ``?`` to open the help screen
 
-Press **/** to open the navigation prompt, where you can type things like
+Press ``/`` to open the navigation prompt, where you can type things like
 
 - /front
 - /r/commandprompt+linuxmasterrace
