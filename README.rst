@@ -69,17 +69,18 @@ Move the cursor using either the arrow keys or *Vim* style movement
 
 - Press **up** and **down** to scroll through submissions
 - Press **right** to view the selected submission and **left** to return
-- Press **u** to login
 - Press **space** to expand/collapse comments
+- Press **u** to login
 - Press **?** to open the help screen
 
 Press **/** to open the navigation prompt, where you can type things like
 
-- /r/front
-- /r/python/controversial-day
+- /front
+- /r/commandprompt+linuxmasterrace
+- /r/programming/controversial-week
 - /u/me
 - /u/multi-mod/m/art
-- /domain/python.org
+- /domain/github.com
 
 See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the full list of commands.
 
