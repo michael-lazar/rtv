@@ -1,0 +1,36 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [rtv test suite PRAW/3.5.0 Python/3.4.0 b'Linux-3.13.0-85-generic-x86_64-with-Ubuntu-14.04-trusty']
+    method: GET
+    uri: https://api.reddit.com/domain/python.org/top.json?limit=1024
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAy3JwQ2AIAxG4VWa/8wEzOAGxgPaIo1YEsATYXdj4vF9b+BSY3jCoq2rnXAEDj3A
+        08BdOIWWvv35kTRzFYOndXOEELtUeLInZ0fYJZYqf8/5AmghW1ZbAAAA
+    headers:
+      CF-RAY: [2c64cdffbda91ee9-SJC]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Fri, 22 Jul 2016 06:23:34 GMT']
+      Server: [cloudflare-nginx]
+      Set-Cookie: ['__cfduid=ddb25a841578e932eadd091010a6c9f981469168614; expires=Sat,
+          22-Jul-17 06:23:34 GMT; path=/; domain=.reddit.com; HttpOnly']
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
+      X-Moose: [majestic]
+      access-control-allow-origin: ['*']
+      access-control-expose-headers: ['X-Reddit-Tracking, X-Moose']
+      cache-control: ['max-age=0, must-revalidate']
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-reddit-tracking: ['https://pixel.redditmedia.com/pixel/of_destiny.png?v=AgMwT7Hx54BYlWm%2FDo9HkVmCnwVUKCEAuvKOpgm7EB3%2FgQFMa6%2Fxee6QIY5%2Fx7QW4ET6GdlOP9Cg5HekDPtNDdDulpDUgS9s']
+      x-ua-compatible: [IE=edge]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+version: 1

@@ -309,7 +309,7 @@ def test_content_subreddit_load_more(reddit, terminal):
 
 
 @pytest.mark.parametrize('prompt,name,order', SUBREDDIT_PROMPTS.values(),
-                         ids=SUBREDDIT_PROMPTS.keys())
+                         ids=list(SUBREDDIT_PROMPTS))
 def test_content_subreddit_from_name(prompt, name, order, reddit, terminal):
 
     content = SubredditContent.from_name(reddit, prompt, terminal.loader)
@@ -318,7 +318,7 @@ def test_content_subreddit_from_name(prompt, name, order, reddit, terminal):
 
 
 @pytest.mark.parametrize('prompt,name,order', SUBREDDIT_AUTH_PROMPTS.values(),
-                         ids=SUBREDDIT_AUTH_PROMPTS.keys())
+                         ids=list(SUBREDDIT_AUTH_PROMPTS))
 def test_content_subreddit_from_name_authenticated(
         prompt, name, order, reddit, terminal, oauth, refresh_token):
 
@@ -335,7 +335,7 @@ def test_content_subreddit_from_name_authenticated(
 
 
 @pytest.mark.parametrize('prompt', SUBREDDIT_INVALID_PROMPTS.values(),
-                         ids=SUBREDDIT_INVALID_PROMPTS.keys())
+                         ids=list(SUBREDDIT_INVALID_PROMPTS))
 def test_content_subreddit_from_name_invalid(prompt, reddit, terminal):
 
     with terminal.loader():
@@ -344,7 +344,7 @@ def test_content_subreddit_from_name_invalid(prompt, reddit, terminal):
 
 
 @pytest.mark.parametrize('prompt,query', SUBREDDIT_SEARCH_QUERIES.values(),
-                         SUBREDDIT_SEARCH_QUERIES.keys())
+                         ids=list(SUBREDDIT_SEARCH_QUERIES))
 def test_content_subreddit_from_name_query(prompt, query, reddit, terminal):
 
     SubredditContent.from_name(reddit, prompt, terminal.loader, query=query)
