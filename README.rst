@@ -72,13 +72,14 @@ Move the cursor using either the arrow keys or *Vim* style movement
 - Press **u** to login
 - Press **space** to expand/collapse comments
 - Press **?** to open the help screen
-- Press **/** to navigate to a different page
 
-   - /r/front
-   - /r/python/controversial-day
-   - /u/me
-   - /u/multi-mod/m/art
-   - /domain/python.org
+Press **/** to open the navigation prompt, where you can type things like
+
+- /r/front
+- /r/python/controversial-day
+- /u/me
+- /u/multi-mod/m/art
+- /domain/python.org
 
 See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the full list of commands.
 
