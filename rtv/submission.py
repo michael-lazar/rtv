@@ -150,7 +150,7 @@ class SubmissionPage(Page):
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_URLVIEWER'))
     def comment_urlview(self):
         data = self.content.get(self.nav.absolute_index)
-        comment = data.get('body') or data.get('text') or data.get('url')
+        comment = data.get('body') or data.get('text') or data.get('url_full')
         if comment:
             self.term.open_urlview(comment)
         else:
