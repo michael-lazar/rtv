@@ -141,7 +141,7 @@ Use ``$RTV_URLVIEWER`` to specify a custom url viewer.
     $ export RTV_URLVIEWER=urlview
 
 `urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible, but any program that accepts text via a stdin pipe will do.
-These applications don't come pre-installed, but are available through most system's package manager
+These applications don't come pre-installed, but are available through most systems' package managers.
 
 ===
 FAQ
