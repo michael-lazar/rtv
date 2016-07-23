@@ -3,13 +3,12 @@ RTV (Reddit Terminal Viewer)
 ============================
 
 | RTV provides an interface to view and interact with reddit from your terminal.
-| It's compatible with *most* terminal emulators on Linux and OSX.
+| It's compatible with *most* terminal emulators on Linux and OS X.
 
 .. image:: http://i.imgur.com/Ek13lqM.png
 
-`DEMO <https://asciinema.org/a/31609?speed=2&autoplay=1>`_
-
-RTV is built in **python** using the **curses** library.
+|
+| RTV is built in **python** using the **curses** library.
 
 ---------------
 
@@ -42,11 +41,13 @@ or clone the repository
     $ cd rtv
     $ python3 setup.py install
 
-on Arch Linux or Arch based distros (Antergos, Manjaro, `etc.`_) you can install directly using an `aur helper`_ such as yaourt. There's also an *rtv-git* package if you wish to keep up to date with the latest development code.
+on Arch Linux or Arch based distros (Antergos, Manjaro, `etc.`_) you can install directly with an `aur helper`_ such as yaourt.
 
 .. code:: bash
 
     $ yaourt -S rtv
+    $ # or to keep up to date with the master branch
+    $ yaourt -S rtv-git
 
 .. _etc.: https://wiki.archlinux.org/index.php/Arch_based_distributions_(active)
 .. _aur helper: https://wiki.archlinux.org/index.php/AUR_helpers#AUR_search.2Fbuild_helpers
@@ -67,30 +68,22 @@ Controls
 
 Move the cursor using either the arrow keys or *Vim* style movement
 
-- Press **up** and **down** to scroll through submissions.
-- Press **right** to view the selected submission and **left** to return.
-- Press **?** to open the help screen.
+- Press ``up`` and ``down`` to scroll through submissions
+- Press ``right`` to view the selected submission and ``left`` to return
+- Press ``space`` to expand/collapse comments
+- Press ``u`` to login
+- Press ``?`` to open the help screen
 
-See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the complete list of available commands.
+Press ``/`` to open the navigation prompt, where you can type things like
 
---------------
-Authentication
---------------
+- /front
+- /r/commandprompt+linuxmasterrace
+- /r/programming/controversial-week
+- /u/me
+- /u/multi-mod/m/art
+- /domain/github.com
 
-RTV enables you to login to your reddit account in order to perform actions like voting and leaving comments.
-The login process uses OAuth [#]_ and follows these steps:
-
-1. Initiate the login by pressing the ``u`` key.
-2. Open a new webpage where reddit will ask you to authorize the application.
-3. Click **Accept**.
-
-RTV will retrieve an auth token with your information and store it locally in ``{HOME}/.config/rtv/refresh-token``.
-You can disable storing the token by setting ``persistent=False`` in the config.
-
-Note that RTV no longer allows you to input your username/password directly. This method of cookie based authentication has been deprecated by reddit [#]_.
-
-.. [#] `<https://github.com/reddit/reddit/wiki/OAuth2>`_
-.. [#] `<https://www.reddit.com/r/redditdev/comments/2ujhkr/important_api_licensing_terms_clarified/>`_
+See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the full list of commands.
 
 ========
 Settings
@@ -140,7 +133,7 @@ If you prefer the complete terminal experience, set ``$BROWSER`` to a console-ba
 Url Viewer
 ----------
 
-You can open links displayed inside of comments by taking advantage of a url extraction program.
+You can extract links from inside of comments using urlview.
 Use ``$RTV_URLVIEWER`` to specify a custom url viewer.
 
 .. code-block:: bash
@@ -148,20 +141,7 @@ Use ``$RTV_URLVIEWER`` to specify a custom url viewer.
     $ export RTV_URLVIEWER=urlview
 
 `urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible, but any program that accepts text via a stdin pipe will do.
-These applications do not come pre-installed on most systems.
-
-**Ubuntu**
-
-.. code-block:: bash
-
-    $ sudo apt-get install urlview
-
-**Mac with Homebrew**
-
-.. code-block:: bash
-
-    $ brew install urlview
-
+These applications don't come pre-installed, but are available through most systems' package managers.
 
 ===
 FAQ

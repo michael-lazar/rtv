@@ -34,12 +34,14 @@ HELP = """
   `e`                 : Edit an existing post or comment
   `d`                 : Delete an existing post or comment
   `i`                 : Display new messages prompt
-  `s`                 : Open/close subscribed subreddits list
+  `s`                 : Open subscribed subreddits
+  `S`                 : Open subscribed multireddits
 
 [Subreddit Mode]
   `l` or `RIGHT`      : Enter the selected submission
   `/`                 : Open a prompt to switch subreddits
   `f`                 : Open a prompt to search the current subreddit
+  'p'                 : Toggle between the front page and last visited subreddit
 
 [Submission Mode]
   `h` or `LEFT`       : Return to subreddit mode

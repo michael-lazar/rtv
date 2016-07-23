@@ -5,7 +5,6 @@ import os
 import curses
 import logging
 from functools import partial
-from tempfile import NamedTemporaryFile
 
 import praw
 import pytest
@@ -220,13 +219,11 @@ def subreddit_page(reddit, terminal, config, oauth):
 
 
 @pytest.fixture()
-def subscription_page(reddit, terminal, config, oauth, refresh_token):
-    # Must be logged in to view your subscriptions
-    config.refresh_token = refresh_token
-    oauth.authorize()
+def subscription_page(reddit, terminal, config, oauth):
+    content_type = 'popular'
 
     with terminal.loader():
-        page = SubscriptionPage(reddit, terminal, config, oauth)
+        page = SubscriptionPage(reddit, terminal, config, oauth, content_type)
     assert terminal.loader.exception is None
     page.draw()
     return page

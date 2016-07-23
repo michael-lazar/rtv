@@ -213,9 +213,15 @@ class Content(object):
 
         data = {}
         data['object'] = subscription
-        data['type'] = 'Subscription'
-        data['name'] = "/r/" + subscription.display_name
-        data['title'] = subscription.title
+        if isinstance(subscription, praw.objects.Multireddit):
+            data['type'] = 'Multireddit'
+            data['name'] = subscription.path
+            data['title'] = subscription.description_md
+        else:
+            data['type'] = 'Subscription'
+            data['name'] = "/r/" + subscription.display_name
+            data['title'] = subscription.title
+
         return data
 
     @staticmethod
@@ -399,75 +405,149 @@ class SubredditContent(Content):
 
     @classmethod
     def from_name(cls, reddit, name, loader, order=None, query=None):
+        """
+        Params:
+            reddit (praw.Reddit): Instance of the reddit api.
+            name (text): The name of the desired subreddit, user, multireddit,
+                etc. In most cases this translates directly from the URL that
+                reddit itself uses. This is what users will type in the command
+                prompt when they navigate to a new location.
+            loader (terminal.loader): Handler for the load screen that will be
+                displayed when making http requests.
+            order (text): If specified, the order that posts will be sorted in.
+                For `top` and `controversial`, you can specify the time frame
+                by including a dash, e.g. "top-year". If an order is not
+                specified, it will be extracted from the name.
+            query (text): Content to search for on the given subreddit or
+                user's page.
+        """
+        # TODO: refactor this into smaller methods
 
-        # Strip leading and trailing backslashes
-        name = name.strip(' /')
-        if name.startswith('r/'):
-            name = name[2:]
+        # Strip leading, trailing, and redundant backslashes
+        parts = [seg for seg in name.strip(' /').split('/') if seg]
 
-        # If the order is not given explicitly, it will be searched for and
-        # stripped out of the subreddit name e.g. python/new.
-        if '/' in name:
-            name, name_order = name.split('/')
-            order = order or name_order
-        display_name = '/r/{0}'.format(name)
+        # Check for the resource type, assume /r/ as the default
+        if len(parts) >= 3 and parts[2] == 'm':
+            # E.g. /u/multi-mod/m/android
+            resource_root, parts = '/'.join(parts[:3]), parts[3:]
+        elif len(parts) > 1 and parts[0] in ['r', 'u', 'user', 'domain']:
+            resource_root = parts.pop(0)
+        else:
+            resource_root = 'r'
+
+        # There should at most two parts left, the resource and the order
+        if len(parts) == 1:
+            resource, resource_order = parts[0], None
+        elif len(parts) == 2:
+            resource, resource_order = parts
+        else:
+            raise InvalidSubreddit()
+
+        if not resource:
+            # Praw does not correctly handle empty strings
+            # https://github.com/praw-dev/praw/issues/615
+            raise InvalidSubreddit()
+
+        # If the order was explicitly passed in, it will take priority over
+        # the order that was extracted from the name
+        order = order or resource_order
+
+        display_order = order
+        display_name = '/'.join(['', resource_root, resource])
+
+        # Split the order from the period E.g. controversial-all, top-hour
+        if order and '-' in order:
+            order, period = order.split('-', 1)
+        else:
+            period = None
 
         if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
-            raise exceptions.SubredditError('Unrecognized order "%s"' % order)
+            raise InvalidSubreddit('Invalid order "%s"' % order)
+        if period not in ['all', 'day', 'hour', 'month', 'week', 'year', None]:
+            raise InvalidSubreddit('Invalid period "%s"' % period)
+        if period and order not in ['top', 'controversial']:
+            raise InvalidSubreddit('"%s" order does not allow sorting by'
+                                   'period' % order)
 
-        if name == 'me':
+        # On some objects, praw doesn't allow you to pass arguments for the
+        # order and period. Instead you need to call special helper functions
+        # such as Multireddit.get_controversial_from_year(). Build the method
+        # name here for convenience.
+        if period:
+            method_alias = 'get_{0}_from_{1}'.format(order, period)
+        elif order:
+            method_alias = 'get_{0}'.format(order)
+        else:
+            method_alias = 'get_hot'
+
+        # Here's where we start to build the submission generators
+        if query:
+            if resource_root in ('u', 'user'):
+                search = '/r/{subreddit}/search'
+                author = reddit.user.name if resource == 'me' else resource
+                query = 'author:{0} {1}'.format(author, query)
+                subreddit = None
+            else:
+                search = resource_root + '/{subreddit}/search'
+                subreddit = None if resource == 'front' else resource
+
+            reddit.config.API_PATHS['search'] = search
+            submissions = reddit.search(query, subreddit=subreddit,
+                                        sort=order, period=period)
+
+        elif resource_root == 'domain':
+            order = order or 'hot'
+            submissions = reddit.get_domain_listing(
+                resource, sort=order, period=period, limit=None)
+
+        elif resource_root.endswith('/m'):
+            redditor = resource_root.split('/')[1]
+            multireddit = reddit.get_multireddit(redditor, resource)
+            submissions = getattr(multireddit, method_alias)(limit=None)
+
+        elif resource_root in ('u', 'user') and resource == 'me':
             if not reddit.is_oauth_session():
                 raise exceptions.AccountError('Not logged in')
-            elif order:
-                submissions = reddit.user.get_submitted(sort=order)
             else:
-                submissions = reddit.user.get_submitted()
+                order = order or 'new'
+                submissions = reddit.user.get_submitted(sort=order, limit=None)
 
-        elif name == 'saved':
+        elif resource_root in ('u', 'user') and resource == 'saved':
             if not reddit.is_oauth_session():
                 raise exceptions.AccountError('Not logged in')
-            elif order:
-                submissions = reddit.user.get_saved(sort=order)
             else:
-                submissions = reddit.user.get_saved()
+                order = order or 'new'
+                submissions = reddit.user.get_saved(sort=order, limit=None)
 
-        elif query:
-            if name == 'front':
-                submissions = reddit.search(query, subreddit=None, sort=order)
+        elif resource_root in ('u', 'user'):
+            order = order or 'new'
+            period = period or 'all'
+            redditor = reddit.get_redditor(resource)
+            submissions = redditor.get_submitted(
+                sort=order, time=period, limit=None)
+
+        elif resource == 'front':
+            if order in (None, 'hot'):
+                submissions = reddit.get_front_page(limit=None)
+            elif period:
+                # For the front page, praw makes you send the period as `t`
+                # instead of calling reddit.get_hot_from_week()
+                method_alias = 'get_{0}'.format(order)
+                method = getattr(reddit, method_alias)
+                submissions = method(limit=None, t=period)
             else:
-                submissions = reddit.search(query, subreddit=name, sort=order)
+                submissions = getattr(reddit, method_alias)(limit=None)
 
         else:
-            if name == '':
-                # Praw does not correctly handle empty strings
-                # https://github.com/praw-dev/praw/issues/615
-                raise InvalidSubreddit()
+            subreddit = reddit.get_subreddit(resource)
+            submissions = getattr(subreddit, method_alias)(limit=None)
 
-            if name == 'front':
-                dispatch = {
-                    None: reddit.get_front_page,
-                    'hot': reddit.get_front_page,
-                    'top': reddit.get_top,
-                    'rising': reddit.get_rising,
-                    'new': reddit.get_new,
-                    'controversial': reddit.get_controversial,
-                    }
-            else:
-                subreddit = reddit.get_subreddit(name)
-                # For special subreddits like /r/random we want to replace the
-                # display name with the one returned by the request.
-                display_name = '/r/{0}'.format(subreddit.display_name)
-                dispatch = {
-                    None: subreddit.get_hot,
-                    'hot': subreddit.get_hot,
-                    'top': subreddit.get_top,
-                    'rising': subreddit.get_rising,
-                    'new': subreddit.get_new,
-                    'controversial': subreddit.get_controversial,
-                    }
-            submissions = dispatch[order](limit=None)
+            # For special subreddits like /r/random we want to replace the
+            # display name with the one returned by the request.
+            display_name = '/r/{0}'.format(subreddit.display_name)
 
-        return cls(display_name, submissions, loader, order=order)
+        # We made it!
+        return cls(display_name, submissions, loader, order=display_order)
 
     def get(self, index, n_cols=70):
         """
@@ -510,9 +590,9 @@ class SubredditContent(Content):
 
 class SubscriptionContent(Content):
 
-    def __init__(self, subscriptions, loader):
+    def __init__(self, name, subscriptions, loader):
 
-        self.name = "Subscriptions"
+        self.name = name
         self.order = None
         self._loader = loader
         self._subscriptions = subscriptions
@@ -521,16 +601,28 @@ class SubscriptionContent(Content):
         try:
             self.get(0)
         except IndexError:
-            raise exceptions.SubscriptionError('No subscriptions')
+            raise exceptions.SubscriptionError('No content')
 
     @classmethod
-    def from_user(cls, reddit, loader):
-        subscriptions = reddit.get_my_subreddits(limit=None)
-        return cls(subscriptions, loader)
+    def from_user(cls, reddit, loader, content_type='subreddit'):
+        if content_type == 'subreddit':
+            name = 'My Subreddits'
+            items = reddit.get_my_subreddits(limit=None)
+        elif content_type == 'multireddit':
+            name = 'My Multireddits'
+            # Multireddits are returned as a list
+            items = iter(reddit.get_my_multireddits())
+        elif content_type == 'popular':
+            name = 'Popular Subreddits'
+            items = reddit.get_popular_subreddits(limit=None)
+        else:
+            raise exceptions.SubscriptionError('Invalid type %s', content_type)
+
+        return cls(name, items, loader)
 
     def get(self, index, n_cols=70):
         """
-        Grab the `i`th subscription, with the title field formatted to fit
+        Grab the `i`th object, with the title field formatted to fit
         inside of a window of width `n_cols`
         """
 
@@ -539,7 +631,7 @@ class SubscriptionContent(Content):
 
         while index >= len(self._subscription_data):
             try:
-                with self._loader('Loading subscriptions'):
+                with self._loader('Loading content'):
                     subscription = next(self._subscriptions)
                 if self._loader.exception:
                     raise IndexError

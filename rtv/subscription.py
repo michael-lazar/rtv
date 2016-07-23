@@ -14,12 +14,14 @@ class SubscriptionController(PageController):
 
 class SubscriptionPage(Page):
 
-    def __init__(self, reddit, term, config, oauth):
+    def __init__(self, reddit, term, config, oauth, content_type='subreddit'):
         super(SubscriptionPage, self).__init__(reddit, term, config, oauth)
 
         self.controller = SubscriptionController(self, keymap=config.keymap)
-        self.content = SubscriptionContent.from_user(reddit, term.loader)
+        self.content = SubscriptionContent.from_user(
+            reddit, term.loader, content_type)
         self.nav = Navigator(self.content.get)
+        self.content_type = content_type
         self.subreddit_data = None
 
     @SubscriptionController.register(Command('REFRESH'))
@@ -32,8 +34,8 @@ class SubscriptionPage(Page):
             return
 
         with self.term.loader():
-            self.content = SubscriptionContent.from_user(self.reddit,
-                                                         self.term.loader)
+            self.content = SubscriptionContent.from_user(
+                self.reddit, self.term.loader, self.content_type)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 

@@ -18,24 +18,18 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
                                      refresh_token):
     window = terminal.stdscr.subwin
 
-    # Can't load the page if not logged in
-    with terminal.loader():
-        SubscriptionPage(reddit, terminal, config, oauth)
-    assert isinstance(
-        terminal.loader.exception, praw.errors.LoginOrScopeRequired)
-
     # Log in
     config.refresh_token = refresh_token
     oauth.authorize()
 
     with terminal.loader():
-        page = SubscriptionPage(reddit, terminal, config, oauth)
+        page = SubscriptionPage(reddit, terminal, config, oauth, 'popular')
     assert terminal.loader.exception is None
 
     page.draw()
 
     # Header - Title
-    title = 'Subscriptions'.encode('utf-8')
+    title = 'Popular Subreddits'.encode('utf-8')
     window.addstr.assert_any_call(0, 0, title)
 
     # Header - Name
@@ -45,7 +39,7 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
     # Banner shouldn't be drawn
     menu = ('[1]hot         '
             '[2]top         '
-            '[3]rising         '
+            '[3]rising         '  # Whitespace is relevant
             '[4]new         '
             '[5]controversial').encode('utf-8')
     with pytest.raises(AssertionError):
@@ -59,7 +53,7 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
     terminal.stdscr.ncols = 20
     terminal.stdscr.nlines = 10
     with terminal.loader():
-        page = SubscriptionPage(reddit, terminal, config, oauth)
+        page = SubscriptionPage(reddit, terminal, config, oauth, 'popular')
     assert terminal.loader.exception is None
 
     page.draw()
@@ -82,8 +76,8 @@ def test_subscription_move(subscription_page):
     # Test movement
     with mock.patch.object(subscription_page, 'clear_input_queue'):
 
-        # Move cursor to the bottom of the page
-        while not curses.flash.called:
+        # Move cursor down for a little while
+        for _ in range(50):
             subscription_page.controller.trigger('j')
         curses.flash.reset_mock()
         assert subscription_page.nav.inverted
@@ -130,7 +124,10 @@ def test_subscription_close(subscription_page):
     assert subscription_page.active is False
 
 
-def test_subscription_page_invalid(subscription_page):
+def test_subscription_page_invalid(subscription_page, oauth, refresh_token):
+
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
 
     # Test that other commands don't crash
     methods = [
@@ -138,6 +135,7 @@ def test_subscription_page_invalid(subscription_page):
         'z',  # Downvote
         'd',  # Delete
         'e',  # Edit
+        'w',  # Save
     ]
     for ch in methods:
         curses.flash.reset_mock()
