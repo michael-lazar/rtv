@@ -282,7 +282,7 @@ class Page(object):
 
         sub_name = self.content.name
         sub_name = sub_name.replace('/r/front', 'Front Page')
-        sub_name = sub_name.replace('/r/me', 'My Submissions')
+        sub_name = sub_name.replace('/u/me', 'My Submissions')
         self.term.add_line(window, sub_name, 0, 0)
 
         # Set the terminal title
@@ -323,7 +323,8 @@ class Page(object):
         text = spacing.join(items)
         self.term.add_line(window, text, 0, 0)
         if self.content.order is not None:
-            col = text.find(self.content.order) - 3
+            order = self.content.order.split('-')[0]
+            col = text.find(order) - 3
             window.chgat(0, col, 3, attr | curses.A_REVERSE)
 
         self._row += 1

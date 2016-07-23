@@ -124,9 +124,18 @@ def refresh_token(request):
 
 @pytest.yield_fixture()
 def config():
-    with patch('rtv.config.Config.save_refresh_token'), \
-            patch('rtv.config.Config.save_history'):
-        yield Config()
+    conf = Config()
+    with mock.patch.object(conf, 'save_history'),          \
+            mock.patch.object(conf, 'delete_history'),     \
+            mock.patch.object(conf, 'save_refresh_token'), \
+            mock.patch.object(conf, 'delete_refresh_token'):
+ 
+        def delete_refresh_token():
+            # Skip the os.remove
+            conf.refresh_token = None
+        conf.delete_refresh_token.side_effect = delete_refresh_token
+
+        yield conf
 
 
 @pytest.yield_fixture()
@@ -210,13 +219,11 @@ def subreddit_page(reddit, terminal, config, oauth):
 
 
 @pytest.fixture()
-def subscription_page(reddit, terminal, config, oauth, refresh_token):
-    # Must be logged in to view your subscriptions
-    config.refresh_token = refresh_token
-    oauth.authorize()
+def subscription_page(reddit, terminal, config, oauth):
+    content_type = 'popular'
 
     with terminal.loader():
-        page = SubscriptionPage(reddit, terminal, config, oauth)
+        page = SubscriptionPage(reddit, terminal, config, oauth, content_type)
     assert terminal.loader.exception is None
     page.draw()
     return page

@@ -27,7 +27,7 @@ class SubredditError(RTVError):
 
 
 class SubscriptionError(RTVError):
-    "Subscriptions could not be fetched"
+    "Content could not be fetched"
 
 
 class ProgramError(RTVError):

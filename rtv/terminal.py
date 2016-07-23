@@ -496,7 +496,7 @@ class Terminal(object):
         try:
             with self.suspend():
                 p = subprocess.Popen([pager], stdin=subprocess.PIPE)
-                p.stdin.write(self.clean(data))
+                p.stdin.write(data.encode('utf-8'))
                 p.stdin.close()
                 try:
                     p.wait()
@@ -573,12 +573,12 @@ class Terminal(object):
             with self.suspend():
                 p = subprocess.Popen([urlview], stdin=subprocess.PIPE)
                 try:
-                    p.communicate(input=six.b(data))
+                    p.communicate(input=data.encode('utf-8'))
                 except KeyboardInterrupt:
                     p.terminate()
         except OSError:
             self.show_notification(
-                'Could not open urls with {}'.format(urlview))
+                'Failed to open {0}'.format(urlview))
 
     def text_input(self, window, allow_resize=False):
         """

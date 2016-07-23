@@ -30,6 +30,7 @@ Once you are logged in your username will appear in the top-right corner of the 
 :``d``: Delete an existing post or comment
 :``i``: Display new messages prompt
 :``s``: View a list of subscribed subreddits
+:``S``: View a list of subscribed multireddits
 
 --------------
 Subreddit Mode
@@ -41,14 +42,20 @@ In subreddit mode you can browse through the top submissions on either the front
 :``o`` or ``ENTER``:  Open the submission link with your web browser
 :``/``: Open a prompt to switch subreddits
 :``f``: Open a prompt to search the current subreddit
+:``p``: Toggle between the front page and the last visited subreddit
 
 The ``/`` prompt accepts subreddits in the following formats
 
+* ``python``
 * ``/r/python``
 * ``/r/python/new``
+* ``/r/python/controversial-year``
 * ``/r/python+linux`` supports multireddits
 * ``/r/front`` will redirect to the front page
-* ``/r/me`` will display your submissions
+* ``/u/me`` will display your submissions
+* ``/u/spez`` will display submissions from any other user
+* ``/u/multi-mod/m/android`` will display a multireddit curated by a user
+* ``/domain/python.org`` will display submissions to the stated domain
 
 ---------------
 Submission Mode
