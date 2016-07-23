@@ -266,18 +266,18 @@ def test_submission_urlview(submission_page, terminal, refresh_token):
 
     # Positive Case
     data = submission_page.content.get(submission_page.nav.absolute_index)
-    TEST_BODY = 'test comment body'
-    data['body'] = TEST_BODY
+    data['body'] = 'test comment body'
     with mock.patch.object(terminal, 'open_urlview') as open_urlview, \
             mock.patch('subprocess.Popen'):
         submission_page.controller.trigger('b')
-        open_urlview.assert_called_with(TEST_BODY)
+        open_urlview.assert_called_with('test comment body')
 
     # Negative Case
     data = submission_page.content.get(submission_page.nav.absolute_index)
-    TEST_NO_BODY = ''
-    data['body'] = TEST_NO_BODY
+    data['text'] = ''
+    data['body'] = ''
+    data['url_full'] = 'http://test.url.com'
     with mock.patch.object(terminal, 'open_urlview') as open_urlview, \
             mock.patch('subprocess.Popen'):
         submission_page.controller.trigger('b')
-        assert not open_urlview.called
+        open_urlview.assert_called_with('http://test.url.com')
