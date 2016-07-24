@@ -1,6 +1,6 @@
 include version.py
 include CHANGELOG.rst
-include CONTRIBUTORS.rst
+include AUTHORS.rst
 include README.rst
 include LICENSE
 include rtv.1
