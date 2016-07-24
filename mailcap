@@ -24,6 +24,7 @@ image/*; feh -g 640x480 '%s'; test=test -n "$DISPLAY"
 # Youtube videos are assigned a custom mime-type, which can be streamed with
 # vlc or youtube-dl.
 video/x-youtube; vlc '%s'; test=test -n "$DISPLAY"
+video/x-youtube; youtube-dl -q -o - '%s' | mpv -; test=test -n "$DISPLAY"
 
 # Mpv is a simple and effective video streamer
 video/webm; mpv '%s'; test=test -n "$DISPLAY"
@@ -43,6 +44,6 @@ image/x-imgur-album; echo
 image/*; curl -s '%s' | convert - jpg:/tmp/rtv.jpg && img2txt -f utf8 /tmp/rtv.jpg; needsterminal; copiousoutput
 
 # Ascii videos
-video/x-youtube; youtube-dl -q -o - "%s" | mplayer -cache 8192 -quiet -
+video/x-youtube; youtube-dl -q -o - '%s' | mplayer -cache 8192 -vo caca -quiet -; needsterminal
 video/*; wget '%s' -O - | mplayer -cache 8192 -vo caca -quiet -; needsterminal
 

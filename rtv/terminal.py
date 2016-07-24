@@ -354,21 +354,25 @@ class Terminal(object):
             return self.open_browser(url)
 
         _logger.info('Executing command: %s', command)
-        if 'copiousoutput' in entry:
-            # TODO: open in pager
-            pass
-        elif 'needsterminal' in entry:
+        needs_terminal = 'needsterminal' in entry
+        copious_output = 'copiousoutput' in entry
+
+        if needs_terminal or copious_output:
             # Blocking, pause rtv until the process returns
             with self.suspend():
+                os.system('clear')
                 p = subprocess.Popen(
                     [command], stderr=subprocess.PIPE,
                     universal_newlines=True, shell=True)
                 code = p.wait()
+                if copious_output:
+                    six.moves.input('Press any key to continue')
             if code != 0:
                 _, stderr = p.communicate()
                 _logger.warning(stderr)
                 self.show_notification(
                     'Program exited with status=%s\n%s' % (code, stderr))
+
         else:
             # Non-blocking, open a background process
             with self.loader('Opening page', delay=0):

@@ -156,7 +156,7 @@ class ImgurAlbumMIMEParser(BaseMIMEParser):
             urls.append('http:' + div.find('img').get('src'))
 
         if urls:
-            return "' '".join(urls), 'image/x-imgur-album'
+            return " ".join(urls), 'image/x-imgur-album'
         else:
             return url, None
 
