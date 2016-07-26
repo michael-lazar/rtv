@@ -52,7 +52,7 @@ URLS = {
 }
 
 
-@pytest.mark.parametrize(ARGS, URLS.values(), ids=URLS.keys())
+@pytest.mark.parametrize(ARGS, URLS.values(), ids=list(URLS))
 def test_parser(url, modified_url, mime_type, reddit):
     # Include the reddit fixture so the cassettes get generated
 

@@ -16,9 +16,11 @@ from .objects import KeyMap
 PACKAGE = os.path.dirname(__file__)
 HOME = os.path.expanduser('~')
 TEMPLATE = os.path.join(PACKAGE, 'templates')
-DEFAULT_CONFIG = os.path.join(PACKAGE, 'rtv.cfg')
+DEFAULT_CONFIG = os.path.join(TEMPLATE, 'rtv.cfg')
+DEFAULT_MAILCAP = os.path.join(TEMPLATE 'mailcap')
 XDG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
 CONFIG = os.path.join(XDG_HOME, 'rtv', 'rtv.cfg')
+MAILCAP = os.path.join(XDG_HOME, '.mailcap')
 TOKEN = os.path.join(XDG_HOME, 'rtv', 'refresh-token')
 HISTORY = os.path.join(XDG_HOME, 'rtv', 'history.log')
 
@@ -60,32 +62,49 @@ def build_parser():
         '--copy-config', dest='copy_config', action='store_const', const=True,
         help='Copy the default configuration to {HOME}/.config/rtv/rtv.cfg')
     parser.add_argument(
+        '--copy-mailcap', dest='copy_mailcap', action='store_const', const=True,
+        help='Copy an example mailcap configuration to {HOME}/.mailcap')
+    parser.add_argument(
         '--enable-media', dest='enable_media', action='store_const', const=True,
         help='Open external links using programs defined in the mailcap config')
     return parser
 
 
+def copy_default_mailcap(filename=MAILCAP):
+    """
+    Copy the example mailcap configuration to the specified file.
+    """
+    return _copy_settings_file(DEFAULT_MAILCAP, filename, 'mailcap')
+
+
 def copy_default_config(filename=CONFIG):
     """
-    Copy the default configuration file to the user's {HOME}/.config/rtv
+    Copy the default rtv user configuration to the specified file.
+    """
+    return _copy_settings_file(DEFAULT_CONFIG, filename, 'config')
+
+
+def _copy_settings_file(source, destination, name):
+    """
+    Copy a file from the repo to the user's home directory.
     """
 
-    if os.path.exists(filename):
+    if os.path.exists(destination):
         try:
             ch = six.moves.input(
-                'File %s already exists, overwrite? y/[n]):' % filename)
+                'File %s already exists, overwrite? y/[n]):' % destination)
             if ch not in ('Y', 'y'):
                 return
         except KeyboardInterrupt:
             return
 
-    filepath = os.path.dirname(filename)
+    filepath = os.path.dirname(destination)
     if not os.path.exists(filepath):
         os.makedirs(filepath)
 
-    print('Copying default settings to %s' % filename)
-    shutil.copy(DEFAULT_CONFIG, filename)
-    os.chmod(filename, 0o664)
+    print('Copying default %s to %s' % (name, destination))
+    shutil.copy(source, destination)
+    os.chmod(destination, 0o664)
 
 
 class OrderedSet(object):

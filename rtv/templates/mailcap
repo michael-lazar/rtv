@@ -1,5 +1,5 @@
 # Example mailcap file for Reddit Terminal Viewer
-#
+
 # Copy the contents of this file to {HOME}/.mailcap, or point to using $MAILCAPS
 # Then launch RTV using the --enable-media flag. All shell commands defined in
 # this file depend on external programs that must be installed on your system.
@@ -23,12 +23,12 @@ image/*; feh -g 640x480 '%s'; test=test -n "$DISPLAY"
 
 # Youtube videos are assigned a custom mime-type, which can be streamed with
 # vlc or youtube-dl.
-video/x-youtube; vlc '%s'; test=test -n "$DISPLAY"
-video/x-youtube; youtube-dl -q -o - '%s' | mpv -; test=test -n "$DISPLAY"
+video/x-youtube; vlc '%s' --width 640 --height 480; test=test -n "$DISPLAY"
+video/x-youtube; youtube-dl -q -o - '%s' | mpv - --autofit 640x480; test=test -n "$DISPLAY"
 
 # Mpv is a simple and effective video streamer
-video/webm; mpv '%s'; test=test -n "$DISPLAY"
-video/*; mpv '%s'; test=test -n "$DISPLAY"
+video/webm; mpv '%s' --autofit 640x480; test=test -n "$DISPLAY"
+video/*; mpv '%s' --autofit 640x480; test=test -n "$DISPLAY"
 
 ###############################################################################
 # Commands below this point will attempt to display media directly in the
@@ -36,14 +36,20 @@ video/*; mpv '%s'; test=test -n "$DISPLAY"
 ###############################################################################
 
 # View true images in the terminal, supported by rxvt-unicode, xterm and st
+# Requires the w3m-img package
 # image/*; w3m -o 'ext_image_viewer=off' '%s'; needsterminal
 
-# Ascii images: download, convert to jpg, and print with img2txt
 # Don't have a solution for albums yet
 image/x-imgur-album; echo
+
+# 256 color images using half-width unicode characters
+# Much higher quality that img2txt, but must be built from source
+# https://github.com/rossy/img2xterm
+image/*; curl -s '%s' | convert -resize 80x80 - jpg:/tmp/rtv.jpg && img2xterm /tmp/rtv.jpg; needsterminal; copiousoutput
+
+# Display images in classic ascii using img2txt and lib-caca
 image/*; curl -s '%s' | convert - jpg:/tmp/rtv.jpg && img2txt -f utf8 /tmp/rtv.jpg; needsterminal; copiousoutput
 
 # Ascii videos
 video/x-youtube; youtube-dl -q -o - '%s' | mplayer -cache 8192 -vo caca -quiet -; needsterminal
 video/*; wget '%s' -O - | mplayer -cache 8192 -vo caca -quiet -; needsterminal
-

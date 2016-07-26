@@ -10,7 +10,7 @@ import praw
 import tornado
 
 from . import docs
-from .config import Config, copy_default_config
+from .config import Config, copy_default_config, copy_default_mailcap
 from .oauth import OAuthHelper
 from .terminal import Terminal
 from .objects import curses_session, Color
@@ -57,6 +57,10 @@ def main():
     # Copy the default config file and quit
     if config['copy_config']:
         copy_default_config()
+        return
+
+    if config['copy_mailcap']:
+        copy_default_mailcap()
         return
 
     # Load the browsing history from previous sessions

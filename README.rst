@@ -100,7 +100,7 @@ Auto-generate the config file by running
 
     $ rtv --copy-config
 
-See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv/rtv.cfg>`_ for the full list of settings.
+See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg>`_ for the full list of settings.
 
 ------
 Editor

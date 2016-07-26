@@ -5,7 +5,7 @@ import os
 import codecs
 from tempfile import NamedTemporaryFile
 
-from rtv.config import Config, copy_default_config, DEFAULT_CONFIG
+from rtv.config import Config, copy_default_config, copy_default_mailcap
 
 try:
     from unittest import mock
@@ -20,6 +20,19 @@ def test_copy_default_config():
         with mock.patch('rtv.config.six.moves.input', return_value='y'):
             copy_default_config(fp.name)
             assert fp.read()
+            # Check that the permissions were changed
+            permissions = os.stat(fp.name).st_mode & 0o777
+            assert permissions == 0o664
+
+
+def test_copy_default_mailcap():
+    "Make sure the example mailcap file was included in the package"
+
+    with NamedTemporaryFile() as fp:
+        with mock.patch('rtv.config.six.moves.input', return_value='y'):
+            copy_default_mailcap(fp.name)
+            assert fp.read()
+            # Check that the permissions were changed
             permissions = os.stat(fp.name).st_mode & 0o777
             assert permissions == 0o664
 
