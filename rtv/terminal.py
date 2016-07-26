@@ -279,7 +279,7 @@ class Terminal(object):
         """
 
         if isinstance(message, six.string_types):
-            message = [message]
+            message = message.splitlines()
 
         n_rows, n_cols = self.stdscr.getmaxyx()
 
@@ -371,7 +371,8 @@ class Terminal(object):
                 _, stderr = p.communicate()
                 _logger.warning(stderr)
                 self.show_notification(
-                    'Program exited with status=%s\n%s' % (code, stderr))
+                    'Program exited with status={0}\n{1}'.format(
+                        code, stderr.strip()))
 
         else:
             # Non-blocking, open a background process
@@ -387,7 +388,8 @@ class Terminal(object):
                 if code is not None and code != 0:
                     _, stderr = p.communicate()
                     raise exceptions.BrowserError(
-                        'Program exited with status=%s\n%s' % (code, stderr))
+                        'Program exited with status={0}\n{1}'.format(
+                            code, stderr.strip()))
 
     def get_mailcap_entry(self, url):
         """

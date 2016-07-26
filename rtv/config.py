@@ -237,6 +237,7 @@ class Config(object):
             'monochrome': partial(config.getboolean, 'rtv'),
             'clear_auth': partial(config.getboolean, 'rtv'),
             'persistent': partial(config.getboolean, 'rtv'),
+            'enable_media': partial(config.getboolean, 'rtv'),
             'history_size': partial(config.getint, 'rtv'),
             'oauth_redirect_port': partial(config.getint, 'rtv'),
             'oauth_scope': lambda x: rtv[x].split(',')

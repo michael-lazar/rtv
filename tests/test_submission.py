@@ -267,7 +267,7 @@ def test_submission_urlview(submission_page, terminal, refresh_token):
     # Submission case
     data = submission_page.content.get(submission_page.nav.absolute_index)
     data['body'] = 'test comment body  ❤'
-    with mock.patch.object(terminal, 'open_urlview') as open_urlview, \
+    with mock.patch.object(terminal, 'open_urlview') as open_urlview:
         submission_page.controller.trigger('b')
         open_urlview.assert_called_with('test comment body  ❤')
 

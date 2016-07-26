@@ -186,7 +186,7 @@ def test_show_notification(terminal, stdscr, use_ascii):
     text = 'line 1\nline 2\nline3'
     terminal.show_notification(text)
     assert stdscr.subwin.nlines == 5
-    assert stdscr.subwin.addstr.call_count == len(text)
+    assert stdscr.subwin.addstr.call_count == 3
     stdscr.reset_mock()
 
     # The whole message should fit in 40x80
@@ -385,9 +385,6 @@ def test_open_link_mailcap(terminal):
 def test_open_link_subprocess(terminal):
 
     url = 'http://www.test.com'
-    addstr = terminal.stdscr.subwin.addstr
-
-    error_status = 'Program exited with status'.encode('utf-8')
 
     with mock.patch('time.sleep'),                            \
             mock.patch('os.system'),                          \
@@ -399,7 +396,13 @@ def test_open_link_subprocess(terminal):
         def reset_mock():
             six_input.reset_mock()
             os.system.reset_mock()
-            addstr.reset_mock()
+            terminal.stdscr.subwin.addstr.reset_mock()
+
+        def get_error():
+            # Check if an error message was printed to the terminal
+            status = 'Program exited with status'.encode('utf-8')
+            return any(status in args[0][2] for args in
+                       terminal.stdscr.subwin.addstr.call_args_list)
 
         # Non-blocking success
         reset_mock()
@@ -407,7 +410,7 @@ def test_open_link_subprocess(terminal):
         terminal.get_mailcap_entry.return_value = entry
         terminal.open_link(url)
         assert not six_input.called
-        assert error_status not in addstr.call_args[0][2]
+        assert not get_error()
 
         # Non-blocking failure
         reset_mock()
@@ -415,7 +418,7 @@ def test_open_link_subprocess(terminal):
         terminal.get_mailcap_entry.return_value = entry
         terminal.open_link(url)
         assert not six_input.called
-        assert error_status in addstr.call_args[0][2]
+        assert get_error()
 
         # needsterminal success
         reset_mock()
@@ -423,7 +426,7 @@ def test_open_link_subprocess(terminal):
         terminal.get_mailcap_entry.return_value = entry
         terminal.open_link(url)
         assert not six_input.called
-        assert not addstr.called
+        assert not get_error()
 
         # needsterminal failure
         reset_mock()
@@ -431,7 +434,7 @@ def test_open_link_subprocess(terminal):
         terminal.get_mailcap_entry.return_value = entry
         terminal.open_link(url)
         assert not six_input.called
-        assert error_status in addstr.call_args[0][2]
+        assert get_error()
 
         # copiousoutput success
         reset_mock()
@@ -439,7 +442,7 @@ def test_open_link_subprocess(terminal):
         terminal.get_mailcap_entry.return_value = entry
         terminal.open_link(url)
         assert six_input.called
-        assert not addstr.called
+        assert not get_error()
 
         # copiousoutput failure
         reset_mock()
@@ -447,7 +450,7 @@ def test_open_link_subprocess(terminal):
         terminal.get_mailcap_entry.return_value = entry
         terminal.open_link(url)
         assert six_input.called
-        assert error_status in addstr.call_args[0][2]
+        assert get_error()
 
 
 def test_open_browser(terminal):
