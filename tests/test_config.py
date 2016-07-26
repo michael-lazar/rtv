@@ -69,7 +69,8 @@ def test_config_get_args():
             '--monochrome',
             '--non-persistent',
             '--clear-auth',
-            '--copy-config',]
+            '--copy-config',
+            '--enable-media']
 
     with mock.patch('sys.argv', ['rtv']):
         config_dict = Config.get_args()
@@ -90,6 +91,7 @@ def test_config_get_args():
         assert config['link'] == 'https://reddit.com/permalink •'
         assert config['config'] == 'configfile.cfg'
         assert config['copy_config'] is True
+        assert config['enable_media'] is True
 
 
 def test_config_from_file():
@@ -102,7 +104,8 @@ def test_config_from_file():
         'clear_auth': True,
         'log': 'logfile.log',
         'link': 'https://reddit.com/permalink •',
-        'subreddit': 'cfb'}
+        'subreddit': 'cfb',
+        'enable_media': True}
 
     bindings = {
         'REFRESH': 'r, <KEY_F5>',

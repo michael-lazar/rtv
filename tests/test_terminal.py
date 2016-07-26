@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
 import os
 import curses
 import codecs
@@ -10,7 +11,7 @@ import pytest
 
 from rtv.docs import HELP, COMMENT_EDIT_FILE
 from rtv.objects import Color
-from rtv.exceptions import TemporaryFileError
+from rtv.exceptions import TemporaryFileError, MailcapEntryNotFound
 
 try:
     from unittest import mock
@@ -181,6 +182,13 @@ def test_show_notification(terminal, stdscr, use_ascii):
 
     terminal.config['ascii'] = use_ascii
 
+    # Multi-line messages should be automatically split
+    text = 'line 1\nline 2\nline3'
+    terminal.show_notification(text)
+    assert stdscr.subwin.nlines == 5
+    assert stdscr.subwin.addstr.call_count == len(text)
+    stdscr.reset_mock()
+
     # The whole message should fit in 40x80
     text = HELP.strip().splitlines()
     terminal.show_notification(text)
@@ -341,6 +349,107 @@ def test_open_editor_error(terminal):
         os.remove(data['filename'])
 
 
+def test_open_link_mailcap(terminal):
+
+    url = 'http://www.test.com'
+
+    class MockMimeParser(object):
+        pattern = re.compile('')
+
+    mock_mime_parser = MockMimeParser()
+
+    with mock.patch.object(terminal, 'open_browser'), \
+            mock.patch('rtv.terminal.mime_parsers') as mime_parsers:
+        mime_parsers.parsers = [mock_mime_parser]
+
+        # Pass through to open_browser if media is disabled
+        terminal.config['enable_media'] = False
+        terminal.open_link(url)
+        assert terminal.open_browser.called
+        terminal.open_browser.reset_mock()
+
+        # Invalid content type
+        terminal.config['enable_media'] = True
+        mock_mime_parser.get_mimetype = lambda url: (url, None)
+        terminal.open_link(url)
+        assert terminal.open_browser.called
+        terminal.open_browser.reset_mock()
+
+        # Text/html defers to open_browser
+        mock_mime_parser.get_mimetype = lambda url: (url, 'text/html')
+        terminal.open_link(url)
+        assert terminal.open_browser.called
+        terminal.open_browser.reset_mock()
+
+
+def test_open_link_subprocess(terminal):
+
+    url = 'http://www.test.com'
+    addstr = terminal.stdscr.subwin.addstr
+
+    error_status = 'Program exited with status'.encode('utf-8')
+
+    with mock.patch('time.sleep'),                            \
+            mock.patch('os.system'),                          \
+            mock.patch('six.moves.input') as six_input,       \
+            mock.patch.object(terminal, 'get_mailcap_entry'):
+
+        six_input.return_values = 'y'
+
+        def reset_mock():
+            six_input.reset_mock()
+            os.system.reset_mock()
+            addstr.reset_mock()
+
+        # Non-blocking success
+        reset_mock()
+        entry = ('echo ""', 'echo %s')
+        terminal.get_mailcap_entry.return_value = entry
+        terminal.open_link(url)
+        assert not six_input.called
+        assert error_status not in addstr.call_args[0][2]
+
+        # Non-blocking failure
+        reset_mock()
+        entry = ('fake .', 'fake %s')
+        terminal.get_mailcap_entry.return_value = entry
+        terminal.open_link(url)
+        assert not six_input.called
+        assert error_status in addstr.call_args[0][2]
+
+        # needsterminal success
+        reset_mock()
+        entry = ('echo ""', 'echo %s; needsterminal')
+        terminal.get_mailcap_entry.return_value = entry
+        terminal.open_link(url)
+        assert not six_input.called
+        assert not addstr.called
+
+        # needsterminal failure
+        reset_mock()
+        entry = ('fake .', 'fake %s; needsterminal')
+        terminal.get_mailcap_entry.return_value = entry
+        terminal.open_link(url)
+        assert not six_input.called
+        assert error_status in addstr.call_args[0][2]
+
+        # copiousoutput success
+        reset_mock()
+        entry = ('echo ""', 'echo %s; needsterminal; copiousoutput')
+        terminal.get_mailcap_entry.return_value = entry
+        terminal.open_link(url)
+        assert six_input.called
+        assert not addstr.called
+
+        # copiousoutput failure
+        reset_mock()
+        entry = ('fake .', 'fake %s; needsterminal; copiousoutput')
+        terminal.get_mailcap_entry.return_value = entry
+        terminal.open_link(url)
+        assert six_input.called
+        assert error_status in addstr.call_args[0][2]
+
+
 def test_open_browser(terminal):
 
     url = 'http://www.test.com'
@@ -363,7 +472,7 @@ def test_open_browser(terminal):
 
 def test_open_pager(terminal, stdscr):
 
-    data = "Hello World!"
+    data = "Hello World!  ❤"
 
     def side_effect(args, stdin=None):
         assert stdin is not None
