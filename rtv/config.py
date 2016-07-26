@@ -20,7 +20,7 @@ DEFAULT_CONFIG = os.path.join(TEMPLATE, 'rtv.cfg')
 DEFAULT_MAILCAP = os.path.join(TEMPLATE, 'mailcap')
 XDG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
 CONFIG = os.path.join(XDG_HOME, 'rtv', 'rtv.cfg')
-MAILCAP = os.path.join(XDG_HOME, '.mailcap')
+MAILCAP = os.path.join(HOME, '.mailcap')
 TOKEN = os.path.join(XDG_HOME, 'rtv', 'refresh-token')
 HISTORY = os.path.join(XDG_HOME, 'rtv', 'history.log')
 
