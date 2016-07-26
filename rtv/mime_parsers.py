@@ -64,8 +64,8 @@ class YoutubeMIMEParser(BaseMIMEParser):
     Assign a custom mime-type so they can be referenced in mailcap.
     """
     pattern = re.compile(
-            r'(?:https?://)?(m\.)?(?:youtu\.be/|(?:www\.)?youtube\.com/watch'
-            r'(?:\.php)?\'?.*v=)([a-zA-Z0-9\-_]+)')
+        r'(?:https?://)?(m\.)?(?:youtu\.be/|(?:www\.)?youtube\.com/watch'
+        r'(?:\.php)?\'?.*v=)([a-zA-Z0-9\-_]+)')
 
     @staticmethod
     def get_mimetype(url):

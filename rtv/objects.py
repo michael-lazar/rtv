@@ -190,7 +190,7 @@ class LoadScreen(object):
 
         self.exception = e
         exc_name = type(e).__name__
-        _logger.info('Loader caught: {0} - {1}'.format(exc_name, e))
+        _logger.info('Loader caught: %s - %s', exc_name, e)
 
         if isinstance(e, KeyboardInterrupt):
             # Don't need to print anything for this one, just swallow it

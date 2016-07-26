@@ -81,7 +81,7 @@ class SubredditPage(Page):
         If this was pressed on the front page, go back to the last subreddit.
         """
 
-        if not self.content.name == '/r/front':
+        if self.content.name != '/r/front':
             target = '/r/front'
             self._toggled_subreddit = self.content.name
         else:
