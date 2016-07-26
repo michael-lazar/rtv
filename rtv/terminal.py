@@ -52,8 +52,11 @@ class Terminal(object):
         self.loader = LoadScreen(self)
         self._display = None
 
-        # TODO: Load from custom location
-        self._mailcap_dict = mailcap.getcaps()
+        try:
+            self._mailcap_dict = mailcap.getcaps()
+        except IOError:
+            # Python 2 raises an error, python 3 does not
+            self._mailcap_dict = {}
 
     @property
     def up_arrow(self):

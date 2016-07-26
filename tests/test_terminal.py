@@ -154,7 +154,7 @@ def test_terminal_clean_unescape_html(terminal, use_ascii):
     terminal.config['ascii'] = use_ascii
     text = terminal.clean('&lt;')
     assert isinstance(text, six.binary_type)
-    assert text.decode('ascii' if ascii else 'utf-8') == '<'
+    assert text.decode('ascii' if use_ascii else 'utf-8') == '<'
 
 
 @pytest.mark.parametrize('use_ascii', [True, False])

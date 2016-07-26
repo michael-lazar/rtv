@@ -56,7 +56,7 @@ def test_objects_load_screen_exception_handled(terminal, stdscr, use_ascii):
     assert not terminal.loader._is_running
     assert not terminal.loader._animator.is_alive()
     assert isinstance(terminal.loader.exception, requests.ConnectionError)
-    error_message = 'ConnectionError'.encode('ascii' if ascii else 'utf-8')
+    error_message = 'ConnectionError'.encode('ascii' if use_ascii else 'utf-8')
     stdscr.subwin.addstr.assert_called_with(1, 1, error_message)
 
 
@@ -155,7 +155,7 @@ def test_objects_load_screen_nested_complex(terminal, stdscr, use_ascii):
     assert terminal.loader.depth == 0
     assert not terminal.loader._is_running
     assert not terminal.loader._animator.is_alive()
-    error_message = 'ConnectionError'.encode('ascii' if ascii else 'utf-8')
+    error_message = 'ConnectionError'.encode('ascii' if use_ascii else 'utf-8')
     stdscr.subwin.addstr.assert_called_once_with(1, 1, error_message)
 
 
