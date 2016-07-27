@@ -17,9 +17,12 @@ from contextlib import contextmanager
 
 import six
 from kitchen.text.display import textual_width_chop
+from mailcap_fix import mailcap
 
 from . import exceptions
+from . import mime_parsers
 from .objects import LoadScreen, Color
+
 
 try:
     # Added in python 3.4+
@@ -42,28 +45,29 @@ class Terminal(object):
     RETURN = 10
     SPACE = 32
 
-    def __init__(self, stdscr, ascii=False):
+    def __init__(self, stdscr, config):
 
         self.stdscr = stdscr
-        self.ascii = ascii
+        self.config = config
         self.loader = LoadScreen(self)
         self._display = None
+        self._mailcap_dict = mailcap.getcaps()
 
     @property
     def up_arrow(self):
-        symbol = '^' if self.ascii else '▲'
+        symbol = '^' if self.config['ascii'] else '▲'
         attr = curses.A_BOLD | Color.GREEN
         return symbol, attr
 
     @property
     def down_arrow(self):
-        symbol = 'v' if self.ascii else '▼'
+        symbol = 'v' if self.config['ascii'] else '▼'
         attr = curses.A_BOLD | Color.RED
         return symbol, attr
 
     @property
     def neutral_arrow(self):
-        symbol = 'o' if self.ascii else '•'
+        symbol = 'o' if self.config['ascii'] else '•'
         attr = curses.A_BOLD
         return symbol, attr
 
@@ -75,7 +79,7 @@ class Terminal(object):
 
     @property
     def guilded(self):
-        symbol = '*' if self.ascii else '✪'
+        symbol = '*' if self.config['ascii'] else '✪'
         attr = curses.A_BOLD | Color.YELLOW
         return symbol, attr
 
@@ -222,7 +226,7 @@ class Terminal(object):
         if isinstance(string, six.text_type):
             string = unescape(string)
 
-        if self.ascii:
+        if self.config['ascii']:
             if isinstance(string, six.binary_type):
                 string = string.decode('utf-8')
             string = string.encode('ascii', 'replace')
@@ -273,7 +277,7 @@ class Terminal(object):
         """
 
         if isinstance(message, six.string_types):
-            message = [message]
+            message = message.splitlines()
 
         n_rows, n_cols = self.stdscr.getmaxyx()
 
@@ -310,6 +314,128 @@ class Terminal(object):
         self.stdscr.refresh()
 
         return ch
+
+    def open_link(self, url):
+        """
+        Open a media link using the definitions from the user's mailcap file.
+
+        Most urls are parsed using their file extension, but special cases
+        exist for websites that are prevalent on reddit such as Imgur and
+        Gfycat. If there are no valid mailcap definitions, RTV will fall back
+        to using the default webbrowser.
+
+        RTV checks for certain mailcap fields to determine how to open a link:
+            - If ``copiousoutput`` is specified, the curses application will
+              be paused and stdout will be piped to the system pager.
+            - If `needsterminal`` is specified, the curses application will
+              yield terminal control to the subprocess until it has exited.
+            - Otherwise, we assume that the subprocess is meant to open a new
+              x-window, and we swallow all stdout output.
+
+        Examples:
+            Stream youtube videos with VLC
+            Browse images and imgur albums with feh
+            Watch .webm videos through your terminal with mplayer
+            View images directly in your terminal with fbi or w3m
+            Play .mp3 files with sox player
+            Send HTML pages your pager using to html2text
+            ...anything is possible!
+        """
+
+        if not self.config['enable_media']:
+            return self.open_browser(url)
+
+        try:
+            with self.loader('Checking link', catch_exception=False):
+                command, entry = self.get_mailcap_entry(url)
+        except exceptions.MailcapEntryNotFound:
+            return self.open_browser(url)
+
+        _logger.info('Executing command: %s', command)
+        needs_terminal = 'needsterminal' in entry
+        copious_output = 'copiousoutput' in entry
+
+        if needs_terminal or copious_output:
+            # Blocking, pause rtv until the process returns
+            with self.suspend():
+                os.system('clear')
+                p = subprocess.Popen(
+                    [command], stderr=subprocess.PIPE,
+                    universal_newlines=True, shell=True)
+                code = p.wait()
+                if copious_output:
+                    six.moves.input('Press any key to continue')
+            if code != 0:
+                _, stderr = p.communicate()
+                _logger.warning(stderr)
+                self.show_notification(
+                    'Program exited with status={0}\n{1}'.format(
+                        code, stderr.strip()))
+
+        else:
+            # Non-blocking, open a background process
+            with self.loader('Opening page', delay=0):
+                p = subprocess.Popen(
+                    [command], shell=True, universal_newlines=True,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                # Wait a little while to make sure that the command doesn't
+                # exit with an error. This isn't perfect, but it should be good
+                # enough to catch invalid commands.
+                time.sleep(1.0)
+                code = p.poll()
+                if code is not None and code != 0:
+                    _, stderr = p.communicate()
+                    raise exceptions.BrowserError(
+                        'Program exited with status={0}\n{1}'.format(
+                            code, stderr.strip()))
+
+    def get_mailcap_entry(self, url):
+        """
+        Search through the mime handlers list and attempt to find the
+        appropriate command to open the provided url with.
+
+        Will raise a MailcapEntryNotFound exception if no valid command exists.
+
+        Params:
+            url (text): URL that will be checked
+
+        Returns:
+            command (text): The string of the command that should be executed
+                in a subprocess to open the resource.
+            entry (dict): The full mailcap entry for the corresponding command
+        """
+
+        for parser in mime_parsers.parsers:
+            if parser.pattern.match(url):
+                # modified_url may be the same as the original url, but it
+                # could also be updated to point to a different page, or it
+                # could refer to the location of a temporary file with the
+                # page's downloaded content.
+                try:
+                    modified_url, content_type = parser.get_mimetype(url)
+                except Exception as e:
+                    # If Imgur decides to change its html layout, let it fail
+                    # silently in the background instead of crashing.
+                    _logger.warn('parser %s raised an exception', parser)
+                    _logger.exception(e)
+                    raise exceptions.MailcapEntryNotFound()
+                if not content_type:
+                    _logger.info('Content type could not be determined')
+                    raise exceptions.MailcapEntryNotFound()
+                elif content_type == 'text/html':
+                    _logger.info('Content type text/html, deferring to browser')
+                    raise exceptions.MailcapEntryNotFound()
+
+                command, entry = mailcap.findmatch(
+                    self._mailcap_dict, content_type, filename=modified_url)
+                if not entry:
+                    _logger.info('Could not find a valid mailcap entry')
+                    raise exceptions.MailcapEntryNotFound()
+
+                return command, entry
+
+        # No parsers matched the url
+        raise exceptions.MailcapEntryNotFound()
 
     def open_browser(self, url):
         """
@@ -353,7 +479,7 @@ class Terminal(object):
                             break  # Success
                         elif code is not None:
                             raise exceptions.BrowserError(
-                                'Browser exited with status=%s' % code)
+                                'Program exited with status=%s' % code)
                         time.sleep(0.01)
                     else:
                         raise exceptions.BrowserError(
@@ -447,6 +573,12 @@ class Terminal(object):
                 _logger.info('File deleted: %s', filepath)
 
     def open_urlview(self, data):
+        """
+        Pipe a block of text to urlview, which displays a list of urls
+        contained in the text and allows the user to open them with their
+        web browser.
+        """
+
         urlview = os.getenv('RTV_URLVIEWER') or 'urlview'
         try:
             with self.suspend():

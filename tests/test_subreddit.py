@@ -101,11 +101,11 @@ def test_subreddit_open(subreddit_page, terminal, config):
         config.history.add.assert_called_with(data['url_full'])
 
     # Open the selected link externally
-    with mock.patch.object(terminal, 'open_browser'), \
+    with mock.patch.object(terminal, 'open_link'), \
             mock.patch.object(config.history, 'add'):
         data['url_type'] = 'external'
         subreddit_page.controller.trigger('o')
-        assert terminal.open_browser.called
+        assert terminal.open_link.called
         config.history.add.assert_called_with(data['url_full'])
 
     # Open the selected link within rtv

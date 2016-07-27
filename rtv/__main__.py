@@ -12,7 +12,7 @@ import praw
 import tornado
 
 from . import docs
-from .config import Config, copy_default_config
+from .config import Config, copy_default_config, copy_default_mailcap
 from .oauth import OAuthHelper
 from .terminal import Terminal
 from .objects import curses_session, Color
@@ -38,7 +38,7 @@ def main():
     logging.captureWarnings(True)
     if six.PY3:
         # These ones get triggered even when capturing warnings is turned on
-        warnings.simplefilter('ignore', ResourceWarning)
+        warnings.simplefilter('ignore', ResourceWarning)  #pylint:disable=E0602
 
     locale.setlocale(locale.LC_ALL, '')
 
@@ -63,6 +63,10 @@ def main():
     # Copy the default config file and quit
     if config['copy_config']:
         copy_default_config()
+        return
+
+    if config['copy_mailcap']:
+        copy_default_mailcap()
         return
 
     # Load the browsing history from previous sessions
@@ -109,7 +113,7 @@ def main():
             if not config['monochrome']:
                 Color.init()
 
-            term = Terminal(stdscr, config['ascii'])
+            term = Terminal(stdscr, config)
             with term.loader('Initializing', catch_exception=False):
                 reddit = praw.Reddit(user_agent=user_agent,
                                      decode_html_entities=False,

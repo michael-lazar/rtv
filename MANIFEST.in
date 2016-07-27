@@ -4,5 +4,4 @@ include AUTHORS.rst
 include README.rst
 include LICENSE
 include rtv.1
-include rtv/rtv.cfg
 include rtv/templates/*
