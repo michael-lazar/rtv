@@ -1,14 +1,21 @@
 # Example mailcap file for Reddit Terminal Viewer
-
+# https://github.com/michael-lazar/rtv/
+#
 # Copy the contents of this file to {HOME}/.mailcap, or point to using $MAILCAPS
 # Then launch RTV using the --enable-media flag. All shell commands defined in
 # this file depend on external programs that must be installed on your system.
 #
-# See https://github.com/michael-lazar/rtv/
-# If something is not working, you can save debug stderr messages to a log file
-# by launching rtv with the --log flag.
-# If you come up with your own commands and would like to share them, post an
-# issue on the GitHub tracker and they will be added as examples.
+# HELP REQUESTED! If you come up with your own commands (especially for OS X)
+# and would like to share, please post an issue on the GitHub tracker and we
+# can get them added to this file as references.
+#
+#
+#                              Mailcap 101
+# - The first entry with a matching MIME type will be executed, * is a wildcard
+# - %s will be replaced with the image or video url
+# - Add ``test=test -n "$DISPLAY"`` if your command opens a new window
+# - Add ``needstermial`` for commands that use the terminal
+# - Add ``copiousoutput`` for commands that dump text to stdout
 
 ###############################################################################
 # Commands below this point will open media in a separate window without
