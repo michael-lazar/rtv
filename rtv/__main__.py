@@ -5,7 +5,9 @@ import os
 import sys
 import locale
 import logging
+import warnings
 
+import six
 import praw
 import tornado
 
@@ -34,6 +36,10 @@ def main():
 
     # Squelch SSL warnings
     logging.captureWarnings(True)
+    if six.PY3:
+        # These ones get triggered even when capturing warnings is turned on
+        warnings.simplefilter('ignore', ResourceWarning)
+
     locale.setlocale(locale.LC_ALL, '')
 
     # Set the terminal title
