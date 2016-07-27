@@ -153,7 +153,10 @@ class ImgurAlbumMIMEParser(BaseMIMEParser):
 
         urls = []
         for div in soup.find_all('div', class_='post-image'):
-            urls.append('http:' + div.find('img').get('src'))
+            img = div.find('img')
+            src = img.get('src') if img else None
+            if src:
+                urls.append('http:{0}'.format(src))
 
         if urls:
             return " ".join(urls), 'image/x-imgur-album'

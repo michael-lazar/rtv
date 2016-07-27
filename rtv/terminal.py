@@ -51,12 +51,7 @@ class Terminal(object):
         self.config = config
         self.loader = LoadScreen(self)
         self._display = None
-
-        try:
-            self._mailcap_dict = mailcap.getcaps()
-        except IOError:
-            # Python 2 raises an error, python 3 does not
-            self._mailcap_dict = {}
+        self._mailcap_dict = mailcap.getcaps()
 
     @property
     def up_arrow(self):
@@ -416,7 +411,14 @@ class Terminal(object):
                 # could also be updated to point to a different page, or it
                 # could refer to the location of a temporary file with the
                 # page's downloaded content.
-                modified_url, content_type = parser.get_mimetype(url)
+                try:
+                    modified_url, content_type = parser.get_mimetype(url)
+                except Exception as e:
+                    # If Imgur decides to change its html layout, let it fail
+                    # silently in the background instead of crashing.
+                    _logger.warn('parser %s raised an exception', parser)
+                    _logger.exception(e)
+                    raise exceptions.MailcapEntryNotFound()
                 if not content_type:
                     _logger.info('Content type could not be determined')
                     raise exceptions.MailcapEntryNotFound()
