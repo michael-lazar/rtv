@@ -38,7 +38,7 @@ def main():
     logging.captureWarnings(True)
     if six.PY3:
         # These ones get triggered even when capturing warnings is turned on
-        warnings.simplefilter('ignore', ResourceWarning)
+        warnings.simplefilter('ignore', ResourceWarning)  #pylint:disable=E0602
 
     locale.setlocale(locale.LC_ALL, '')
 
