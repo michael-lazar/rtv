@@ -455,6 +455,16 @@ class Terminal(object):
                     p.communicate(input=data.encode('utf-8'))
                 except KeyboardInterrupt:
                     p.terminate()
+
+                code = p.poll()
+                if code == 1:
+                    # Clear the "No URLs found." message from stdout
+                    sys.stdout.write("\033[F")
+                    sys.stdout.flush()
+
+            if code == 1:
+                self.show_notification('No URLs found')
+
         except OSError:
             self.show_notification(
                 'Failed to open {0}'.format(urlview))
