@@ -144,17 +144,22 @@ class ImgurAlbumMIMEParser(BaseMIMEParser):
             </a>
         </div>
     """
-    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/a(lbum)?/[^.]+$')
+    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/'
+                                                 '(a(lbum)?|(gallery))/[^.]+$')
 
     @staticmethod
     def get_mimetype(url):
+        url = url.replace('/gallery/', '/a/')
+        url_parts = url.strip('/').split('/')
+        page_id = url_parts.index('a') + 1
+        url = 'https://www.imgur.com/a/' + url_parts[page_id] + '/layout/grid'
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
 
         urls = []
-        for div in soup.find_all('div', class_='post-image'):
-            img = div.find('img')
-            src = img.get('src') if img else None
+        for div in soup.find_all('div', class_='post'):
+            a = div.find('a')
+            src = a.get('href') if a else None
             if src:
                 urls.append('http:{0}'.format(src))
 
