@@ -76,14 +76,14 @@ Move the cursor using either the arrow keys or *Vim* style movement
 
 Press ``/`` to open the navigation prompt, where you can type things like
 
-- /front
-- /r/commandprompt+linuxmasterrace
-- /r/programming/controversial-week
-- /u/me
-- /u/multi-mod/m/art
-- /domain/github.com
+- ``/front``
+- ``/r/commandprompt+linuxmasterrace``
+- ``/r/programming/controversial-week``
+- ``/u/me``
+- ``/u/multi-mod/m/art``
+- ``/domain/github.com``
 
-See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the full list of commands.
+See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the full list of commands
 
 ========
 Settings
