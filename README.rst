@@ -100,47 +100,25 @@ See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv
 .. code-block:: bash
 
     $ rtv --copy-config
-    
-------
-Editor
-------
-
-You can compose posts and reply to comments using your preferred text editor.
-Set the editor by changing ``$RTV_EDITOR`` in your environment.
-
-.. code-block:: bash
-
-    $ export RTV_EDITOR=gedit
-
-If not specified, the default system ``$EDITOR`` (or *nano*) will be used.
 
 -----------
-Web Browser
+Environment
 -----------
 
-You can open submission links using your web browser.
-On most systems the default web browser will open in a new window.
-If you prefer the complete terminal experience, set ``$BROWSER`` to a console-based web browser.
-
-.. code-block:: bash
-
-    $ export BROWSER=w3m
-
-`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices.
-
-----------
-Url Viewer
-----------
-
-You can extract links from inside of comments using urlview.
-Use ``$RTV_URLVIEWER`` to specify a custom url viewer.
-
-.. code-block:: bash
-
-    $ export RTV_URLVIEWER=urlview
-
-`urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible, but any program that accepts text via a stdin pipe will do.
-These applications don't come pre-installed, but are available through most systems' package managers.
+``$BROWSER``
+  You can open submission links using your web browser.
+  On most systems the default web browser will open in a new window.
+  If you prefer the complete terminal experience, try using a console-based web browser
+  (`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices).
+``$PAGER``
+  You can use your system's pager to scroll through long comments and submissions.
+``$RTV_EDITOR``
+  You can compose posts and reply to comments using your preferred text editor.
+  If not specified, the default system ``$EDITOR`` (or `nano <https://www.nano-editor.org/>`_) will be used.
+``$RTV_URLVIEWER``
+  You can extract links from inside of comments using a url viewer.
+  `urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible.
+  These applications don't come pre-installed, but are available through most systems' package managers.
 
 ===
 FAQ
