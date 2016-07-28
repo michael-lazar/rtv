@@ -93,7 +93,7 @@ Settings
 Configuration
 -------------
 
-RTV stores configuration files in the ``{HOME}/.config/rtv/`` directory.
+Configuration files are stored in the ``{HOME}/.config/rtv/`` directory
 
 See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg>`_ for the full list of configurable options. You can clone this file onto your system by running
 
