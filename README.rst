@@ -106,17 +106,17 @@ Environment
 -----------
 
 ``$BROWSER``
-  You can open submission links using your web browser.
+  Submission links can be opened in your web browser.
   On most systems the default web browser will open in a new window.
   If you prefer the complete terminal experience, try using a console-based web browser
   (`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices).
 ``$PAGER``
-  You can use your system's pager to scroll through long comments and submissions.
+  Extra long comments and submissions can be viewed through the system pager.
 ``$RTV_EDITOR``
-  You can compose posts and reply to comments using your preferred text editor.
+  Compose posts and replying to comments is done using your preferred text editor.
   If not specified, the default system ``$EDITOR`` (or `nano <https://www.nano-editor.org/>`_) will be used.
 ``$RTV_URLVIEWER``
-  You can extract links from inside of comments using a url viewer.
+  A url viewer can be used to extract links from inside of comments.
   `urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible.
   These applications don't come pre-installed, but are available through most systems' package managers.
 
