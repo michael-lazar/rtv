@@ -105,6 +105,8 @@ See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv
 Environment
 -----------
 
+RTV will respect the following environment variables when accessing external programs
+
 ``$BROWSER``
   Submission links can be opened in your web browser.
   On most systems the default web browser will open in a new window.
