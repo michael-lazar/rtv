@@ -93,15 +93,14 @@ Settings
 Configuration
 -------------
 
-Configuration settings are stored in ``{HOME}/.config/rtv/rtv.cfg``.
-Auto-generate the config file by running
+RTV stores configuration files in the ``{HOME}/.config/rtv/`` directory.
+
+See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg>`_ for the full list of configurable options. You can clone this file onto your system by running
 
 .. code-block:: bash
 
     $ rtv --copy-config
-
-See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg>`_ for the full list of settings.
-
+    
 ------
 Editor
 ------
