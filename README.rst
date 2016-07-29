@@ -28,8 +28,8 @@ RTV (Reddit Terminal Viewer)
 Demo
 ====
 
-.. image:: http://i.imgur.com/aZCaXno.png
 .. image:: http://i.imgur.com/UeKbK8z.png
+   :target: https://asciinema.org/a/81168
 
 ============
 Installation
