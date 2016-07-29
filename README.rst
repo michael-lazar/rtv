@@ -7,12 +7,13 @@ RTV (Reddit Terminal Viewer)
 
 .. image:: http://i.imgur.com/Ek13lqM.png
 
-.. image:: http://i.imgur.com/8g7asLr.png
-
-.. image:: http://i.imgur.com/UeKbK8z.png
-
 |
 | RTV is built in **python** using the **curses** library.
+|
+|
+
+.. image:: http://i.imgur.com/aZCaXno.png
+.. image:: http://i.imgur.com/UeKbK8z.png
 
 ---------------
 
