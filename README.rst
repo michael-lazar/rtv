@@ -6,8 +6,10 @@ RTV (Reddit Terminal Viewer)
 | It's compatible with *most* terminal emulators on Linux and OS X.
 
 .. image:: http://i.imgur.com/Ek13lqM.png
+
 .. image:: https://asciinema.org/a/81168.png
    :target: https://asciinema.org/a/81168
+   :width: 30%
 
 |
 | RTV is built in **python** using the **curses** library.
