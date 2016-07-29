@@ -8,12 +8,6 @@ RTV (Reddit Terminal Viewer)
 .. image:: http://i.imgur.com/Ek13lqM.png
 
 |
-|
-
-.. image:: http://i.imgur.com/aZCaXno.png
-.. image:: http://i.imgur.com/UeKbK8z.png
-
-|
 | RTV is built in **python** using the **curses** library.
 
 ---------------
@@ -22,12 +16,20 @@ RTV (Reddit Terminal Viewer)
 
 ---------------
 
+* `Demo`_
 * `Installation`_
 * `Usage`_
 * `Settings`_
 * `FAQ`_
 * `Contributing`_
 * `License`_
+
+====
+Demo
+====
+
+.. image:: http://i.imgur.com/aZCaXno.png
+.. image:: http://i.imgur.com/UeKbK8z.png
 
 ============
 Installation
