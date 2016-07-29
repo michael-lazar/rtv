@@ -76,14 +76,14 @@ Move the cursor using either the arrow keys or *Vim* style movement
 
 Press ``/`` to open the navigation prompt, where you can type things like
 
-- /front
-- /r/commandprompt+linuxmasterrace
-- /r/programming/controversial-week
-- /u/me
-- /u/multi-mod/m/art
-- /domain/github.com
+- ``/front``
+- ``/r/commandprompt+linuxmasterrace``
+- ``/r/programming/controversial-week``
+- ``/u/me``
+- ``/u/multi-mod/m/art``
+- ``/domain/github.com``
 
-See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the full list of commands.
+See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the full list of commands
 
 ========
 Settings
@@ -93,55 +93,34 @@ Settings
 Configuration
 -------------
 
-Configuration settings are stored in ``{HOME}/.config/rtv/rtv.cfg``.
-Auto-generate the config file by running
+Configuration files are stored in the ``{HOME}/.config/rtv/`` directory
+
+See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg>`_ for the full list of configurable options. You can clone this file onto your system by running
 
 .. code-block:: bash
 
     $ rtv --copy-config
 
-See the `default config <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg>`_ for the full list of settings.
-
-------
-Editor
-------
-
-You can compose posts and reply to comments using your preferred text editor.
-Set the editor by changing ``$RTV_EDITOR`` in your environment.
-
-.. code-block:: bash
-
-    $ export RTV_EDITOR=gedit
-
-If not specified, the default system ``$EDITOR`` (or *nano*) will be used.
-
 -----------
-Web Browser
+Environment
 -----------
 
-You can open submission links using your web browser.
-On most systems the default web browser will open in a new window.
-If you prefer the complete terminal experience, set ``$BROWSER`` to a console-based web browser.
+RTV will respect the following environment variables when accessing external programs
 
-.. code-block:: bash
-
-    $ export BROWSER=w3m
-
-`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices.
-
-----------
-Url Viewer
-----------
-
-You can extract links from inside of comments using urlview.
-Use ``$RTV_URLVIEWER`` to specify a custom url viewer.
-
-.. code-block:: bash
-
-    $ export RTV_URLVIEWER=urlview
-
-`urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible, but any program that accepts text via a stdin pipe will do.
-These applications don't come pre-installed, but are available through most systems' package managers.
+``$BROWSER``
+  Submission links can be opened in your web browser.
+  On most systems the default web browser will open in a new window.
+  If you prefer the complete terminal experience, try using a console-based web browser
+  (`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices).
+``$PAGER``
+  Extra long comments and submissions can be viewed through the system pager.
+``$RTV_EDITOR``
+  Compose posts and replying to comments is done using your preferred text editor.
+  If not specified, the default system ``$EDITOR`` (or `nano <https://www.nano-editor.org/>`_) will be used.
+``$RTV_URLVIEWER``
+  A url viewer can be used to extract links from inside of comments.
+  `urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible.
+  These applications don't come pre-installed, but are available through most systems' package managers.
 
 ===
 FAQ
