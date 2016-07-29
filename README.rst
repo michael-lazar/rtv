@@ -7,7 +7,7 @@ RTV (Reddit Terminal Viewer)
 
 .. image:: http://i.imgur.com/Ek13lqM.png
 
-.. image:: http://i.imgur.com/N0COSlG.png
+.. image:: http://i.imgur.com/8g7asLr.png
 
 .. image:: http://i.imgur.com/UeKbK8z.png
 
