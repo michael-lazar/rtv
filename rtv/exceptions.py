@@ -40,3 +40,7 @@ class BrowserError(RTVError):
 
 class TemporaryFileError(RTVError):
     "Indicates that an error has occurred and the file should not be deleted"
+
+
+class MailcapEntryNotFound(RTVError):
+    "A valid mailcap entry could not be coerced from the given url"

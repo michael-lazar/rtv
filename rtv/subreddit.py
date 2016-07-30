@@ -81,7 +81,7 @@ class SubredditPage(Page):
         If this was pressed on the front page, go back to the last subreddit.
         """
 
-        if not self.content.name == '/r/front':
+        if self.content.name != '/r/front':
             target = '/r/front'
             self._toggled_subreddit = self.content.name
         else:
@@ -124,7 +124,7 @@ class SubredditPage(Page):
             self.open_submission(url=data['url_full'])
             self.config.history.add(data['url_full'])
         else:
-            self.term.open_browser(data['url_full'])
+            self.term.open_link(data['url_full'])
             self.config.history.add(data['url_full'])
 
     @SubredditController.register(Command('SUBREDDIT_POST'))

@@ -5,7 +5,7 @@ import os
 import codecs
 from tempfile import NamedTemporaryFile
 
-from rtv.config import Config, copy_default_config, DEFAULT_CONFIG
+from rtv.config import Config, copy_default_config, copy_default_mailcap
 
 try:
     from unittest import mock
@@ -20,6 +20,19 @@ def test_copy_default_config():
         with mock.patch('rtv.config.six.moves.input', return_value='y'):
             copy_default_config(fp.name)
             assert fp.read()
+            # Check that the permissions were changed
+            permissions = os.stat(fp.name).st_mode & 0o777
+            assert permissions == 0o664
+
+
+def test_copy_default_mailcap():
+    "Make sure the example mailcap file was included in the package"
+
+    with NamedTemporaryFile() as fp:
+        with mock.patch('rtv.config.six.moves.input', return_value='y'):
+            copy_default_mailcap(fp.name)
+            assert fp.read()
+            # Check that the permissions were changed
             permissions = os.stat(fp.name).st_mode & 0o777
             assert permissions == 0o664
 
@@ -56,7 +69,8 @@ def test_config_get_args():
             '--monochrome',
             '--non-persistent',
             '--clear-auth',
-            '--copy-config',]
+            '--copy-config',
+            '--enable-media']
 
     with mock.patch('sys.argv', ['rtv']):
         config_dict = Config.get_args()
@@ -77,6 +91,7 @@ def test_config_get_args():
         assert config['link'] == 'https://reddit.com/permalink •'
         assert config['config'] == 'configfile.cfg'
         assert config['copy_config'] is True
+        assert config['enable_media'] is True
 
 
 def test_config_from_file():
@@ -89,7 +104,8 @@ def test_config_from_file():
         'clear_auth': True,
         'log': 'logfile.log',
         'link': 'https://reddit.com/permalink •',
-        'subreddit': 'cfb'}
+        'subreddit': 'cfb',
+        'enable_media': True}
 
     bindings = {
         'REFRESH': 'r, <KEY_F5>',

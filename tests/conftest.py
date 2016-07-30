@@ -184,7 +184,7 @@ def reddit(vcr, request):
 
 @pytest.fixture()
 def terminal(stdscr, config):
-    term = Terminal(stdscr, ascii=config['ascii'])
+    term = Terminal(stdscr, config=config)
     # Disable the python 3.4 addch patch so that the mock stdscr calls are
     # always made the same way
     term.addch = lambda window, *args: window.addch(*args)

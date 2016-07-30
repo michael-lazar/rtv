@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Internal tool used to automatically generate an up-to-date version of the rtv
 man page. Currently this script should be manually ran after each version bump.
@@ -6,6 +8,7 @@ In the future, it would be nice to have this functionality built into setup.py.
 Usage:
     $ python scripts/build_manpage.py
 """
+
 import os
 import sys
 from datetime import datetime
