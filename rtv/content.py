@@ -87,15 +87,15 @@ class Content(object):
 
         data = {}
         data['object'] = comment
-        # Saved comments do not have a nested_level
-        data['level'] = getattr(comment, 'nested_level', None)
 
         if isinstance(comment, praw.objects.MoreComments):
             data['type'] = 'MoreComments'
+            data['level'] = comment.nested_level
             data['count'] = comment.count
             data['body'] = 'More comments'
             data['hidden'] = True
-        else:
+
+        elif hasattr(comment, 'nested_level'):
             author = getattr(comment, 'author', '[deleted]')
             name = getattr(author, 'name', '[deleted]')
             sub = getattr(comment, 'submission', '[deleted]')
@@ -106,6 +106,7 @@ class Content(object):
             stickied = getattr(comment, 'stickied', False)
 
             data['type'] = 'Comment'
+            data['level'] = comment.nested_level
             data['body'] = comment.body
             data['created'] = cls.humanize_timestamp(comment.created_utc)
             data['score'] = '{0} pts'.format(
@@ -119,23 +120,33 @@ class Content(object):
             data['stickied'] = stickied
             data['hidden'] = False
             data['saved'] = comment.saved
+        else:
+            # Saved comments don't have a nested level and are missing a couple
+            # of fields like ``submission``. As a result, we can only load a
+            # subset of fields to avoid triggering a seperate api call to load
+            # the full comment.
+            author = getattr(comment, 'author', '[deleted]')
+            stickied = getattr(comment, 'stickied', False)
+            flair = getattr(comment, 'author_flair_text', '')
 
-        return data
-
-    @classmethod
-    def coerce_saved_comment(cls, comment, data):
-        """
-        Saved comments need to be coerced so that they can be displayed in the
-        subreddit window.
-        """
-
-        data['title'] = data['body']
-        data['comments'] = ''
-        data['url_full'] = data['permalink']
-        data['url'] = data['permalink']
-        data['nsfw'] = comment.over_18
-        data['subreddit'] = six.text_type(comment.subreddit)
-        data['url_type'] = 'selfpost'
+            data['type'] = 'SavedComment'
+            data['level'] = None
+            data['title'] = comment.body
+            data['comments'] = ''
+            data['url_full'] = comment._fast_permalink
+            data['url'] = comment._fast_permalink
+            data['nsfw'] = comment.over_18
+            data['subreddit'] = six.text_type(comment.subreddit)
+            data['url_type'] = 'selfpost'
+            data['score'] = '{0} pts'.format(
+                '-' if comment.score_hidden else comment.score)
+            data['likes'] = comment.likes
+            data['created'] = cls.humanize_timestamp(comment.created_utc)
+            data['saved'] = comment.saved
+            data['stickied'] = stickied
+            data['gold'] = comment.gilded > 0
+            data['author'] = author
+            data['flair'] = flair
 
         return data
 
@@ -571,7 +582,6 @@ class SubredditContent(Content):
                 else:
                     # when submission is a saved commment
                     data = self.strip_praw_comment(submission)
-                    data = self.coerce_saved_comment(submission, data)
 
                 data['index'] = len(self._submission_data) + 1
                 # Add the post number to the beginning of the title
