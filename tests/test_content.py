@@ -38,7 +38,7 @@ SUBREDDIT_PROMPTS = {
     'front-1': ('/r/front', '/r/front', None),
     'front-new': ('/r/front/new', '/r/front', 'new'),
     'front-top-week': ('/r/front/top-week', '/r/front', 'top-week'),
-    'user-0': ('/user/spez', '/user/spez', None),
+    'user-0': ('/user/spez', '/u/spez', None),
     'user-1': ('/u/spez', '/u/spez', None),
     'user-new': ('/u/spez/new', '/u/spez', 'new'),
     'user-top-all': ('/u/spez/top-all', '/u/spez', 'top-all'),
@@ -56,7 +56,7 @@ SUBREDDIT_PROMPTS = {
 
 # Will raise an error if not logged in
 SUBREDDIT_AUTH_PROMPTS = {
-    'me-0': ('/user/me', '/user/me', None),
+    'me-0': ('/user/me', '/u/me', None),
     'me-1': ('/u/me', '/u/me', None),
     'me-top': ('/u/me/top', '/u/me', 'top'),
     'me-top-all': ('/u/me/top-all', '/u/me', 'top-all'),
