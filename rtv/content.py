@@ -88,10 +88,7 @@ class Content(object):
         data = {}
         data['object'] = comment
         # Saved comments do not have a nested_level
-        if hasattr(comment, 'nested_level'):
-            data['level'] = comment.nested_level
-        else:
-            data['level'] = None
+        data['level'] = getattr(comment, 'nested_level', None)
 
         if isinstance(comment, praw.objects.MoreComments):
             data['type'] = 'MoreComments'
@@ -384,10 +381,11 @@ class SubredditContent(Content):
     list for repeat access.
     """
 
-    def __init__(self, name, submissions, loader, order=None):
+    def __init__(self, name, submissions, loader, order=None, max_title_rows=4):
 
         self.name = name
         self.order = order
+        self.max_title_rows = max_title_rows
         self._loader = loader
         self._submissions = submissions
         self._submission_data = []
@@ -568,7 +566,7 @@ class SubredditContent(Content):
             except StopIteration:
                 raise IndexError
             else:
-                if hasattr(submission,'title'):
+                if hasattr(submission, 'title'):
                     data = self.strip_praw_submission(submission)
                 else:
                     # when submission is a saved commment
@@ -583,6 +581,9 @@ class SubredditContent(Content):
         # Modifies the original dict, faster than copying
         data = self._submission_data[index]
         data['split_title'] = self.wrap_text(data['title'], width=n_cols)
+        if len(data['split_title']) > self.max_title_rows:
+            data['split_title'] = data['split_title'][:self.max_title_rows-1]
+            data['split_title'].append('(Not enough space to display)')
         data['n_rows'] = len(data['split_title']) + 3
         data['offset'] = 0
 
