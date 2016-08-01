@@ -176,7 +176,7 @@ def test_submission_save(submission_page, refresh_token):
     submission_page.oauth.authorize()
 
     # Test save on the submission
-    with mock.patch('praw.objects.Submission.save') as save,            \
+    with mock.patch('praw.objects.Submission.save') as save,        \
             mock.patch('praw.objects.Submission.unsave') as unsave:
 
         data = submission_page.content.get(submission_page.nav.absolute_index)
@@ -203,18 +203,12 @@ def test_submission_comment_save(submission_page, terminal, refresh_token):
     submission_page.config.refresh_token = refresh_token
     submission_page.oauth.authorize()
 
-    # View a submission with the pager
-    with mock.patch.object(terminal, 'open_pager'):
-        submission_page.controller.trigger('l')
-        assert terminal.open_pager.called
-
     # Move down to the first comment
     with mock.patch.object(submission_page, 'clear_input_queue'):
         submission_page.controller.trigger('j')
 
-    data = submission_page.content.get(submission_page.nav.absolute_index)
     # Test save on the coment submission
-    with mock.patch('praw.objects.Comment.save') as save,            \
+    with mock.patch('praw.objects.Comment.save') as save,        \
             mock.patch('praw.objects.Comment.unsave') as unsave:
 
         # Save

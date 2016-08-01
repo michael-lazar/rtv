@@ -123,14 +123,13 @@ class Content(object):
             data['hidden'] = False
             data['saved'] = comment.saved
 
-
         return data
 
     @classmethod
     def coerce_saved_comment(cls, comment, data):
         """
-        Parse through a submission comment saved and return a dict with data ready to
-        be displayed through the terminal.
+        Saved comments need to be coerced so that they can be displayed in the
+        subreddit window.
         """
 
         data['title'] = data['body']
@@ -298,7 +297,6 @@ class SubmissionContent(Content):
         submission = reddit.get_submission(url, comment_sort=order)
         return cls(submission, loader, indent_size, max_indent_level, order)
 
-
     def get(self, index, n_cols=70):
         """
         Grab the `i`th submission, with the title field formatted to fit inside
@@ -435,6 +433,9 @@ class SubredditContent(Content):
         else:
             resource_root = 'r'
 
+        if resource_root == 'user':
+            resource_root = 'u'
+
         # There should at most two parts left, the resource and the order
         if len(parts) == 1:
             resource, resource_order = parts[0], None
@@ -482,7 +483,7 @@ class SubredditContent(Content):
 
         # Here's where we start to build the submission generators
         if query:
-            if resource_root in ('u', 'user'):
+            if resource_root == 'u':
                 search = '/r/{subreddit}/search'
                 author = reddit.user.name if resource == 'me' else resource
                 query = 'author:{0} {1}'.format(author, query)
@@ -505,21 +506,21 @@ class SubredditContent(Content):
             multireddit = reddit.get_multireddit(redditor, resource)
             submissions = getattr(multireddit, method_alias)(limit=None)
 
-        elif resource_root in ('u', 'user') and resource == 'me':
+        elif resource_root == 'u' and resource == 'me':
             if not reddit.is_oauth_session():
                 raise exceptions.AccountError('Not logged in')
             else:
                 order = order or 'new'
                 submissions = reddit.user.get_submitted(sort=order, limit=None)
 
-        elif resource_root in ('u', 'user') and resource == 'saved':
+        elif resource_root == 'u' and resource == 'saved':
             if not reddit.is_oauth_session():
                 raise exceptions.AccountError('Not logged in')
             else:
                 order = order or 'new'
                 submissions = reddit.user.get_saved(sort=order, limit=None)
 
-        elif resource_root in ('u', 'user'):
+        elif resource_root == 'u':
             order = order or 'new'
             period = period or 'all'
             redditor = reddit.get_redditor(resource)
@@ -569,8 +570,8 @@ class SubredditContent(Content):
             else:
                 if hasattr(submission,'title'):
                     data = self.strip_praw_submission(submission)
-                # when submission is a saved commment
                 else:
+                    # when submission is a saved commment
                     data = self.strip_praw_comment(submission)
                     data = self.coerce_saved_comment(submission, data)
 
