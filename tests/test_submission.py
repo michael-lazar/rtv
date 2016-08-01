@@ -211,6 +211,8 @@ def test_submission_comment_save(submission_page, terminal, refresh_token):
     with mock.patch('praw.objects.Comment.save') as save,        \
             mock.patch('praw.objects.Comment.unsave') as unsave:
 
+        data = submission_page.content.get(submission_page.nav.absolute_index)
+
         # Save
         submission_page.controller.trigger('w')
         assert save.called
