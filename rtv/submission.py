@@ -209,6 +209,10 @@ class SubmissionPage(Page):
                 text, attr = self.term.stickied
                 self.term.add_line(win, text, attr=attr)
 
+            if data['saved']:
+                text, attr = self.term.saved
+                self.term.add_line(win, text, attr=attr)
+
         for row, text in enumerate(split_body, start=offset+1):
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1)
@@ -279,6 +283,10 @@ class SubmissionPage(Page):
 
         if data['nsfw']:
             text, attr = 'NSFW', (curses.A_BOLD | Color.RED)
+            self.term.add_line(win, text, attr=attr)
+
+        if data['saved']:
+            text, attr = self.term.saved
             self.term.add_line(win, text, attr=attr)
 
         win.border()

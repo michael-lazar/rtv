@@ -227,6 +227,17 @@ def test_subreddit_draw_header(subreddit_page, refresh_token, terminal):
     text = 'My Submissions'.encode('utf-8')
     terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
 
+    # /u/saved alias should be renamed in the header
+    subreddit_page.refresh_content(name='/u/saved')
+    subreddit_page.draw()
+    text = 'My Saved Submissions'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    subreddit_page.refresh_content(name='/u/saved/new')
+    subreddit_page.draw()
+    text = 'My Saved Submissions'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
 
 def test_subreddit_frontpage_toggle(subreddit_page, terminal):
 

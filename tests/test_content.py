@@ -60,6 +60,7 @@ SUBREDDIT_AUTH_PROMPTS = {
     'me-1': ('/u/me', '/u/me', None),
     'me-top': ('/u/me/top', '/u/me', 'top'),
     'me-top-all': ('/u/me/top-all', '/u/me', 'top-all'),
+    'user-saved': ('/u/saved', '/u/saved', None),
 }
 
 # All of these should raise an error when entered
@@ -423,6 +424,20 @@ def test_content_subscription(reddit, terminal):
         # All text should be converted to unicode by this point
         for val in data.values():
             assert not isinstance(val, six.binary_type)
+
+
+def test_content_subreddit_saved(reddit, oauth, refresh_token, terminal):
+
+    # Not logged in
+    with terminal.loader():
+        SubredditContent.from_name(reddit, '/u/saved', terminal.loader)
+    assert isinstance(terminal.loader.exception, exceptions.AccountError)
+
+    # Logged in
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
+    with terminal.loader():
+        SubredditContent.from_name(reddit, '/u/saved', terminal.loader)
 
 
 def test_content_subscription_empty(reddit, terminal):

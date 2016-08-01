@@ -135,6 +135,7 @@ def test_subscription_page_invalid(subscription_page, oauth, refresh_token):
         'z',  # Downvote
         'd',  # Delete
         'e',  # Edit
+        'w',  # Save
     ]
     for ch in methods:
         curses.flash.reset_mock()

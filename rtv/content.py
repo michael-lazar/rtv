@@ -87,14 +87,15 @@ class Content(object):
 
         data = {}
         data['object'] = comment
-        data['level'] = comment.nested_level
 
         if isinstance(comment, praw.objects.MoreComments):
             data['type'] = 'MoreComments'
+            data['level'] = comment.nested_level
             data['count'] = comment.count
             data['body'] = 'More comments'
             data['hidden'] = True
-        else:
+
+        elif hasattr(comment, 'nested_level'):
             author = getattr(comment, 'author', '[deleted]')
             name = getattr(author, 'name', '[deleted]')
             sub = getattr(comment, 'submission', '[deleted]')
@@ -105,6 +106,7 @@ class Content(object):
             stickied = getattr(comment, 'stickied', False)
 
             data['type'] = 'Comment'
+            data['level'] = comment.nested_level
             data['body'] = comment.body
             data['created'] = cls.humanize_timestamp(comment.created_utc)
             data['score'] = '{0} pts'.format(
@@ -117,6 +119,34 @@ class Content(object):
             data['permalink'] = permalink
             data['stickied'] = stickied
             data['hidden'] = False
+            data['saved'] = comment.saved
+        else:
+            # Saved comments don't have a nested level and are missing a couple
+            # of fields like ``submission``. As a result, we can only load a
+            # subset of fields to avoid triggering a seperate api call to load
+            # the full comment.
+            author = getattr(comment, 'author', '[deleted]')
+            stickied = getattr(comment, 'stickied', False)
+            flair = getattr(comment, 'author_flair_text', '')
+
+            data['type'] = 'SavedComment'
+            data['level'] = None
+            data['title'] = comment.body
+            data['comments'] = ''
+            data['url_full'] = comment._fast_permalink
+            data['url'] = comment._fast_permalink
+            data['nsfw'] = comment.over_18
+            data['subreddit'] = six.text_type(comment.subreddit)
+            data['url_type'] = 'selfpost'
+            data['score'] = '{0} pts'.format(
+                '-' if comment.score_hidden else comment.score)
+            data['likes'] = comment.likes
+            data['created'] = cls.humanize_timestamp(comment.created_utc)
+            data['saved'] = comment.saved
+            data['stickied'] = stickied
+            data['gold'] = comment.gilded > 0
+            data['author'] = author
+            data['flair'] = flair
 
         return data
 
@@ -160,6 +190,7 @@ class Content(object):
         data['hidden'] = False
         data['xpost_subreddit'] = None
         data['index'] = None  # This is filled in later by the method caller
+        data['saved'] = sub.saved
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:
             data['url'] = 'self.{0}'.format(data['subreddit'])
@@ -361,10 +392,11 @@ class SubredditContent(Content):
     list for repeat access.
     """
 
-    def __init__(self, name, submissions, loader, order=None):
+    def __init__(self, name, submissions, loader, order=None, max_title_rows=4):
 
         self.name = name
         self.order = order
+        self.max_title_rows = max_title_rows
         self._loader = loader
         self._submissions = submissions
         self._submission_data = []
@@ -409,6 +441,9 @@ class SubredditContent(Content):
             resource_root = parts.pop(0)
         else:
             resource_root = 'r'
+
+        if resource_root == 'user':
+            resource_root = 'u'
 
         # There should at most two parts left, the resource and the order
         if len(parts) == 1:
@@ -457,7 +492,7 @@ class SubredditContent(Content):
 
         # Here's where we start to build the submission generators
         if query:
-            if resource_root in ('u', 'user'):
+            if resource_root == 'u':
                 search = '/r/{subreddit}/search'
                 author = reddit.user.name if resource == 'me' else resource
                 query = 'author:{0} {1}'.format(author, query)
@@ -480,14 +515,21 @@ class SubredditContent(Content):
             multireddit = reddit.get_multireddit(redditor, resource)
             submissions = getattr(multireddit, method_alias)(limit=None)
 
-        elif resource_root in ('u', 'user') and resource == 'me':
+        elif resource_root == 'u' and resource == 'me':
             if not reddit.is_oauth_session():
                 raise exceptions.AccountError('Not logged in')
             else:
                 order = order or 'new'
                 submissions = reddit.user.get_submitted(sort=order, limit=None)
 
-        elif resource_root in ('u', 'user'):
+        elif resource_root == 'u' and resource == 'saved':
+            if not reddit.is_oauth_session():
+                raise exceptions.AccountError('Not logged in')
+            else:
+                order = order or 'new'
+                submissions = reddit.user.get_saved(sort=order, limit=None)
+
+        elif resource_root == 'u':
             order = order or 'new'
             period = period or 'all'
             redditor = reddit.get_redditor(resource)
@@ -535,7 +577,12 @@ class SubredditContent(Content):
             except StopIteration:
                 raise IndexError
             else:
-                data = self.strip_praw_submission(submission)
+                if hasattr(submission, 'title'):
+                    data = self.strip_praw_submission(submission)
+                else:
+                    # when submission is a saved commment
+                    data = self.strip_praw_comment(submission)
+
                 data['index'] = len(self._submission_data) + 1
                 # Add the post number to the beginning of the title
                 data['title'] = '{0}. {1}'.format(data['index'], data['title'])
@@ -544,6 +591,9 @@ class SubredditContent(Content):
         # Modifies the original dict, faster than copying
         data = self._submission_data[index]
         data['split_title'] = self.wrap_text(data['title'], width=n_cols)
+        if len(data['split_title']) > self.max_title_rows:
+            data['split_title'] = data['split_title'][:self.max_title_rows-1]
+            data['split_title'].append('(Not enough space to display)')
         data['n_rows'] = len(data['split_title']) + 3
         data['offset'] = 0
 

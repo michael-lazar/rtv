@@ -90,6 +90,12 @@ class Terminal(object):
         return text, attr
 
     @property
+    def saved(self):
+        text = '[saved]'
+        attr = Color.GREEN
+        return text, attr
+
+    @property
     def vline(self):
         return getattr(curses, 'ACS_VLINE', ord('|'))
 
