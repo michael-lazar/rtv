@@ -5,30 +5,30 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.10.0]
+      User-Agent: [python-requests/2.5.1 CPython/3.4.0 Linux/3.13.0-92-generic]
     method: HEAD
     uri: https://i.reddituploads.com/a065472e47a4405da159189ee48bff46?fit=max&h=1536&w=1536&s=5639918a0c696b9bb3ec694dc3cf59ac
   response:
     body: {string: ''}
     headers:
       Accept-Ranges: [bytes]
-      Age: ['847320']
-      CF-RAY: [2ca896d2334614e5-CDG]
+      Age: ['487842']
+      CF-RAY: [2c864e7ed22a11b9-SJC]
       Cache-Control: [max-age=300]
       Connection: [keep-alive]
       Content-Length: ['183244']
       Content-Type: [image/jpeg]
-      Date: ['Sat, 30 Jul 2016 11:49:45 GMT']
+      Date: ['Tue, 26 Jul 2016 07:58:27 GMT']
       Fastly-Debug-Digest: [0794b9fa1afd174c22abcd8455ed8cb859c900325e06b732b74cebd3063257a3]
       Last-Modified: ['Wed, 20 Jul 2016 16:27:46 GMT']
       Server: [cloudflare-nginx]
-      Set-Cookie: ['__cfduid=dd207a5e9ea708f286c15b43eb26357e01469879385; expires=Sun,
-          30-Jul-17 11:49:45 GMT; path=/; domain=.reddituploads.com; HttpOnly']
+      Set-Cookie: ['__cfduid=d34105474396dd4ddf576bcff4e4a81911469519907; expires=Wed,
+          26-Jul-17 07:58:27 GMT; path=/; domain=.reddituploads.com; HttpOnly']
       X-Cache: ['HIT, HIT']
       X-Cache-Hits: ['1, 1']
       X-Content-Type-Options: [nosniff]
-      X-Imgix-Request-ID: [798042ae265c31e94dae8585266259ff0643bc2e]
+      X-Imgix-Request-ID: [d0b67b89a628e062b1ed849e4e0f1d09b11fab9b]
       X-Imgix-Wait: ['0']
-      X-Served-By: ['cache-lax1439-LAX, cache-lhr6348-LHR']
+      X-Served-By: ['cache-lax1421-LAX, cache-sjc3128-SJC']
     status: {code: 200, message: OK}
 version: 1

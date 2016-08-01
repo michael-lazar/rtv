@@ -5,22 +5,23 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [rtv test suite PRAW/3.4.0 Python/3.5.1 b'Linux-4.6.2-1-ARCH-x86_64-with-arch']
+      User-Agent: [rtv test suite PRAW/3.3.0 Python/3.4.0 b'Linux-3.13.0-24-generic-x86_64-with-Ubuntu-14.04-trusty']
     method: GET
     uri: https://api.reddit.com/r/invalidsubreddit7/top.json?limit=1024
   response:
-    body: {string: "<html>\n <head>\n  <title>302 Found</title>\n </head>\n <body>\n
-        \ <h1>302 Found</h1>\n  The resource was found at <a href=\"https://api.reddit.com/subreddits/search.json?q=invalidsubreddit7\">https://api.reddit.com/subreddits/search.json?q=invalidsubreddit7</a>;\nyou
-        should be redirected automatically.\n\n\n </body>\n</html>"}
+    body: {string: "<html>\n <head>\n  <title>302 Found</title>\n </head>\n <body>\n\
+        \  <h1>302 Found</h1>\n  The resource was found at <a href=\"https://api.reddit.com/subreddits/search.json?q=invalidsubreddit7\"\
+        >https://api.reddit.com/subreddits/search.json?q=invalidsubreddit7</a>;\n\
+        you should be redirected automatically.\n\n\n </body>\n</html>"}
     headers:
-      CF-RAY: [2c3eff9ea1543bff-CDG]
+      CF-RAY: [24e5677aa46a1ea7-SJC]
       Connection: [keep-alive]
       Content-Length: ['313']
       Content-Type: [text/html; charset=UTF-8]
-      Date: ['Sun, 17 Jul 2016 16:16:28 GMT']
+      Date: ['Wed, 02 Dec 2015 07:44:02 GMT']
       Server: [cloudflare-nginx]
-      Set-Cookie: ['__cfduid=d0f997f8b2eda9968b5821a8696a2aa861468772187; expires=Mon,
-          17-Jul-17 16:16:27 GMT; path=/; domain=.reddit.com; HttpOnly']
+      Set-Cookie: ['__cfduid=df3faf3331eff535be76b2182b9629ec01449042241; expires=Thu,
+          01-Dec-16 07:44:01 GMT; path=/; domain=.reddit.com; HttpOnly']
       Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
       X-Content-Type-Options: [nosniff]
       X-Moose: [majestic]
