@@ -138,12 +138,11 @@ Environment
 RTV will respect the following environment variables when accessing external programs
 
 ``$BROWSER``
-  Submission links can be opened in your web browser.
-  On most systems the default web browser will open in a new window.
-  If you prefer the complete terminal experience, try using a console-based web browser
-  (`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices).
+  | Submission links will be opened inside of your web browser.
+  | On most systems the default web browser will open in a new window.
+  | If you prefer the complete terminal experience, try using a console-based web browser (`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices).
 ``$PAGER``
-  Extra long comments and submissions can be viewed through the system pager.
+  Extra long comments and submissions wil be viewed through the system pager.
 ``$RTV_EDITOR``
   Compose posts and replying to comments is done using your preferred text editor.
   If not specified, the default system ``$EDITOR`` (or `nano <https://www.nano-editor.org/>`_) will be used.
