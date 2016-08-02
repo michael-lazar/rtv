@@ -127,7 +127,7 @@ This feature is disabled by default because it takes a a few extra steps to conf
 
     $ rtv --copy-mailcap
 
-This template contains examples for common MIME types as well as popular reddit websites like `imgur <http://imgur.com/>`_, `youtube <https://www.youtube.com/>`_, and `gfycat <https://gfycat.com/>`_. Open the mailcap template and follow the `instructions <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap>`_ given inside. 
+This template contains examples for common MIME types as well as popular reddit websites like `imgur <http://imgur.com/>`_, `youtube <https://www.youtube.com/>`_, and `gfycat <https://gfycat.com/>`_. Open the mailcap template and follow the `instructions <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap>`_ listed inside. 
 
 Once you've setup your mailcap file, enable it by launching rtv with the ``rtv --enable-media`` flag (or set it in your **rtv.cfg**)
 
