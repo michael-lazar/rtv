@@ -119,8 +119,7 @@ how RTV will open different types of links
 .. image:: http://i.imgur.com/ueQ3w0P.gif
 
 |
-| The mailcap format allows you to associate MIME media
-types, like ``image/jpeg`` or ``video/*``, with shell commands.
+| A mailcap file allows you to associate different MIME media types, like ``image/jpeg`` or ``video/mp4``, with shell commands.
 
 To get started, copy the default mailcap template to your home directory.
 
