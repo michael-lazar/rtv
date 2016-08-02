@@ -16,7 +16,7 @@ RTV (Reddit Terminal Viewer)
 
 ---------------
 
-* `Preview`_
+* `Demo`_
 * `Installation`_
 * `Usage`_
 * `Settings`_
@@ -24,9 +24,9 @@ RTV (Reddit Terminal Viewer)
 * `Contributing`_
 * `License`_
 
-=======
-Preview
-=======
+====
+Demo
+====
 
 .. figure:: http://i.imgur.com/UeKbK8z.png
    :target: https://asciinema.org/a/81251
