@@ -113,7 +113,7 @@ See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv
 Media
 -----
 
-You can set your `mailcap <https://en.wikipedia.org/wiki/Media_type#Mailcap>`_ file to configure
+You can use `mailcap <https://en.wikipedia.org/wiki/Media_type#Mailcap>`_ to configure
 how RTV will open different types of links
 
 .. image:: http://i.imgur.com/ueQ3w0P.gif
