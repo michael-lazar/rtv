@@ -103,7 +103,7 @@ Configuration
 
 Configuration files are stored in the ``{HOME}/.config/rtv/`` directory
 
-See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg>`_ for the full list of configurable options. You can clone this file onto your system by running
+See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg>`_ for the full list of configurable options. You can clone this file into your home directory by running
 
 .. code-block:: bash
 
@@ -113,16 +113,22 @@ See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv
 Media
 -----
 
-Insert gif here: ``apt-get install byzanz``
+You can set up a `mailcap <https://en.wikipedia.org/wiki/Media_type#Mailcap>`_ file to configure
+how RTV will open different types of links
 
-You can set up a `mailcap <https://en.wikipedia.org/wiki/Media_type#Mailcap>`_ file to configure how RTV will open different types of links.
+.. image:: http://i.imgur.com/ueQ3w0P.gif
 
+|
+| The mailcap format allows you to associate MIME media
+types, like ``image/jpeg`` or ``video/*``, with shell commands.
 
-Copy the rtv `mailcap template <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap>`_ to your **{HOME}/.mailcap** file.
+To get started, copy the default mailcap template to your home directory.
 
 .. code-block:: bash
 
     $ rtv --copy-mailcap
+
+This template contains examples for common MIME types as well as popular reddit websites like `imgur <http://imgur.com/`_, `youtube <https://www.youtube.com/>`_, and `gfycat <https://gfycat.com/>`_. 
 
 This setting is disabled by default because it takes a few extra steps to configure.
 
