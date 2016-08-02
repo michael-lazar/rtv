@@ -121,16 +121,15 @@ how RTV will open different types of links
 |
 | A mailcap file allows you to associate different MIME media types, like ``image/jpeg`` or ``video/mp4``, with shell commands.
 
-To get started, copy the default mailcap template to your home directory.
+This feature is disabled by default because it takes a a few extra steps to configure. To get started, copy the default mailcap template to your home directory.
 
 .. code-block:: bash
 
     $ rtv --copy-mailcap
 
-This template contains examples for common MIME types as well as popular reddit websites like `imgur <http://imgur.com/`_, `youtube <https://www.youtube.com/>`_, and `gfycat <https://gfycat.com/>`_. 
+This template contains examples for common MIME types as well as popular reddit websites like `imgur <http://imgur.com/>`_, `youtube <https://www.youtube.com/>`_, and `gfycat <https://gfycat.com/>`_. Open the mailcap template and follow the `instructions <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap>`_ given inside. 
 
-This setting is disabled by default because it takes a few extra steps to configure.
-
+Once you've setup your mailcap file, enable it by launching rtv with the ``rtv --enable-media`` flag (or set it in your **rtv.cfg**)
 
 -----------
 Environment
