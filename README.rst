@@ -29,7 +29,7 @@ Demo
 ====
 
 .. figure:: http://i.imgur.com/UeKbK8z.png
-   :target: https://asciinema.org/a/81251
+   :target: https://asciinema.org/a/81251?speed=2
 
 ============
 Installation
