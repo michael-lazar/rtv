@@ -108,6 +108,24 @@ See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv
 .. code-block:: bash
 
     $ rtv --copy-config
+    
+-----
+Media
+-----
+
+Insert gif here: ``apt-get install byzanz``
+
+You can set up a `mailcap <https://en.wikipedia.org/wiki/Media_type#Mailcap>`_ file to configure how RTV will open different types of links.
+
+
+Copy the rtv `mailcap template <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap>`_ to your **{HOME}/.mailcap** file.
+
+.. code-block:: bash
+
+    $ rtv --copy-mailcap
+
+This setting is disabled by default because it takes a few extra steps to configure.
+
 
 -----------
 Environment
