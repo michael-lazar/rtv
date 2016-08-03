@@ -16,12 +16,20 @@ RTV (Reddit Terminal Viewer)
 
 ---------------
 
+* `Demo`_
 * `Installation`_
 * `Usage`_
 * `Settings`_
 * `FAQ`_
 * `Contributing`_
 * `License`_
+
+====
+Demo
+====
+
+.. figure:: http://i.imgur.com/UeKbK8z.png
+   :target: https://asciinema.org/a/81251?speed=2
 
 ============
 Installation
@@ -95,11 +103,33 @@ Configuration
 
 Configuration files are stored in the ``{HOME}/.config/rtv/`` directory
 
-See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg>`_ for the full list of configurable options. You can clone this file onto your system by running
+See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg>`_ for the full list of configurable options. You can clone this file into your home directory by running
 
 .. code-block:: bash
 
     $ rtv --copy-config
+    
+-----
+Media
+-----
+
+You can use `mailcap <https://en.wikipedia.org/wiki/Media_type#Mailcap>`_ to configure
+how RTV will open different types of links
+
+.. image:: http://i.imgur.com/ueQ3w0P.gif
+
+|
+| A mailcap file allows you to associate different MIME media types, like ``image/jpeg`` or ``video/mp4``, with shell commands.
+
+This feature is disabled by default because it takes a a few extra steps to configure. To get started, copy the default mailcap template to your home directory.
+
+.. code-block:: bash
+
+    $ rtv --copy-mailcap
+
+This template contains examples for common MIME types as well as popular reddit websites like `imgur <http://imgur.com/>`_, `youtube <https://www.youtube.com/>`_, and `gfycat <https://gfycat.com/>`_. Open the mailcap template and follow the `instructions <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap>`_ listed inside. 
+
+Once you've setup your mailcap file, enable it by launching rtv with the ``rtv --enable-media`` flag (or set it in your **rtv.cfg**)
 
 -----------
 Environment
@@ -108,19 +138,16 @@ Environment
 RTV will respect the following environment variables when accessing external programs
 
 ``$BROWSER``
-  Submission links can be opened in your web browser.
-  On most systems the default web browser will open in a new window.
-  If you prefer the complete terminal experience, try using a console-based web browser
-  (`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices).
+  | Submission links will be opened inside of your web browser.
+  | On most systems the default web browser will open in a new window. If you prefer the complete terminal experience, try using a console-based web browser (`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices).
 ``$PAGER``
-  Extra long comments and submissions can be viewed through the system pager.
+  | Extra long comments and submissions wil be viewed through the system pager.
 ``$RTV_EDITOR``
-  Compose posts and replying to comments is done using your preferred text editor.
-  If not specified, the default system ``$EDITOR`` (or `nano <https://www.nano-editor.org/>`_) will be used.
+ | Compose posts and replying to comments is done using your preferred text editor.
+ | If not specified, the default system ``$EDITOR`` (or `nano <https://www.nano-editor.org/>`_) will be used.
 ``$RTV_URLVIEWER``
-  A url viewer can be used to extract links from inside of comments.
-  `urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible.
-  These applications don't come pre-installed, but are available through most systems' package managers.
+ | A url viewer can be used to extract links from inside of comments.
+ | `urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible. These applications don't come pre-installed, but are available through most systems' package managers.
 
 ===
 FAQ
