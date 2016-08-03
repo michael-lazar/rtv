@@ -34,8 +34,8 @@ video/x-youtube; vlc '%s' --width 640 --height 480; test=test -n "$DISPLAY"
 video/x-youtube; youtube-dl -q -o - '%s' | mpv - --autofit 640x480; test=test -n "$DISPLAY"
 
 # Mpv is a simple and effective video streamer
-video/webm; mpv '%s' --autofit 640x480; test=test -n "$DISPLAY"
-video/*; mpv '%s' --autofit 640x480; test=test -n "$DISPLAY"
+video/webm; mpv '%s' --autofit 640x480 --loop=inf; test=test -n "$DISPLAY"
+video/*; mpv '%s' --autofit 640x480 --loop=inf; test=test -n "$DISPLAY"
 
 ###############################################################################
 # Commands below this point will attempt to display media directly in the
