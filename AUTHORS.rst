@@ -10,6 +10,7 @@ Thanks to the following people for their contributions to this project.
 * `Théo Piboubès <https://github.com/TheoPib>`_
 * `Yusuke Sakamoto <https://github.com/yskmt>`_
 * `Johnathan Jenkins <https://github.com/shaggytwodope>`_
+* `tyjak <https://github.com/tyjak>`_
 * `Gustavo Zambonin <https://github.com/zambonin>`_
 * `mekhami <https://github.com/mekhami>`_
 * `obosob <https://github.com/obosob>`_
@@ -18,6 +19,7 @@ Thanks to the following people for their contributions to this project.
 * `mardiqwop <https://github.com/mardiqwop>`_
 * `Shawn Hind <https://github.com/shawnhind>`_
 * `5225225 <https://github.com/5225225>`_
+* `Alex Kahan <https://github.com/alexk307>`_
 * `JuanPablo <https://github.com/juanpabloaj>`_
 * `Robert Greener <https://github.com/ragreener1>`_
 * `afloofloo <https://github.com/afloofloo>`_

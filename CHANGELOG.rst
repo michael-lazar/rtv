@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.11.0: http://github.com/michael-lazar/rtv/releases/tag/v1.11.0
 .. _1.10.0: http://github.com/michael-lazar/rtv/releases/tag/v1.10.0
 .. _1.9.1: http://github.com/michael-lazar/rtv/releases/tag/v1.9.1
 .. _1.9.0: http://github.com/michael-lazar/rtv/releases/tag/v1.9.0
@@ -18,6 +19,35 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.11.0_ (2016-08-02)
+--------------------
+Features
+
+* Added the ability to open image and video urls with the user's mailcap file.
+* New ``--enable-media`` and ``copy-mailcap`` commands to support mailcap.
+* New command `w` to save submissions and comments.
+* New command `p` to toggle between the front page and the last visited subreddit.
+* New command `S` to view subscribed multireddits.
+* Extended ``/`` prompt to work with users, multireddits, and domains.
+* New page ``/u/saved`` to view saved submissions.
+* You can now specify the sort period by appending **-(period)**,
+  E.g. **/r/python/top-week**.
+
+Bugfixes
+
+* Terminal title is now only set when $DISPLAY is present.
+* Urlview now works on the submission as well as comments.
+* Fixed text encoding when using urlview.
+* Removed `futures` dependency from the python 3 wheel.
+* Unhandled resource warnings on exit are now ignored.
+
+Documentation
+
+* Various README updates.
+* Updated asciinema demo video.
+* Added script to update the AUTHORS.rst file.
 
 --------------------
 1.10.0_ (2016-07-11)

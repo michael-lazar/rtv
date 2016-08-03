@@ -1,8 +1,8 @@
-.TH "RTV" "1" "July 12, 2016" "Version 1.10.0" "Usage and Commands"
+.TH "RTV" "1" "August 03, 2016" "Version 1.11.0" "Usage and Commands"
 .SH NAME
 RTV - Reddit Terminal Viewer
 .SH SYNOPSIS
-rtv [\-h] [\-V] [\-s SUBREDDIT] [\-l LINK] [\-\-log FILE] [\-\-config FILE] [\-\-ascii] [\-\-monochrome] [\-\-non\-persistent] [\-\-clear\-auth] [\-\-copy\-config]
+rtv [\-h] [\-V] [\-s SUBREDDIT] [\-l LINK] [\-\-log FILE] [\-\-config FILE] [\-\-ascii] [\-\-monochrome] [\-\-non\-persistent] [\-\-clear\-auth] [\-\-copy\-config] [\-\-copy\-mailcap] [\-\-enable\-media]
 .SH DESCRIPTION
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
 terminal window.
@@ -50,6 +50,14 @@ Remove any saved user data before launching
 .TP
 \fB\-\-copy\-config\fR
 Copy the default configuration to {HOME}/.config/rtv/rtv.cfg
+
+.TP
+\fB\-\-copy\-mailcap\fR
+Copy an example mailcap configuration to {HOME}/.mailcap
+
+.TP
+\fB\-\-enable\-media\fR
+Open external links using programs defined in the mailcap config
 
 
 .SH CONTROLS
