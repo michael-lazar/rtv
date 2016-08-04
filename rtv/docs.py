@@ -17,37 +17,58 @@ Press `?` to open the help screen.
 """
 
 HELP = """
+Reddit Terminal Viewer
+
+https://github.com/michael-lazar/rtv
+======================
+
 [Basic Commands]
-  `j/k` or `UP/DOWN`  : Move the cursor up/down
-  `m/n` or `PgUp/PgDn`: Jump to the previous/next page
-  `o` or `ENTER`      : Open the selected item as a webpage
-  `1`-`5`             : Toggle post order
-  `r` or `F5`         : Refresh page content
-  `u`                 : Log in or switch accounts
-  `?`                 : Show the help screen
-  `q/Q`               : Quit/Force quit
+  j/k or ▲/▼       : Move the cursor up/down
+  m/n or PgUp/PgDn : Jump to the previous/next page
+  1-5              : Toggle post order
+  r or F5          : Refresh page content
+  u                : Log in or switch accounts
+  ?                : Show the help screen
+  q/Q              : Quit/Force quit
 
 [Authenticated Commands]
-  `a/z`               : Upvote/downvote
-  `w`                 : Save/unsave a post
-  `c`                 : Compose a new post or comment
-  `e`                 : Edit an existing post or comment
-  `d`                 : Delete an existing post or comment
-  `i`                 : Display new messages prompt
-  `s`                 : Open subscribed subreddits
-  `S`                 : Open subscribed multireddits
+  a/z              : Upvote/downvote
+  c                : Compose a new post or comment
+  e                : Edit an existing post or comment
+  d                : Delete an existing post or comment
+  i                : Display new messages prompt
+  s                : View a list of subscribed subreddits
+  S                : View a list of subscribed multireddits
+  w                : Save a submission
 
-[Subreddit Mode]
-  `l` or `RIGHT`      : Enter the selected submission
-  `/`                 : Open a prompt to switch subreddits
-  `f`                 : Open a prompt to search the current subreddit
-  'p'                 : Toggle between the front page and last visited subreddit
+[Subreddit Commands]
+  l or ►           : Enter the selected submission
+  o or ENTER       : Open the submission link with your web browser
+  /                : Open a prompt to switch subreddits
+  f                : Open a prompt to search the current subreddit
+  p                : Return to the front page
 
-[Submission Mode]
-  `h` or `LEFT`       : Return to subreddit mode
-  `l` or `RIGHT`      : Open the selected comment in a new window
-  `SPACE`             : Fold the selected comment, or load additional comments
-  `b`                 : Display URLs with urlview
+[Submission Commands]
+  h or ◄           : Return to the subreddit
+  l or ►           : Open the selected comment in a new window
+  o or ENTER       : Open the comment permalink with your web browser
+  SPACE            : Fold the selected comment, or load additional comments
+  b                : Display URLs with urlview
+
+[Navigating]
+  The `/` prompt accepts subreddits in the following formats
+
+  - python
+  - /r/python
+  - /r/python/new                (sort)
+  - /r/python/controversial-year (sort and order)
+  - /r/python+linux              (multireddit)
+  - /r/front                     (front page)
+  - /u/me                        (your submissions)
+  - /u/saved                     (your saved posts)
+  - /u/spez                      (a user's submissions)
+  - /u/multi-mod/m/android       (curated multireddit)
+  - /domain/python.org           (search by domain)
 """
 
 COMMENT_FILE = """
