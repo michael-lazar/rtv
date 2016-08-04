@@ -172,7 +172,7 @@ def test_content_submission(reddit, terminal):
     content = SubmissionContent(submission, terminal.loader)
 
     # Everything is loaded upon instantiation
-    assert len(content._comment_data) == 45
+    assert content.range == (-1, 44)
     assert content.get(-1)['type'] == 'Submission'
     assert content.get(40)['type'] == 'Comment'
 
@@ -200,13 +200,13 @@ def test_content_submission(reddit, terminal):
     assert data['count'] == 3
     assert data['hidden'] is True
     assert data['level'] >= content.get(3)['level']
-    assert len(content._comment_data) == 43
+    assert content.range == (-1, 42)
 
     # Toggling again expands the children
     content.toggle(2)
     data = content.get(2)
     assert data['hidden'] is False
-    assert len(content._comment_data) == 45
+    assert content.range == (-1, 44)
 
 
 def test_content_submission_load_more_comments(reddit, terminal):
@@ -219,7 +219,8 @@ def test_content_submission_load_more_comments(reddit, terminal):
     # More comments load when toggled
     assert content.get(390)['type'] == 'MoreComments'
     content.toggle(390)
-    assert len(content._comment_data) > 390
+    assert content.range[0] == -1
+    assert content.range[1] > 390
     assert content.get(390)['type'] == 'Comment'
 
 
@@ -254,7 +255,7 @@ def test_content_subreddit_initialize(reddit, terminal):
     content = SubredditContent('python', submissions, terminal.loader, 'top')
     assert content.name == 'python'
     assert content.order == 'top'
-    assert len(content._submission_data) == 1
+    assert content.range == (0, 0)
 
 
 def test_content_subreddit_initialize_invalid(reddit, terminal):
@@ -271,7 +272,7 @@ def test_content_subreddit(reddit, terminal):
     content = SubredditContent('front', submissions, terminal.loader)
 
     # Submissions are loaded on demand, excluding for the first one
-    assert len(content._submission_data) == 1
+    assert content.range == (0, 0)
     assert content.get(0)['type'] == 'Submission'
 
     for data in content.iterate(0, 1):
@@ -295,7 +296,7 @@ def test_content_subreddit_load_more(reddit, terminal):
     content = SubredditContent('front', submissions, terminal.loader)
 
     assert content.get(50)['type'] == 'Submission'
-    assert len(content._submission_data) == 51
+    assert content.range == (0, 50)
 
     for i, data in enumerate(islice(content.iterate(0, 1), 0, 50)):
         assert all(k in data for k in ('object', 'n_rows', 'offset', 'type',
@@ -416,6 +417,7 @@ def test_content_subscription(reddit, terminal):
     # These are static
     assert content.name == 'Popular Subreddits'
     assert content.order is None
+    assert content.range == (0, 0)
 
     # Validate content
     for data in islice(content.iterate(0, 1), 20):
@@ -424,6 +426,8 @@ def test_content_subscription(reddit, terminal):
         # All text should be converted to unicode by this point
         for val in data.values():
             assert not isinstance(val, six.binary_type)
+
+    assert content.range == (0, 19)
 
 
 def test_content_subreddit_saved(reddit, oauth, refresh_token, terminal):

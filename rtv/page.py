@@ -124,6 +124,22 @@ class Page(object):
         self._move_page(1)
         self.clear_input_queue()
 
+    @PageController.register(Command('PAGE_TOP'))
+    def move_page_top(self):
+        self._remove_cursor()
+        self.nav.page_index = self.content.range[0]
+        self.nav.cursor_index = 0
+        self.nav.inverted = False
+        self._add_cursor()
+
+    @PageController.register(Command('PAGE_BOTTOM'))
+    def move_page_bottom(self):
+        self._remove_cursor()
+        self.nav.page_index = self.content.range[1]
+        self.nav.cursor_index = 0
+        self.nav.inverted = True
+        self._add_cursor()
+
     @PageController.register(Command('UPVOTE'))
     @logged_in
     def upvote(self):

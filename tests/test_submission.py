@@ -95,6 +95,16 @@ def test_submission_open(submission_page, terminal):
         assert terminal.open_browser.called
 
 
+def test_submission_move_top_bottom(submission_page):
+
+    submission_page.controller.trigger('G')
+    assert submission_page.nav.absolute_index == 44
+
+    submission_page.controller.trigger('g')
+    submission_page.controller.trigger('g')
+    assert submission_page.nav.absolute_index == -1
+
+
 def test_submission_pager(submission_page, terminal):
 
     # View a submission with the pager
