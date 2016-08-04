@@ -385,6 +385,7 @@ def test_open_link_mailcap(terminal):
 def test_open_link_subprocess(terminal):
 
     url = 'http://www.test.com'
+    terminal.config['enable_media'] = True
 
     with mock.patch('time.sleep'),                            \
             mock.patch('os.system'),                          \
