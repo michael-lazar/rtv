@@ -25,6 +25,7 @@ https://github.com/michael-lazar/rtv
 [Basic Commands]
   j/k or ▲/▼       : Move the cursor up/down
   m/n or PgUp/PgDn : Jump to the previous/next page
+  gg/G             : Jump to the top/bottom of the page
   1-5              : Toggle post order
   r or F5          : Refresh page content
   u                : Log in or switch accounts
