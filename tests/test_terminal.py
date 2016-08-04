@@ -189,12 +189,12 @@ def test_show_notification(terminal, stdscr, use_ascii):
     assert stdscr.subwin.addstr.call_count == 3
     stdscr.reset_mock()
 
-    # The whole message should fit in 40x80
+    # The text should be trimmed to fit 40x80
     text = HELP.strip().splitlines()
     terminal.show_notification(text)
-    assert stdscr.subwin.nlines == len(text) + 2
-    assert stdscr.subwin.ncols == 80
-    assert stdscr.subwin.addstr.call_count == len(text)
+    assert stdscr.subwin.nlines == 40
+    assert stdscr.subwin.ncols <= 80
+    assert stdscr.subwin.addstr.call_count == 38
     stdscr.reset_mock()
 
     # The text should be trimmed to fit in 20x20

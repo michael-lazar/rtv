@@ -82,7 +82,7 @@ class Page(object):
 
     @PageController.register(Command('HELP'))
     def show_help(self):
-        self.term.show_notification(docs.HELP.strip('\n').splitlines())
+        self.term.open_pager(docs.HELP.strip())
 
     @PageController.register(Command('SORT_HOT'))
     def sort_content_hot(self):

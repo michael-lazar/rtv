@@ -71,9 +71,9 @@ def test_page_unauthenticated(reddit, terminal, config, oauth):
         assert sys_exit.called
 
         # Show help
-        page.controller.trigger('?')
-        message = '[Basic Commands]'.encode('utf-8')
-        terminal.stdscr.subwin.addstr.assert_any_call(1, 1, message)
+        with mock.patch('subprocess.Popen') as Popen:
+            page.controller.trigger('?')
+        assert Popen.called
 
         # Sort content
         page.controller.trigger('1')
