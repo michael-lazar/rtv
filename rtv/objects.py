@@ -519,11 +519,6 @@ class Controller(object):
     >>> def upvote(self, *args)
     >>      ...
 
-    Register a default behavior by using `None`.
-    >>> @Controller.register(None)
-    >>> def default_func(self, *args)
-    >>>     ...
-
     Bind the controller to a class instance and trigger a key. Additional
     arguments will be passed to the function.
     >>> controller = Controller(self)
@@ -538,6 +533,8 @@ class Controller(object):
         # Build a list of parent controllers that follow the object's MRO
         # to check if any parent controllers have registered the keypress
         self.parents = inspect.getmro(type(self))[:-1]
+        # Keep track of last key press for doubles like `gg`
+        self.last_char = None
 
         if not keymap:
             return
@@ -551,6 +548,18 @@ class Controller(object):
                 if isinstance(command, Command):
                     for key in keymap.get(command):
                         val = keymap.parse(key)
+                        # If a double key press is defined, the first half
+                        # must be unbound
+                        if isinstance(val, tuple):
+                            if controller.character_map.get(val[0]) is not None:
+                                raise exceptions.ConfigError(
+                                    "Invalid configuration! `%s` is bound to "
+                                    "duplicate commands in the "
+                                    "%s" % (key, controller.__name__))
+                            # Mark the first half of the double with None so
+                            # that no other command can use it
+                            controller.character_map[val[0]] = None
+
                         # Check if the key is already programmed to trigger a
                         # different function.
                         if controller.character_map.get(val, func) != func:
@@ -569,16 +578,19 @@ class Controller(object):
         # Check if the controller (or any of the controller's parents) have
         # registered a function to the given key
         for controller in self.parents:
+            func = controller.character_map.get((self.last_char, char))
             if func:
                 break
             func = controller.character_map.get(char)
-        # If the controller has not registered the key, check if there is a
-        # default function registered
-        for controller in self.parents:
             if func:
                 break
-            func = controller.character_map.get(None)
-        return func(self.instance, *args, **kwargs) if func else None
+
+        if func:
+            self.last_char = None
+            return func(self.instance, *args, **kwargs)
+        else:
+            self.last_char = char
+            return None
 
     @classmethod
     def register(cls, *chars):
@@ -645,8 +657,8 @@ class KeyMap(object):
             raise exceptions.ConfigError('Invalid configuration! `%s` key is '
                                          'undefined' % command.val)
 
-    @staticmethod
-    def parse(key):
+    @classmethod
+    def parse(cls, key):
         """
         Parse a key represented by a string and return its character code.
         """
@@ -663,6 +675,9 @@ class KeyMap(object):
             elif key.startswith('0x'):
                 # Ascii hex code
                 return int(key, 16)
+            elif len(key) == 2:
+                # Double presses
+                return tuple(cls.parse(k) for k in key)
             else:
                 # Ascii character
                 code = ord(key)

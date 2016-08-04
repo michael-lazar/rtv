@@ -15,9 +15,17 @@ from . import exceptions
 class Content(object):
 
     def get(self, index, n_cols):
+        """
+        Grab the item at the given index, and format the text to fit a width of
+        n columns.
+        """
         raise NotImplementedError
 
     def iterate(self, index, step, n_cols=70):
+        """
+        Return an iterator that starts and the current index and increments
+        by the given step.
+        """
 
         while True:
             if step < 0 and index < 0:
@@ -29,6 +37,13 @@ class Content(object):
             except IndexError:
                 break
             index += step
+
+    @property
+    def range(self):
+        """
+        Return the minimm and maximum valid indicies.
+        """
+        raise NotImplementedError
 
     @staticmethod
     def flatten_comments(comments, root_level=0):
@@ -305,6 +320,10 @@ class SubmissionContent(Content):
         submission = reddit.get_submission(url, comment_sort=order)
         return cls(submission, loader, indent_size, max_indent_level, order)
 
+    @property
+    def range(self):
+        return -1, len(self._comment_data) - 1
+
     def get(self, index, n_cols=70):
         """
         Grab the `i`th submission, with the title field formatted to fit inside
@@ -559,6 +578,13 @@ class SubredditContent(Content):
         # We made it!
         return cls(display_name, submissions, loader, order=display_order)
 
+    @property
+    def range(self):
+        # Note that for subreddits, the submissions are generated lazily and
+        # there is no actual "end" index. Instead, we return the bottom index
+        # that we have loaded so far.
+        return 0, len(self._submission_data) - 1
+
     def get(self, index, n_cols=70):
         """
         Grab the `i`th submission, with the title field formatted to fit inside
@@ -615,6 +641,15 @@ class SubscriptionContent(Content):
         except IndexError:
             raise exceptions.SubscriptionError('No content')
 
+        # Load 1024 subscriptions up front (one http request's worth)
+        # For most people this should be all of their subscriptions. Doing thi
+        # allows the user to jump to the end of the page with `G`.
+        if name != 'Popular Subreddits':
+            try:
+                self.get(1023)
+            except IndexError:
+                pass
+
     @classmethod
     def from_user(cls, reddit, loader, content_type='subreddit'):
         if content_type == 'subreddit':
@@ -631,6 +666,10 @@ class SubscriptionContent(Content):
             raise exceptions.SubscriptionError('Invalid type %s', content_type)
 
         return cls(name, items, loader)
+
+    @property
+    def range(self):
+        return 0, len(self._subscription_data) - 1
 
     def get(self, index, n_cols=70):
         """

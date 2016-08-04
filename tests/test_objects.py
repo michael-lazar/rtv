@@ -249,6 +249,41 @@ def test_objects_controller():
     assert controller_c.trigger('3') is None
 
 
+def test_objects_controller_double_press():
+
+    class ControllerA(Controller):
+        character_map = {}
+
+    @ControllerA.register(Command('F1'))
+    def call_page(_):
+        return '1'
+
+    @ControllerA.register(Command('F2'))
+    def call_page(_):
+        return '2'
+
+    keymap = KeyMap({'F1': ['gg'], 'F2': ['a']})
+    controller_a = ControllerA(None, keymap=keymap)
+
+    # Double press
+    controller_a.last_char = None
+    assert controller_a.trigger('g') is None
+    assert controller_a.trigger('g') == '1'
+    assert controller_a.trigger('g') is None
+
+    # Executing another command cancels the chain
+    controller_a.last_char = None
+    assert controller_a.trigger('g') is None
+    assert controller_a.trigger('a') == '2'
+    assert controller_a.trigger('g') is None
+
+    # Pressing an invalid key cancels the chain
+    controller_a.last_char = None
+    assert controller_a.trigger('g') is None
+    assert controller_a.trigger('b') is None
+    assert controller_a.trigger('g') is None
+
+
 def test_objects_controller_command():
 
     class ControllerA(Controller):
@@ -271,6 +306,15 @@ def test_objects_controller_command():
 
     # Two commands aren't allowed to share keys
     keymap = KeyMap({'REFRESH': [0x10, 0x11], 'UPVOTE': [0x11, 0x12]})
+    with pytest.raises(exceptions.ConfigError) as e:
+        ControllerA(None, keymap=keymap)
+    assert 'ControllerA' in six.text_type(e)
+
+    # Reset the character map
+    ControllerA.character_map = {Command('REFRESH'): 0, Command('UPVOTE'): 0}
+
+    # A double command can't share the first key with a single comand
+    keymap = KeyMap({'REFRESH': ['gg'], 'UPVOTE': ['g']})
     with pytest.raises(exceptions.ConfigError) as e:
         ControllerA(None, keymap=keymap)
     assert 'ControllerA' in six.text_type(e)
@@ -306,12 +350,14 @@ def test_objects_keymap():
     bindings = {
         'refresh': ['a', 0x12, '<LF>', '<KEY_UP>'],
         'exit': [],
-        Command('UPVOTE'): ['b', '<KEY_F5>']
+        Command('UPVOTE'): ['b', '<KEY_F5>'],
+        Command('PAGE_TOP'): ['gg']
     }
 
     keymap = KeyMap(bindings)
     assert keymap.get(Command('REFRESH')) == ['a', 0x12, '<LF>', '<KEY_UP>']
     assert keymap.get(Command('exit')) == []
+    assert keymap.get(Command('PAGE_TOP')) == ['gg']
     assert keymap.get('upvote') == ['b', '<KEY_F5>']
     with pytest.raises(exceptions.ConfigError) as e:
         keymap.get('downvote')
@@ -331,7 +377,8 @@ def test_objects_keymap():
     assert KeyMap.parse('<LF>') == 10
     assert KeyMap.parse('<KEY_UP>') == 259
     assert KeyMap.parse('<KEY_F5>') == 269
-    for key in ('', None, '<lf>', '<DNS>', '<KEY_UD>', '♬'):
+    assert KeyMap.parse('gg') == (103, 103)
+    for key in ('', None, '<lf>', '<DNS>', '<KEY_UD>', '♬', 'ggg'):
         with pytest.raises(exceptions.ConfigError) as e:
             keymap.parse(key)
         assert six.text_type(key) in six.text_type(e)
