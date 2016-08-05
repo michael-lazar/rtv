@@ -20,7 +20,7 @@ HELP = """
 Reddit Terminal Viewer
 
 https://github.com/michael-lazar/rtv
-======================
+====================================
 
 [Basic Commands]
   j/k or ▲/▼       : Move the cursor up/down
