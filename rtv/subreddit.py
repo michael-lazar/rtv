@@ -30,7 +30,7 @@ class SubredditPage(Page):
         self.controller = SubredditController(self, keymap=config.keymap)
         self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.nav = Navigator(self.content.get)
-        self._toggled_subreddit = None
+        self.toggled_subreddit = None
 
     @SubredditController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
@@ -83,9 +83,9 @@ class SubredditPage(Page):
 
         if self.content.name != '/r/front':
             target = '/r/front'
-            self._toggled_subreddit = self.content.name
+            self.toggled_subreddit = self.content.name
         else:
-            target = self._toggled_subreddit
+            target = self.toggled_subreddit
 
         # target still may be empty string if this command hasn't yet been used
         if target is not None:
@@ -111,9 +111,9 @@ class SubredditPage(Page):
         if data.get('url_type') == 'selfpost':
             self.config.history.add(data['url_full'])
 
-        if page.subreddit_name is not None:
-            self.refresh_content(order='ignore',
-                                 name=page.subreddit_name)
+        if page.selected_subreddit is not None:
+            self.content = page.selected_subreddit
+            self.nav = Navigator(self.content.get)
         else:
             self.refresh_content()
 
@@ -173,9 +173,9 @@ class SubredditPage(Page):
 
             page.loop()
 
-            if page.subreddit_name is not None:
-                self.refresh_content(order='ignore',
-                                     name=page.subreddit_name)
+            if page.selected_subreddit is not None:
+                self.content = page.selected_subreddit
+                self.nav = Navigator(self.content.get)
             else:
                 self.refresh_content()
 
@@ -194,9 +194,11 @@ class SubredditPage(Page):
 
         # When the user has chosen a subreddit in the subscriptions list,
         # refresh content with the selected subreddit
-        if page.subreddit_name is not None:
-            self.refresh_content(order='ignore',
-                                 name=page.subreddit_name)
+        if page.selected_subreddit is not None:
+            self.content = page.selected_subreddit
+            self.nav = Navigator(self.content.get)
+        else:
+            self.refresh_content()
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_MULTIREDDITS'))
     @logged_in
@@ -213,9 +215,11 @@ class SubredditPage(Page):
 
         # When the user has chosen a subreddit in the subscriptions list,
         # refresh content with the selected subreddit
-        if page.subreddit_name is not None:
-            self.refresh_content(order='ignore',
-                                 name=page.subreddit_name)
+        if page.selected_subreddit is not None:
+            self.content = page.selected_subreddit
+            self.nav = Navigator(self.content.get)
+        else:
+            self.refresh_content()
 
     def _draw_item(self, win, data, inverted):
 
