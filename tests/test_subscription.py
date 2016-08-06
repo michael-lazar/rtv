@@ -71,6 +71,27 @@ def test_subscription_refresh(subscription_page):
     assert not curses.flash.called
 
 
+def test_subscription_prompt(subscription_page, terminal):
+
+    # Prompt for a different subreddit
+    with mock.patch.object(terminal, 'prompt_input'):
+        # Valid input
+        subscription_page.active = True
+        subscription_page.selected_subreddit = None
+        terminal.prompt_input.return_value = 'front/top'
+        subscription_page.controller.trigger('/')
+        assert not subscription_page.active
+        assert subscription_page.selected_subreddit
+
+        # Invalid input
+        subscription_page.active = True
+        subscription_page.selected_subreddit = None
+        terminal.prompt_input.return_value = 'front/pot'
+        subscription_page.controller.trigger('/')
+        assert subscription_page.active
+        assert not subscription_page.selected_subreddit
+
+
 def test_subscription_move(subscription_page):
 
     # Test movement
