@@ -29,6 +29,7 @@ https://github.com/michael-lazar/rtv
   1-5              : Toggle post order
   r or F5          : Refresh page content
   u                : Log in or switch accounts
+  /                : Open a prompt to switch subreddits
   ?                : Show the help screen
   q/Q              : Quit/Force quit
 
@@ -45,7 +46,6 @@ https://github.com/michael-lazar/rtv
 [Subreddit Commands]
   l or ►           : Enter the selected submission
   o or ENTER       : Open the submission link with your web browser
-  /                : Open a prompt to switch subreddits
   f                : Open a prompt to search the current subreddit
   p                : Return to the front page
 

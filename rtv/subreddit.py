@@ -66,7 +66,7 @@ class SubredditPage(Page):
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
-    @SubredditController.register(Command('SUBREDDIT_PROMPT'))
+    @SubredditController.register(Command('PROMPT'))
     def prompt_subreddit(self):
         "Open a prompt to navigate to a different subreddit"
 
@@ -110,6 +110,12 @@ class SubredditPage(Page):
 
         if data.get('url_type') == 'selfpost':
             self.config.history.add(data['url_full'])
+
+        if page.subreddit_name is not None:
+            self.refresh_content(order='ignore',
+                                 name=page.subreddit_name)
+        else:
+            self.refresh_content()
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_IN_BROWSER'))
     def open_link(self):
@@ -167,7 +173,11 @@ class SubredditPage(Page):
 
             page.loop()
 
-            self.refresh_content()
+            if page.subreddit_name is not None:
+                self.refresh_content(order='ignore',
+                                     name=page.subreddit_name)
+            else:
+                self.refresh_content()
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_SUBSCRIPTIONS'))
     @logged_in
@@ -184,9 +194,9 @@ class SubredditPage(Page):
 
         # When the user has chosen a subreddit in the subscriptions list,
         # refresh content with the selected subreddit
-        if page.subreddit_data is not None:
+        if page.subreddit_name is not None:
             self.refresh_content(order='ignore',
-                                 name=page.subreddit_data['name'])
+                                 name=page.subreddit_name)
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_MULTIREDDITS'))
     @logged_in
@@ -203,9 +213,9 @@ class SubredditPage(Page):
 
         # When the user has chosen a subreddit in the subscriptions list,
         # refresh content with the selected subreddit
-        if page.subreddit_data is not None:
+        if page.subreddit_name is not None:
             self.refresh_content(order='ignore',
-                                 name=page.subreddit_data['name'])
+                                 name=page.subreddit_name)
 
     def _draw_item(self, win, data, inverted):
 

@@ -22,7 +22,7 @@ class SubscriptionPage(Page):
             reddit, term.loader, content_type)
         self.nav = Navigator(self.content.get)
         self.content_type = content_type
-        self.subreddit_data = None
+        self.subreddit_name = None
 
     @SubscriptionController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
@@ -39,11 +39,20 @@ class SubscriptionPage(Page):
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
+    @SubscriptionController.register(Command('PROMPT'))
+    def prompt_subreddit(self):
+        "Open a prompt to navigate to a different subreddit"
+
+        name = self.term.prompt_input('Enter page: /')
+        if name is not None:
+            self.subreddit_name = name
+            self.active = False
+
     @SubscriptionController.register(Command('SUBSCRIPTION_SELECT'))
     def select_subreddit(self):
         "Store the selected subreddit and return to the subreddit page"
 
-        self.subreddit_data = self.content.get(self.nav.absolute_index)
+        self.subreddit_name = self.content.get(self.nav.absolute_index)['name']
         self.active = False
 
     @SubscriptionController.register(Command('SUBSCRIPTION_EXIT'))

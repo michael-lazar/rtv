@@ -27,6 +27,7 @@ class SubmissionPage(Page):
             self.content = SubmissionContent(submission, term.loader)
         # Start at the submission post, which is indexed as -1
         self.nav = Navigator(self.content.get, page_index=-1)
+        self.subreddit_name = None
 
     @SubmissionController.register(Command('SUBMISSION_TOGGLE_COMMENT'))
     def toggle_comment(self):
@@ -66,6 +67,15 @@ class SubmissionPage(Page):
                 self.reddit, url, self.term.loader, order=order)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get, page_index=-1)
+
+    @SubmissionController.register(Command('PROMPT'))
+    def prompt_subreddit(self):
+        "Open a prompt to navigate to a different subreddit"
+
+        name = self.term.prompt_input('Enter page: /')
+        if name is not None:
+            self.subreddit_name = name
+            self.active = False
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):
