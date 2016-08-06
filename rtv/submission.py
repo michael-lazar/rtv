@@ -5,7 +5,7 @@ import time
 import curses
 
 from . import docs
-from .content import SubmissionContent
+from .content import SubmissionContent, SubredditContent
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Color, Command
 from .exceptions import TemporaryFileError
@@ -27,6 +27,7 @@ class SubmissionPage(Page):
             self.content = SubmissionContent(submission, term.loader)
         # Start at the submission post, which is indexed as -1
         self.nav = Navigator(self.content.get, page_index=-1)
+        self.selected_subreddit = None
 
     @SubmissionController.register(Command('SUBMISSION_TOGGLE_COMMENT'))
     def toggle_comment(self):
@@ -66,6 +67,19 @@ class SubmissionPage(Page):
                 self.reddit, url, self.term.loader, order=order)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get, page_index=-1)
+
+    @SubmissionController.register(Command('PROMPT'))
+    def prompt_subreddit(self):
+        "Open a prompt to navigate to a different subreddit"
+
+        name = self.term.prompt_input('Enter page: /')
+        if name is not None:
+            with self.term.loader('Loading page'):
+                content = SubredditContent.from_name(
+                    self.reddit, name, self.term.loader)
+            if not self.term.loader.exception:
+                self.selected_subreddit = content
+                self.active = False
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):

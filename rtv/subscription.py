@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import curses
 
 from .page import Page, PageController
-from .content import SubscriptionContent
+from .content import SubscriptionContent, SubredditContent
 from .objects import Color, Navigator, Command
 
 
@@ -22,7 +22,7 @@ class SubscriptionPage(Page):
             reddit, term.loader, content_type)
         self.nav = Navigator(self.content.get)
         self.content_type = content_type
-        self.subreddit_data = None
+        self.selected_subreddit = None
 
     @SubscriptionController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
@@ -39,12 +39,30 @@ class SubscriptionPage(Page):
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
+    @SubscriptionController.register(Command('PROMPT'))
+    def prompt_subreddit(self):
+        "Open a prompt to navigate to a different subreddit"
+
+        name = self.term.prompt_input('Enter page: /')
+        if name is not None:
+            with self.term.loader('Loading page'):
+                content = SubredditContent.from_name(
+                    self.reddit, name, self.term.loader)
+            if not self.term.loader.exception:
+                self.selected_subreddit = content
+                self.active = False
+
     @SubscriptionController.register(Command('SUBSCRIPTION_SELECT'))
     def select_subreddit(self):
         "Store the selected subreddit and return to the subreddit page"
 
-        self.subreddit_data = self.content.get(self.nav.absolute_index)
-        self.active = False
+        name = self.content.get(self.nav.absolute_index)['name']
+        with self.term.loader('Loading page'):
+            content = SubredditContent.from_name(
+                self.reddit, name, self.term.loader)
+        if not self.term.loader.exception:
+            self.selected_subreddit = content
+            self.active = False
 
     @SubscriptionController.register(Command('SUBSCRIPTION_EXIT'))
     def close_subscriptions(self):

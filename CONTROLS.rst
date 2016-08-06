@@ -14,6 +14,7 @@ Basic Commands
 :``1-5``: Toggle post order (*hot*, *top*, *rising*, *new*, *controversial*)
 :``r`` or ``F5``: Refresh page content
 :``u``: Log in or switch accounts
+:``/``: Open a prompt to switch subreddits
 :``?``: Show the help screen
 :``q``/``Q``: Quit/Force quit
 
@@ -43,7 +44,6 @@ In subreddit mode you can browse through the top submissions on either the front
 
 :``l`` or ``►``: Enter the selected submission
 :``o`` or ``ENTER``:  Open the submission link with your web browser
-:``/``: Open a prompt to switch subreddits
 :``f``: Open a prompt to search the current subreddit
 :``p``: Toggle between the front page and the last visited subreddit
 

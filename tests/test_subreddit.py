@@ -101,6 +101,7 @@ def test_subreddit_open(subreddit_page, terminal, config):
         config.history.add.assert_called_with(data['url_full'])
 
     # Open the selected link externally
+    data = subreddit_page.content.get(subreddit_page.nav.absolute_index)
     with mock.patch.object(terminal, 'open_link'), \
             mock.patch.object(config.history, 'add'):
         data['url_type'] = 'external'
@@ -109,6 +110,7 @@ def test_subreddit_open(subreddit_page, terminal, config):
         config.history.add.assert_called_with(data['url_full'])
 
     # Open the selected link within rtv
+    data = subreddit_page.content.get(subreddit_page.nav.absolute_index)
     with mock.patch.object(subreddit_page, 'open_submission'), \
             mock.patch.object(config.history, 'add'):
         data['url_type'] = 'selfpost'

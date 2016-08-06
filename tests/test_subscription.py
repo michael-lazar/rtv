@@ -71,6 +71,27 @@ def test_subscription_refresh(subscription_page):
     assert not curses.flash.called
 
 
+def test_subscription_prompt(subscription_page, terminal):
+
+    # Prompt for a different subreddit
+    with mock.patch.object(terminal, 'prompt_input'):
+        # Valid input
+        subscription_page.active = True
+        subscription_page.selected_subreddit = None
+        terminal.prompt_input.return_value = 'front/top'
+        subscription_page.controller.trigger('/')
+        assert not subscription_page.active
+        assert subscription_page.selected_subreddit
+
+        # Invalid input
+        subscription_page.active = True
+        subscription_page.selected_subreddit = None
+        terminal.prompt_input.return_value = 'front/pot'
+        subscription_page.controller.trigger('/')
+        assert subscription_page.active
+        assert not subscription_page.selected_subreddit
+
+
 def test_subscription_move(subscription_page):
 
     # Test movement
@@ -110,17 +131,17 @@ def test_subscription_select(subscription_page):
 
     # Select a subreddit
     subscription_page.controller.trigger(curses.KEY_ENTER)
-    assert subscription_page.subreddit_data is not None
+    assert subscription_page.selected_subreddit is not None
     assert subscription_page.active is False
 
 
 def test_subscription_close(subscription_page):
 
     # Close the subscriptions page
-    subscription_page.subreddit_data = None
+    subscription_page.selected_subreddit = None
     subscription_page.active = None
     subscription_page.controller.trigger('h')
-    assert subscription_page.subreddit_data is None
+    assert subscription_page.selected_subreddit is None
     assert subscription_page.active is False
 
 

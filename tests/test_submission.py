@@ -95,6 +95,27 @@ def test_submission_open(submission_page, terminal):
         assert terminal.open_browser.called
 
 
+def test_submission_prompt(submission_page, terminal):
+
+    # Prompt for a different subreddit
+    with mock.patch.object(terminal, 'prompt_input'):
+        # Valid input
+        submission_page.active = True
+        submission_page.selected_subreddit = None
+        terminal.prompt_input.return_value = 'front/top'
+        submission_page.controller.trigger('/')
+        assert not submission_page.active
+        assert submission_page.selected_subreddit
+
+        # Invalid input
+        submission_page.active = True
+        submission_page.selected_subreddit = None
+        terminal.prompt_input.return_value = 'front/pot'
+        submission_page.controller.trigger('/')
+        assert submission_page.active
+        assert not submission_page.selected_subreddit
+
+
 def test_submission_move_top_bottom(submission_page):
 
     submission_page.controller.trigger('G')
