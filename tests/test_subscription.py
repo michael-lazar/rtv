@@ -131,17 +131,17 @@ def test_subscription_select(subscription_page):
 
     # Select a subreddit
     subscription_page.controller.trigger(curses.KEY_ENTER)
-    assert subscription_page.subreddit_name is not None
+    assert subscription_page.selected_subreddit is not None
     assert subscription_page.active is False
 
 
 def test_subscription_close(subscription_page):
 
     # Close the subscriptions page
-    subscription_page.subreddit_name = None
+    subscription_page.selected_subreddit = None
     subscription_page.active = None
     subscription_page.controller.trigger('h')
-    assert subscription_page.subreddit_name is None
+    assert subscription_page.selected_subreddit is None
     assert subscription_page.active is False
 
 
