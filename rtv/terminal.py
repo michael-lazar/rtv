@@ -411,6 +411,11 @@ class Terminal(object):
             entry (dict): The full mailcap entry for the corresponding command
         """
 
+        if self.config['has_youtube-dl'] and subprocess.run(
+        ['youtube-dl', '-qs', url], stderr=subprocess.DEVNULL).returncode == 0:
+            return mailcap.findmatch(self._mailcap_dict, 'video/x-youtube',
+                    filename=url)
+
         for parser in mime_parsers.parsers:
             if parser.pattern.match(url):
                 # modified_url may be the same as the original url, but it
