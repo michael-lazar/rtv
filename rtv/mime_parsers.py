@@ -164,8 +164,33 @@ class ImgurAlbumMIMEParser(BaseMIMEParser):
             return url, None
 
 
+class InstagramMIMEParser(BaseMIMEParser):
+    """
+    Instagram pages can contain either an embedded image or video. The <meta>
+    tags below provide the relevant info.
+
+    <meta property="og:image" content="https://xxxx.jpg?ig_cache_key=xxxxx" />
+    <meta property="og:video:secure_url" content="https://xxxxx.mp4" />
+
+    If the page is a video page both of the above tags will be present.
+    """
+    pattern = re.compile(r'https?://(www\.)?instagr((am\.com)|\.am)/p/[^.]+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        tag = soup.find('meta', attrs={'property': 'og:video:secure_url'})
+        tag = tag or soup.find('meta', attrs={'property':  'og:image'})
+        if tag:
+            return BaseMIMEParser.get_mimetype(tag.get('content'))
+        else:
+            return url, None
+
+
 # Parsers should be listed in the order they will be checked
 parsers = [
+    InstagramMIMEParser,
     GfycatMIMEParser,
     ImgurAlbumMIMEParser,
     ImgurMIMEParser,

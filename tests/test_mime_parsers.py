@@ -49,6 +49,17 @@ URLS = {
         'http://imgur.com/a/qx9t5',
         'http://i.imgur.com/uEt0YLI.jpg',
         'image/x-imgur-album'),
+    'instagram_image': (
+        'https://www.instagram.com/p/BIxQ0vrBN2Y/?taken-by=kimchi_chic',
+        'https://instagram.fsan1-1.fna.fbcdn.net/t51.2885-15/e35/13694516_8610'
+        '10040698614_1723649992_n.jpg?ig_cache_key=MTMxMDkwMjk1OTg4NjA5NzgxNg%'
+        '3D%3D.2',
+        'image/jpeg'),
+    'instagram_video': (
+        'https://www.instagram.com/p/3Whn5uL5UF/',
+        'https://instagram.fsan1-1.fna.fbcdn.net/t50.2886-16/11389587_14398286'
+        '86321376_1437626724_n.mp4',
+        'video/mp4'),
 }
 
 
