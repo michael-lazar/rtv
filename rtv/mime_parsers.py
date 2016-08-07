@@ -180,12 +180,12 @@ class InstagramMIMEParser(BaseMIMEParser):
     def get_mimetype(url):
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
-        tags = soup.find_all('meta', attrs={'property': 'og:video:secure_url'})
-        if tags:
-            return BaseMIMEParser.get_mimetype(tags[0].get('content'))
+        tag = soup.find('meta', attrs={'property': 'og:video:secure_url'})
+        tag = tag or soup.find('meta', attrs={'property':  'og:image'})
+        if tag:
+            return BaseMIMEParser.get_mimetype(tag.get('content'))
         else:
-            tags = soup.find_all('meta', attrs={'property':  'og:image'})
-            return BaseMIMEParser.get_mimetype(tags[0].get('content'))
+            return url, None
 
 
 # Parsers should be listed in the order they will be checked
