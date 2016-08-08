@@ -10,6 +10,7 @@ import warnings
 import six
 import praw
 import tornado
+import requests
 
 from . import docs
 from .config import Config, copy_default_config, copy_default_mailcap
@@ -132,7 +133,13 @@ def main():
 
             # Open the supplied submission link before opening the subreddit
             if config['link']:
-                page.open_submission(url=config['link'])
+                # Expand shortened urls like https://redd.it/
+                # Praw won't accept the shortened versions, add the reddit
+                # headers to avoid a 429 response from reddit.com
+                url = requests.head(config['link'], headers=reddit.http.headers,
+                                    allow_redirects=True).url
+
+                page.open_submission(url=url)
 
             # Launch the subreddit page
             page.loop()
