@@ -114,8 +114,6 @@ class SubredditPage(Page):
         if page.selected_subreddit is not None:
             self.content = page.selected_subreddit
             self.nav = Navigator(self.content.get)
-        else:
-            self.refresh_content()
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_IN_BROWSER'))
     def open_link(self):
@@ -197,8 +195,6 @@ class SubredditPage(Page):
         if page.selected_subreddit is not None:
             self.content = page.selected_subreddit
             self.nav = Navigator(self.content.get)
-        else:
-            self.refresh_content()
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_MULTIREDDITS'))
     @logged_in
@@ -218,8 +214,6 @@ class SubredditPage(Page):
         if page.selected_subreddit is not None:
             self.content = page.selected_subreddit
             self.nav = Navigator(self.content.get)
-        else:
-            self.refresh_content()
 
     def _draw_item(self, win, data, inverted):
 
