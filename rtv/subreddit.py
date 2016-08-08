@@ -11,6 +11,7 @@ from .objects import Navigator, Color, Command
 from .submission import SubmissionPage
 from .subscription import SubscriptionPage
 from .exceptions import TemporaryFileError
+from urllib.request import urlopen # For parsing shortened URLs
 
 
 class SubredditController(PageController):
@@ -99,6 +100,13 @@ class SubredditPage(Page):
         if url is None:
             data = self.content.get(self.nav.absolute_index)
             url = data['permalink']
+        # Patch to hopefully allow shortened URLs
+        try:
+            redditpage = urlopen(url)
+            if redditpage.getcode() == 200:
+                url = redditpage.url
+        except urllib.error.HTTPError:
+            break
 
         with self.term.loader('Loading submission'):
             page = SubmissionPage(
