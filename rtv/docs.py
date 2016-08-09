@@ -107,7 +107,7 @@ SUBMISSION_EDIT_FILE = """{content}
 OAUTH_ACCESS_DENIED = """\
         <h1 style="color: red">Access Denied</h1><hr>
         <p><span style="font-weight: bold">Reddit Terminal Viewer</span> was
-        denied access and will continue to operate in unauthenticated mode
+        denied access and will continue to operate in unauthenticated mode,
         you can close this window.</p>
 """
 
