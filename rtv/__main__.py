@@ -9,7 +9,6 @@ import warnings
 
 import six
 import praw
-import tornado
 import requests
 
 from . import docs
@@ -158,7 +157,5 @@ def main():
         # Ensure sockets are closed to prevent a ResourceWarning
         if 'reddit' in locals():
             reddit.handler.http.close()
-        # Explicitly close file descriptors opened by Tornado's IOLoop
-        tornado.ioloop.IOLoop.current().close(all_fds=True)
 
 sys.exit(main())
