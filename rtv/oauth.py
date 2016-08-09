@@ -9,8 +9,8 @@ import codecs
 import logging
 import threading
 
-from urllib.parse import urlparse, parse_qs
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from six.moves.urllib.parse import urlparse, parse_qs
+from six.moves.BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 from . import docs
 from .config import TEMPLATES
