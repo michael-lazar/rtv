@@ -175,7 +175,6 @@ class OAuthHelper(object):
                 _logger.exception(e)
                 self.term.show_notification('Browser Error')
             else:
-                _logger.debug('Calling server shutdown()')
                 self.server.shutdown()
             finally:
                 thread.join()
