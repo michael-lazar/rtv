@@ -144,8 +144,9 @@ class Config(object):
         self.default = default
         self.keymap = KeyMap(bindings)
 
-        # `refresh_token` and `history` are saved/loaded at separate locations,
-        # so they are treated differently from the rest of the config options.
+        # `refresh_token` and `history` are saved/loaded at separate 
+        # locations, so they are treated differently from the rest of 
+        # the config options.
         self.refresh_token = None
         self.history = OrderedSet()
 
@@ -258,7 +259,8 @@ class Config(object):
     @staticmethod
     def _ensure_filepath(filename):
         """
-        Ensure that the directory exists before trying to write to the file.
+        Ensure that the directory exists before trying to write to the 
+        file.
         """
 
         filepath = os.path.dirname(filename)

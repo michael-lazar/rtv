@@ -10,8 +10,8 @@ _logger = logging.getLogger(__name__)
 
 class BaseMIMEParser(object):
     """
-    BaseMIMEParser can be sub-classed to define custom handlers for determining
-    the MIME type of external urls.
+    BaseMIMEParser can be sub-classed to define custom handlers for
+    determining the MIME type of external urls.
     """
     pattern = re.compile(r'.*$')
 
@@ -21,15 +21,17 @@ class BaseMIMEParser(object):
         Guess based on the file extension.
 
         Args:
-            url (text): Web url that was linked to by a reddit submission.
+            url (text): Web url that was linked to by a reddit
+                        submission.
 
         Returns:
-            modified_url (text): The url (or filename) that will be used when
-                constructing the command to run.
+            modified_url (text): The url (or filename) that will be used
+                                 when constructing the command to run.
             content_type (text): The mime-type that will be used when
-                constructing the command to run. If the mime-type is unknown,
-                return None and the program will fallback to using the web
-                browser.
+                                 constructing the command to run. If the
+                                 mime-type is unknown, return None and
+                                 the program will fallback to using the
+                                 web browser.
         """
         filename = url.split('?')[0]
         content_type, _ = mimetypes.guess_type(filename)
@@ -38,9 +40,9 @@ class BaseMIMEParser(object):
 
 class GfycatMIMEParser(BaseMIMEParser):
     """
-    Gfycat provides a primitive json api to generate image links. URLs can be
-    downloaded as either gif, webm, or mjpg. Webm was selected because it's
-    fast and works with VLC.
+    Gfycat provides a primitive json api to generate image links. URLs
+    can be downloaded as either gif, webm, or mjpg. Webm was selected
+    because it's fast and works with VLC.
 
         https://gfycat.com/api
 
@@ -60,8 +62,9 @@ class GfycatMIMEParser(BaseMIMEParser):
 
 class YoutubeMIMEParser(BaseMIMEParser):
     """
-    Youtube videos can be streamed with vlc or downloaded with youtube-dl.
-    Assign a custom mime-type so they can be referenced in mailcap.
+    Youtube videos can be streamed with vlc or downloaded with
+    youtube-dl. Assign a custom mime-type so they can be referenced in
+    mailcap.
     """
     pattern = re.compile(
         r'(?:https?://)?(m\.)?(?:youtu\.be/|(?:www\.)?youtube\.com/watch'
@@ -74,10 +77,10 @@ class YoutubeMIMEParser(BaseMIMEParser):
 
 class GifvMIMEParser(BaseMIMEParser):
     """
-    Special case for .gifv, which is a custom video format for imgur serves
-    as html with a special <video> frame. Note that attempting for download as
-    .webm also returns this html page. However, .mp4 appears to return the raw
-    video file.
+    Special case for .gifv, which is a custom video format for imgur
+    serves as html with a special <video> frame. Note that attempting
+    for download as .webm also returns this html page. However, .mp4
+    appears to return the raw video file.
     """
     pattern = re.compile(r'.*[.]gifv$')
 
@@ -89,8 +92,8 @@ class GifvMIMEParser(BaseMIMEParser):
 
 class RedditUploadsMIMEParser(BaseMIMEParser):
     """
-    Reddit uploads do not have a file extension, but we can grab the mime-type
-    from the page header.
+    Reddit uploads do not have a file extension, but we can grab the
+    mime-type from the page header.
     """
     pattern = re.compile(r'https://i\.reddituploads\.com/.+$')
 
@@ -104,12 +107,12 @@ class RedditUploadsMIMEParser(BaseMIMEParser):
 
 class ImgurMIMEParser(BaseMIMEParser):
     """
-    The majority of imgur links don't point directly to the image, so we need
-    to open the provided url and scrape the page for the link.
+    The majority of imgur links don't point directly to the image, so we
+    need to open the provided url and scrape the page for the link.
 
-    Scrape the actual image url from an imgur landing page. Imgur intentionally
-    obscures this on most reddit links in order to draw more traffic for their
-    advertisements.
+    Scrape the actual image url from an imgur landing page. Imgur
+    intentionally obscures this on most reddit links in order to draw
+    more traffic for their advertisements.
 
     There are a couple of <meta> tags that supply the relevant info:
         <meta name="twitter:image" content="https://i.imgur.com/xrqQ4LEh.jpg">
@@ -132,8 +135,8 @@ class ImgurMIMEParser(BaseMIMEParser):
 
 class ImgurAlbumMIMEParser(BaseMIMEParser):
     """
-    Imgur albums can contain several images, which need to be scraped from the
-    landing page. Assumes the following html structure:
+    Imgur albums can contain several images, which need to be scraped
+    from the landing page. Assumes the following html structure:
 
         <div class="post-image">
             <a href="//i.imgur.com/L3Lfp1O.jpg" class="zoom">
@@ -166,8 +169,8 @@ class ImgurAlbumMIMEParser(BaseMIMEParser):
 
 class InstagramMIMEParser(BaseMIMEParser):
     """
-    Instagram pages can contain either an embedded image or video. The <meta>
-    tags below provide the relevant info.
+    Instagram pages can contain either an embedded image or video. The
+    <meta> tags below provide the relevant info.
 
     <meta property="og:image" content="https://xxxx.jpg?ig_cache_key=xxxxx" />
     <meta property="og:video:secure_url" content="https://xxxxx.mp4" />

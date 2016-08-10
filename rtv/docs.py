@@ -7,8 +7,8 @@ desktop:https://github.com/michael-lazar/rtv:{version}\
 """
 
 SUMMARY = """
-Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
-terminal window.
+Reddit Terminal Viewer is a lightweight browser for www.reddit.com built
+into a terminal window.
 """
 
 CONTROLS = """

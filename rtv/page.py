@@ -17,7 +17,8 @@ from .__version__ import __version__
 
 def logged_in(f):
     """
-    Decorator for Page methods that require the user to be authenticated.
+    Decorator for Page methods that require the user to be
+    authenticated.
     """
     @wraps(f)
     def wrapped_method(self, *args, **kwargs):
@@ -61,8 +62,8 @@ class Page(object):
             2. Wait for user to press a key (includes terminal resizing)
             3. Trigger the method registered to the input key
 
-        The loop will run until self.active is set to False from within one of
-        the methods.
+        The loop will run until self.active is set to False from within
+        one of the methods.
         """
 
         self.active = True
@@ -271,7 +272,8 @@ class Page(object):
     @logged_in
     def get_inbox(self):
         """
-        Checks the inbox for unread messages and displays a notification.
+        Checks the inbox for unread messages and displays a
+        notification.
         """
 
         inbox = len(list(self.reddit.get_unread(limit=1)))
@@ -280,7 +282,8 @@ class Page(object):
 
     def clear_input_queue(self):
         """
-        Clear excessive input caused by the scroll wheel or holding down a key
+        Clear excessive input caused by the scroll wheel or holding down
+        a key
         """
 
         with self.term.no_delay():
@@ -291,8 +294,9 @@ class Page(object):
 
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         if n_rows < self.term.MIN_HEIGHT or n_cols < self.term.MIN_WIDTH:
-            # TODO: Will crash when you try to navigate if the terminal is too
-            # small at startup because self._subwindows will never be populated
+            # TODO: Will crash when you try to navigate if the terminal
+            # is too small at startup because self._subwindows will
+            # never be populated
             return
 
         self._row = 0
@@ -331,13 +335,14 @@ class Page(object):
             sys.stdout.flush()
 
         if self.reddit.user is not None:
-            # The starting position of the name depends on if we're converting
-            # to ascii or not
+            # The starting position of the name depends on if we're
+            # converting to ascii or not
             width = len if self.config['ascii'] else textual_width
 
             username = self.reddit.user.name
             s_col = (n_cols - width(username) - 1)
-            # Only print username if it fits in the empty space on the right
+            # Only print username if it fits in the empty space on the
+            # right
             if (s_col - 1) >= width(sub_name):
                 self.term.add_line(window, username, 0, s_col)
 
@@ -378,9 +383,9 @@ class Page(object):
         page_index, cursor_index, inverted = self.nav.position
         step = self.nav.step
 
-        # If not inverted, align the first submission with the top and draw
-        # downwards. If inverted, align the first submission with the bottom
-        # and draw upwards.
+        # If not inverted, align the first submission with the top and
+        # draw downwards. If inverted, align the first submission with
+        # the bottom and draw upwards.
         cancel_inverted = True
         current_row = (win_n_rows - 1) if inverted else 0
         available_rows = (win_n_rows - 1) if inverted else win_n_rows
@@ -389,9 +394,9 @@ class Page(object):
             subwin_n_rows = min(available_rows, data['n_rows'])
             subwin_inverted = inverted
             if top_item_height is not None:
-                # Special case: draw the page as non-inverted, except for the
-                # top element. This element will be drawn as inverted with a
-                # restricted height
+                # Special case: draw the page as non-inverted, except
+                # for the top element. This element will be drawn as
+                # inverted with a restricted height
                 subwin_n_rows = min(subwin_n_rows, top_item_height)
                 subwin_inverted = True
                 top_item_height = None
@@ -401,24 +406,27 @@ class Page(object):
                 subwin_n_rows, subwin_n_cols, start, data['offset'])
             attr = self._draw_item(subwindow, data, subwin_inverted)
             self._subwindows.append((subwindow, attr))
-            available_rows -= (subwin_n_rows + 1)  # Add one for the blank line
+            # Add one for the blank line
+            available_rows -= (subwin_n_rows + 1)  
             current_row += step * (subwin_n_rows + 1)
             if available_rows <= 0:
-                # Indicate the page is full and we can keep the inverted screen.
+                # Indicate the page is full and we can keep the inverted
+                # screen.
                 cancel_inverted = False
                 break
 
         if len(self._subwindows) == 1:
             # Never draw inverted if only one subwindow. The top of the
-            # subwindow should always be aligned with the top of the screen.
+            # subwindow should always be aligned with the top of the
+            # screen.
             cancel_inverted = True
 
         if cancel_inverted and self.nav.inverted:
             # In some cases we need to make sure that the screen is NOT
-            # inverted. Unfortunately, this currently means drawing the whole
-            # page over again. Could not think of a better way to pre-determine
-            # if the content will fill up the page, given that it is dependent
-            # on the size of the terminal.
+            # inverted. Unfortunately, this currently means drawing the
+            # whole page over again. Could not think of a better way to
+            # pre-determine if the content will fill up the page, given
+            # that it is dependent on the size of the terminal.
             self.nav.flip((len(self._subwindows) - 1))
             self._draw_content()
 
@@ -432,8 +440,8 @@ class Page(object):
 
     def _move_cursor(self, direction):
         self._remove_cursor()
-        # Note: ACS_VLINE doesn't like changing the attribute, so disregard the
-        # redraw flag and opt to always redraw
+        # Note: ACS_VLINE doesn't like changing the attribute, so
+        # disregard the redraw flag and opt to always redraw
         valid, redraw = self.nav.move(direction, len(self._subwindows))
         if not valid:
             self.term.flash()
@@ -453,8 +461,8 @@ class Page(object):
             return
 
         # Don't allow the cursor to go over the number of subwindows
-        # This could happen if the window is resized and the cursor index is
-        # pushed out of bounds
+        # This could happen if the window is resized and the cursor
+        # index is pushed out of bounds
         if self.nav.cursor_index >= len(self._subwindows):
             self.nav.cursor_index = len(self._subwindows) - 1
 

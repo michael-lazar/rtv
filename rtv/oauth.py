@@ -24,20 +24,21 @@ INDEX = os.path.join(TEMPLATES, 'index.html')
 
 class OAuthHandler(BaseHTTPRequestHandler):
 
-    # params are stored as a global because we don't have control over what
-    # gets passed into the handler __init__. These will be accessed by the
-    # OAuthHelper class.
+    # params are stored as a global because we don't have control over
+    # what gets passed into the handler __init__. These will be accessed
+    # by the OAuthHelper class.
     params = {'state': None, 'code': None, 'error': None}
     shutdown_on_request = True
 
     def do_GET(self):
         """
-        Accepts GET requests to http://localhost:6500/, and stores the query
-        params in the global dict. If shutdown_on_request is true, stop the
-        server after the first successful request.
+        Accepts GET requests to http://localhost:6500/, and stores the
+        query params in the global dict. If shutdown_on_request is true,
+        stop the server after the first successful request.
 
         The http request may contain the following query params:
-            - state : unique identifier, should match what we passed to reddit
+            - state : unique identifier, should match what we passed to
+                      reddit
             - code  : code that can be exchanged for a refresh token
             - error : if provided, the OAuth error that occurred
         """
@@ -110,8 +111,8 @@ class OAuthHelper(object):
         self.reddit = reddit
         self.config = config
 
-        # Wait to initialize the server, we don't want to reserve the port
-        # unless we know that the server needs to be used.
+        # Wait to initialize the server, we don't want to reserve the
+        # port unless we know that the server needs to be used.
         self.server = None
 
         self.reddit.set_oauth_app_info(
@@ -144,22 +145,24 @@ class OAuthHelper(object):
             self.server = HTTPServer(address, OAuthHandler)
 
         if self.term.display:
-            # Open a background browser (e.g. firefox) which is non-blocking.
-            # The server will block until it responds to its first request,
-            # at which point we can check the callback params.
+            # Open a background browser (e.g. firefox) which is
+            # non-blocking. Stop the iloop when the user hits the auth
+            # callback, at which point we continue and check the
+            # callback params.
             OAuthHandler.shutdown_on_request = True
             with self.term.loader('Opening browser for authorization'):
                 self.term.open_browser(authorize_url)
                 self.server.serve_forever()
             if self.term.loader.exception:
-                # Don't need to call server.shutdown() because serve_forever()
-                # is wrapped in a try-finally that doees it for us.
+                # Don't need to call server.shutdown() because
+                # serve_forever() is wrapped in a try-finally that doees
+                # it for us.
                 return
         else:
-            # Open the terminal webbrowser in a background thread and wait
-            # while for the user to close the process. Once the process is
-            # closed, the iloop is stopped and we can check if the user has
-            # hit the callback URL.
+            # Open the terminal webbrowser in a background thread and
+            # wait while for the user to close the process. Once the
+            # process is closed, the iloop is stopped and we can check
+            # if the user has hit the callback URL.
             OAuthHandler.shutdown_on_request = False
             with self.term.loader('Redirecting to reddit', delay=0):
                 # This load message exists to provide user feedback
@@ -171,8 +174,9 @@ class OAuthHelper(object):
             try:
                 self.term.open_browser(authorize_url)
             except Exception as e:
-                # If an exception is raised it will be seen by the thread
-                # so we don't need to explicitly shutdown() the server
+                # If an exception is raised it will be seen by the
+                # thread so we don't need to explicitly shutdown() the
+                # server
                 _logger.exception(e)
                 self.term.show_notification('Browser Error')
             else:
