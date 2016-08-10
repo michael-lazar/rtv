@@ -36,11 +36,12 @@ class SubmissionPage(Page):
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
 
-        # This logic handles a display edge case after a comment toggle. We
-        # want to make sure that when we re-draw the page, the cursor stays at
-        # its current absolute position on the screen. In order to do this,
-        # apply a fixed offset if, while inverted, we either try to hide the
-        # bottom comment or toggle any of the middle comments.
+        # This logic handles a display edge case after a comment toggle.
+        # We want to make sure that when we re-draw the page, the cursor
+        # stays at its current absolute position on the screen. In order
+        # to do this, apply a fixed offset if, while inverted, we either
+        # try to hide the bottom comment or toggle any of the middle
+        # comments.
         if self.nav.inverted:
             data = self.content.get(current_index)
             if data['hidden'] or self.nav.cursor_index != 0:
@@ -186,15 +187,17 @@ class SubmissionPage(Page):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
 
-        # Handle the case where the window is not large enough to fit the text.
+        # Handle the case where the window is not large enough to fit
+        # the text.
         valid_rows = range(0, n_rows)
         offset = 0 if not inverted else -(data['n_rows'] - n_rows)
 
-        # If there isn't enough space to fit the comment body on the screen,
-        # replace the last line with a notification.
+        # If there isn't enough space to fit the comment body on the
+        # screen, replace the last line with a notification.
         split_body = data['split_body']
         if data['n_rows'] > n_rows:
-            # Only when there is a single comment on the page and not inverted
+            # Only when there is a single comment on the page and not
+            # inverted
             if not inverted and len(self._subwindows) == 0:
                 cutoff = data['n_rows'] - n_rows + 1
                 split_body = split_body[:-cutoff]
@@ -231,8 +234,8 @@ class SubmissionPage(Page):
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1)
 
-        # Unfortunately vline() doesn't support custom color so we have to
-        # build it one segment at a time.
+        # Unfortunately vline() doesn't support custom color so we have
+        # to build it one segment at a time.
         attr = Color.get_level(data['level'])
         x = 0
         for y in range(n_rows):
@@ -275,7 +278,8 @@ class SubmissionPage(Page):
         self.term.add_line(win, '{url}'.format(**data), row, 1, attr)
         offset = len(data['split_title']) + 3
 
-        # Cut off text if there is not enough room to display the whole post
+        # Cut off text if there is not enough room to display the whole
+        # post
         split_text = data['split_text']
         if data['n_rows'] > n_rows:
             cutoff = data['n_rows'] - n_rows + 1

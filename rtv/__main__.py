@@ -24,10 +24,10 @@ from .__version__ import __version__
 _logger = logging.getLogger(__name__)
 
 # Pycharm debugging note:
-# You can use pycharm to debug a curses application by launching rtv in a
-# console window (python -m rtv) and using pycharm to attach to the remote
-# process. On Ubuntu, you may need to allow ptrace permissions by setting
-# ptrace_scope to 0 in /etc/sysctl.d/10-ptrace.conf.
+# You can use pycharm to debug a curses application by launching rtv in
+# a console window (python -m rtv) and using pycharm to attach to the
+# remote process. On Ubuntu, you may need to allow ptrace permissions by
+# setting ptrace_scope to 0 in /etc/sysctl.d/10-ptrace.conf.
 # http://blog.mellenthin.de/archives/2010/10/18/gdb-attach-fails
 
 
@@ -37,8 +37,10 @@ def main():
     # Squelch SSL warnings
     logging.captureWarnings(True)
     if six.PY3:
-        # These ones get triggered even when capturing warnings is turned on
-        warnings.simplefilter('ignore', ResourceWarning)  #pylint:disable=E0602
+        # These ones get triggered even when capturing warnings is
+        # turned on
+        # pylint:disable=E0602
+        warnings.simplefilter('ignore', ResourceWarning)  
 
     locale.setlocale(locale.LC_ALL, '')
 
@@ -51,12 +53,14 @@ def main():
     args = Config.get_args()
     fargs, bindings = Config.get_file(args.get('config'))
 
-    # Apply the file config first, then overwrite with any command line args
+    # Apply the file config first, then overwrite with any command line
+    # args
     config = Config()
     config.update(**fargs)
     config.update(**args)
 
-    # If key bindings are supplied in the config file, overwrite the defaults
+    # If key bindings are supplied in the config file, overwrite the
+    # defaults
     if bindings:
         config.keymap.set_bindings(bindings)
 
@@ -78,7 +82,8 @@ def main():
         config.delete_refresh_token()
 
     if config['log']:
-        # Log request headers to the file (print hack only works on python 3.x)
+        # Log request headers to the file (print hack only works on
+        # python 3.x)
         # from http import client
         # _http_logger = logging.getLogger('http.client')
         # client.HTTPConnection.debuglevel = 2
@@ -130,11 +135,12 @@ def main():
             if term.loader.exception:
                 return
 
-            # Open the supplied submission link before opening the subreddit
+            # Open the supplied submission link before opening the
+            # subreddit
             if config['link']:
                 # Expand shortened urls like https://redd.it/
-                # Praw won't accept the shortened versions, add the reddit
-                # headers to avoid a 429 response from reddit.com
+                # Praw won't accept the shortened versions, add the
+                # reddit headers to avoid a 429 response from reddit.com
                 url = requests.head(config['link'], headers=reddit.http.headers,
                                     allow_redirects=True).url
 

@@ -100,8 +100,9 @@ def test_oauth_clear_data(oauth):
 
 def test_oauth_authorize(oauth, reddit, stdscr, refresh_token):
 
-    # Because we use `from .helpers import open_browser` we have to patch the
-    # function in the destination oauth module and not the helpers module
+    # Because we use `from .helpers import open_browser` we have to
+    # patch the function in the destination oauth module and not the
+    # helpers module
     with mock.patch('uuid.UUID.hex', new_callable=mock.PropertyMock) as uuid, \
             mock.patch('rtv.terminal.Terminal.open_browser') as open_browser, \
             mock.patch('rtv.oauth.HTTPServer') as http_server,                \

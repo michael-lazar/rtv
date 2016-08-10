@@ -27,33 +27,35 @@ _logger = logging.getLogger(__name__)
 def curses_session():
     """
     Setup terminal and initialize curses. Most of this copied from
-    curses.wrapper in order to convert the wrapper into a context manager.
+    curses.wrapper in order to convert the wrapper into a context
+    manager.
     """
 
     try:
-        # Curses must wait for some time after the Escape key is pressed to
-        # check if it is the beginning of an escape sequence indicating a
-        # special key. The default wait time is 1 second, which means that
-        # http://stackoverflow.com/questions/27372068
+        # Curses must wait for some time after the Escape key is pressed
+        # to check if it is the beginning of an escape sequence
+        # indicating a special key. The default wait time is 1 second,
+        # which means that http://stackoverflow.com/questions/27372068
         os.environ['ESCDELAY'] = '25'
 
         # Initialize curses
         stdscr = curses.initscr()
 
-        # Turn off echoing of keys, and enter cbreak mode, where no buffering
-        # is performed on keyboard input
+        # Turn off echoing of keys, and enter cbreak mode, where no
+        # buffering is performed on keyboard input
         curses.noecho()
         curses.cbreak()
 
-        # In keypad mode, escape sequences for special keys (like the cursor
-        # keys) will be interpreted and a special value like curses.KEY_LEFT
-        # will be returned
+        # In keypad mode, escape sequences for special keys (like the
+        # cursor keys) will be interpreted and a special value like
+        # curses.KEY_LEFT will be returned
         stdscr.keypad(1)
 
-        # Start color, too.  Harmless if the terminal doesn't have color; user
-        # can test with has_color() later on.  The try/catch works around a
-        # minor bit of over-conscientiousness in the curses module -- the error
-        # return from C start_color() is ignorable.
+        # Start color, too.  Harmless if the terminal doesn't have
+        # color; user can test with has_color() later on.  The try/catch
+        # works around a minor bit of over-conscientiousness in the
+        # curses module -- the error return from C start_color() is
+        # ignorable.
         try:
             curses.start_color()
         except:
@@ -77,16 +79,18 @@ def curses_session():
 
 class LoadScreen(object):
     """
-    Display a loading dialog while waiting for a blocking action to complete.
+    Display a loading dialog while waiting for a blocking action to
+    complete.
 
-    This class spins off a separate thread to animate the loading screen in the
-    background. The loading thread also takes control of stdscr.getch(). If
-    an exception occurs in the main thread while the loader is active, the
-    exception will be caught, attached to the loader object, and displayed as
-    a notification. The attached exception can be used to trigger context
-    sensitive actions. For example, if the connection hangs while opening a
-    submission, the user may press ctrl-c to raise a KeyboardInterrupt. In this
-    case we would *not* want to refresh the current page.
+    This class spins off a separate thread to animate the loading screen
+    in the background. The loading thread also takes control of
+    stdscr.getch(). If an exception occurs in the main thread while the
+    loader is active, the exception will be caught, attached to the
+    loader object, and displayed as a notification. The attached
+    exception can be used to trigger context sensitive actions. For
+    example, if the connection hangs while opening a submission, the
+    user may press ctrl-c to raise a KeyboardInterrupt. In this case we
+    would *not* want to refresh the current page.
 
     >>> with self.terminal.loader(...) as loader:
     >>>     # Perform a blocking request to load content
@@ -97,8 +101,9 @@ class LoadScreen(object):
     >>>     self.refresh_content()
 
     When a loader is nested inside of itself, the outermost loader takes
-    priority and all of the nested loaders become no-ops. Call arguments given
-    to nested loaders will be ignored, and errors will propagate to the parent.
+    priority and all of the nested loaders become no-ops. Call arguments
+    given to nested loaders will be ignored, and errors will propagate
+    to the parent.
 
     >>> with self.terminal.loader(...) as loader:
     >>>
@@ -106,8 +111,8 @@ class LoadScreen(object):
     >>>     with self.terminal.loader(...):
     >>>         raise KeyboardInterrupt()
     >>>
-    >>>     # This code will not be executed because the inner loader doesn't
-    >>>     # catch the exception
+    >>>     # This code will not be executed because the inner loader 
+    >>>     # doesn't catch the exception
     >>>     assert False
     >>>
     >>> # The exception is finally caught by the outer loader
@@ -143,16 +148,17 @@ class LoadScreen(object):
             catch_exception=True):
         """
         Params:
-            delay (float): Length of time that the loader will wait before
-                printing on the screen. Used to prevent flicker on pages that
-                load very fast.
-            interval (float): Length of time between each animation frame.
-            message (str): Message to display
-            trail (str): Trail of characters that will be animated by the
-                loading screen.
-            catch_exception (bool): If an exception occurs while the loader is
-                active, this flag determines whether it is caught or allowed to
-                bubble up.
+            delay (float): Length of time that the loader will wait
+                           before printing on the screen. Used to
+                           prevent flicker on pages that load very fast.
+            interval (float): Length of time between each animation
+                              frame. message (str): Message to display
+            trail (str): Trail of characters that will be animated by
+                         the loading screen.
+            catch_exception (bool): If an exception occurs while the
+                                    loader is active, this flag
+                                    determines whether it is caught or
+                                    allowed to bubble up.
         """
 
         if self.depth > 0:
@@ -197,16 +203,17 @@ class LoadScreen(object):
             return True
 
         for e_type, message in self.EXCEPTION_MESSAGES:
-            # Some exceptions we want to swallow and display a notification
+            # Some exceptions we want to swallow and display a
+            # notification
             if isinstance(e, e_type):
                 self._terminal.show_notification(message.format(e))
                 return True
 
     def animate(self, delay, interval, message, trail):
 
-        # The animation starts with a configurable delay before drawing on the
-        # screen. This is to prevent very short loading sections from
-        # flickering on the screen before immediately disappearing.
+        # The animation starts with a configurable delay before drawing
+        # on the screen. This is to prevent very short loading sections
+        # from flickering on the screen before immediately disappearing.
         with self._terminal.no_delay():
             start = time.time()
             while (time.time() - start) < delay:
@@ -226,8 +233,8 @@ class LoadScreen(object):
         s_col = (n_cols - message_len - 1) // 2
         window = curses.newwin(3, message_len + 2, s_row, s_col)
 
-        # Animate the loading prompt until the stopping condition is triggered
-        # when the context manager exits.
+        # Animate the loading prompt until the stopping condition is
+        # triggered when the context manager exits.
         with self._terminal.no_delay():
             while True:
                 for i in range(len(trail) + 1):
@@ -243,8 +250,9 @@ class LoadScreen(object):
                     self._terminal.add_line(window, message + trail[:i], 1, 1)
                     window.refresh()
 
-                    # Break up the designated sleep interval into smaller
-                    # chunks so we can more responsively check for interrupts.
+                    # Break up the designated sleep interval into
+                    # smaller chunks so we can more responsively check
+                    # for interrupts.
                     for _ in range(int(interval/0.01)):
                         # Pressing escape triggers a keyboard interrupt
                         if self._terminal.getch() == self._terminal.ESCAPE:
@@ -280,10 +288,12 @@ class Color(object):
     @classmethod
     def init(cls):
         """
-        Initialize color pairs inside of curses using the default background.
+        Initialize color pairs inside of curses using the default
+        background.
 
-        This should be called once during the curses initial setup. Afterwards,
-        curses color pairs can be accessed directly through class attributes.
+        This should be called once during the curses initial setup.
+        Afterwards, curses color pairs can be accessed directly through
+        class attributes.
         """
 
         for index, (attr, code) in enumerate(cls._colors.items(), start=1):
@@ -301,13 +311,14 @@ class Navigator(object):
     """
     Handles the math behind cursor movement and screen paging.
 
-    This class determines how cursor movements effect the currently displayed
-    page. For example, if scrolling down the page, items are drawn from the
-    bottom up. This ensures that the item at the very bottom of the screen
-    (the one selected by cursor) will be fully drawn and not cut off. Likewise,
-    when scrolling up the page, items are drawn from the top down. If the
-    cursor is moved around without hitting the top or bottom of the screen, the
-    current mode is preserved.
+    This class determines how cursor movements effect the currently
+    displayed page. For example, if scrolling down the page, items are
+    drawn from the bottom up. This ensures that the item at the very
+    bottom of the screen (the one selected by cursor) will be fully
+    drawn and not cut off. Likewise, when scrolling up the page, items
+    are drawn from the top down. If the cursor is moved around without
+    hitting the top or bottom of the screen, the current mode is
+    preserved.
     """
 
     def __init__(
@@ -319,23 +330,32 @@ class Navigator(object):
             top_item_height=None):
         """
         Params:
-            valid_page_callback (func): This function, usually `Content.get`,
-                takes a page index and raises an IndexError if that index falls
-                out of bounds. This is used to determine the upper and lower
-                bounds of the page, i.e. when to stop scrolling.
+            valid_page_callback (func): This function, usually
+                                        `Content.get`, takes a page
+                                        index and raises an IndexError
+                                        if that index falls out of
+                                        bounds. This is used to
+                                        determine the upper and lower
+                                        bounds of the page, i.e. when to
+                                        stop scrolling.
             page_index (int): Initial page index.
-            cursor_index (int): Initial cursor index, relative to the page.
-            inverted (bool): Whether the page scrolling is reversed of not.
-                normal - The page is drawn from the top of the screen,
-                    starting with the page index, down to the bottom of
-                    the screen.
-                inverted - The page is drawn from the bottom of the screen,
-                    starting with the page index, up to the top of the
-                    screen.
+            cursor_index (int): Initial cursor index, relative to the
+                                page.
+            inverted (bool): Whether the page scrolling is reversed of 
+                             not.
+                    normal - The page is drawn from the top of
+                             the screen, starting with the page index,
+                             down to the bottom of the screen.
+                    inverted - The page is drawn from the bottom of the
+                               screen, starting with the page index, up
+                               to the top of the screen.
             top_item_height (int): If this is set to a non-null value
-            The number of columns that the top-most item
-                should utilize if non-inverted. This is used for a special mode
-                where all items are drawn non-inverted except for the top one.
+                                   The number of columns that the
+                                   top-most item should utilize if
+                                   non-inverted. This is used for a
+                                   special mode where all items are
+                                   drawn non-inverted except for the top
+                                   one.
         """
 
         self.page_index = page_index
@@ -365,17 +385,18 @@ class Navigator(object):
         Move the cursor up or down by the given increment.
 
         Params:
-            direction (int): `1` will move the cursor down one item and `-1`
-                will move the cursor up one item.
-            n_windows (int): The number of items that are currently being drawn
-                on the screen.
+            direction (int): `1` will move the cursor down one item and
+                             `-1` will move the cursor up one item.
+            n_windows (int): The number of items that are currently
+                             being drawn on the screen.
 
         Returns:
-            valid (bool): Indicates whether or not the attempted cursor move is
-                allowed. E.g. When the cursor is on the last comment,
-                attempting to scroll down any further would not be valid.
-            redraw (bool): Indicates whether or not the screen needs to be
-                redrawn.
+            valid (bool): Indicates whether or not the attempted cursor
+                          move is allowed. E.g. When the cursor is on
+                          the last comment, attempting to scroll down
+                          any further would not be valid.
+            redraw (bool): Indicates whether or not the screen needs to
+                           be redrawn.
         """
 
         assert direction in (-1, 1)
@@ -386,7 +407,8 @@ class Navigator(object):
         if forward:
             if self.page_index < 0:
                 if self._is_valid(0):
-                    # Special case - advance the page index if less than zero
+                    # Special case - advance the page index if less than
+                    # zero
                     self.page_index = 0
                     self.cursor_index = 0
                     redraw = True
@@ -414,8 +436,8 @@ class Navigator(object):
             else:
                 self.page_index -= self.step
                 if self._is_valid(self.absolute_index):
-                    # We have reached the beginning of the page - move the
-                    # index
+                    # We have reached the beginning of the page - move
+                    # the index
                     self.top_item_height = None
                     redraw = True
                 else:
@@ -426,14 +448,15 @@ class Navigator(object):
 
     def move_page(self, direction, n_windows):
         """
-        Move the page down (positive direction) or up (negative direction).
+        Move the page down (positive direction) or up (negative
+        direction).
 
         Paging down:
-            The post on the bottom of the page becomes the post at the top of
-            the page and the cursor is moved to the top.
+            The post on the bottom of the page becomes the post at the
+            top of the page and the cursor is moved to the top.
         Paging up:
-            The post at the top of the page becomes the post at the bottom of
-            the page and the cursor is moved to the bottom.
+            The post at the top of the page becomes the post at the
+            bottom of the page and the cursor is moved to the bottom.
         """
 
         assert direction in (-1, 1)
@@ -494,7 +517,8 @@ class Navigator(object):
 
     def _is_valid(self, page_index):
         """
-        Check if a page index will cause entries to fall outside valid range.
+        Check if a page index will cause entries to fall outside valid
+        range.
         """
 
         try:
@@ -509,7 +533,8 @@ class Controller(object):
     """
     Event handler for triggering functions with curses keypresses.
 
-    Register a keystroke to a class method using the @register decorator.
+    Register a keystroke to a class method using the @register
+    decorator.
     >>> @Controller.register('a', 'A')
     >>> def func(self, *args)
     >>>     ...
@@ -519,8 +544,8 @@ class Controller(object):
     >>> def upvote(self, *args)
     >>      ...
 
-    Bind the controller to a class instance and trigger a key. Additional
-    arguments will be passed to the function.
+    Bind the controller to a class instance and trigger a key.
+    Additional arguments will be passed to the function.
     >>> controller = Controller(self)
     >>> controller.trigger('a', *args)
     """
@@ -530,8 +555,9 @@ class Controller(object):
     def __init__(self, instance, keymap=None):
 
         self.instance = instance
-        # Build a list of parent controllers that follow the object's MRO
-        # to check if any parent controllers have registered the keypress
+        # Build a list of parent controllers that follow the object's
+        # MRO to check if any parent controllers have registered the
+        # keypress
         self.parents = inspect.getmro(type(self))[:-1]
         # Keep track of last key press for doubles like `gg`
         self.last_char = None
@@ -540,28 +566,28 @@ class Controller(object):
             return
 
         # Go through the controller and all of it's parents and look for
-        # Command objects in the character map. Use the keymap the lookup the
-        # keys associated with those command objects and add them to the
-        # character map.
+        # Command objects in the character map. Use the keymap the
+        # lookup the keys associated with those command objects and add
+        # them to the character map.
         for controller in self.parents:
             for command, func in controller.character_map.copy().items():
                 if isinstance(command, Command):
                     for key in keymap.get(command):
                         val = keymap.parse(key)
-                        # If a double key press is defined, the first half
-                        # must be unbound
+                        # If a double key press is defined, the first
+                        # half must be unbound
                         if isinstance(val, tuple):
                             if controller.character_map.get(val[0]) is not None:
                                 raise exceptions.ConfigError(
                                     "Invalid configuration! `%s` is bound to "
                                     "duplicate commands in the "
                                     "%s" % (key, controller.__name__))
-                            # Mark the first half of the double with None so
-                            # that no other command can use it
+                            # Mark the first half of the double with
+                            # None so that no other command can use it
                             controller.character_map[val[0]] = None
 
-                        # Check if the key is already programmed to trigger a
-                        # different function.
+                        # Check if the key is already programmed to
+                        # trigger a different function.
                         if controller.character_map.get(val, func) != func:
                             raise exceptions.ConfigError(
                                 "Invalid configuration! `%s` is bound to "
@@ -575,8 +601,8 @@ class Controller(object):
             char = ord(char)
 
         func = None
-        # Check if the controller (or any of the controller's parents) have
-        # registered a function to the given key
+        # Check if the controller (or any of the controller's parents)
+        # have registered a function to the given key
         for controller in self.parents:
             func = controller.character_map.get((self.last_char, char))
             if func:
@@ -606,11 +632,11 @@ class Controller(object):
 
 class Command(object):
     """
-    Minimal class that should be used to wrap abstract commands that may be
-    implemented as one or more physical keystrokes.
+    Minimal class that should be used to wrap abstract commands that may
+    be implemented as one or more physical keystrokes.
 
-    E.g. Command("REFRESH") can be represented by the KeyMap to be triggered
-         by either `r` or `F5`
+    E.g. Command("REFRESH") can be represented by the KeyMap to be
+         triggered by either `r` or `F5`
     """
 
     def __init__(self, val):
@@ -639,9 +665,9 @@ class KeyMap(object):
         self.set_bindings(bindings)
 
     def set_bindings(self, bindings):
-        # Clear the keymap before applying the bindings to avoid confusion.
-        # If a user defines custom bindings in their config file, they must
-        # explicitly define ALL of the bindings.
+        # Clear the keymap before applying the bindings to avoid
+        # confusion. If a user defines custom bindings in their config
+        # file, they must explicitly define ALL of the bindings.
         self._keymap = {}
         for command, keys in bindings.items():
             if not isinstance(command, Command):
@@ -660,7 +686,8 @@ class KeyMap(object):
     @classmethod
     def parse(cls, key):
         """
-        Parse a key represented by a string and return its character code.
+        Parse a key represented by a string and return its character
+        code.
         """
 
         try:
@@ -683,8 +710,9 @@ class KeyMap(object):
                 code = ord(key)
                 if 0 <= code <= 255:
                     return code
-                # Python 3.3 has a curses.get_wch() function that we can use
-                # for unicode keys, but Python 2.7 is limited to ascii.
+                # Python 3.3 has a curses.get_wch() function that we can
+                # use for unicode keys, but Python 2.7 is limited to
+                # ascii.
                 raise exceptions.ConfigError('Invalid configuration! `%s` is '
                                              'not in the ascii range' % key)
 

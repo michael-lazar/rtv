@@ -45,8 +45,8 @@ def pytest_addoption(parser):
 class MockStdscr(mock.MagicMock):
     """
     Extend mock to mimic curses.stdscr by keeping track of the terminal
-    coordinates and allowing for the creation of subwindows with the same
-    properties as stdscr.
+    coordinates and allowing for the creation of subwindows with the
+    same properties as stdscr.
     """
 
     def getyx(self):
@@ -95,8 +95,8 @@ def vcr(request):
         return (p1[:3] == p2[:3] and
                 parse_qs(p1.query, True) == parse_qs(p2.query, True))
 
-    # Use `none` to use the recorded requests, and `once` to delete existing
-    # cassettes and re-record.
+    # Use `none` to use the recorded requests, and `once` to delete
+    # existing cassettes and re-record.
     record_mode = request.config.option.record_mode
     assert record_mode in ('once', 'none')
 
@@ -187,8 +187,8 @@ def reddit(vcr, request):
 @pytest.fixture()
 def terminal(stdscr, config):
     term = Terminal(stdscr, config=config)
-    # Disable the python 3.4 addch patch so that the mock stdscr calls are
-    # always made the same way
+    # Disable the python 3.4 addch patch so that the mock stdscr calls
+    # are always made the same way
     term.addch = lambda window, *args: window.addch(*args)
     return term
 

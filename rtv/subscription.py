@@ -71,14 +71,16 @@ class SubscriptionPage(Page):
         self.active = False
 
     def _draw_banner(self):
-        # Subscriptions can't be sorted, so disable showing the order menu
+        # Subscriptions can't be sorted, so disable showing the order
+        # menu
         pass
 
     def _draw_item(self, win, data, inverted):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1  # Leave space for the cursor in the first column
 
-        # Handle the case where the window is not large enough to fit the data.
+        # Handle the case where the window is not large enough to fit
+        # the data.
         valid_rows = range(0, n_rows)
         offset = 0 if not inverted else -(data['n_rows'] - n_rows)
 

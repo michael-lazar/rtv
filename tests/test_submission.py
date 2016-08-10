@@ -20,7 +20,8 @@ def test_submission_page_construct(reddit, terminal, config, oauth):
         page = SubmissionPage(reddit, terminal, config, oauth, url=url)
     assert terminal.loader.exception is None
 
-    # Toggle the second comment so we can check the draw more comments method
+    # Toggle the second comment so we can check the draw more comments
+    # method
     page.content.toggle(1)
 
     # Set some special flags to make sure that we can draw them
@@ -168,9 +169,10 @@ def test_submission_pager(submission_page, terminal):
 
 def test_submission_comment_not_enough_space(submission_page, terminal):
 
-    # The first comment is 10 lines, shrink the screen so that it won't fit.
-    # Setting the terminal to 10 lines means that there will only be 8 lines
-    # available (after subtracting the header and footer) to draw the comment.
+    # The first comment is 10 lines, shrink the screen so that it won't
+    # fit. Setting the terminal to 10 lines means that there will only
+    # be 8 lines available (after subtracting the header and footer) to
+    # draw the comment.
     terminal.stdscr.nlines = 10
 
     # Select the first comment
