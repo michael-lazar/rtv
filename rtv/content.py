@@ -16,21 +16,21 @@ class Content(object):
 
     def get(self, index, n_cols):
         """
-        Grab the item at the given index, and format the text to fit a width of
-        n columns.
+        Grab the item at the given index, and format the text to fit a 
+        width of n columns.
         """
         raise NotImplementedError
 
     def iterate(self, index, step, n_cols=70):
         """
-        Return an iterator that starts and the current index and increments
-        by the given step.
+        Return an iterator that starts and the current index and 
+        increments by the given step.
         """
 
         while True:
             if step < 0 and index < 0:
-                # Hack to prevent displaying a submission's post if iterating
-                # comments in the negative direction
+                # Hack to prevent displaying a submission's post if 
+                # iterating comments in the negative direction
                 break
             try:
                 yield self.get(index, n_cols=n_cols)
@@ -48,8 +48,8 @@ class Content(object):
     @staticmethod
     def flatten_comments(comments, root_level=0):
         """
-        Flatten a PRAW comment tree while preserving the nested level of each
-        comment via the `nested_level` attribute.
+        Flatten a PRAW comment tree while preserving the nested level 
+        of each comment via the `nested_level` attribute.
         """
 
         stack = comments[:]
@@ -60,8 +60,9 @@ class Content(object):
         while stack:
             item = stack.pop(0)
 
-            # MoreComments item count should never be zero, but if it is then
-            # discard the MoreComment object. Need to look into this further.
+            # MoreComments item count should never be zero, but if it 
+            # is then discard the MoreComment object. Need to look into 
+            # this further.
             if isinstance(item, praw.objects.MoreComments) and item.count == 0:
                 continue
 
@@ -76,15 +77,16 @@ class Content(object):
                 # Search through previous comments for a possible parent
                 for parent in retval[::-1]:
                     if level and parent.nested_level >= level:
-                        # Stop if we reach a sibling or a child, we know that
-                        # nothing before this point is a candidate for parent.
+                        # Stop if we reach a sibling or a child, we know 
+                        # that nothing before this point is a candidate 
+                        # for parent.
                         break
                     level = parent.nested_level
                     if item.parent_id.endswith(parent.id):
                         item.nested_level = parent.nested_level + 1
 
-            # Otherwise, grab all of the attached replies and add them back to
-            # the list of comments to parse
+            # Otherwise, grab all of the attached replies and add them 
+            # back to the list of comments to parse
             if hasattr(item, 'replies'):
                 for n in item.replies:
                     n.nested_level = item.nested_level + 1
@@ -96,8 +98,8 @@ class Content(object):
     @classmethod
     def strip_praw_comment(cls, comment):
         """
-        Parse through a submission comment and return a dict with data ready to
-        be displayed through the terminal.
+        Parse through a submission comment and return a dict with data 
+        ready to be displayed through the terminal.
         """
 
         data = {}
@@ -136,10 +138,10 @@ class Content(object):
             data['hidden'] = False
             data['saved'] = comment.saved
         else:
-            # Saved comments don't have a nested level and are missing a couple
-            # of fields like ``submission``. As a result, we can only load a
-            # subset of fields to avoid triggering a seperate api call to load
-            # the full comment.
+            # Saved comments don't have a nested level and are missing a
+            # couple of fields like ``submission``. As a result, we can
+            # only load a subset of fields to avoid triggering a
+            # seperate api call to load the full comment.
             author = getattr(comment, 'author', '[deleted]')
             stickied = getattr(comment, 'stickied', False)
             flair = getattr(comment, 'author_flair_text', '')
@@ -168,15 +170,15 @@ class Content(object):
     @classmethod
     def strip_praw_submission(cls, sub):
         """
-        Parse through a submission and return a dict with data ready to be
-        displayed through the terminal.
+        Parse through a submission and return a dict with data ready to
+        be displayed through the terminal.
 
         Definitions:
             permalink - URL to the reddit page with submission comments.
             url_full - URL that the submission points to.
-            url - URL that will be displayed on the subreddit page, may be
-                "selfpost", "x-post submission", "x-post subreddit", or an
-                external link.
+            url - URL that will be displayed on the subreddit page, may
+                  be "selfpost", "x-post submission", "x-post subreddit",
+                  or an external link.
         """
 
         reddit_link = re.compile(
@@ -204,15 +206,16 @@ class Content(object):
         data['stickied'] = sub.stickied
         data['hidden'] = False
         data['xpost_subreddit'] = None
-        data['index'] = None  # This is filled in later by the method caller
+        # This is filled in later by the method caller
+        data['index'] = None  
         data['saved'] = sub.saved
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:
             data['url'] = 'self.{0}'.format(data['subreddit'])
             data['url_type'] = 'selfpost'
         elif reddit_link.match(sub.url):
-            # Strip the subreddit name from the permalink to avoid having
-            # submission.subreddit.url make a separate API call
+            # Strip the subreddit name from the permalink to avoid
+            # having submission.subreddit.url make a separate API call
             url_parts = sub.url.split('/')
             data['xpost_subreddit'] = url_parts[4]
             data['url'] = 'self.{0}'.format(url_parts[4])
@@ -229,8 +232,8 @@ class Content(object):
     @staticmethod
     def strip_praw_subscription(subscription):
         """
-        Parse through a subscription and return a dict with data ready to be
-        displayed through the terminal.
+        Parse through a subscription and return a dict with data ready
+        to be displayed through the terminal.
         """
 
         data = {}
@@ -275,14 +278,14 @@ class Content(object):
     @staticmethod
     def wrap_text(text, width):
         """
-        Wrap text paragraphs to the given character width while preserving
-        newlines.
+        Wrap text paragraphs to the given character width while
+        preserving newlines.
         """
         out = []
         for paragraph in text.splitlines():
-            # Wrap returns an empty list when paragraph is a newline. In order
-            # to preserve newlines we substitute a list containing an empty
-            # string.
+            # Wrap returns an empty list when paragraph is a newline. In
+            # order to preserve newlines we substitute a list containing
+            # an empty string.
             lines = wrap(paragraph, width=width) or ['']
             out.extend(lines)
         return out
@@ -313,9 +316,10 @@ class SubmissionContent(Content):
     def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=8,
                  order=None):
 
-        url = url.replace('http:', 'https:')  # Reddit forces SSL
-        # Sometimes reddit will return a 403 FORBIDDEN when trying to access an
-        # np link while using OAUTH. Cause is unknown.
+        # Reddit forces SSL
+        url = url.replace('http:', 'https:')  
+        # Sometimes reddit will return a 403 FORBIDDEN when trying to
+        # access an np link while using OAUTH. Cause is unknown.
         url = url.replace('https://np.', 'https://www.')
         submission = reddit.get_submission(url, comment_sort=order)
         return cls(submission, loader, indent_size, max_indent_level, order)
@@ -326,8 +330,8 @@ class SubmissionContent(Content):
 
     def get(self, index, n_cols=70):
         """
-        Grab the `i`th submission, with the title field formatted to fit inside
-        of a window of width `n`
+        Grab the `i`th submission, with the title field formatted to fit
+        inside of a window of width `n`
         """
 
         if index < -1:
@@ -407,8 +411,8 @@ class SubmissionContent(Content):
 
 class SubredditContent(Content):
     """
-    Grab a subreddit from PRAW and lazily stores submissions to an internal
-    list for repeat access.
+    Grab a subreddit from PRAW and lazily stores submissions to an
+    internal list for repeat access.
     """
 
     def __init__(self, name, submissions, loader, order=None, max_title_rows=4):
@@ -422,8 +426,8 @@ class SubredditContent(Content):
 
         # Verify that content exists for the given submission generator.
         # This is necessary because PRAW loads submissions lazily, and
-        # there is is no other way to check things like multireddits that
-        # don't have a real corresponding subreddit object.
+        # there is is no other way to check things like multireddits
+        # that don't have a real corresponding subreddit object.
         try:
             self.get(0)
         except IndexError:
@@ -434,18 +438,21 @@ class SubredditContent(Content):
         """
         Params:
             reddit (praw.Reddit): Instance of the reddit api.
-            name (text): The name of the desired subreddit, user, multireddit,
-                etc. In most cases this translates directly from the URL that
-                reddit itself uses. This is what users will type in the command
-                prompt when they navigate to a new location.
-            loader (terminal.loader): Handler for the load screen that will be
-                displayed when making http requests.
-            order (text): If specified, the order that posts will be sorted in.
-                For `top` and `controversial`, you can specify the time frame
-                by including a dash, e.g. "top-year". If an order is not
-                specified, it will be extracted from the name.
-            query (text): Content to search for on the given subreddit or
-                user's page.
+            name (text): The name of the desired subreddit, user, 
+                         multireddit, etc. In most cases this translates
+                         directly from the URL that reddit itself uses.
+                         This is what users will type in the command
+                         prompt when they navigate to a new location.
+            loader (terminal.loader): Handler for the load screen that
+                                      will be displayed when making http 
+                                      requests.
+            order (text): If specified, the order that posts will be 
+                          sorted in. For `top` and `controversial`, you
+                          can specify the time frame by including a
+                          dash, e.g. "top-year". If an order is not
+                          specified, it will be extracted from the name.
+            query (text): Content to search for on the given subreddit 
+                          or user's page.
         """
         # TODO: refactor this into smaller methods
 
@@ -477,14 +484,15 @@ class SubredditContent(Content):
             # https://github.com/praw-dev/praw/issues/615
             raise InvalidSubreddit()
 
-        # If the order was explicitly passed in, it will take priority over
-        # the order that was extracted from the name
+        # If the order was explicitly passed in, it will take priority
+        # over the order that was extracted from the name
         order = order or resource_order
 
         display_order = order
         display_name = '/'.join(['', resource_root, resource])
 
-        # Split the order from the period E.g. controversial-all, top-hour
+        # Split the order from the period E.g. controversial-all,
+        # top-hour
         if order and '-' in order:
             order, period = order.split('-', 1)
         else:
@@ -498,10 +506,10 @@ class SubredditContent(Content):
             raise InvalidSubreddit('"%s" order does not allow sorting by'
                                    'period' % order)
 
-        # On some objects, praw doesn't allow you to pass arguments for the
-        # order and period. Instead you need to call special helper functions
-        # such as Multireddit.get_controversial_from_year(). Build the method
-        # name here for convenience.
+        # On some objects, praw doesn't allow you to pass arguments for
+        # the order and period. Instead you need to call special helper
+        # functions such as Multireddit.get_controversial_from_year().
+        # Build the method name here for convenience.
         if period:
             method_alias = 'get_{0}_from_{1}'.format(order, period)
         elif order:
@@ -559,8 +567,8 @@ class SubredditContent(Content):
             if order in (None, 'hot'):
                 submissions = reddit.get_front_page(limit=None)
             elif period:
-                # For the front page, praw makes you send the period as `t`
-                # instead of calling reddit.get_hot_from_week()
+                # For the front page, praw makes you send the period as
+                # `t` instead of calling reddit.get_hot_from_week()
                 method_alias = 'get_{0}'.format(order)
                 method = getattr(reddit, method_alias)
                 submissions = method(limit=None, t=period)
@@ -571,8 +579,8 @@ class SubredditContent(Content):
             subreddit = reddit.get_subreddit(resource)
             submissions = getattr(subreddit, method_alias)(limit=None)
 
-            # For special subreddits like /r/random we want to replace the
-            # display name with the one returned by the request.
+            # For special subreddits like /r/random we want to replace
+            # the display name with the one returned by the request.
             display_name = '/r/{0}'.format(subreddit.display_name)
 
         # We made it!
@@ -580,15 +588,15 @@ class SubredditContent(Content):
 
     @property
     def range(self):
-        # Note that for subreddits, the submissions are generated lazily and
-        # there is no actual "end" index. Instead, we return the bottom index
-        # that we have loaded so far.
+        # Note that for subreddits, the submissions are generated lazily
+        # and there is no actual "end" index. Instead, we return the
+        # bottom index that we have loaded so far.
         return 0, len(self._submission_data) - 1
 
     def get(self, index, n_cols=70):
         """
-        Grab the `i`th submission, with the title field formatted to fit inside
-        of a window of width `n_cols`
+        Grab the `i`th submission, with the title field formatted to fit
+        inside of a window of width `n_cols`
         """
 
         if index < 0:
@@ -642,8 +650,9 @@ class SubscriptionContent(Content):
             raise exceptions.SubscriptionError('No content')
 
         # Load 1024 subscriptions up front (one http request's worth)
-        # For most people this should be all of their subscriptions. Doing thi
-        # allows the user to jump to the end of the page with `G`.
+        # For most people this should be all of their subscriptions.
+        # Doing thi allows the user to jump to the end of the page with
+        # `G`.
         if name != 'Popular Subreddits':
             try:
                 self.get(1023)

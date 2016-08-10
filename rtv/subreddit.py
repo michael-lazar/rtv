@@ -39,8 +39,8 @@ class SubredditPage(Page):
         order = order or self.content.order
         name = name or self.content.name
 
-        # Hack to allow an order specified in the name by prompt_subreddit() to
-        # override the current default
+        # Hack to allow an order specified in the name by
+        # prompt_subreddit() to override the current default
         if order == 'ignore':
             order = None
 
@@ -78,7 +78,8 @@ class SubredditPage(Page):
     def show_frontpage(self):
         """
         If on a subreddit, remember it and head back to the front page.
-        If this was pressed on the front page, go back to the last subreddit.
+        If this was pressed on the front page, go back to the last
+        subreddit.
         """
 
         if self.content.name != '/r/front':
@@ -87,7 +88,8 @@ class SubredditPage(Page):
         else:
             target = self.toggled_subreddit
 
-        # target still may be empty string if this command hasn't yet been used
+        # target still may be empty string if this command hasn't yet
+        # been used
         if target is not None:
             self.refresh_content(order='ignore', name=target)
 
@@ -190,8 +192,8 @@ class SubredditPage(Page):
 
         page.loop()
 
-        # When the user has chosen a subreddit in the subscriptions list,
-        # refresh content with the selected subreddit
+        # When the user has chosen a subreddit in the subscriptions
+        # list, refresh content with the selected subreddit
         if page.selected_subreddit is not None:
             self.content = page.selected_subreddit
             self.nav = Navigator(self.content.get)
@@ -209,8 +211,8 @@ class SubredditPage(Page):
 
         page.loop()
 
-        # When the user has chosen a subreddit in the subscriptions list,
-        # refresh content with the selected subreddit
+        # When the user has chosen a subreddit in the subscriptions
+        # list, refresh content with the selected subreddit
         if page.selected_subreddit is not None:
             self.content = page.selected_subreddit
             self.nav = Navigator(self.content.get)
@@ -218,9 +220,11 @@ class SubredditPage(Page):
     def _draw_item(self, win, data, inverted):
 
         n_rows, n_cols = win.getmaxyx()
-        n_cols -= 1  # Leave space for the cursor in the first column
+        # Leave space for the cursor in the first column
+        n_cols -= 1  
 
-        # Handle the case where the window is not large enough to fit the data.
+        # Handle the case where the window is not large enough to fit
+        # the data.
         valid_rows = range(0, n_rows)
         offset = 0 if not inverted else -(data['n_rows'] - n_rows)
 

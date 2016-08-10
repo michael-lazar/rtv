@@ -102,18 +102,20 @@ class Terminal(object):
     @property
     def display(self):
         """
-        Use a number of methods to guess if the default webbrowser will open in
-        the background as opposed to opening directly in the terminal.
+        Use a number of methods to guess if the default webbrowser will
+        open in the background as opposed to opening directly in the
+        terminal.
         """
 
         if self._display is None:
             if sys.platform == 'darwin':
-                # OSX doesn't always set DISPLAY so we can't use this to check
-                # Note: Disabling for now, with the hope that if this
-                # is a widespread issue then people will complain and we can
-                # come up with a better solution. Checking for $DISPLAY is
-                # used extensively in mailcap files, so it really *should* be
-                # set properly. I don't have a mac anymore so I can't test.
+                # OSX doesn't always set DISPLAY so we can't use this to
+                # check Note: Disabling for now, with the hope that if
+                # this is a widespread issue then people will complain
+                # and we can come up with a better solution. Checking
+                # for $DISPLAY is used extensively in mailcap files, so
+                # it really *should* be set properly. I don't have a mac
+                # anymore so I can't test.
 
                 #  display = True
                 display = bool(os.environ.get("DISPLAY"))
@@ -158,7 +160,8 @@ class Terminal(object):
     @contextmanager
     def suspend():
         """
-        Suspend curses in order to open another subprocess in the terminal.
+        Suspend curses in order to open another subprocess in the
+        terminal.
         """
 
         try:
@@ -170,9 +173,9 @@ class Terminal(object):
     @contextmanager
     def no_delay(self):
         """
-        Temporarily turn off character delay mode. In this mode, getch will not
-        block while waiting for input and will return -1 if no key has been
-        pressed.
+        Temporarily turn off character delay mode. In this mode, getch
+        will not block while waiting for input and will return -1 if no
+        key has been pressed.
         """
 
         try:
@@ -183,10 +186,11 @@ class Terminal(object):
 
     def get_arrow(self, likes):
         """
-        Curses does define constants for symbols (e.g. curses.ACS_BULLET).
-        However, they rely on using the curses.addch() function, which has been
-        found to be buggy and a general PITA to work with. By defining them as
-        unicode points they can be added via the more reliable curses.addstr().
+        Curses does define constants for symbols (e.g.
+        curses.ACS_BULLET). However, they rely on using the
+        curses.addch() function, which has been found to be buggy and a
+        general PITA to work with. By defining them as unicode points
+        they can be added via the more reliable curses.addstr().
         http://bugs.python.org/issue21088
         """
 
@@ -202,28 +206,31 @@ class Terminal(object):
         Required reading!
             http://nedbatchelder.com/text/unipain.html
 
-        Python 2 input string will be a unicode type (unicode code points).
-        Curses will accept unicode if all of the points are in the ascii range.
-        However, if any of the code points are not valid ascii curses will
-        throw a UnicodeEncodeError: 'ascii' codec can't encode character,
-        ordinal not in range(128). If we encode the unicode to a utf-8 byte
-        string and pass that to curses, it will render correctly.
+        Python 2 input string will be a unicode type (unicode code
+        points). Curses will accept unicode if all of the points are in
+        the ascii range. However, if any of the code points are not
+        valid ascii curses will throw a UnicodeEncodeError: 'ascii'
+        codec can't encode character, ordinal not in range(128). If we
+        encode the unicode to a utf-8 byte string and pass that to
+        curses, it will render correctly.
 
-        Python 3 input string will be a string type (unicode code points).
-        Curses will accept that in all cases. However, the n character count in
-        addnstr will not be correct. If code points are passed to addnstr,
-        curses will treat each code point as one character and will not account
-        for wide characters. If utf-8 is passed in, addnstr will treat each
-        'byte' as a single character.
+        Python 3 input string will be a string type (unicode code
+        points). Curses will accept that in all cases. However, the n
+        character count in addnstr will not be correct. If code points
+        are passed to addnstr, curses will treat each code point as one
+        character and will not account for wide characters. If utf-8 is
+        passed in, addnstr will treat each 'byte' as a single character.
 
-        Reddit's api sometimes chokes and double-encodes some html characters
-        Praw handles the initial decoding, but we need to do a second pass
-        just to make sure. See https://github.com/michael-lazar/rtv/issues/96
+        Reddit's api sometimes chokes and double-encodes some html
+        characters Praw handles the initial decoding, but we need to do
+        a second pass just to make sure. See
+        https://github.com/michael-lazar/rtv/issues/96
 
         Example:
             &amp;amp; -> returned directly from reddit's api
             &amp;     -> returned after PRAW decodes the html characters
-            &         -> returned after our second pass, this is the true value
+            &         -> returned after our second pass, this is the
+                         true value
         """
 
         if n_cols is not None and n_cols <= 0:
@@ -249,8 +256,8 @@ class Terminal(object):
         Unicode aware version of curses's built-in addnstr method.
 
         Safely draws a line of text on the window starting at position
-        (row, col). Checks the boundaries of the window and cuts off the text
-        if it exceeds the length of the window.
+        (row, col). Checks the boundaries of the window and cuts off the
+        text if it exceeds the length of the window.
         """
 
         # The following arg combos must be supported to conform with addnstr
@@ -274,12 +281,13 @@ class Terminal(object):
 
     def show_notification(self, message, timeout=None):
         """
-        Overlay a message box on the center of the screen and wait for input.
+        Overlay a message box on the center of the screen and wait for
+        input.
 
         Params:
             message (list or string): List of strings, one per line.
-            timeout (float): Optional, maximum length of time that the message
-                will be shown before disappearing.
+            timeout (float): Optional, maximum length of time that the
+                             message will be shown before disappearing.
         """
 
         if isinstance(message, six.string_types):
@@ -323,20 +331,24 @@ class Terminal(object):
 
     def open_link(self, url):
         """
-        Open a media link using the definitions from the user's mailcap file.
+        Open a media link using the definitions from the user's mailcap
+        file.
 
-        Most urls are parsed using their file extension, but special cases
-        exist for websites that are prevalent on reddit such as Imgur and
-        Gfycat. If there are no valid mailcap definitions, RTV will fall back
-        to using the default webbrowser.
+        Most urls are parsed using their file extension, but special
+        cases exist for websites that are prevalent on reddit such as
+        Imgur and Gfycat. If there are no valid mailcap definitions, RTV
+        will fall back to using the default webbrowser.
 
-        RTV checks for certain mailcap fields to determine how to open a link:
-            - If ``copiousoutput`` is specified, the curses application will
-              be paused and stdout will be piped to the system pager.
-            - If `needsterminal`` is specified, the curses application will
-              yield terminal control to the subprocess until it has exited.
-            - Otherwise, we assume that the subprocess is meant to open a new
-              x-window, and we swallow all stdout output.
+        RTV checks for certain mailcap fields to determine how to open a
+        link:
+            - If ``copiousoutput`` is specified, the curses application
+              will be paused and stdout will be piped to the system
+              pager.
+            - If `needsterminal`` is specified, the curses application
+              will yield terminal control to the subprocess until it has
+              exited.
+            - Otherwise, we assume that the subprocess is meant to open
+              a new x-window, and we swallow all stdout output.
 
         Examples:
             Stream youtube videos with VLC
@@ -384,9 +396,9 @@ class Terminal(object):
                 p = subprocess.Popen(
                     [command], shell=True, universal_newlines=True,
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                # Wait a little while to make sure that the command doesn't
-                # exit with an error. This isn't perfect, but it should be good
-                # enough to catch invalid commands.
+                # Wait a little while to make sure that the command
+                # doesn't exit with an error. This isn't perfect, but it
+                # should be good enough to catch invalid commands.
                 time.sleep(1.0)
                 code = p.poll()
                 if code is not None and code != 0:
@@ -400,28 +412,32 @@ class Terminal(object):
         Search through the mime handlers list and attempt to find the
         appropriate command to open the provided url with.
 
-        Will raise a MailcapEntryNotFound exception if no valid command exists.
+        Will raise a MailcapEntryNotFound exception if no valid command
+        exists.
 
         Params:
             url (text): URL that will be checked
 
         Returns:
-            command (text): The string of the command that should be executed
-                in a subprocess to open the resource.
-            entry (dict): The full mailcap entry for the corresponding command
+            command (text): The string of the command that should be
+                            executed in a subprocess to open the
+                            resource.
+            entry (dict): The full mailcap entry for the corresponding
+                          command
         """
 
         for parser in mime_parsers.parsers:
             if parser.pattern.match(url):
-                # modified_url may be the same as the original url, but it
-                # could also be updated to point to a different page, or it
-                # could refer to the location of a temporary file with the
-                # page's downloaded content.
+                # modified_url may be the same as the original url, but
+                # it could also be updated to point to a different page,
+                # or it could refer to the location of a temporary file
+                # with the page's downloaded content.
                 try:
                     modified_url, content_type = parser.get_mimetype(url)
                 except Exception as e:
-                    # If Imgur decides to change its html layout, let it fail
-                    # silently in the background instead of crashing.
+                    # If Imgur decides to change its html layout, let it
+                    # fail silently in the background instead of
+                    # crashing.
                     _logger.warn('parser %s raised an exception', parser)
                     _logger.exception(e)
                     raise exceptions.MailcapEntryNotFound()
@@ -445,27 +461,28 @@ class Terminal(object):
 
     def open_browser(self, url):
         """
-        Open the given url using the default webbrowser. The preferred browser
-        can specified with the $BROWSER environment variable. If not specified,
-        python webbrowser will try to determine the default to use based on
-        your system.
+        Open the given url using the default webbrowser. The preferred
+        browser can specified with the $BROWSER environment variable. If
+        not specified, python webbrowser will try to determine the
+        default to use based on your system.
 
         For browsers requiring an X display, we call
-        webbrowser.open_new_tab(url) and redirect stdout/stderr to devnull.
-        This is a workaround to stop firefox from spewing warning messages to
-        the console. See http://bugs.python.org/issue22277 for a better
-        description of the problem.
+        webbrowser.open_new_tab(url) and redirect stdout/stderr to
+        devnull. This is a workaround to stop firefox from spewing
+        warning messages to the console. See
+        http://bugs.python.org/issue22277 for a better description of
+        the problem.
 
-        For console browsers (e.g. w3m), RTV will suspend and display the
-        browser window within the same terminal. This mode is triggered either
-        when
+        For console browsers (e.g. w3m), RTV will suspend and display
+        the browser window within the same terminal. This mode is
+        triggered either when
 
         1. $BROWSER is set to a known console browser, or
-        2. $DISPLAY is undefined, indicating that the terminal is running
-           headless
+        2. $DISPLAY is undefined, indicating that the terminal is
+           running headless
 
-        There may be other cases where console browsers are opened (xdg-open?)
-        but are not detected here.
+        There may be other cases where console browsers are opened
+        (xdg-open?) but are not detected here.
         """
 
         if self.display:
@@ -474,9 +491,10 @@ class Terminal(object):
             with self.loader('Opening page in a new window'), \
                     open(os.devnull, 'ab+', 0) as null:
                 p = subprocess.Popen(args, stdout=null, stderr=null)
-                # Give the browser 5 seconds to open a new tab. Because the
-                # display is set, calling webbrowser should be non-blocking.
-                # If it blocks or returns an error, something went wrong.
+                # Give the browser 5 seconds to open a new tab. Because
+                # the display is set, calling webbrowser should be
+                # non-blocking. If it blocks or returns an error,
+                # something went wrong.
                 try:
                     start = time.time()
                     while time.time() - start < 10:
@@ -491,9 +509,9 @@ class Terminal(object):
                         raise exceptions.BrowserError(
                             'Timeout opening browser')
                 finally:
-                    # Can't check the loader exception because the oauth module
-                    # supersedes this loader and we need to always kill the
-                    # process if escape is pressed
+                    # Can't check the loader exception because the oauth
+                    # module supersedes this loader and we need to
+                    # always kill the process if escape is pressed
                     try:
                         p.terminate()
                     except OSError:
@@ -527,14 +545,15 @@ class Terminal(object):
         """
         Open a file for editing using the system's default editor.
 
-        After the file has been altered, the text will be read back and lines
-        starting with '#' will be stripped. If an error occurs inside of the
-        context manager, the file will be preserved. Otherwise, the file will
-        be deleted when the context manager closes.
+        After the file has been altered, the text will be read back and
+        lines starting with '#' will be stripped. If an error occurs
+        inside of the context manager, the file will be preserved.
+        Otherwise, the file will be deleted when the context manager
+        closes.
 
         Params:
-            data (str): If provided, text will be written to the file before
-                opening it with the editor.
+            data (str): If provided, text will be written to the file
+                        before opening it with the editor.
 
         Returns:
             text (str): The text that the user entered into the editor.
@@ -565,8 +584,8 @@ class Terminal(object):
         try:
             yield text
         except exceptions.TemporaryFileError:
-            # All exceptions will cause the file to *not* be removed, but these
-            # ones should also be swallowed
+            # All exceptions will cause the file to *not* be removed,
+            # but these ones should also be swallowed
             _logger.info('Caught TemporaryFileError')
             self.show_notification('Post saved as: %s', filepath)
         else:
@@ -581,8 +600,8 @@ class Terminal(object):
     def open_urlview(self, data):
         """
         Pipe a block of text to urlview, which displays a list of urls
-        contained in the text and allows the user to open them with their
-        web browser.
+        contained in the text and allows the user to open them with
+        their web browser.
         """
 
         urlview = os.getenv('RTV_URLVIEWER') or 'urlview'
@@ -609,21 +628,23 @@ class Terminal(object):
 
     def text_input(self, window, allow_resize=False):
         """
-        Transform a window into a text box that will accept user input and loop
-        until an escape sequence is entered.
+        Transform a window into a text box that will accept user input
+        and loop until an escape sequence is entered.
 
-        If the escape key (27) is pressed, cancel the textbox and return None.
-        Otherwise, the textbox will wait until it is full (^j, or a new line is
-        entered on the bottom line) or the BEL key (^g) is pressed.
+        If the escape key (27) is pressed, cancel the textbox and return
+        None. Otherwise, the textbox will wait until it is full (^j, or
+        a new line is entered on the bottom line) or the BEL key (^g) is
+        pressed.
         """
 
         window.clear()
 
-        # Set cursor mode to 1 because 2 doesn't display on some terminals
+        # Set cursor mode to 1 because 2 doesn't display on some
+        # terminals
         curses.curs_set(1)
 
-        # Keep insert_mode off to avoid the recursion error described here
-        # http://bugs.python.org/issue13051
+        # Keep insert_mode off to avoid the recursion error described
+        # here http://bugs.python.org/issue13051
         textbox = textpad.Textbox(window)
         textbox.stripspaces = 0
 
@@ -638,9 +659,9 @@ class Terminal(object):
                 ch = curses.KEY_BACKSPACE
             return ch
 
-        # Wrapping in an exception block so that we can distinguish when the
-        # user hits the return character from when the user tries to back out
-        # of the input.
+        # Wrapping in an exception block so that we can distinguish when
+        # the user hits the return character from when the user tries to
+        # back out of the input.
         try:
             out = textbox.edit(validate=validate)
             if isinstance(out, six.binary_type):
@@ -657,17 +678,17 @@ class Terminal(object):
 
         Params:
             prompt (string): Text prompt that will be displayed
-            key (bool): If true, grab a single keystroke instead of a full
-                        string. This can be faster than pressing enter for
-                        single key prompts (e.g. y/n?)
+            key (bool): If true, grab a single keystroke instead of a
+                        full string. This can be faster than pressing
+                        enter for single key prompts (e.g. y/n?)
         """
 
         n_rows, n_cols = self.stdscr.getmaxyx()
         attr = curses.A_BOLD | Color.CYAN
         prompt = self.clean(prompt, n_cols-1)
 
-        # Create a new window to draw the text at the bottom of the screen,
-        # so we can erase it when we're done.
+        # Create a new window to draw the text at the bottom of the
+        # screen, so we can erase it when we're done.
         prompt_win = curses.newwin(1, len(prompt)+1, n_rows-1, 0)
         self.add_line(prompt_win, prompt, attr=attr)
         prompt_win.refresh()
@@ -679,9 +700,9 @@ class Terminal(object):
         if key:
             curses.curs_set(1)
             ch = self.getch()
-            # We can't convert the character to unicode, because it may return
-            # Invalid values for keys that don't map to unicode characters,
-            # e.g. F1
+            # We can't convert the character to unicode, because it may
+            # return Invalid values for keys that don't map to unicode
+            # characters e.g. F1
             text = ch if ch != self.ESCAPE else None
             curses.curs_set(0)
         else:
@@ -713,8 +734,8 @@ class Terminal(object):
     @staticmethod
     def strip_textpad(text):
         """
-        Attempt to intelligently strip excess whitespace from the output of a
-        curses textpad.
+        Attempt to intelligently strip excess whitespace from the output
+        of a curses textpad.
         """
 
         if text is None:
@@ -724,8 +745,9 @@ class Terminal(object):
         if '\n' not in text:
             return text.rstrip()
 
-        # Allow one space at the end of the line. If there is more than one
-        # space, assume that a newline operation was intended by the user
+        # Allow one space at the end of the line. If there is more than
+        # one space, assume that a newline operation was intended by the
+        # user
         stack, current_line = [], ''
         for line in text.split('\n'):
             if line.endswith('  ') or not line:
