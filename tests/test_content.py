@@ -6,13 +6,16 @@ from itertools import islice
 
 import six
 import praw
-import mock
 import pytest
 
 from rtv.content import (
     Content, SubmissionContent, SubredditContent, SubscriptionContent)
 from rtv import exceptions
 
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 # Test entering a bunch of text into the prompt
 # (text, parsed subreddit, parsed order)
