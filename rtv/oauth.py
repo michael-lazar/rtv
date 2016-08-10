@@ -9,6 +9,7 @@ import codecs
 import logging
 import threading
 
+#pylint: disable=import-error
 from six.moves.urllib.parse import urlparse, parse_qs
 from six.moves.BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
