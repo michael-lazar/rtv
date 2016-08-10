@@ -728,7 +728,7 @@ class Terminal(object):
         # space, assume that a newline operation was intended by the user
         stack, current_line = [], ''
         for line in text.split('\n'):
-            if line.endswith('  '):
+            if line.endswith('  ') or not line:
                 stack.append(current_line + line.rstrip())
                 current_line = ''
             else:

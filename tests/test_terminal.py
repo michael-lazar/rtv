@@ -505,3 +505,40 @@ def test_open_pager(terminal, stdscr):
         terminal.open_pager(data)
         message = 'Could not open pager fake'.encode('ascii')
         assert stdscr.addstr.called_with(0, 0, message)
+
+
+def test_open_urlview(terminal, stdscr):
+
+    data = "Hello World!  ❤"
+
+    def side_effect(args, stdin=None):
+        assert stdin is not None
+        raise OSError
+
+    with mock.patch('subprocess.Popen') as Popen, \
+            mock.patch.dict('os.environ', {'RTV_URLVIEWER': 'fake'}):
+
+        Popen.return_value.poll.return_value = 0
+        terminal.open_urlview(data)
+        assert Popen.called
+        assert not stdscr.addstr.called
+
+        Popen.return_value.poll.return_value = 1
+        terminal.open_urlview(data)
+        assert stdscr.subwin.addstr.called
+
+        # Raise an OS error
+        Popen.side_effect = side_effect
+        terminal.open_urlview(data)
+        message = 'Failed to open fake'.encode('utf-8')
+        assert stdscr.addstr.called_with(0, 0, message)
+
+
+def test_strip_textpad(terminal):
+
+    assert terminal.strip_textpad(None) is None
+    assert terminal.strip_textpad('  foo  ') == '  foo'
+
+    text = 'alpha bravo\ncharlie \ndelta  \n  echo   \n\nfoxtrot\n\n\n'
+    assert terminal.strip_textpad(text) == (
+        'alpha bravocharlie delta\n  echo\n\nfoxtrot')
