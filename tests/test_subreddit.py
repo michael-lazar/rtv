@@ -195,9 +195,21 @@ def test_subreddit_open_subscriptions(subreddit_page, refresh_token):
     subreddit_page.config.refresh_token = refresh_token
     subreddit_page.oauth.authorize()
 
-    # Open a subscription
+    # Open subscriptions
     with mock.patch('rtv.page.Page.loop') as loop:
         subreddit_page.controller.trigger('s')
+        assert loop.called
+
+
+def test_subreddit_open_multireddits(subreddit_page, refresh_token):
+
+    # Log in
+    subreddit_page.config.refresh_token = refresh_token
+    subreddit_page.oauth.authorize()
+
+    # Open multireddits
+    with mock.patch('rtv.page.Page.loop') as loop:
+        subreddit_page.controller.trigger('S')
         assert loop.called
 
 

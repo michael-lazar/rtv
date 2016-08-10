@@ -22,6 +22,21 @@ def test_submission_page_construct(reddit, terminal, config, oauth):
 
     # Toggle the second comment so we can check the draw more comments method
     page.content.toggle(1)
+
+    # Set some special flags to make sure that we can draw them
+    submission_data = page.content.get(-1)
+    submission_data['gold'] = True
+    submission_data['stickied'] = True
+    submission_data['saved'] = True
+    submission_data['flair'] = 'flair'
+
+    # Set some special flags to make sure that we can draw them
+    comment_data = page.content.get(0)
+    comment_data['gold'] = True
+    comment_data['stickied'] = True
+    comment_data['saved'] = True
+    comment_data['flair'] = 'flair'
+
     page.draw()
 
     #  Title
@@ -68,6 +83,14 @@ def test_submission_refresh(submission_page):
 
     # Should be able to refresh content
     submission_page.refresh_content()
+
+
+def test_submission_exit(submission_page):
+
+    # Exiting should set active to false
+    submission_page.active = True
+    submission_page.controller.trigger('h')
+    assert not submission_page.active
 
 
 def test_submission_unauthenticated(submission_page, terminal):
@@ -179,6 +202,16 @@ def test_submission_vote(submission_page, refresh_token):
         assert upvote.called
         assert data['likes'] is True
 
+        # Clear vote
+        submission_page.controller.trigger('a')
+        assert clear_vote.called
+        assert data['likes'] is None
+
+        # Upvote
+        submission_page.controller.trigger('a')
+        assert upvote.called
+        assert data['likes'] is True
+
         # Downvote
         submission_page.controller.trigger('z')
         assert downvote.called
@@ -271,7 +304,6 @@ def test_submission_comment(submission_page, terminal, refresh_token):
             mock.patch.object(terminal, 'open_editor') as open_editor,     \
             mock.patch('time.sleep'):
         open_editor.return_value.__enter__.return_value = 'comment text'
-
         submission_page.controller.trigger('c')
         assert open_editor.called
         add_comment.assert_called_with('comment text')

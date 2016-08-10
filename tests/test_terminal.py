@@ -389,6 +389,7 @@ def test_open_link_subprocess(terminal):
 
     with mock.patch('time.sleep'),                            \
             mock.patch('os.system'),                          \
+            mock.patch('subprocess.Popen') as Popen,          \
             mock.patch('six.moves.input') as six_input,       \
             mock.patch.object(terminal, 'get_mailcap_entry'):
 
@@ -398,6 +399,9 @@ def test_open_link_subprocess(terminal):
             six_input.reset_mock()
             os.system.reset_mock()
             terminal.stdscr.subwin.addstr.reset_mock()
+            Popen.return_value.communicate.return_value = '', 'stderr message'
+            Popen.return_value.poll.return_value = 0
+            Popen.return_value.wait.return_value = 0
 
         def get_error():
             # Check if an error message was printed to the terminal
@@ -415,6 +419,8 @@ def test_open_link_subprocess(terminal):
 
         # Non-blocking failure
         reset_mock()
+        Popen.return_value.poll.return_value = 127
+        Popen.return_value.wait.return_value = 127
         entry = ('fake .', 'fake %s')
         terminal.get_mailcap_entry.return_value = entry
         terminal.open_link(url)
@@ -431,6 +437,8 @@ def test_open_link_subprocess(terminal):
 
         # needsterminal failure
         reset_mock()
+        Popen.return_value.poll.return_value = 127
+        Popen.return_value.wait.return_value = 127
         entry = ('fake .', 'fake %s; needsterminal')
         terminal.get_mailcap_entry.return_value = entry
         terminal.open_link(url)
@@ -447,6 +455,8 @@ def test_open_link_subprocess(terminal):
 
         # copiousoutput failure
         reset_mock()
+        Popen.return_value.poll.return_value = 127
+        Popen.return_value.wait.return_value = 127
         entry = ('fake .', 'fake %s; needsterminal; copiousoutput')
         terminal.get_mailcap_entry.return_value = entry
         terminal.open_link(url)
@@ -495,3 +505,40 @@ def test_open_pager(terminal, stdscr):
         terminal.open_pager(data)
         message = 'Could not open pager fake'.encode('ascii')
         assert stdscr.addstr.called_with(0, 0, message)
+
+
+def test_open_urlview(terminal, stdscr):
+
+    data = "Hello World!  ❤"
+
+    def side_effect(args, stdin=None):
+        assert stdin is not None
+        raise OSError
+
+    with mock.patch('subprocess.Popen') as Popen, \
+            mock.patch.dict('os.environ', {'RTV_URLVIEWER': 'fake'}):
+
+        Popen.return_value.poll.return_value = 0
+        terminal.open_urlview(data)
+        assert Popen.called
+        assert not stdscr.addstr.called
+
+        Popen.return_value.poll.return_value = 1
+        terminal.open_urlview(data)
+        assert stdscr.subwin.addstr.called
+
+        # Raise an OS error
+        Popen.side_effect = side_effect
+        terminal.open_urlview(data)
+        message = 'Failed to open fake'.encode('utf-8')
+        assert stdscr.addstr.called_with(0, 0, message)
+
+
+def test_strip_textpad(terminal):
+
+    assert terminal.strip_textpad(None) is None
+    assert terminal.strip_textpad('  foo  ') == '  foo'
+
+    text = 'alpha bravo\ncharlie \ndelta  \n  echo   \n\nfoxtrot\n\n\n'
+    assert terminal.strip_textpad(text) == (
+        'alpha bravocharlie delta\n  echo\n\nfoxtrot')

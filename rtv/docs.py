@@ -103,3 +103,27 @@ SUBMISSION_EDIT_FILE = """{content}
 #
 # Editing {name}
 """
+
+OAUTH_ACCESS_DENIED = """\
+        <h1 style="color: red">Access Denied</h1><hr>
+        <p><span style="font-weight: bold">Reddit Terminal Viewer</span> was
+        denied access and will continue to operate in unauthenticated mode,
+        you can close this window.</p>
+"""
+
+OAUTH_ERROR = """\
+       <h1 style="color: red">Error</h1><hr>
+       <p>{error}</p>
+"""
+
+OAUTH_INVALID = """\
+       <h1>Wait...</h1><hr>
+       <p>This page is supposed to be a Reddit OAuth callback.
+       You can't just come here hands in your pocket!</p>
+"""
+
+OAUTH_SUCCESS = """\
+       <h1 style="color: green">Access Granted</h1><hr>
+       <p><span style="font-weight: bold">Reddit Terminal Viewer</span>
+       will now log in, you can close this window.</p>
+"""
