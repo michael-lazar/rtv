@@ -5,8 +5,7 @@ python:
   - "3.4"
   - "3.5"
 before_install:
-  - pip install coveralls pytest coverage mock pylint
-  - pip install git+https://github.com/kevin1024/vcrpy.git
+  - pip install coveralls pytest coverage mock pylint vcrpy
 install:
   - pip install .
 script:
