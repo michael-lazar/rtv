@@ -178,6 +178,10 @@ def reddit(vcr, request):
             reddit = praw.Reddit(user_agent='rtv test suite',
                                  decode_html_entities=False,
                                  disable_update_check=True)
+            # praw uses a global cache for requests, so we need to clear it
+            # before each unit test. Otherwise we may fail to generate new
+            # cassettes.
+            reddit.handler.clear_cache()
             if request.config.option.record_mode == 'none':
                 # Turn off praw rate limiting when using cassettes
                 reddit.config.api_request_delay = 0
