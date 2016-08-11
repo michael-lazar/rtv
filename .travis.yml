@@ -5,11 +5,11 @@ python:
   - "3.4"
   - "3.5"
 before_install:
-  - pip install coveralls pytest coverage mock pylint vcrpy
+  - pip install coveralls pytest pytest-xdist coverage mock pylint vcrpy
 install:
   - pip install .
 script:
   - pylint --rcfile .pylintrc -E rtv/
-  - coverage run -m py.test -v
+  - coverage run -m py.test -v -n auto
 after_success:
   - coveralls

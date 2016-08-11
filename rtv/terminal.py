@@ -7,13 +7,12 @@ import time
 import codecs
 import curses
 import logging
-import tempfile
 import webbrowser
 import subprocess
 import curses.ascii
 from curses import textpad
-from datetime import datetime
 from contextlib import contextmanager
+from tempfile import NamedTemporaryFile
 
 import six
 from kitchen.text.display import textual_width_chop
@@ -540,8 +539,10 @@ class Terminal(object):
             text (str): The text that the user entered into the editor.
         """
 
-        filename = 'rtv_{:%Y%m%d_%H%M%S}.txt'.format(datetime.now())
-        filepath = os.path.join(tempfile.gettempdir(), filename)
+        with NamedTemporaryFile(prefix='rtv_', suffix='.txt', delete=False) as fp:
+            # Create a tempory file and grab the name, but close immediately so
+            # we can re-open using the right encoding
+            filepath = fp.name
 
         with codecs.open(filepath, 'w', 'utf-8') as fp:
             fp.write(data)
@@ -568,7 +569,7 @@ class Terminal(object):
             # All exceptions will cause the file to *not* be removed, but these
             # ones should also be swallowed
             _logger.info('Caught TemporaryFileError')
-            self.show_notification('Post saved as: %s', filepath)
+            self.show_notification('Post saved as: %s' % filepath)
         else:
             # If no errors occurred, try to remove the file
             try:
