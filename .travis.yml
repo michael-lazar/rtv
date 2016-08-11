@@ -10,6 +10,6 @@ install:
   - pip install .
 script:
   - pylint --rcfile .pylintrc -E rtv/
-  - coverage run -m py.test -v -n auto
+  - coverage run -m py.test -v -n 4
 after_success:
   - coveralls
