@@ -10,6 +10,6 @@ install:
   - pip install .
 script:
   - pylint --rcfile .pylintrc -E rtv/
-  - py.test -v --cov
+  - py.test -v --cov=rtv
 after_success:
   - coveralls
