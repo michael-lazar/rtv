@@ -17,8 +17,8 @@ Thanks to the following people for their contributions to this project.
 * `Toby Hughes <https://github.com/tobywhughes>`_
 * `Noah Morrison <https://github.com/noahmorrison>`_
 * `mardiqwop <https://github.com/mardiqwop>`_
-* `Shawn Hind <https://github.com/shawnhind>`_
 * `5225225 <https://github.com/5225225>`_
+* `Shawn Hind <https://github.com/shawnhind>`_
 * `Alex Kahan <https://github.com/alexk307>`_
 * `JuanPablo <https://github.com/juanpabloaj>`_
 * `Robert Greener <https://github.com/ragreener1>`_
@@ -30,4 +30,5 @@ Thanks to the following people for their contributions to this project.
 * `Wieland Hoffmann <https://github.com/mineo>`_
 * `Adam Talsma <https://github.com/a-tal>`_
 * `Alexander Terry <https://github.com/mralext20>`_
+* `nagracks <https://github.com/nagracks>`_
 * `peterpans01 <https://github.com/peterpans01>`_
