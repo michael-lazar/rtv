@@ -70,6 +70,35 @@ To run the program, type
 
     $ rtv --help
 
+    ```
+    usage: rtv [-h] [-V] [-s SUBREDDIT] [-l LINK] [--log FILE] [--config FILE]
+            [--ascii] [--monochrome] [--non-persistent] [--clear-auth]
+            [--copy-config] [--copy-mailcap] [--enable-media]
+
+    Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
+    terminal window.
+
+    optional arguments:
+    -h, --help        show this help message and exit
+    -V, --version     show program's version number and exit
+    -s SUBREDDIT      Name of the subreddit that will be opened on start
+    -l LINK           Full URL of a submission that will be opened on start
+    --log FILE        Log HTTP requests to the given file
+    --config FILE     Load configuration settings from the given file
+    --ascii           Enable ascii-only mode
+    --monochrome      Disable color
+    --non-persistent  Forget the authenticated user when the program exits
+    --clear-auth      Remove any saved user data before launching
+    --copy-config     Copy the default configuration to
+                        {HOME}/.config/rtv/rtv.cfg
+    --copy-mailcap    Copy an example mailcap configuration to {HOME}/.mailcap
+    --enable-media    Open external links using programs defined in the mailcap
+                        config
+
+    Move the cursor using either the arrow keys or *Vim* style movement.
+    Press `?` to open the help screen.
+    ```
+
 --------
 Controls
 --------
