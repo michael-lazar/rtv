@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import curses
 
+from . import docs
 from .page import Page, PageController
 from .content import SubscriptionContent, SubredditContent
 from .objects import Color, Navigator, Command
@@ -13,6 +14,8 @@ class SubscriptionController(PageController):
 
 
 class SubscriptionPage(Page):
+
+    FOOTER = docs.FOOTER_SUBSCRIPTION
 
     def __init__(self, reddit, term, config, oauth, content_type='subreddit'):
         super(SubscriptionPage, self).__init__(reddit, term, config, oauth)

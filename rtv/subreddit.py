@@ -19,6 +19,8 @@ class SubredditController(PageController):
 
 class SubredditPage(Page):
 
+    FOOTER = docs.FOOTER_SUBREDDIT
+
     def __init__(self, reddit, term, config, oauth, name):
         """
         Params:
@@ -265,7 +267,7 @@ class SubredditPage(Page):
         row = n_title + offset + 2
         if row in valid_rows:
             text = '{author}'.format(**data)
-            self.term.add_line(win, text, row, 1, curses.A_BOLD)
+            self.term.add_line(win, text, row, 1, Color.GREEN)
             text = ' /r/{subreddit}'.format(**data)
             self.term.add_line(win, text, attr=Color.YELLOW)
             if data['flair']:

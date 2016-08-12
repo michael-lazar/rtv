@@ -34,6 +34,8 @@ class PageController(Controller):
 
 class Page(object):
 
+    FOOTER = None
+
     def __init__(self, reddit, term, config, oauth):
 
         self.reddit = reddit
@@ -299,6 +301,7 @@ class Page(object):
         self._draw_header()
         self._draw_banner()
         self._draw_content()
+        self._draw_footer()
         self._add_cursor()
         self.term.stdscr.touchwin()
         self.term.stdscr.refresh()
@@ -351,7 +354,7 @@ class Page(object):
         ch, attr = str(' '), curses.A_BOLD | Color.YELLOW
         window.bkgd(ch, attr)
 
-        items = ['[1]hot', '[2]top', '[3]rising', '[4]new', '[5]controversial']
+        items = docs.BANNER.strip().split(' ')
         distance = (n_cols - sum(len(t) for t in items) - 1) / (len(items) - 1)
         spacing = max(1, int(distance)) * ' '
         text = spacing.join(items)
@@ -370,7 +373,7 @@ class Page(object):
 
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(
-            n_rows - self._row, n_cols, self._row, 0)
+            n_rows - self._row - 1, n_cols, self._row, 0)
         window.erase()
         win_n_rows, win_n_cols = window.getmaxyx()
 
@@ -383,7 +386,7 @@ class Page(object):
         # and draw upwards.
         cancel_inverted = True
         current_row = (win_n_rows - 1) if inverted else 0
-        available_rows = (win_n_rows - 1) if inverted else win_n_rows
+        available_rows = win_n_rows
         top_item_height = None if inverted else self.nav.top_item_height
         for data in self.content.iterate(page_index, step, win_n_cols - 2):
             subwin_n_rows = min(available_rows, data['n_rows'])
@@ -396,7 +399,7 @@ class Page(object):
                 subwin_inverted = True
                 top_item_height = None
             subwin_n_cols = win_n_cols - data['offset']
-            start = current_row - subwin_n_rows if inverted else current_row
+            start = current_row - subwin_n_rows + 1 if inverted else current_row
             subwindow = window.derwin(
                 subwin_n_rows, subwin_n_cols, start, data['offset'])
             attr = self._draw_item(subwindow, data, subwin_inverted)
@@ -422,7 +425,19 @@ class Page(object):
             self.nav.flip((len(self._subwindows) - 1))
             self._draw_content()
 
-        self._row = n_rows
+        self._row += win_n_rows
+
+    def _draw_footer(self):
+
+        n_rows, n_cols = self.term.stdscr.getmaxyx()
+        window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
+        window.erase()
+        ch, attr = str(' '), curses.A_REVERSE | curses.A_BOLD | Color.CYAN
+        window.bkgd(ch, attr)
+
+        text = self.FOOTER.strip()
+        self.term.add_line(window, text, 0, 0)
+        self._row += 1
 
     def _add_cursor(self):
         self._edit_cursor(curses.A_REVERSE)
