@@ -1,3 +1,4 @@
+import json
 import re
 import logging
 import mimetypes
@@ -133,7 +134,7 @@ class ImgurMIMEParser(BaseMIMEParser):
 class ImgurAlbumMIMEParser(BaseMIMEParser):
     """
     Imgur albums can contain several images, which need to be scraped from the
-    landing page. Assumes the following html structure:
+    landing page. Assumes the one of following html structures:
 
         <div class="post-image">
             <a href="//i.imgur.com/L3Lfp1O.jpg" class="zoom">
@@ -143,25 +144,49 @@ class ImgurAlbumMIMEParser(BaseMIMEParser):
                      src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
             </a>
         </div>
+
+        <script type="text/javascript">
+    (function(widgetFactory) {
+        widgetFactory.mergeConfig('gallery', {
+            ...
+            hash                : 'L3Lfp10',
+            ...
+            image               : {IMGUR_JSON_DATA},
+            ...
+        </script>
     """
     pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/'
                                                  '(a(lbum)?|(gallery))/[^.]+$')
 
     @staticmethod
     def get_mimetype(url):
-        url = url.replace('/gallery/', '/a/')
-        url_parts = url.strip('/').split('/')
-        page_id = url_parts.index('a') + 1
-        url = 'https://www.imgur.com/a/' + url_parts[page_id] + '/layout/grid'
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
-
         urls = []
-        for div in soup.find_all('div', class_='post'):
-            a = div.find('a')
-            src = a.get('href') if a else None
-            if src:
-                urls.append('http:{0}'.format(src))
+        for tag in soup.find_all('script', attrs={'type': 'text/javascript'}):
+            if tag.string and 'hash ' in tag.string:
+                pattern = re.compile(r'image\s+:\s(.*),')
+                j = json.loads(re.search(pattern, tag.string).group(1))
+                if int(j['num_images']) == 1:
+                    return ImgurMIMEParser.get_mimetype(url)
+                elif int(j['num_images']) <= 10:
+                    urls = ['https://www.imgur.com/{}{}'.format(
+                                                         im['hash'], im['ext'])
+                                         for im in j['album_images']['images']]
+                elif int(j['num_images']) > 10:
+                    modified_url = url.replace('/gallery/', '/a/')
+                    url_parts = modified_url.strip('/').split('/')
+                    page_id = url_parts.index('a') + 1
+                    modified_url = 'https://www.imgur.com/a/{}/all'.format(
+                                                            url_parts[page_id])
+                    page = requests.get(modified_url)
+                    soup = BeautifulSoup(page.content, 'html.parser')
+                    for div in soup.find_all('div', class_='post'):
+                        a = div.find('a')
+                        src = a.get('href') if a else None
+                        if src:
+                            urls.append('http:{0}'.format(src))
+                break
 
         if urls:
             return " ".join(urls), 'image/x-imgur-album'
