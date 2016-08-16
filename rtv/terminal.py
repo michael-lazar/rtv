@@ -664,18 +664,20 @@ class Terminal(object):
         """
 
         n_rows, n_cols = self.stdscr.getmaxyx()
-        attr = curses.A_BOLD | Color.CYAN
+        ch, attr = str(' '), curses.A_BOLD | curses.A_REVERSE | Color.CYAN
         prompt = self.clean(prompt, n_cols-1)
 
         # Create a new window to draw the text at the bottom of the screen,
         # so we can erase it when we're done.
         prompt_win = curses.newwin(1, len(prompt)+1, n_rows-1, 0)
-        self.add_line(prompt_win, prompt, attr=attr)
+        prompt_win.bkgd(ch, attr)
+        self.add_line(prompt_win, prompt)
         prompt_win.refresh()
 
         # Create a separate window for text input
         input_win = curses.newwin(1, n_cols-len(prompt), n_rows-1, len(prompt))
-        input_win.attrset(attr)
+        input_win.bkgd(ch, attr)
+        input_win.refresh()
 
         if key:
             curses.curs_set(1)
