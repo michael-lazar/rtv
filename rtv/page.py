@@ -309,6 +309,7 @@ class Page(object):
     def _draw_header(self):
 
         n_rows, n_cols = self.term.stdscr.getmaxyx()
+
         # Note: 2 argument form of derwin breaks PDcurses on Windows 7!
         window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
         window.erase()
@@ -423,7 +424,7 @@ class Page(object):
             # if the content will fill up the page, given that it is dependent
             # on the size of the terminal.
             self.nav.flip((len(self._subwindows) - 1))
-            self._draw_content()
+            return self._draw_content()
 
         self._row += win_n_rows
 
