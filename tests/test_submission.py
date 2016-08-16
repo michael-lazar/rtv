@@ -51,6 +51,11 @@ def test_submission_page_construct(reddit, terminal, config, oauth):
             '[5]controversial').encode('utf-8')
     window.addstr.assert_any_call(0, 0, menu)
 
+    # Footer
+    text = ('[?]Help [q]Quit [h]Return [space]Fold/Expand [o]Open [c]Comment '
+            '[a/z]Vote'.encode('utf-8'))
+    window.addstr.assert_any_call(0, 0, text)
+
     # Submission
     submission_data = page.content.get(-1)
     text = submission_data['title'].encode('utf-8')
@@ -181,7 +186,7 @@ def test_submission_comment_not_enough_space(submission_page, terminal):
 
     text = '(Not enough space to display)'.encode('ascii')
     window = terminal.stdscr.subwin
-    window.subwin.addstr.assert_any_call(7, 1, text)
+    window.subwin.addstr.assert_any_call(6, 1, text)
 
 
 def test_submission_vote(submission_page, refresh_token):

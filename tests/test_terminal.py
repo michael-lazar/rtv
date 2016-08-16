@@ -236,8 +236,7 @@ def test_prompt_input(terminal, stdscr, use_ascii):
     window.getch.side_effect = [ord('h'), ord('i'), terminal.RETURN]
     assert isinstance(terminal.prompt_input('hi'), six.text_type)
 
-    attr = Color.CYAN | curses.A_BOLD
-    stdscr.subwin.addstr.assert_called_with(0, 0, 'hi'.encode('ascii'), attr)
+    stdscr.subwin.addstr.assert_called_with(0, 0, 'hi'.encode('ascii'))
     assert window.nlines == 1
     assert window.ncols == 78
 
@@ -254,27 +253,26 @@ def test_prompt_input(terminal, stdscr, use_ascii):
 def test_prompt_y_or_n(terminal, stdscr):
 
     stdscr.getch.side_effect = [ord('y'), ord('N'), terminal.ESCAPE, ord('a')]
-    attr = Color.CYAN | curses.A_BOLD
     text = 'hi'.encode('ascii')
 
     # Press 'y'
     assert terminal.prompt_y_or_n('hi')
-    stdscr.subwin.addstr.assert_called_with(0, 0, text, attr)
+    stdscr.subwin.addstr.assert_called_with(0, 0, text)
     assert not curses.flash.called
 
     # Press 'N'
     assert not terminal.prompt_y_or_n('hi')
-    stdscr.subwin.addstr.assert_called_with(0, 0, text, attr)
+    stdscr.subwin.addstr.assert_called_with(0, 0, text)
     assert not curses.flash.called
 
     # Press Esc
     assert not terminal.prompt_y_or_n('hi')
-    stdscr.subwin.addstr.assert_called_with(0, 0, text, attr)
+    stdscr.subwin.addstr.assert_called_with(0, 0, text)
     assert not curses.flash.called
 
     # Press an invalid key
     assert not terminal.prompt_y_or_n('hi')
-    stdscr.subwin.addstr.assert_called_with(0, 0, text, attr)
+    stdscr.subwin.addstr.assert_called_with(0, 0, text)
     assert curses.flash.called
 
 
