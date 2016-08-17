@@ -16,9 +16,9 @@ from six.moves.BaseHTTPServer import HTTPServer
 from rtv.oauth import OAuthHelper, OAuthHandler
 from rtv.config import Config
 from rtv.terminal import Terminal
-from rtv.subreddit import SubredditPage
-from rtv.submission import SubmissionPage
-from rtv.subscription import SubscriptionPage
+from rtv.subreddit_page import SubredditPage
+from rtv.submission_page import SubmissionPage
+from rtv.subscription_page import SubscriptionPage
 
 try:
     from unittest import mock

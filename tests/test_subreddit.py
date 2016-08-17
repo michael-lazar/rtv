@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from rtv.subreddit import SubredditPage
+from rtv.subreddit_page import SubredditPage
 
 try:
     from unittest import mock

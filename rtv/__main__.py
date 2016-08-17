@@ -16,7 +16,7 @@ from .config import Config, copy_default_config, copy_default_mailcap
 from .oauth import OAuthHelper
 from .terminal import Terminal
 from .objects import curses_session, Color
-from .subreddit import SubredditPage
+from .subreddit_page import SubredditPage
 from .exceptions import ConfigError
 from .__version__ import __version__
 

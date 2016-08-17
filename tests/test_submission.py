@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import curses
 
-from rtv.submission import SubmissionPage
+from rtv.submission_page import SubmissionPage
 
 try:
     from unittest import mock

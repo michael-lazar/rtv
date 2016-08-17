@@ -8,8 +8,8 @@ from . import docs
 from .content import SubredditContent
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Color, Command
-from .submission import SubmissionPage
-from .subscription import SubscriptionPage
+from .submission_page import SubmissionPage
+from .subscription_page import SubscriptionPage
 from .exceptions import TemporaryFileError
 
 
