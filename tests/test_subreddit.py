@@ -92,7 +92,7 @@ def test_subreddit_open(subreddit_page, terminal, config):
 
     # Open the selected submission
     data = subreddit_page.content.get(subreddit_page.nav.absolute_index)
-    with mock.patch('rtv.submission.SubmissionPage.loop') as loop, \
+    with mock.patch('rtv.submission_page.SubmissionPage.loop') as loop, \
             mock.patch.object(config.history, 'add'):
         data['url_type'] = 'selfpost'
         subreddit_page.controller.trigger('l')
