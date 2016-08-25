@@ -22,13 +22,14 @@ Thanks to the following people for their contributions to this project.
 * `Alex Kahan <https://github.com/alexk307>`_
 * `JuanPablo <https://github.com/juanpabloaj>`_
 * `Robert Greener <https://github.com/ragreener1>`_
+* `nagracks <https://github.com/nagracks>`_
 * `afloofloo <https://github.com/afloofloo>`_
-* `Matthew Smith <https://github.com/msmith491>`_
 * `Marc Abramowitz <https://github.com/msabramo>`_
 * `Hans Roman <https://github.com/snahor>`_
+* `Fabio Alessandro Locati <https://github.com/Fale>`_
+* `Matthew Smith <https://github.com/msmith491>`_
 * `Ram-Z <https://github.com/Ram-Z>`_
 * `Wieland Hoffmann <https://github.com/mineo>`_
 * `Adam Talsma <https://github.com/a-tal>`_
 * `Alexander Terry <https://github.com/mralext20>`_
-* `nagracks <https://github.com/nagracks>`_
 * `peterpans01 <https://github.com/peterpans01>`_

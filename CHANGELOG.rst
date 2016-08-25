@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.12.0: http://github.com/michael-lazar/rtv/releases/tag/v1.12.0
 .. _1.11.0: http://github.com/michael-lazar/rtv/releases/tag/v1.11.0
 .. _1.10.0: http://github.com/michael-lazar/rtv/releases/tag/v1.10.0
 .. _1.9.1: http://github.com/michael-lazar/rtv/releases/tag/v1.9.1
@@ -19,6 +20,29 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.12.0_ (2016-08-25)
+--------------------
+Features
+
+* Added a help banner with common key bindings.
+* Added `gg` and `G` bindings to jump to the top and bottom the the page.
+* Updated help screen now opens with the system PAGER.
+* The `/` prompt now works from inside of submissions.
+* Added an Instagram parser to extract images and videos from urls.
+
+Bugixes
+
+* Shortened reddit links (https://redd.it/) will now work with ``-s``.
+
+Codebase
+  
+* Removed the Tornado dependency from the project.
+* Added a requirements.txt file.
+* Fixed a bunch of tests where cassettes were not being generated.
+* Added compatability for pytest-xdist.
+
 
 --------------------
 1.11.0_ (2016-08-02)
