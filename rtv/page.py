@@ -331,7 +331,7 @@ class Page(object):
 
         if os.getenv('DISPLAY'):
             title += ' - rtv {0}'.format(__version__)
-            sys.stdout.write('\x1b]2;{0}\x07'.format(title))
+            sys.stdout.write('\x1b]2;{0}\x07'.format(self.term.clean(title)))
             sys.stdout.flush()
 
         if self.reddit.user is not None:
