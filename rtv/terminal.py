@@ -15,6 +15,7 @@ from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
 
 import six
+#pylint: disable=import-error
 from six.moves.urllib.parse import quote
 from kitchen.text.display import textual_width_chop
 from mailcap_fix import mailcap
