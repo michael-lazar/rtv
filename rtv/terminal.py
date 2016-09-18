@@ -15,6 +15,8 @@ from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
 
 import six
+#pylint: disable=import-error
+from six.moves.urllib.parse import quote
 from kitchen.text.display import textual_width_chop
 from mailcap_fix import mailcap
 
@@ -468,7 +470,12 @@ class Terminal(object):
         """
 
         if self.display:
-            command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
+            # Note that we need to sanitize the url before inserting it into
+            # the python code to prevent injection attacks.
+            command = (
+                "import webbrowser\n"
+                "from six.moves.urllib.parse import unquote\n"
+                "webbrowser.open_new_tab(unquote('%s'))" % quote(url))
             args = [sys.executable, '-c', command]
             with self.loader('Opening page in a new window'), \
                     open(os.devnull, 'ab+', 0) as null:
