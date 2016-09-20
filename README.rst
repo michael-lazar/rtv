@@ -51,7 +51,7 @@ or clone the repository
 
 on Arch Linux or Arch based distros (Antergos, Manjaro, `etc.`_) you can install directly with an `aur helper`_ such as yaourt.
 
-**WARNING - The Aur package is temporarily broken, see** `this discussion`_ **for a workaround**
+**WARNING - The Aur package is temporarily broken, see** `here`_ **for a workaround**
 
 .. code:: bash
 
