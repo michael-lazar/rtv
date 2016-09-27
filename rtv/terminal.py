@@ -373,7 +373,8 @@ class Terminal(object):
                 _, stderr = p.communicate()
                 if copious_output:
                     six.moves.input('Press any key to continue')
-            if p.poll() != 0:
+            code = p.poll()
+            if code != 0:
                 _logger.warning(stderr)
                 self.show_notification(
                     'Program exited with status={0}\n{1}'.format(
