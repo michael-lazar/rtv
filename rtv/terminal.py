@@ -7,6 +7,7 @@ import time
 import codecs
 import curses
 import logging
+import threading
 import webbrowser
 import subprocess
 import curses.ascii
@@ -369,11 +370,11 @@ class Terminal(object):
                 p = subprocess.Popen(
                     [command], stderr=subprocess.PIPE,
                     universal_newlines=True, shell=True)
-                code = p.wait()
+                _, stderr = p.communicate()
                 if copious_output:
                     six.moves.input('Press any key to continue')
+            code = p.poll()
             if code != 0:
-                _, stderr = p.communicate()
                 _logger.warning(stderr)
                 self.show_notification(
                     'Program exited with status={0}\n{1}'.format(
@@ -395,6 +396,13 @@ class Terminal(object):
                     raise exceptions.BrowserError(
                         'Program exited with status={0}\n{1}'.format(
                             code, stderr.strip()))
+
+                # Spin off a thread with p.communicate() to avoid subprocess
+                # hang when the stodout/stderr PIPE gets filled up. This
+                # behavior was discovered when opening long gifs with mpv
+                # because mpv sends a progress bar to stderr.
+                # https://thraxil.org/users/anders/posts/2008/03/13/
+                threading.Thread(target=p.communicate).start()
 
     def get_mailcap_entry(self, url):
         """
@@ -519,10 +527,8 @@ class Terminal(object):
         try:
             with self.suspend():
                 p = subprocess.Popen([pager], stdin=subprocess.PIPE)
-                p.stdin.write(data.encode('utf-8'))
-                p.stdin.close()
                 try:
-                    p.wait()
+                    p.communicate(data.encode('utf-8'))
                 except KeyboardInterrupt:
                     p.terminate()
         except OSError:
@@ -560,7 +566,7 @@ class Terminal(object):
             with self.suspend():
                 p = subprocess.Popen([editor, filepath])
                 try:
-                    p.wait()
+                    p.communicate()
                 except KeyboardInterrupt:
                     p.terminate()
         except OSError:
