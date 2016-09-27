@@ -14,9 +14,7 @@ RTV (Reddit Terminal Viewer)
 
 |pypi| |python| |travis-ci| |coveralls| |gitter|
 
-Note to users - a security `vulnerability <https://github.com/michael-lazar/rtv/issues/295>`_ has been discovered in rtv versions prior to v1.12.1
-
-It is strongly advised that you upgrade to the latest version
+Note to users - a security `vulnerability <https://github.com/michael-lazar/rtv/issues/295>`_ has been discovered in rtv versions prior to v1.12.1. It is strongly advised that you upgrade to the latest version
 
 ---------------
 
