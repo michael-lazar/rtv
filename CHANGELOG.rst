@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.12.1: http://github.com/michael-lazar/rtv/releases/tag/v1.12.1
 .. _1.12.0: http://github.com/michael-lazar/rtv/releases/tag/v1.12.0
 .. _1.11.0: http://github.com/michael-lazar/rtv/releases/tag/v1.11.0
 .. _1.10.0: http://github.com/michael-lazar/rtv/releases/tag/v1.10.0
@@ -20,6 +21,15 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.12.1_ (2016-09-27)
+--------------------
+Bugfixes
+
+* Fixed security vulnerability where malicious URLs could inject python code.
+* No longer hands when using mpv on long videos.
+* Now falls back to ascii mode when the system locale is not utf-8.
 
 --------------------
 1.12.0_ (2016-08-25)
