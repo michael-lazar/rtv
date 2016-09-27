@@ -28,7 +28,7 @@ RTV Changelog
 Bugfixes
 
 * Fixed security vulnerability where malicious URLs could inject python code.
-* No longer hands when using mpv on long videos.
+* No longer hangs when using mpv on long videos.
 * Now falls back to ascii mode when the system locale is not utf-8.
 
 --------------------
