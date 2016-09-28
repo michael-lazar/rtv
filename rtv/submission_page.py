@@ -23,10 +23,13 @@ class SubmissionPage(Page):
         super(SubmissionPage, self).__init__(reddit, term, config, oauth)
 
         self.controller = SubmissionController(self, keymap=config.keymap)
+
         if url:
-            self.content = SubmissionContent.from_url(reddit, url, term.loader)
+            self.content = SubmissionContent.from_url(reddit, url, term.loader,
+                max_comment_cols=config['max_comment_cols'])
         else:
-            self.content = SubmissionContent(submission, term.loader)
+            self.content = SubmissionContent(submission, term.loader,
+                max_comment_cols=config['max_comment_cols'])
         # Start at the submission post, which is indexed as -1
         self.nav = Navigator(self.content.get, page_index=-1)
         self.selected_subreddit = None

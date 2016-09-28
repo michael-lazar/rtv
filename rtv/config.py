@@ -67,6 +67,9 @@ def build_parser():
     parser.add_argument(
         '--enable-media', dest='enable_media', action='store_const', const=True,
         help='Open external links using programs defined in the mailcap config')
+    parser.add_argument(
+        '--max-comment-cols', dest='max_comment_cols', type=int,
+        help='Maximum comment column width')
     return parser
 
 
@@ -240,8 +243,10 @@ class Config(object):
             'enable_media': partial(config.getboolean, 'rtv'),
             'history_size': partial(config.getint, 'rtv'),
             'oauth_redirect_port': partial(config.getint, 'rtv'),
-            'oauth_scope': lambda x: rtv[x].split(',')
+            'oauth_scope': lambda x: rtv[x].split(','),
+            'max_comment_cols': partial(config.getint, 'rtv')
         }
+
         for key, func in params.items():
             if key in rtv:
                 rtv[key] = func(key)
