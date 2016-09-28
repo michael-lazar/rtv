@@ -295,7 +295,7 @@ class SubmissionContent(Content):
     """
 
     def __init__(self, submission, loader, indent_size=2, max_indent_level=8,
-                 order=None, max_comment_cols=70):
+                 order=None, max_comment_cols=80):
 
         submission_data = self.strip_praw_submission(submission)
         comments = self.flatten_comments(submission.comments)
@@ -312,7 +312,7 @@ class SubmissionContent(Content):
 
     @classmethod
     def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=8,
-                 order=None, max_comment_cols=70):
+                 order=None, max_comment_cols=80):
 
         url = url.replace('http:', 'https:')  # Reddit forces SSL
         # Sometimes reddit will return a 403 FORBIDDEN when trying to access an
