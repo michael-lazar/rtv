@@ -140,7 +140,7 @@ class SubredditPage(Page):
 
         # Check that the subreddit can be submitted to
         name = self.content.name
-        if '+' in name or name in ('/r/all', '/r/front', '/r/me','/u/saved'):
+        if '+' in name or name in ('/r/all', '/r/front', '/r/me', '/u/saved'):
             self.term.show_notification("Can't post to {0}".format(name))
             return
 
