@@ -71,7 +71,8 @@ class SubmissionPage(Page):
 
         with self.term.loader('Refreshing page'):
             self.content = SubmissionContent.from_url(
-                self.reddit, url, self.term.loader, order=order)
+                self.reddit, url, self.term.loader, order=order,
+                max_comment_cols=config['max_comment_cols'])
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get, page_index=-1)
 
