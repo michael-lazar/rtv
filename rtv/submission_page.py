@@ -63,7 +63,7 @@ class SubmissionPage(Page):
         self.active = False
 
     @SubmissionController.register(Command('REFRESH'))
-    def refresh_content(self, order=None, name=None, max_comment_cols=120):
+    def refresh_content(self, order=None, name=None):
         "Re-download comments and reset the page index"
 
         order = order or self.content.order
@@ -72,7 +72,7 @@ class SubmissionPage(Page):
         with self.term.loader('Refreshing page'):
             self.content = SubmissionContent.from_url(
                 self.reddit, url, self.term.loader, order=order,
-                max_comment_cols=max_comment_cols)
+                max_comment_cols=self.config['max_comment_cols'])
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get, page_index=-1)
 
@@ -155,8 +155,7 @@ class SubmissionPage(Page):
                 time.sleep(2.0)
 
             if self.term.loader.exception is None:
-                self.refresh_content(
-                    max_comment_cols=config['max_comment_cols'])
+                self.refresh_content()
             else:
                 raise TemporaryFileError()
 
