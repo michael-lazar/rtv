@@ -67,9 +67,6 @@ def build_parser():
     parser.add_argument(
         '--enable-media', dest='enable_media', action='store_const', const=True,
         help='Open external links using programs defined in the mailcap config')
-    parser.add_argument(
-        '--max-comment-cols', dest='max_comment_cols', type=int,
-        help='Maximum comment column width')
     return parser
 
 
