@@ -240,8 +240,10 @@ class Config(object):
             'enable_media': partial(config.getboolean, 'rtv'),
             'history_size': partial(config.getint, 'rtv'),
             'oauth_redirect_port': partial(config.getint, 'rtv'),
-            'oauth_scope': lambda x: rtv[x].split(',')
+            'oauth_scope': lambda x: rtv[x].split(','),
+            'max_comment_cols': partial(config.getint, 'rtv')
         }
+
         for key, func in params.items():
             if key in rtv:
                 rtv[key] = func(key)

@@ -295,7 +295,7 @@ class SubmissionContent(Content):
     """
 
     def __init__(self, submission, loader, indent_size=2, max_indent_level=8,
-                 order=None):
+                 order=None, max_comment_cols=120):
 
         submission_data = self.strip_praw_submission(submission)
         comments = self.flatten_comments(submission.comments)
@@ -308,17 +308,19 @@ class SubmissionContent(Content):
         self._submission = submission
         self._submission_data = submission_data
         self._comment_data = [self.strip_praw_comment(c) for c in comments]
+        self._max_comment_cols = max_comment_cols
 
     @classmethod
     def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=8,
-                 order=None):
+                 order=None, max_comment_cols=120):
 
         url = url.replace('http:', 'https:')  # Reddit forces SSL
         # Sometimes reddit will return a 403 FORBIDDEN when trying to access an
         # np link while using OAUTH. Cause is unknown.
         url = url.replace('https://np.', 'https://www.')
         submission = reddit.get_submission(url, comment_sort=order)
-        return cls(submission, loader, indent_size, max_indent_level, order)
+        return cls(submission, loader, indent_size, max_indent_level, order,
+            max_comment_cols)
 
     @property
     def range(self):
@@ -346,7 +348,7 @@ class SubmissionContent(Content):
             data['offset'] = indent_level * self.indent_size
 
             if data['type'] == 'Comment':
-                width = n_cols - data['offset']
+                width = min(n_cols - data['offset'], self._max_comment_cols)
                 data['split_body'] = self.wrap_text(data['body'], width=width)
                 data['n_rows'] = len(data['split_body']) + 1
             else:
