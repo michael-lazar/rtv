@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import os
 import sys
+import six
 import time
 import curses
 from functools import wraps
@@ -325,13 +326,22 @@ class Page(object):
 
         # Set the terminal title
         if len(sub_name) > 50:
-            title = sub_name.strip('/').rsplit('/', 1)[1].replace('_', ' ')
+            title = sub_name.strip('/')
+            title = title.rsplit('/', 1)[1]
+            title = title.replace('_', ' ')
         else:
             title = sub_name
 
         if os.getenv('DISPLAY'):
             title += ' - rtv {0}'.format(__version__)
-            sys.stdout.write('\x1b]2;{0}\x07'.format(self.term.clean(title)))
+            title = self.term.clean(title)
+            if six.PY3:
+                # In py3 you can't write bytes to stdout
+                title = title.decode('utf-8')
+                title = '\x1b]2;{0}\x07'.format(title)
+            else:
+                title = b'\x1b]2;{0}\x07'.format(title)
+            sys.stdout.write(title)
             sys.stdout.flush()
 
         if self.reddit.user is not None:

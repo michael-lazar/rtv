@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import six
+
 from rtv.subreddit_page import SubredditPage
+from rtv import __version__
 
 try:
     from unittest import mock
@@ -58,6 +61,28 @@ def test_subreddit_refresh(subreddit_page, terminal):
     assert subreddit_page.content.order == 'hot'
     assert subreddit_page.content.name == '/r/front'
     assert terminal.loader.exception is None
+
+
+def test_subreddit_title(subreddit_page, terminal, capsys):
+    subreddit_page.content.name = 'hello ❤'
+
+    with mock.patch.dict('os.environ', {'DISPLAY': ':1'}):
+        terminal.config['ascii'] = True
+        subreddit_page.draw()
+        out, _ = capsys.readouterr()
+        assert isinstance(out, six.text_type)
+        assert out == '\x1b]2;hello ? - rtv {}\x07'.format(__version__)
+
+        terminal.config['ascii'] = False
+        subreddit_page.draw()
+        out, _ = capsys.readouterr()
+        assert isinstance(out, six.text_type)
+        assert out == '\x1b]2;hello ❤ - rtv {}\x07'.format(__version__)
+
+    with mock.patch.dict('os.environ', {'DISPLAY': ''}):
+        subreddit_page.draw()
+        out, _ = capsys.readouterr()
+        assert not out
 
 
 def test_subreddit_search(subreddit_page, terminal):
