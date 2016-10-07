@@ -349,7 +349,10 @@ class Page(object):
             # to ascii or not
             width = len if self.config['ascii'] else textual_width
 
-            username = self.reddit.user.name
+            if self.config['hide_username']:
+                username = "Logged in"
+            else:
+                username = self.reddit.user.name
             s_col = (n_cols - width(username) - 1)
             # Only print username if it fits in the empty space on the right
             if (s_col - 1) >= width(sub_name):
