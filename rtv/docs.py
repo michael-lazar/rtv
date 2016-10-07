@@ -24,10 +24,10 @@ https://github.com/michael-lazar/rtv
 ====================================
 
 [Commands]
-  j     : Move the cursor up
-  k     : Move the cursor down
-  m     : Move up one page
+  j     : Move the cursor down
+  k     : Move the cursor up
   n     : Move down one page
+  m     : Move up one page
   gg    : Jump to the first post
   G     : Jump to the last post
   1     : Sort by hot
