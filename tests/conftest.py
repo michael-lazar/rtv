@@ -131,7 +131,7 @@ def config():
             mock.patch.object(conf, 'delete_history'),     \
             mock.patch.object(conf, 'save_refresh_token'), \
             mock.patch.object(conf, 'delete_refresh_token'):
- 
+
         def delete_refresh_token():
             # Skip the os.remove
             conf.refresh_token = None
