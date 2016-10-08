@@ -166,4 +166,5 @@ def main():
         if 'reddit' in locals():
             reddit.handler.http.close()
 
+
 sys.exit(main())

@@ -25,6 +25,7 @@ Thanks to the following people for their contributions to this project.
 
 """
 
+
 def main():
 
     logging.captureWarnings(True)
@@ -52,6 +53,7 @@ def main():
     text = text.encode('utf-8')
     with open(FILENAME, 'wb') as fp:
         fp.write(text)
+
 
 if __name__ == '__main__':
     main()
