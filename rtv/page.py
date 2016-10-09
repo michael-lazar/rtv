@@ -124,9 +124,27 @@ class Page(object):
 
     @PageController.register(Command('SORT_CONTROVERSIAL'))
     def sort_content_controversial(self):
-        self.refresh_content(order='controversial')
+        if (self.content.order and 'controversial' not in self.content.order) or 'front' in self.content.name:
+            self.refresh_content(order='controversial')
+            return
+        else:
+            ch = self.term.show_notification(
+                docs.TIME_ORDER_MENU.strip('\n').splitlines())
+        if ch not in range(ord('1'), ord('6') + 1):
+            self.term.show_notification('Invalid option')
+            return
+        ord_choices = {
+            ord('1'): 'controversial-hour',
+            ord('2'): 'controversial-day',
+            ord('3'): 'controversial-week',
+            ord('4'): 'controversial-month',
+            ord('5'): 'controversial-year',
+            ord('6'): 'controversial-all',
+        }
+        order = ord_choices[ch]
 
-    ##TODO: ADD CONTROVERSIAL SUBSORTS
+        self.refresh_content(order=order)
+
 
     @PageController.register(Command('MOVE_UP'))
     def move_cursor_up(self):
