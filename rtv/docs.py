@@ -145,3 +145,13 @@ OAUTH_SUCCESS = """\
        <p><span style="font-weight: bold">Reddit Terminal Viewer</span>
        will now log in, you can close this window.</p>
 """
+
+TIME_ORDER_MENU = """
+Links from:
+  [1] Past hour
+  [2] Past 24 hours
+  [3] Past week
+  [4] Past month
+  [5] Past year
+  [6] All time
+"""
