@@ -74,10 +74,10 @@ class SubredditPage(Page):
 
         name = self.term.prompt_input('Enter page: /')
         if name is not None:
-			if not '/comments/' in name:
-				self.refresh_content(order='ignore', name=name)
-			else:
-				self.open_submission(url='https://www.reddit.com/r/'+name)
+            if not '/comments/' in name:
+                self.refresh_content(order='ignore', name=name)
+            else:
+                self.open_submission(url='https://www.reddit.com/r/'+name)
 
     @SubredditController.register(Command('SUBREDDIT_FRONTPAGE'))
     def show_frontpage(self):
