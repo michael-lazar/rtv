@@ -94,7 +94,7 @@ class Page(object):
     @PageController.register(Command('SORT_TOP'))
     def sort_content_top(self):
 
-        if self.content.order and 'top' not in self.content.order:
+        if not self.content.order or 'top' not in self.content.order:
             self.refresh_content(order='top')
             return
 
@@ -126,7 +126,7 @@ class Page(object):
     @PageController.register(Command('SORT_CONTROVERSIAL'))
     def sort_content_controversial(self):
 
-        if self.content.order and 'controversial' not in self.content.order:
+        if not self.content.order or 'controversial' not in self.content.order:
             self.refresh_content(order='controversial')
             return
 

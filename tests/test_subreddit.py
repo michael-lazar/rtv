@@ -113,6 +113,47 @@ def test_subreddit_prompt(subreddit_page, terminal):
         assert not terminal.loader.exception
 
 
+def test_subreddit_order_top(subreddit_page, terminal):
+
+    # Sort by top - First time selects default
+    subreddit_page.controller.trigger('2')
+    assert subreddit_page.content.order == 'top'
+
+    # Second time opens the menu
+    with mock.patch.object(terminal, 'show_notification'):
+        # Invalid selection
+        terminal.show_notification.return_value = ord('x')
+        subreddit_page.controller.trigger('2')
+        terminal.show_notification.assert_called_with('Invalid option')
+        assert subreddit_page.content.order == 'top'
+
+        # Valid selection - sort by week
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('3')
+        subreddit_page.controller.trigger('2')
+        assert subreddit_page.content.order == 'top-week'
+
+
+def test_subreddit_order_controversial(subreddit_page, terminal):
+
+    # Now do controversial
+    subreddit_page.controller.trigger('5')
+    assert subreddit_page.content.order == 'controversial'
+
+    with mock.patch.object(terminal, 'show_notification'):
+        # Invalid selection
+        terminal.show_notification.return_value = ord('x')
+        subreddit_page.controller.trigger('5')
+        terminal.show_notification.assert_called_with('Invalid option')
+        assert subreddit_page.content.order == 'controversial'
+
+        # Valid selection - sort by week
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('3')
+        subreddit_page.controller.trigger('5')
+        assert subreddit_page.content.order == 'controversial-week'
+
+
 def test_subreddit_open(subreddit_page, terminal, config):
 
     # Open the selected submission
