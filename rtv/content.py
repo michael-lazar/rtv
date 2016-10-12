@@ -565,7 +565,7 @@ class SubredditContent(Content):
                 # instead of calling reddit.get_hot_from_week()
                 method_alias = 'get_{0}'.format(order)
                 method = getattr(reddit, method_alias)
-                submissions = method(limit=None, t=period)
+                submissions = method(limit=None, params={'t': period})
             else:
                 submissions = getattr(reddit, method_alias)(limit=None)
 

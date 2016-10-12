@@ -144,6 +144,47 @@ def test_submission_prompt(submission_page, terminal):
         assert not submission_page.selected_subreddit
 
 
+def test_submission_order_top(submission_page, terminal):
+
+    # Sort by top - First time selects default
+    submission_page.controller.trigger('2')
+    assert submission_page.content.order == 'top'
+
+    # Second time opens the menu
+    with mock.patch.object(terminal, 'show_notification'):
+        # Invalid selection
+        terminal.show_notification.return_value = ord('x')
+        submission_page.controller.trigger('2')
+        terminal.show_notification.assert_called_with('Invalid option')
+        assert submission_page.content.order == 'top'
+
+        # Valid selection - sort by week
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('3')
+        submission_page.controller.trigger('2')
+        assert submission_page.content.order == 'top-week'
+
+
+def test_submission_order_controversial(submission_page, terminal):
+
+    # Now do controversial
+    submission_page.controller.trigger('5')
+    assert submission_page.content.order == 'controversial'
+
+    with mock.patch.object(terminal, 'show_notification'):
+        # Invalid selection
+        terminal.show_notification.return_value = ord('x')
+        submission_page.controller.trigger('5')
+        terminal.show_notification.assert_called_with('Invalid option')
+        assert submission_page.content.order == 'controversial'
+
+        # Valid selection - sort by week
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('3')
+        submission_page.controller.trigger('5')
+        assert submission_page.content.order == 'controversial-week'
+
+
 def test_submission_move_top_bottom(submission_page):
 
     submission_page.controller.trigger('G')

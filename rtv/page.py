@@ -93,7 +93,27 @@ class Page(object):
 
     @PageController.register(Command('SORT_TOP'))
     def sort_content_top(self):
-        self.refresh_content(order='top')
+
+        if not self.content.order or 'top' not in self.content.order:
+            self.refresh_content(order='top')
+            return
+
+        choices = {
+            '1': 'top-hour',
+            '2': 'top-day',
+            '3': 'top-week',
+            '4': 'top-month',
+            '5': 'top-year',
+            '6': 'top-all'}
+
+        message = docs.TIME_ORDER_MENU.strip().splitlines()
+        ch = self.term.show_notification(message)
+        ch = six.unichr(ch)
+        if ch not in choices:
+            self.term.show_notification('Invalid option')
+            return
+
+        self.refresh_content(order=choices[ch])
 
     @PageController.register(Command('SORT_RISING'))
     def sort_content_rising(self):
@@ -105,7 +125,27 @@ class Page(object):
 
     @PageController.register(Command('SORT_CONTROVERSIAL'))
     def sort_content_controversial(self):
-        self.refresh_content(order='controversial')
+
+        if not self.content.order or 'controversial' not in self.content.order:
+            self.refresh_content(order='controversial')
+            return
+
+        choices = {
+            '1': 'controversial-hour',
+            '2': 'controversial-day',
+            '3': 'controversial-week',
+            '4': 'controversial-month',
+            '5': 'controversial-year',
+            '6': 'controversial-all'}
+
+        message = docs.TIME_ORDER_MENU.strip().splitlines()
+        ch = self.term.show_notification(message)
+        ch = six.unichr(ch)
+        if ch not in choices:
+            self.term.show_notification('Invalid option')
+            return
+
+        self.refresh_content(order=choices[ch])
 
     @PageController.register(Command('MOVE_UP'))
     def move_cursor_up(self):

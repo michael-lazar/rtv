@@ -62,7 +62,7 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
 def test_subscription_refresh(subscription_page):
 
     # Refresh content - invalid order
-    subscription_page.controller.trigger('2')
+    subscription_page.controller.trigger('3')
     assert curses.flash.called
     curses.flash.reset_mock()
 
