@@ -344,7 +344,8 @@ def test_content_subreddit_from_name_invalid(prompt, reddit, terminal):
     with terminal.loader():
         SubredditContent.from_name(reddit, prompt, terminal.loader)
     assert isinstance(terminal.loader.exception, praw.errors.InvalidSubreddit)
-
+    # Must always have an argument because it gets displayed
+    assert terminal.loader.exception.args[0]
 
 args, ids = SUBREDDIT_SEARCH_QUERIES.values(), list(SUBREDDIT_SEARCH_QUERIES)
 @pytest.mark.parametrize('prompt,query', args, ids=ids)

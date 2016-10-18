@@ -475,12 +475,12 @@ class SubredditContent(Content):
         elif len(parts) == 2:
             resource, resource_order = parts
         else:
-            raise InvalidSubreddit()
+            raise InvalidSubreddit('`{}` is an invalid format'.format(name))
 
         if not resource:
             # Praw does not correctly handle empty strings
             # https://github.com/praw-dev/praw/issues/615
-            raise InvalidSubreddit()
+            raise InvalidSubreddit('Subreddit cannot be empty')
 
         # If the order was explicitly passed in, it will take priority over
         # the order that was extracted from the name
@@ -496,12 +496,12 @@ class SubredditContent(Content):
             period = None
 
         if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
-            raise InvalidSubreddit('Invalid order "%s"' % order)
+            raise InvalidSubreddit('Invalid order `%s`' % order)
         if period not in ['all', 'day', 'hour', 'month', 'week', 'year', None]:
-            raise InvalidSubreddit('Invalid period "%s"' % period)
+            raise InvalidSubreddit('Invalid period `%s`' % period)
         if period and order not in ['top', 'controversial']:
-            raise InvalidSubreddit('"%s" order does not allow sorting by'
-                                   'period' % order)
+            raise InvalidSubreddit('`%s` order does not allow sorting by'
+                                   ' period' % order)
 
         # On some objects, praw doesn't allow you to pass arguments for the
         # order and period. Instead you need to call special helper functions
