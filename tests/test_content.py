@@ -344,7 +344,8 @@ def test_content_subreddit_from_name_invalid(prompt, reddit, terminal):
     with terminal.loader():
         SubredditContent.from_name(reddit, prompt, terminal.loader)
     assert isinstance(terminal.loader.exception, praw.errors.InvalidSubreddit)
-
+    # Must always have an argument because it gets displayed
+    assert terminal.loader.exception.args[0]
 
 args, ids = SUBREDDIT_SEARCH_QUERIES.values(), list(SUBREDDIT_SEARCH_QUERIES)
 @pytest.mark.parametrize('prompt,query', args, ids=ids)
@@ -399,8 +400,9 @@ def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):
 
     # If there is no submitted content, an error should be raised
     if terminal.loader.exception:
-        assert isinstance(terminal.loader.exception, exceptions.SubredditError)
-
+        assert isinstance(terminal.loader.exception,
+                          exceptions.NoSubmissionsError)
+        assert terminal.loader.exception.name == '/u/me'
 
 def test_content_subscription(reddit, terminal):
 
