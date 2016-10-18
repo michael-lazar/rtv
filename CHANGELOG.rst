@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.13.0: http://github.com/michael-lazar/rtv/releases/tag/v1.13.0
 .. _1.12.1: http://github.com/michael-lazar/rtv/releases/tag/v1.12.1
 .. _1.12.0: http://github.com/michael-lazar/rtv/releases/tag/v1.12.0
 .. _1.11.0: http://github.com/michael-lazar/rtv/releases/tag/v1.11.0
@@ -21,6 +22,22 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.13.0_ (2016-10-17)
+--------------------
+Features
+
+* Pressing `2` or `5` twice now opens a menu to select the time frame. 
+* Added the `hide_username` config option.
+* Added the `max_comment_cols` config option.
+
+Bugfixes
+
+* Fixed the terminal title from displaying b'' in py3.
+* Flipped j and k in the documentation.
+* Fixed bug when selecting post order for the front page.
+* Added more descriptive error messages for invalid subreddits.
 
 --------------------
 1.12.1_ (2016-09-27)

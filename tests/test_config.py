@@ -124,7 +124,9 @@ def test_config_from_file():
         'log': 'logfile.log',
         'link': 'https://reddit.com/permalink •',
         'subreddit': 'cfb',
-        'enable_media': True}
+        'enable_media': True,
+        'max_comment_cols': 150,
+        'hide_username': True}
 
     bindings = {
         'REFRESH': 'r, <KEY_F5>',
