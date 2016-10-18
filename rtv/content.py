@@ -429,7 +429,10 @@ class SubredditContent(Content):
         try:
             self.get(0)
         except IndexError:
-            raise exceptions.SubredditError('No submissions')
+            full_name = self.name
+            if self.order:
+                full_name += '/' + self.order
+            raise exceptions.NoSubmissionsError(full_name)
 
     @classmethod
     def from_name(cls, reddit, name, loader, order=None, query=None):

@@ -399,8 +399,9 @@ def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):
 
     # If there is no submitted content, an error should be raised
     if terminal.loader.exception:
-        assert isinstance(terminal.loader.exception, exceptions.SubredditError)
-
+        assert isinstance(terminal.loader.exception,
+                          exceptions.NoSubmissionsError)
+        assert terminal.loader.exception.name == '/u/me'
 
 def test_content_subscription(reddit, terminal):
 
