@@ -3,8 +3,6 @@ import setuptools
 
 from version import __version__ as version
 
-requirements = ['praw==3.5.0', 'six', 'requests', 'kitchen', 'beautifulsoup4',
-                'mailcap-fix']
 
 setuptools.setup(
     name='rtv',
@@ -19,7 +17,14 @@ setuptools.setup(
     packages=['rtv'],
     package_data={'rtv': ['templates/*']},
     data_files=[("share/man/man1", ["rtv.1"])],
-    install_requires=requirements,
+    install_requires=[
+        'praw >=3.5, <4',
+        'six',
+        'requests',
+        'kitchen',
+        'beautifulsoup4',
+        'mailcap-fix',
+        ],
     entry_points={'console_scripts': ['rtv=rtv.__main__:main']},
     classifiers=[
         'Intended Audience :: End Users/Desktop',
