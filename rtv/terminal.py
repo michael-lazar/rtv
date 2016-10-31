@@ -74,28 +74,10 @@ class Terminal(object):
         return symbol, attr
 
     @property
-    def timestamp_sep(self):
-        symbol = '-'
-        attr = curses.A_BOLD
-        return symbol, attr
-
-    @property
     def guilded(self):
         symbol = '*' if self.config['ascii'] else '✪'
         attr = curses.A_BOLD | Color.YELLOW
         return symbol, attr
-
-    @property
-    def stickied(self):
-        text = '[stickied]'
-        attr = Color.GREEN
-        return text, attr
-
-    @property
-    def saved(self):
-        text = '[saved]'
-        attr = Color.GREEN
-        return text, attr
 
     @property
     def vline(self):
@@ -138,6 +120,9 @@ class Terminal(object):
 
     @staticmethod
     def flash():
+        """
+        Flash the screen to indicate that an action was invalid.
+        """
         return curses.flash()
 
     @staticmethod
@@ -154,6 +139,9 @@ class Terminal(object):
         window.addch(y, x, ch, attr)
 
     def getch(self):
+        """
+        Wait for a keypress and return the corresponding character code (int).
+        """
         return self.stdscr.getch()
 
     @staticmethod

@@ -178,7 +178,7 @@ def test_content_submission(reddit, terminal):
     assert content.get(40)['type'] == 'Comment'
 
     for data in content.iterate(-1, 1):
-        assert all(k in data for k in ('object', 'n_rows', 'offset', 'type',
+        assert all(k in data for k in ('object', 'n_rows', 'h_offset', 'type',
                                        'hidden'))
         # All text should be converted to unicode by this point
         for val in data.values():
@@ -278,7 +278,7 @@ def test_content_subreddit(reddit, terminal):
 
     for data in content.iterate(0, 1):
         assert all(k in data for k in (
-            'object', 'n_rows', 'offset', 'type', 'index', 'title',
+            'object', 'n_rows', 'h_offset', 'type', 'index', 'title',
             'split_title', 'hidden'))
         # All text should be converted to unicode by this point
         for val in data.values():
@@ -300,7 +300,7 @@ def test_content_subreddit_load_more(reddit, terminal):
     assert content.range == (0, 50)
 
     for i, data in enumerate(islice(content.iterate(0, 1), 0, 50)):
-        assert all(k in data for k in ('object', 'n_rows', 'offset', 'type',
+        assert all(k in data for k in ('object', 'n_rows', 'h_offset', 'type',
                                        'index', 'title', 'split_title'))
         # All text should be converted to unicode by this point
         for val in data.values():
@@ -424,7 +424,7 @@ def test_content_subscription(reddit, terminal):
 
     # Validate content
     for data in islice(content.iterate(0, 1), 20):
-        assert all(k in data for k in ('object', 'n_rows', 'offset', 'type',
+        assert all(k in data for k in ('object', 'n_rows', 'h_offset', 'type',
                                        'title', 'split_title'))
         # All text should be converted to unicode by this point
         for val in data.values():

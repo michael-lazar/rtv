@@ -99,7 +99,7 @@ class SubredditPage(Page):
 
         data = {}
         if url is None:
-            data = self.content.get(self.nav.absolute_index)
+            data = self.get_selected_item()
             url = data['permalink']
 
         with self.term.loader('Loading submission'):
@@ -121,7 +121,7 @@ class SubredditPage(Page):
     def open_link(self):
         "Open a link with the webbrowser"
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data['url_type'] == 'selfpost':
             self.open_submission()
         elif data['url_type'] == 'x-post subreddit':
@@ -244,16 +244,16 @@ class SubredditPage(Page):
             text, attr = self.term.get_arrow(data['likes'])
             self.term.add_line(win, text, attr=attr)
             self.term.add_line(win, ' {created} '.format(**data))
-            text, attr = self.term.timestamp_sep
+            text, attr = '-', curses.A_BOLD
             self.term.add_line(win, text, attr=attr)
             self.term.add_line(win, ' {comments} '.format(**data))
 
             if data['saved']:
-                text, attr = self.term.saved
+                text, attr = '[saved]', Color.GREEN
                 self.term.add_line(win, text, attr=attr)
 
             if data['stickied']:
-                text, attr = self.term.stickied
+                text, attr = '[stickied]', Color.GREEN
                 self.term.add_line(win, text, attr=attr)
 
             if data['gold']:
