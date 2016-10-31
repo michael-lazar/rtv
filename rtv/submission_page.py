@@ -93,7 +93,7 @@ class SubmissionPage(Page):
     def open_link(self):
         "Open the selected item with the webbrowser"
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         url = data.get('permalink')
         if url:
             self.term.open_browser(url)
@@ -103,7 +103,7 @@ class SubmissionPage(Page):
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
     def open_pager(self):
         "Open the selected item with the system's pager"
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data['type'] == 'Submission':
             text = '\n\n'.join((data['permalink'], data['text']))
             self.term.open_pager(text)
@@ -124,7 +124,7 @@ class SubmissionPage(Page):
             Comment - add a comment reply
         """
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data['type'] == 'Submission':
             body = data['text']
             reply = data['object'].add_comment
@@ -171,7 +171,7 @@ class SubmissionPage(Page):
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_URLVIEWER'))
     def comment_urlview(self):
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         comment = data.get('body') or data.get('text') or data.get('url_full')
         if comment:
             self.term.open_urlview(comment)
@@ -228,11 +228,11 @@ class SubmissionPage(Page):
                 self.term.add_line(win, text, attr=attr)
 
             if data['stickied']:
-                text, attr = self.term.stickied
+                text, attr = '[stickied]', Color.GREEN
                 self.term.add_line(win, text, attr=attr)
 
             if data['saved']:
-                text, attr = self.term.saved
+                text, attr = '[saved]', Color.GREEN
                 self.term.add_line(win, text, attr=attr)
 
         for row, text in enumerate(split_body, start=offset+1):
@@ -308,7 +308,7 @@ class SubmissionPage(Page):
             self.term.add_line(win, text, attr=attr)
 
         if data['saved']:
-            text, attr = self.term.saved
+            text, attr = '[saved]', Color.GREEN
             self.term.add_line(win, text, attr=attr)
 
         win.border()

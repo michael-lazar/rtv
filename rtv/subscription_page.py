@@ -59,7 +59,7 @@ class SubscriptionPage(Page):
     def select_subreddit(self):
         "Store the selected subreddit and return to the subreddit page"
 
-        name = self.content.get(self.nav.absolute_index)['name']
+        name = self.get_selected_item()['name']
         with self.term.loader('Loading page'):
             content = SubredditContent.from_name(
                 self.reddit, name, self.term.loader)

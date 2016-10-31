@@ -57,6 +57,9 @@ class Page(object):
     def _draw_item(self, window, data, inverted):
         raise NotImplementedError
 
+    def get_selected_item(self):
+        return self.content.get(self.nav.absolute_index)
+
     def loop(self):
         """
         Main control loop runs the following steps:
@@ -186,7 +189,7 @@ class Page(object):
     @PageController.register(Command('UPVOTE'))
     @logged_in
     def upvote(self):
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if 'likes' not in data:
             self.term.flash()
         elif data['likes']:
@@ -203,7 +206,7 @@ class Page(object):
     @PageController.register(Command('DOWNVOTE'))
     @logged_in
     def downvote(self):
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if 'likes' not in data:
             self.term.flash()
         elif data['likes'] or data['likes'] is None:
@@ -220,7 +223,7 @@ class Page(object):
     @PageController.register(Command('SAVE'))
     @logged_in
     def save(self):
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if 'saved' not in data:
             self.term.flash()
         elif not data['saved']:
@@ -255,7 +258,7 @@ class Page(object):
         Delete a submission or comment.
         """
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data.get('author') != self.reddit.user.name:
             self.term.flash()
             return
@@ -279,7 +282,7 @@ class Page(object):
         Edit a submission or comment.
         """
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data.get('author') != self.reddit.user.name:
             self.term.flash()
             return
