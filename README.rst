@@ -53,15 +53,12 @@ or clone the repository
 
 on Arch Linux or Arch based distros (Antergos, Manjaro, `etc.`_) you can install directly with an `aur helper`_ such as yaourt.
 
-**WARNING - The Aur package is temporarily broken, see** `here`_ **for a workaround**
-
 .. code:: bash
 
     $ yaourt -S rtv
     $ # or to keep up to date with the master branch
     $ yaourt -S rtv-git
 
-.. _here: https://aur.archlinux.org/packages/rtv/
 .. _etc.: https://wiki.archlinux.org/index.php/Arch_based_distributions_(active)
 .. _aur helper: https://wiki.archlinux.org/index.php/AUR_helpers#AUR_search.2Fbuild_helpers
 
