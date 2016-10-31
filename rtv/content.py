@@ -340,15 +340,15 @@ class SubmissionContent(Content):
             data['split_title'] = self.wrap_text(data['title'], width=n_cols-2)
             data['split_text'] = self.wrap_text(data['text'], width=n_cols-2)
             data['n_rows'] = len(data['split_title'] + data['split_text']) + 5
-            data['offset'] = 0
+            data['h_offset'] = 0
 
         else:
             data = self._comment_data[index]
             indent_level = min(data['level'], self.max_indent_level)
-            data['offset'] = indent_level * self.indent_size
+            data['h_offset'] = indent_level * self.indent_size
 
             if data['type'] == 'Comment':
-                width = min(n_cols - data['offset'], self._max_comment_cols)
+                width = min(n_cols - data['h_offset'], self._max_comment_cols)
                 data['split_body'] = self.wrap_text(data['body'], width=width)
                 data['n_rows'] = len(data['split_body']) + 1
             else:
@@ -626,7 +626,7 @@ class SubredditContent(Content):
             data['split_title'] = data['split_title'][:self.max_title_rows-1]
             data['split_title'].append('(Not enough space to display)')
         data['n_rows'] = len(data['split_title']) + 3
-        data['offset'] = 0
+        data['h_offset'] = 0
 
         return data
 
@@ -700,6 +700,6 @@ class SubscriptionContent(Content):
         data = self._subscription_data[index]
         data['split_title'] = self.wrap_text(data['title'], width=n_cols)
         data['n_rows'] = len(data['split_title']) + 1
-        data['offset'] = 0
+        data['h_offset'] = 0
 
         return data

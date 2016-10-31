@@ -455,10 +455,10 @@ class Page(object):
                 subwin_n_rows = min(subwin_n_rows, top_item_height)
                 subwin_inverted = True
                 top_item_height = None
-            subwin_n_cols = win_n_cols - data['offset']
+            subwin_n_cols = win_n_cols - data['h_offset']
             start = current_row - subwin_n_rows + 1 if inverted else current_row
             subwindow = window.derwin(
-                subwin_n_rows, subwin_n_cols, start, data['offset'])
+                subwin_n_rows, subwin_n_cols, start, data['h_offset'])
             attr = self._draw_item(subwindow, data, subwin_inverted)
             self._subwindows.append((subwindow, attr))
             available_rows -= (subwin_n_rows + 1)  # Add one for the blank line

@@ -162,9 +162,9 @@ class SubmissionPage(Page):
     @SubmissionController.register(Command('DELETE'))
     @logged_in
     def delete_comment(self):
-        "Delete a comment as long as it is not the current submission"
+        "Delete the selected comment"
 
-        if self.nav.absolute_index != -1:
+        if self.get_selected_item()['type'] == 'Comment':
             self.delete_item()
         else:
             self.term.flash()
