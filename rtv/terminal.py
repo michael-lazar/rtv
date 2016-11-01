@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import os
 import sys
 import time
+import shlex
 import codecs
 import curses
 import logging
@@ -512,14 +513,17 @@ class Terminal(object):
         """
 
         pager = os.getenv('PAGER') or 'less'
+        command = shlex.split(pager)
         try:
             with self.suspend():
-                p = subprocess.Popen([pager], stdin=subprocess.PIPE)
+                _logger.debug('Running command: %s', command)
+                p = subprocess.Popen(command, stdin=subprocess.PIPE)
                 try:
                     p.communicate(data.encode('utf-8'))
                 except KeyboardInterrupt:
                     p.terminate()
-        except OSError:
+        except OSError as e:
+            _logger.exception(e)
             self.show_notification('Could not open pager %s' % pager)
 
     @contextmanager
@@ -550,14 +554,17 @@ class Terminal(object):
         _logger.info('File created: %s', filepath)
 
         editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
+        command = shlex.split(editor) + [filepath]
         try:
             with self.suspend():
-                p = subprocess.Popen([editor, filepath])
+                _logger.debug('Running command: %s', command)
+                p = subprocess.Popen(command)
                 try:
                     p.communicate()
                 except KeyboardInterrupt:
                     p.terminate()
-        except OSError:
+        except OSError as e:
+            _logger.exception(e)
             self.show_notification('Could not open file with %s' % editor)
 
         with codecs.open(filepath, 'r', 'utf-8') as fp:
@@ -588,9 +595,11 @@ class Terminal(object):
         """
 
         urlview = os.getenv('RTV_URLVIEWER') or 'urlview'
+        command = shlex.split(urlview)
         try:
             with self.suspend():
-                p = subprocess.Popen([urlview], stdin=subprocess.PIPE)
+                _logger.debug('Running command: %s', command)
+                p = subprocess.Popen(command, stdin=subprocess.PIPE)
                 try:
                     p.communicate(input=data.encode('utf-8'))
                 except KeyboardInterrupt:
@@ -605,7 +614,8 @@ class Terminal(object):
             if code == 1:
                 self.show_notification('No URLs found')
 
-        except OSError:
+        except OSError as e:
+            _logger.exception(e)
             self.show_notification(
                 'Failed to open {0}'.format(urlview))
 
