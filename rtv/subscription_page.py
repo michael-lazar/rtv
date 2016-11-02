@@ -74,8 +74,10 @@ class SubscriptionPage(Page):
         self.active = False
 
     def _draw_banner(self):
-        # Subscriptions can't be sorted, so disable showing the order menu
-        pass
+        """
+        Subscriptions can't be sorted so the banner is disabled.
+        """
+        return 0
 
     def _draw_item(self, win, data, inverted):
         n_rows, n_cols = win.getmaxyx()

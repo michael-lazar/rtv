@@ -52,12 +52,23 @@ class Page(object):
         self._subwindows = None
 
     def refresh_content(self, order=None, name=None):
+        """
+        Reload the page's content through PRAW.
+        """
         raise NotImplementedError
 
     def _draw_item(self, window, data, inverted):
+        """
+        Draw an individual item (comment, submission, etc.) inside of the given
+        subwindow. This method will be overwritten by each of the individual
+        pages.
+        """
         raise NotImplementedError
 
     def get_selected_item(self):
+        """
+        Return the item that is currently selected with the cursor.
+        """
         return self.content.get(self.nav.absolute_index)
 
     def loop(self):
@@ -76,6 +87,15 @@ class Page(object):
             self.draw()
             ch = self.term.stdscr.getch()
             self.controller.trigger(ch)
+
+    def clear_input_queue(self):
+        """
+        Clear excessive input caused by the scroll wheel or holding down a key
+        """
+
+        with self.term.no_delay():
+            while self.term.getch() != -1:
+                continue
 
     @PageController.register(Command('EXIT'))
     def exit(self):
@@ -149,42 +169,6 @@ class Page(object):
             return
 
         self.refresh_content(order=choices[ch])
-
-    @PageController.register(Command('MOVE_UP'))
-    def move_cursor_up(self):
-        self._move_cursor(-1)
-        self.clear_input_queue()
-
-    @PageController.register(Command('MOVE_DOWN'))
-    def move_cursor_down(self):
-        self._move_cursor(1)
-        self.clear_input_queue()
-
-    @PageController.register(Command('PAGE_UP'))
-    def move_page_up(self):
-        self._move_page(-1)
-        self.clear_input_queue()
-
-    @PageController.register(Command('PAGE_DOWN'))
-    def move_page_down(self):
-        self._move_page(1)
-        self.clear_input_queue()
-
-    @PageController.register(Command('PAGE_TOP'))
-    def move_page_top(self):
-        self._remove_cursor()
-        self.nav.page_index = self.content.range[0]
-        self.nav.cursor_index = 0
-        self.nav.inverted = False
-        self._add_cursor()
-
-    @PageController.register(Command('PAGE_BOTTOM'))
-    def move_page_bottom(self):
-        self._remove_cursor()
-        self.nav.page_index = self.content.range[1]
-        self.nav.cursor_index = 0
-        self.nav.inverted = True
-        self._add_cursor()
 
     @PageController.register(Command('UPVOTE'))
     @logged_in
@@ -324,38 +308,80 @@ class Page(object):
         message = 'New Messages' if inbox > 0 else 'No New Messages'
         self.term.show_notification(message)
 
-    def clear_input_queue(self):
-        """
-        Clear excessive input caused by the scroll wheel or holding down a key
-        """
+    @PageController.register(Command('MOVE_UP'))
+    def move_cursor_up(self):
+        valid, redraw = self.nav.move(-1, len(self._subwindows))
+        if not valid:
+            self.term.flash()
+        self.clear_input_queue()
 
-        with self.term.no_delay():
-            while self.term.getch() != -1:
-                continue
+    @PageController.register(Command('MOVE_DOWN'))
+    def move_cursor_down(self):
+        valid, redraw = self.nav.move(1, len(self._subwindows))
+        if not valid:
+            self.term.flash()
+        self.clear_input_queue()
+
+    @PageController.register(Command('PAGE_UP'))
+    def move_page_up(self):
+        valid, redraw = self.nav.move_page(-1, len(self._subwindows) - 1)
+        if not valid:
+            self.term.flash()
+        self.clear_input_queue()
+
+    @PageController.register(Command('PAGE_DOWN'))
+    def move_page_down(self):
+        valid, redraw = self.nav.move_page(1, len(self._subwindows) - 1)
+        if not valid:
+            self.term.flash()
+        self.clear_input_queue()
+
+    @PageController.register(Command('PAGE_TOP'))
+    def move_page_top(self):
+        self.nav.page_index = self.content.range[0]
+        self.nav.cursor_index = 0
+        self.nav.inverted = False
+
+    @PageController.register(Command('PAGE_BOTTOM'))
+    def move_page_bottom(self):
+        self.nav.page_index = self.content.range[1]
+        self.nav.cursor_index = 0
+        self.nav.inverted = True
 
     def draw(self):
 
+        row = 0
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         if n_rows < self.term.MIN_HEIGHT or n_cols < self.term.MIN_WIDTH:
             # TODO: Will crash when you try to navigate if the terminal is too
             # small at startup because self._subwindows will never be populated
+            # TODO: Look into if the new navigation fixes this
             return
 
-        self._row = 0
-        self._draw_header()
-        self._draw_banner()
-        self._draw_content()
-        self._draw_footer()
+        window = self.term.stdscr.derwin(1, n_cols, row, 0)
+        row += self._draw_header(window)
+
+        window = self.term.stdscr.derwin(1, n_cols, row, 0)
+        row += self._draw_banner(window)
+
+        window = self.term.stdscr.derwin(n_rows - row - 1, n_cols, row, 0)
+        row += self._draw_content(window)
+
+        window = self.term.stdscr.derwin(1, n_cols, row, 0)
+        row += self._draw_footer(window)
+
         self._add_cursor()
         self.term.stdscr.touchwin()
         self.term.stdscr.refresh()
 
-    def _draw_header(self):
+    def _draw_header(self, window):
+        """
+        The bar at the top of the screen that displays the page title and the
+        logged in user's information. The page title is also sent to the parent
+        terminal to be displayed on the window bar.
+        """
 
-        n_rows, n_cols = self.term.stdscr.getmaxyx()
-
-        # Note: 2 argument form of derwin breaks PDcurses on Windows 7!
-        window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
+        n_rows, n_cols = window.getmaxyx()
         window.erase()
         # curses.bkgd expects bytes in py2 and unicode in py3
         ch, attr = str(' '), curses.A_REVERSE | curses.A_BOLD | Color.CYAN
@@ -401,12 +427,15 @@ class Page(object):
             if (s_col - 1) >= width(sub_name):
                 self.term.add_line(window, username, 0, s_col)
 
-        self._row += 1
+        return 1
 
-    def _draw_banner(self):
+    def _draw_banner(self, window):
+        """
+        The bar below the header that displays the page sorting options that
+        the user can select.
+        """
 
-        n_rows, n_cols = self.term.stdscr.getmaxyx()
-        window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
+        n_rows, n_cols = window.getmaxyx()
         window.erase()
         ch, attr = str(' '), curses.A_BOLD | Color.YELLOW
         window.bkgd(ch, attr)
@@ -421,18 +450,15 @@ class Page(object):
             col = text.find(order) - 3
             window.chgat(0, col, 3, attr | curses.A_REVERSE)
 
-        self._row += 1
+        return 1
 
-    def _draw_content(self):
+    def _draw_content(self, window):
         """
-        Loop through submissions and fill up the content page.
+        Loop through submissions/comments and fill up the content page.
         """
 
-        n_rows, n_cols = self.term.stdscr.getmaxyx()
-        window = self.term.stdscr.derwin(
-            n_rows - self._row - 1, n_cols, self._row, 0)
+        n_rows, n_cols = window.getmaxyx()
         window.erase()
-        win_n_rows, win_n_cols = window.getmaxyx()
 
         self._subwindows = []
         page_index, cursor_index, inverted = self.nav.position
@@ -442,10 +468,10 @@ class Page(object):
         # downwards. If inverted, align the first submission with the bottom
         # and draw upwards.
         cancel_inverted = True
-        current_row = (win_n_rows - 1) if inverted else 0
-        available_rows = win_n_rows
+        current_row = (n_rows - 1) if inverted else 0
+        available_rows = n_rows
         top_item_height = None if inverted else self.nav.top_item_height
-        for data in self.content.iterate(page_index, step, win_n_cols - 2):
+        for data in self.content.iterate(page_index, step, n_cols - 2):
             subwin_n_rows = min(available_rows, data['n_rows'])
             subwin_inverted = inverted
             if top_item_height is not None:
@@ -455,7 +481,7 @@ class Page(object):
                 subwin_n_rows = min(subwin_n_rows, top_item_height)
                 subwin_inverted = True
                 top_item_height = None
-            subwin_n_cols = win_n_cols - data['h_offset']
+            subwin_n_cols = n_cols - data['h_offset']
             start = current_row - subwin_n_rows + 1 if inverted else current_row
             subwindow = window.derwin(
                 subwin_n_rows, subwin_n_cols, start, data['h_offset'])
@@ -482,43 +508,26 @@ class Page(object):
             self.nav.flip((len(self._subwindows) - 1))
             return self._draw_content()
 
-        self._row += win_n_rows
+        return n_rows
 
-    def _draw_footer(self):
+    def _draw_footer(self, window):
+        """
+        The bar at the bottom of the screen that displays help options.
+        """
 
-        n_rows, n_cols = self.term.stdscr.getmaxyx()
-        window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
         window.erase()
         ch, attr = str(' '), curses.A_REVERSE | curses.A_BOLD | Color.CYAN
         window.bkgd(ch, attr)
 
         text = self.FOOTER.strip()
         self.term.add_line(window, text, 0, 0)
-        self._row += 1
+        return 1
 
     def _add_cursor(self):
-        self._edit_cursor(curses.A_REVERSE)
-
-    def _remove_cursor(self):
-        self._edit_cursor(curses.A_NORMAL)
-
-    def _move_cursor(self, direction):
-        self._remove_cursor()
-        # Note: ACS_VLINE doesn't like changing the attribute, so disregard the
-        # redraw flag and opt to always redraw
-        valid, redraw = self.nav.move(direction, len(self._subwindows))
-        if not valid:
-            self.term.flash()
-        self._add_cursor()
-
-    def _move_page(self, direction):
-        self._remove_cursor()
-        valid, redraw = self.nav.move_page(direction, len(self._subwindows)-1)
-        if not valid:
-            self.term.flash()
-        self._add_cursor()
-
-    def _edit_cursor(self, attribute):
+        """
+        The line on the left of the screen that highlights the selected comment
+        or submission.
+        """
 
         # Don't allow the cursor to go below page index 0
         if self.nav.absolute_index < 0:
@@ -530,6 +539,7 @@ class Page(object):
         if self.nav.cursor_index >= len(self._subwindows):
             self.nav.cursor_index = len(self._subwindows) - 1
 
+        attribute = curses.A_REVERSE
         window, attr = self._subwindows[self.nav.cursor_index]
         if attr is not None:
             attribute |= attr
