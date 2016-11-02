@@ -73,7 +73,7 @@ class SubscriptionPage(Page):
 
         self.active = False
 
-    def _draw_banner(self):
+    def _draw_banner(self, window):
         """
         Subscriptions can't be sorted so the banner is disabled.
         """
