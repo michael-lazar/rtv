@@ -57,7 +57,7 @@ class Page(object):
         """
         raise NotImplementedError
 
-    def _draw_item(self, window, data, inverted):
+    def _draw_item(self, window, data, offset=0):
         """
         Draw an individual item (comment, submission, etc.) inside of the given
         subwindow. This method will be overwritten by each of the individual
@@ -310,43 +310,51 @@ class Page(object):
 
     @PageController.register(Command('MOVE_UP'))
     def move_cursor_up(self):
-        valid, redraw = self.nav.move(-1, len(self._subwindows))
-        if not valid:
+        try:
+            self.nav.move_cursor_up()
+        except IndexError:
             self.term.flash()
         self.clear_input_queue()
 
     @PageController.register(Command('MOVE_DOWN'))
     def move_cursor_down(self):
-        valid, redraw = self.nav.move(1, len(self._subwindows))
-        if not valid:
+        try:
+            self.nav.move_cursor_down()
+        except IndexError:
             self.term.flash()
         self.clear_input_queue()
 
     @PageController.register(Command('PAGE_UP'))
     def move_page_up(self):
-        valid, redraw = self.nav.move_page(-1, len(self._subwindows) - 1)
-        if not valid:
+        try:
+            self.nav.move_page_up()
+        except IndexError:
             self.term.flash()
         self.clear_input_queue()
 
     @PageController.register(Command('PAGE_DOWN'))
     def move_page_down(self):
-        valid, redraw = self.nav.move_page(1, len(self._subwindows) - 1)
-        if not valid:
+        try:
+            self.nav.move_page_down()
+        except IndexError:
             self.term.flash()
         self.clear_input_queue()
 
     @PageController.register(Command('PAGE_TOP'))
     def move_page_top(self):
-        self.nav.page_index = self.content.range[0]
-        self.nav.cursor_index = 0
-        self.nav.inverted = False
+        try:
+            self.nav.move_page_top()
+        except IndexError:
+            self.term.flash()
+        self.clear_input_queue()
 
     @PageController.register(Command('PAGE_BOTTOM'))
     def move_page_bottom(self):
-        self.nav.page_index = self.content.range[1]
-        self.nav.cursor_index = 0
-        self.nav.inverted = True
+        try:
+            self.nav.move_page_bottom()
+        except IndexError:
+            self.term.flash()
+        self.clear_input_queue()
 
     def draw(self):
 
@@ -461,53 +469,23 @@ class Page(object):
         window.erase()
 
         self._subwindows = []
-        page_index, cursor_index, inverted = self.nav.position
-        step = self.nav.step
-
-        # If not inverted, align the first submission with the top and draw
-        # downwards. If inverted, align the first submission with the bottom
-        # and draw upwards.
-        cancel_inverted = True
-        current_row = (n_rows - 1) if inverted else 0
-        available_rows = n_rows
-        top_item_height = None if inverted else self.nav.top_item_height
-        for data in self.content.iterate(page_index, step, n_cols - 2):
-            subwin_n_rows = min(available_rows, data['n_rows'])
-            subwin_inverted = inverted
-            if top_item_height is not None:
-                # Special case: draw the page as non-inverted, except for the
-                # top element. This element will be drawn as inverted with a
-                # restricted height
-                subwin_n_rows = min(subwin_n_rows, top_item_height)
-                subwin_inverted = True
-                top_item_height = None
+        current_row, available_rows = 0, n_rows
+        for data in self.content.iterate(self.nav.page_index, 1, n_cols - 2):
+            # Apply the offset to the first item only
+            offset = 0 if self._subwindows else self.nav.top_offset
+            subwin_n_rows = min(available_rows, data['n_rows'] - offset)
             subwin_n_cols = n_cols - data['h_offset']
-            start = current_row - subwin_n_rows + 1 if inverted else current_row
             subwindow = window.derwin(
-                subwin_n_rows, subwin_n_cols, start, data['h_offset'])
-            attr = self._draw_item(subwindow, data, subwin_inverted)
-            self._subwindows.append((subwindow, attr))
-            available_rows -= (subwin_n_rows + 1)  # Add one for the blank line
-            current_row += step * (subwin_n_rows + 1)
+                subwin_n_rows, subwin_n_cols, current_row, data['h_offset'])
+            attr = self._draw_item(subwindow, data, offset=offset)
+            is_bottom_cutoff = subwin_n_rows < data['n_rows'] - offset
+            self._subwindows.append((subwindow, attr, is_bottom_cutoff))
+            available_rows -= subwin_n_rows
+            current_row += subwin_n_rows
             if available_rows <= 0:
-                # Indicate the page is full and we can keep the inverted screen.
-                cancel_inverted = False
                 break
 
-        if len(self._subwindows) == 1:
-            # Never draw inverted if only one subwindow. The top of the
-            # subwindow should always be aligned with the top of the screen.
-            cancel_inverted = True
-
-        if cancel_inverted and self.nav.inverted:
-            # In some cases we need to make sure that the screen is NOT
-            # inverted. Unfortunately, this currently means drawing the whole
-            # page over again. Could not think of a better way to pre-determine
-            # if the content will fill up the page, given that it is dependent
-            # on the size of the terminal.
-            self.nav.flip((len(self._subwindows) - 1))
-            return self._draw_content()
-
+        self.nav.set_window_params(n_rows, n_cols, len(self._subwindows))
         return n_rows
 
     def _draw_footer(self, window):
@@ -540,10 +518,10 @@ class Page(object):
             self.nav.cursor_index = len(self._subwindows) - 1
 
         attribute = curses.A_REVERSE
-        window, attr = self._subwindows[self.nav.cursor_index]
+        window, attr, is_bottom_cutoff = self._subwindows[self.nav.cursor_index]
         if attr is not None:
             attribute |= attr
 
         n_rows, _ = window.getmaxyx()
-        for row in range(n_rows):
+        for row in range(n_rows if is_bottom_cutoff else n_rows - 1):
             window.chgat(row, 0, 1, attribute)

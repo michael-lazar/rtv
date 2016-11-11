@@ -23,7 +23,7 @@ class SubscriptionPage(Page):
         self.controller = SubscriptionController(self, keymap=config.keymap)
         self.content = SubscriptionContent.from_user(
             reddit, term.loader, content_type)
-        self.nav = Navigator(self.content.get)
+        self.nav = Navigator(self.content)
         self.content_type = content_type
         self.selected_subreddit = None
 
@@ -40,7 +40,7 @@ class SubscriptionPage(Page):
             self.content = SubscriptionContent.from_user(
                 self.reddit, self.term.loader, self.content_type)
         if not self.term.loader.exception:
-            self.nav = Navigator(self.content.get)
+            self.nav = Navigator(self.content)
 
     @SubscriptionController.register(Command('PROMPT'))
     def prompt_subreddit(self):
@@ -79,20 +79,19 @@ class SubscriptionPage(Page):
         """
         return 0
 
-    def _draw_item(self, win, data, inverted):
+    def _draw_item(self, win, data, offset=0):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1  # Leave space for the cursor in the first column
 
         # Handle the case where the window is not large enough to fit the data.
-        valid_rows = range(0, n_rows)
-        offset = 0 if not inverted else -(data['n_rows'] - n_rows)
+        valid_rows = range(n_rows)
 
-        row = offset
+        row = 0 - offset
         if row in valid_rows:
             attr = curses.A_BOLD | Color.YELLOW
             self.term.add_line(win, '{name}'.format(**data), row, 1, attr)
 
-        row = offset + 1
+        row = 1 - offset
         for row, text in enumerate(data['split_title'], start=row):
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1)

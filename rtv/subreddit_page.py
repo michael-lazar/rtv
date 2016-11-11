@@ -31,7 +31,7 @@ class SubredditPage(Page):
 
         self.controller = SubredditController(self, keymap=config.keymap)
         self.content = SubredditContent.from_name(reddit, name, term.loader)
-        self.nav = Navigator(self.content.get)
+        self.nav = Navigator(self.content)
         self.toggled_subreddit = None
 
     @SubredditController.register(Command('REFRESH'))
@@ -50,7 +50,7 @@ class SubredditPage(Page):
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.term.loader, order=order)
         if not self.term.loader.exception:
-            self.nav = Navigator(self.content.get)
+            self.nav = Navigator(self.content)
 
     @SubredditController.register(Command('SUBREDDIT_SEARCH'))
     def search_subreddit(self, name=None):
@@ -66,7 +66,7 @@ class SubredditPage(Page):
             self.content = SubredditContent.from_name(
                 self.reddit, name, self.term.loader, query=query)
         if not self.term.loader.exception:
-            self.nav = Navigator(self.content.get)
+            self.nav = Navigator(self.content)
 
     @SubredditController.register(Command('PROMPT'))
     def prompt_subreddit(self):
@@ -115,7 +115,7 @@ class SubredditPage(Page):
 
         if page.selected_subreddit is not None:
             self.content = page.selected_subreddit
-            self.nav = Navigator(self.content.get)
+            self.nav = Navigator(self.content)
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_IN_BROWSER'))
     def open_link(self):
@@ -175,7 +175,7 @@ class SubredditPage(Page):
 
             if page.selected_subreddit is not None:
                 self.content = page.selected_subreddit
-                self.nav = Navigator(self.content.get)
+                self.nav = Navigator(self.content)
             else:
                 self.refresh_content()
 
@@ -196,7 +196,7 @@ class SubredditPage(Page):
         # refresh content with the selected subreddit
         if page.selected_subreddit is not None:
             self.content = page.selected_subreddit
-            self.nav = Navigator(self.content.get)
+            self.nav = Navigator(self.content)
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_MULTIREDDITS'))
     @logged_in
@@ -215,30 +215,30 @@ class SubredditPage(Page):
         # refresh content with the selected subreddit
         if page.selected_subreddit is not None:
             self.content = page.selected_subreddit
-            self.nav = Navigator(self.content.get)
+            self.nav = Navigator(self.content)
 
-    def _draw_item(self, win, data, inverted):
+    def _draw_item(self, win, data, offset=0):
 
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1  # Leave space for the cursor in the first column
 
         # Handle the case where the window is not large enough to fit the data.
-        valid_rows = range(0, n_rows)
-        offset = 0 if not inverted else -(data['n_rows'] - n_rows)
+        valid_rows = range(n_rows)
 
+        row = 0 - offset
         n_title = len(data['split_title'])
-        for row, text in enumerate(data['split_title'], start=offset):
+        for row, text in enumerate(data['split_title'], start=row):
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1, curses.A_BOLD)
 
-        row = n_title + offset
+        row = n_title - offset
         if row in valid_rows:
             seen = (data['url_full'] in self.config.history)
             link_color = Color.MAGENTA if seen else Color.BLUE
             attr = curses.A_UNDERLINE | link_color
             self.term.add_line(win, '{url}'.format(**data), row, 1, attr)
 
-        row = n_title + offset + 1
+        row = n_title - offset + 1
         if row in valid_rows:
             self.term.add_line(win, '{score} '.format(**data), row, 1)
             text, attr = self.term.get_arrow(data['likes'])
@@ -264,7 +264,7 @@ class SubredditPage(Page):
                 text, attr = 'NSFW', (curses.A_BOLD | Color.RED)
                 self.term.add_line(win, text, attr=attr)
 
-        row = n_title + offset + 2
+        row = n_title - offset + 2
         if row in valid_rows:
             text = '{author}'.format(**data)
             self.term.add_line(win, text, row, 1, Color.GREEN)

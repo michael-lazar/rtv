@@ -33,28 +33,14 @@ class SubmissionPage(Page):
                 submission, term.loader,
                 max_comment_cols=config['max_comment_cols'])
         # Start at the submission post, which is indexed as -1
-        self.nav = Navigator(self.content.get, page_index=-1)
+        self.nav = Navigator(self.content, page_index=-1)
         self.selected_subreddit = None
 
     @SubmissionController.register(Command('SUBMISSION_TOGGLE_COMMENT'))
     def toggle_comment(self):
         "Toggle the selected comment tree between visible and hidden"
 
-        current_index = self.nav.absolute_index
-        self.content.toggle(current_index)
-
-        # This logic handles a display edge case after a comment toggle. We
-        # want to make sure that when we re-draw the page, the cursor stays at
-        # its current absolute position on the screen. In order to do this,
-        # apply a fixed offset if, while inverted, we either try to hide the
-        # bottom comment or toggle any of the middle comments.
-        if self.nav.inverted:
-            data = self.content.get(current_index)
-            if data['hidden'] or self.nav.cursor_index != 0:
-                window = self._subwindows[-1][0]
-                n_rows, _ = window.getmaxyx()
-                self.nav.flip(len(self._subwindows) - 1)
-                self.nav.top_item_height = n_rows
+        self.content.toggle(self.nav.absolute_index)
 
     @SubmissionController.register(Command('SUBMISSION_EXIT'))
     def exit_submission(self):
@@ -74,7 +60,7 @@ class SubmissionPage(Page):
                 self.reddit, url, self.term.loader, order=order,
                 max_comment_cols=self.config['max_comment_cols'])
         if not self.term.loader.exception:
-            self.nav = Navigator(self.content.get, page_index=-1)
+            self.nav = Navigator(self.content, page_index=-1)
 
     @SubmissionController.register(Command('PROMPT'))
     def prompt_subreddit(self):
@@ -178,37 +164,34 @@ class SubmissionPage(Page):
         else:
             self.term.flash()
 
-    def _draw_item(self, win, data, inverted):
+    def _draw_item(self, win, data, offset=0):
 
         if data['type'] == 'MoreComments':
             return self._draw_more_comments(win, data)
         elif data['type'] == 'HiddenComment':
             return self._draw_more_comments(win, data)
         elif data['type'] == 'Comment':
-            return self._draw_comment(win, data, inverted)
+            return self._draw_comment(win, data, offset)
         else:
             return self._draw_submission(win, data)
 
-    def _draw_comment(self, win, data, inverted):
+    def _draw_comment(self, win, data, offset=0):
 
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
 
         # Handle the case where the window is not large enough to fit the text.
-        valid_rows = range(0, n_rows)
-        offset = 0 if not inverted else -(data['n_rows'] - n_rows)
+        valid_rows = range(n_rows)
 
         # If there isn't enough space to fit the comment body on the screen,
         # replace the last line with a notification.
         split_body = data['split_body']
-        if data['n_rows'] > n_rows:
-            # Only when there is a single comment on the page and not inverted
-            if not inverted and len(self._subwindows) == 0:
-                cutoff = data['n_rows'] - n_rows + 1
-                split_body = split_body[:-cutoff]
-                split_body.append('(Not enough space to display)')
+        if data['n_rows'] - 1 > n_rows + offset and len(self._subwindows) == 0:
+            cutoff = data['n_rows'] - n_rows + offset
+            split_body = split_body[:-cutoff]
+            split_body.append('(Not enough space to display)')
 
-        row = offset
+        row = 0 - offset
         if row in valid_rows:
 
             attr = curses.A_BOLD
@@ -235,7 +218,8 @@ class SubmissionPage(Page):
                 text, attr = '[saved]', Color.GREEN
                 self.term.add_line(win, text, attr=attr)
 
-        for row, text in enumerate(split_body, start=offset+1):
+        row = 1 - offset
+        for row, text in enumerate(split_body, start=row):
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1)
 
@@ -243,7 +227,8 @@ class SubmissionPage(Page):
         # build it one segment at a time.
         attr = Color.get_level(data['level'])
         x = 0
-        for y in range(n_rows):
+        is_bottom_cutoff = n_rows < data['n_rows'] - offset
+        for y in range(n_rows if is_bottom_cutoff else n_rows - 1):
             self.term.addch(win, y, x, self.term.vline, attr)
 
         return attr | self.term.vline

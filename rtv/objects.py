@@ -298,214 +298,6 @@ class Color(object):
         return levels[level % len(levels)]
 
 
-class Navigator(object):
-    """
-    Handles the math behind cursor movement and screen paging.
-
-    This class determines how cursor movements effect the currently displayed
-    page. For example, if scrolling down the page, items are drawn from the
-    bottom up. This ensures that the item at the very bottom of the screen
-    (the one selected by cursor) will be fully drawn and not cut off. Likewise,
-    when scrolling up the page, items are drawn from the top down. If the
-    cursor is moved around without hitting the top or bottom of the screen, the
-    current mode is preserved.
-    """
-
-    def __init__(
-            self,
-            valid_page_cb,
-            page_index=0,
-            cursor_index=0,
-            inverted=False,
-            top_item_height=None):
-        """
-        Params:
-            valid_page_callback (func): This function, usually `Content.get`,
-                takes a page index and raises an IndexError if that index falls
-                out of bounds. This is used to determine the upper and lower
-                bounds of the page, i.e. when to stop scrolling.
-            page_index (int): Initial page index.
-            cursor_index (int): Initial cursor index, relative to the page.
-            inverted (bool): Whether the page scrolling is reversed of not.
-                normal - The page is drawn from the top of the screen,
-                    starting with the page index, down to the bottom of
-                    the screen.
-                inverted - The page is drawn from the bottom of the screen,
-                    starting with the page index, up to the top of the
-                    screen.
-            top_item_height (int): If this is set to a non-null value
-            The number of columns that the top-most item
-                should utilize if non-inverted. This is used for a special mode
-                where all items are drawn non-inverted except for the top one.
-        """
-
-        self.page_index = page_index
-        self.cursor_index = cursor_index
-        self.inverted = inverted
-        self.top_item_height = top_item_height
-        self._page_cb = valid_page_cb
-
-    @property
-    def step(self):
-        return 1 if not self.inverted else -1
-
-    @property
-    def position(self):
-        return self.page_index, self.cursor_index, self.inverted
-
-    @property
-    def absolute_index(self):
-        """
-        Return the index of the currently selected item.
-        """
-
-        return self.page_index + (self.step * self.cursor_index)
-
-    def move(self, direction, n_windows):
-        """
-        Move the cursor up or down by the given increment.
-
-        Params:
-            direction (int): `1` will move the cursor down one item and `-1`
-                will move the cursor up one item.
-            n_windows (int): The number of items that are currently being drawn
-                on the screen.
-
-        Returns:
-            valid (bool): Indicates whether or not the attempted cursor move is
-                allowed. E.g. When the cursor is on the last comment,
-                attempting to scroll down any further would not be valid.
-            redraw (bool): Indicates whether or not the screen needs to be
-                redrawn.
-        """
-
-        assert direction in (-1, 1)
-
-        valid, redraw = True, False
-        forward = ((direction * self.step) > 0)
-
-        if forward:
-            if self.page_index < 0:
-                if self._is_valid(0):
-                    # Special case - advance the page index if less than zero
-                    self.page_index = 0
-                    self.cursor_index = 0
-                    redraw = True
-                else:
-                    valid = False
-            else:
-                self.cursor_index += 1
-                if not self._is_valid(self.absolute_index):
-                    # Move would take us out of bounds
-                    self.cursor_index -= 1
-                    valid = False
-                elif self.cursor_index >= (n_windows - 1):
-                    # Flip the orientation and reset the cursor
-                    self.flip(self.cursor_index)
-                    self.cursor_index = 0
-                    self.top_item_height = None
-                    redraw = True
-        else:
-            if self.cursor_index > 0:
-                self.cursor_index -= 1
-                if self.top_item_height and self.cursor_index == 0:
-                    # Selecting the partially displayed item
-                    self.top_item_height = None
-                    redraw = True
-            else:
-                self.page_index -= self.step
-                if self._is_valid(self.absolute_index):
-                    # We have reached the beginning of the page - move the
-                    # index
-                    self.top_item_height = None
-                    redraw = True
-                else:
-                    self.page_index += self.step
-                    valid = False  # Revert
-
-        return valid, redraw
-
-    def move_page(self, direction, n_windows):
-        """
-        Move the page down (positive direction) or up (negative direction).
-
-        Paging down:
-            The post on the bottom of the page becomes the post at the top of
-            the page and the cursor is moved to the top.
-        Paging up:
-            The post at the top of the page becomes the post at the bottom of
-            the page and the cursor is moved to the bottom.
-        """
-
-        assert direction in (-1, 1)
-        assert n_windows >= 0
-
-        # top of subreddit/submission page or only one
-        # submission/reply on the screen: act as normal move
-        if (self.absolute_index < 0) | (n_windows == 0):
-            valid, redraw = self.move(direction, n_windows)
-        else:
-            # first page
-            if self.absolute_index < n_windows and direction < 0:
-                self.page_index = -1
-                self.cursor_index = 0
-                self.inverted = False
-
-                # not submission mode: starting index is 0
-                if not self._is_valid(self.absolute_index):
-                    self.page_index = 0
-                valid = True
-            else:
-                # flip to the direction of movement
-                if ((direction > 0) & (self.inverted is True))\
-                   | ((direction < 0) & (self.inverted is False)):
-                    self.page_index += (self.step * (n_windows-1))
-                    self.inverted = not self.inverted
-                    self.cursor_index \
-                        = (n_windows-(direction < 0)) - self.cursor_index
-
-                valid = False
-                adj = 0
-                # check if reached the bottom
-                while not valid:
-                    n_move = n_windows - adj
-                    if n_move == 0:
-                        break
-
-                    self.page_index += n_move * direction
-                    valid = self._is_valid(self.absolute_index)
-                    if not valid:
-                        self.page_index -= n_move * direction
-                        adj += 1
-
-            redraw = True
-
-        return valid, redraw
-
-    def flip(self, n_windows):
-        """
-        Flip the orientation of the page.
-        """
-
-        assert n_windows >= 0
-        self.page_index += (self.step * n_windows)
-        self.cursor_index = n_windows
-        self.inverted = not self.inverted
-        self.top_item_height = None
-
-    def _is_valid(self, page_index):
-        """
-        Check if a page index will cause entries to fall outside valid range.
-        """
-
-        try:
-            self._page_cb(page_index)
-        except IndexError:
-            return False
-        else:
-            return True
-
-
 class Controller(object):
     """
     Event handler for triggering functions with curses keypresses.
@@ -692,3 +484,154 @@ class KeyMap(object):
         except (AttributeError, ValueError, TypeError):
             raise exceptions.ConfigError('Invalid configuration! "%s" is not a '
                                          'valid key' % key)
+
+
+class Navigator(object):
+    """
+    The navigator holds the state of the main content window. This includes all
+    of the information necessary to draw the screen, including the current
+    position of the cursor and any offsets applied to the top of the page.
+    """
+
+    def __init__(self, content, page_index=0, cursor_index=0, top_offset=0):
+
+        self.page_index = page_index
+        self.cursor_index = cursor_index
+        self.top_offset = top_offset
+
+        self._n_rows = None
+        self._n_cols = None
+        self._n_subwindows = None
+        self._content = content
+
+    @property
+    def absolute_index(self):
+        """
+        Return the index of the currently selected item
+        """
+        return self.page_index + self.cursor_index
+
+    def set_window_params(self, n_rows, n_cols, n_subwindows):
+        """
+        Save the size of the content window, this will be used to make movement
+        calculations in the next loop. This method should be called every time
+        the content window is re-drawn.
+
+        Params:
+            n_rows (int): Height of the content window
+            n_cols (int): Width of the content window
+            n_subwindows (int): The number of submissions currently drawn on
+                the content window.
+        """
+        self._n_rows = n_rows
+        self._n_cols = n_cols
+        self._n_subwindows = n_subwindows
+
+    def move_cursor_up(self):
+        """
+        Attempt to move the cursor up the screen by one item.
+        """
+        self._content.get(self.absolute_index - 1)
+        if self.cursor_index > 1:
+            self.cursor_index -= 1
+        else:
+            self._align_top(self.absolute_index - 1)
+
+    def move_cursor_down(self):
+        """
+        Attempt to move the cursor down the screen by one item.
+        """
+        self._content.get(self.absolute_index + 1)
+        if self.page_index < 0:
+            self.page_index = 0
+        elif self.cursor_index < self._n_subwindows - 2:
+            self.cursor_index += 1
+        else:
+            self._align_bottom(self.absolute_index + 1)
+
+    def move_page_up(self):
+        """
+        Move the page up by making the top item on the screen the bottom item.
+        """
+        self._content.get(self.page_index - 1)
+        if self._n_subwindows > 1:
+            self._align_bottom(self.page_index)
+        else:
+            self._align_bottom(self.page_index - 1)
+
+        # Reset the cursor to the top, this is more pleasant than seeing the
+        # cursor on the bottom of the screen after paging.
+        self.cursor_index = 0
+        self.top_offset = 0
+
+    def move_page_down(self):
+        """
+        Move the page down by making the bottom item on the screen the top item.
+
+        Note that the way that paging is programmed, there is no way to ensure
+        that they are excact inverse operations. Pressing page down followed by
+        page up may put you in a different location than where you started at.
+        """
+        self._content.get(self.page_index + self._n_subwindows)
+        if self._n_subwindows > 1:
+            self._align_top(self.page_index + self._n_subwindows - 1)
+        else:
+            self._align_top(self.page_index + self._n_subwindows)
+
+    def move_page_top(self):
+        """
+        Jump to the top of the screen.
+        """
+        self._align_top(self._content.range[0])
+
+    def move_page_bottom(self):
+        """
+        Jump to the last item index that has been loaded so far. Because PRAW
+        loads items lazily, we can't know for sure where the *true* last
+        comment/submission is, so we go down as far as we have seen before.
+        """
+        self._align_bottom(self._content.range[1])
+
+    def _align_top(self, index):
+        """
+        Set the page paramaters so that the given index lines up with the top
+        of the screen.
+        """
+        available_rows = self._n_rows
+        content_gen = self._content.iterate(index, 1, self._n_cols - 2)
+        for i, data in enumerate(content_gen):
+            if data['n_rows'] >= available_rows:
+                self.page_index = index
+                self.cursor_index = 0
+                self.top_offset = 0
+                break
+
+            available_rows -= data['n_rows']
+        else:
+            # Need to flip the alignment so the page fills up
+            self._align_bottom(self._content.range[1])
+
+    def _align_bottom(self, index):
+        """
+        Set the page paramaters so that the given index lines up with the
+        bottom of the screen. To do this we need to backtrack - start at the
+        bottom of the screen and fill it up with content until we discover
+        where the top should be.
+        """
+        available_rows = self._n_rows
+        content_gen = self._content.iterate(index, -1, self._n_cols - 2)
+        for i, data in enumerate(content_gen):
+            if data['n_rows'] >= available_rows:
+                # We have determined the first item on the page
+                self.page_index = index - i
+                self.cursor_index = i
+                # Throw out the top offset if only one item can fit on the
+                # screen, in this case we want to draw from the top down.
+                self.top_offset = data['n_rows'] - available_rows if i else 0
+                break
+
+            # Add the current item and continue moving up the page
+            available_rows -= data['n_rows']
+        else:
+            # Need to flip the alignment so the page fills up
+            self._align_top(self._content.range[0])
