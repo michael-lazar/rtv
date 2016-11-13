@@ -370,6 +370,18 @@ class SubredditContent(Content):
         except IndexError:
             raise exceptions.SubredditError('No submissions')
 
+    def get_description(self, reddit):
+        """
+        Gets the subreddit's description
+        """
+        # Strip leading and trailing backslashes
+        self.name = self.name.strip(' /')
+        if self.name.startswith('r/'):
+            self.name = self.name[2:]
+
+        subreddit = reddit.get_subreddit(self.name)
+        return subreddit.description
+
     @classmethod
     def from_name(cls, reddit, name, loader, order=None, query=None):
 
@@ -430,6 +442,7 @@ class SubredditContent(Content):
                     'rising': subreddit.get_rising,
                     'new': subreddit.get_new,
                     'controversial': subreddit.get_controversial,
+                    'description': subreddit.description
                     }
             submissions = dispatch[order](limit=None)
 

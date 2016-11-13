@@ -1,0 +1,7 @@
+tornado
+praw>=3.3.0
+six
+requests
+kitchen
+beautifulsoup4==4.5.1
+Markdown==2.6.7
