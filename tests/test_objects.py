@@ -3,11 +3,15 @@ from __future__ import unicode_literals
 
 import time
 import curses
+from collections import OrderedDict
 
+import six
 import pytest
 import requests
 
-from rtv.objects import Color, Controller, Navigator, curses_session
+from rtv import exceptions
+from rtv.objects import Color, Controller, Navigator, Command, KeyMap, \
+    curses_session
 
 try:
     from unittest import mock
@@ -15,9 +19,9 @@ except ImportError:
     import mock
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     # Ensure the thread is properly started/stopped
     with terminal.loader(delay=0, message=u'Hello', trail=u'...'):
@@ -29,9 +33,9 @@ def test_objects_load_screen(terminal, stdscr, ascii):
     assert stdscr.subwin.nlines == 3
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_exception_unhandled(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_exception_unhandled(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     # Raising an exception should clean up the loader properly
     with pytest.raises(Exception):
@@ -42,9 +46,9 @@ def test_objects_load_screen_exception_unhandled(terminal, stdscr, ascii):
     assert not terminal.loader._animator.is_alive()
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_exception_handled(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_exception_handled(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     # Raising a handled exception should get stored on the loaders
     with terminal.loader(delay=0):
@@ -53,13 +57,13 @@ def test_objects_load_screen_exception_handled(terminal, stdscr, ascii):
     assert not terminal.loader._is_running
     assert not terminal.loader._animator.is_alive()
     assert isinstance(terminal.loader.exception, requests.ConnectionError)
-    error_message = 'ConnectionError'.encode('ascii' if ascii else 'utf-8')
+    error_message = 'ConnectionError'.encode('ascii' if use_ascii else 'utf-8')
     stdscr.subwin.addstr.assert_called_with(1, 1, error_message)
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_exception_not_caught(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_exception_not_caught(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     with pytest.raises(KeyboardInterrupt):
         with terminal.loader(delay=0, catch_exception=False):
@@ -70,9 +74,9 @@ def test_objects_load_screen_exception_not_caught(terminal, stdscr, ascii):
     assert terminal.loader.exception is None
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_keyboard_interrupt(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_keyboard_interrupt(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     # Raising a KeyboardInterrupt should be also be stored
     with terminal.loader(delay=0):
@@ -83,9 +87,9 @@ def test_objects_load_screen_keyboard_interrupt(terminal, stdscr, ascii):
     assert isinstance(terminal.loader.exception, KeyboardInterrupt)
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_escape(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_escape(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     stdscr.getch.return_value = terminal.ESCAPE
 
@@ -106,9 +110,9 @@ def test_objects_load_screen_escape(terminal, stdscr, ascii):
     assert kill.called
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_initial_delay(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_initial_delay(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     # If we don't reach the initial delay nothing should be drawn
     with terminal.loader(delay=0.1):
@@ -116,9 +120,9 @@ def test_objects_load_screen_initial_delay(terminal, stdscr, ascii):
     assert not stdscr.subwin.addstr.called
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_nested(terminal, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_nested(terminal, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     with terminal.loader(message='Outer'):
         with terminal.loader(message='Inner'):
@@ -131,9 +135,9 @@ def test_objects_load_screen_nested(terminal, ascii):
     assert not terminal.loader._animator.is_alive()
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_objects_load_screen_nested_complex(terminal, stdscr, ascii):
-    terminal.ascii = ascii
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_objects_load_screen_nested_complex(terminal, stdscr, use_ascii):
+    terminal.config['ascii'] = use_ascii
 
     with terminal.loader(message='Outer') as outer_loader:
         assert outer_loader.depth == 1
@@ -152,7 +156,7 @@ def test_objects_load_screen_nested_complex(terminal, stdscr, ascii):
     assert terminal.loader.depth == 0
     assert not terminal.loader._is_running
     assert not terminal.loader._animator.is_alive()
-    error_message = 'ConnectionError'.encode('ascii' if ascii else 'utf-8')
+    error_message = 'ConnectionError'.encode('ascii' if use_ascii else 'utf-8')
     stdscr.subwin.addstr.assert_called_once_with(1, 1, error_message)
 
 
@@ -165,7 +169,6 @@ def test_objects_color(stdscr):
         assert getattr(Color, color) == curses.A_NORMAL
 
     Color.init()
-    assert curses.use_default_colors.called
 
     # Check that all colors are populated
     for color in colors:
@@ -179,6 +182,7 @@ def test_objects_curses_session(stdscr):
         pass
     assert curses.initscr.called
     assert curses.endwin.called
+    assert curses.use_default_colors.called
     curses.initscr.reset_mock()
     curses.endwin.reset_mock()
 
@@ -246,6 +250,147 @@ def test_objects_controller():
     assert controller_c.trigger('3') is None
 
 
+def test_objects_controller_double_press():
+
+    class ControllerA(Controller):
+        character_map = {}
+
+    @ControllerA.register(Command('F1'))
+    def call_page(_):
+        return '1'
+
+    @ControllerA.register(Command('F2'))
+    def call_page(_):
+        return '2'
+
+    keymap = KeyMap({'F1': ['gg'], 'F2': ['a']})
+    controller_a = ControllerA(None, keymap=keymap)
+
+    # Double press
+    controller_a.last_char = None
+    assert controller_a.trigger('g') is None
+    assert controller_a.trigger('g') == '1'
+    assert controller_a.trigger('g') is None
+
+    # Executing another command cancels the chain
+    controller_a.last_char = None
+    assert controller_a.trigger('g') is None
+    assert controller_a.trigger('a') == '2'
+    assert controller_a.trigger('g') is None
+
+    # Pressing an invalid key cancels the chain
+    controller_a.last_char = None
+    assert controller_a.trigger('g') is None
+    assert controller_a.trigger('b') is None
+    assert controller_a.trigger('g') is None
+
+
+def test_objects_controller_command():
+
+    class ControllerA(Controller):
+        character_map = {}
+
+    class ControllerB(ControllerA):
+        character_map = {}
+
+    @ControllerA.register(Command('REFRESH'))
+    def call_page(_):
+        return 'a1'
+
+    @ControllerA.register(Command('UPVOTE'))
+    def call_page(_):
+        return 'a2'
+
+    @ControllerB.register(Command('REFRESH'))
+    def call_page(_):
+        return 'b1'
+
+    # Two commands aren't allowed to share keys
+    keymap = KeyMap({'REFRESH': [0x10, 0x11], 'UPVOTE': [0x11, 0x12]})
+    with pytest.raises(exceptions.ConfigError) as e:
+        ControllerA(None, keymap=keymap)
+    assert 'ControllerA' in six.text_type(e)
+
+    # Reset the character map
+    ControllerA.character_map = {Command('REFRESH'): 0, Command('UPVOTE'): 0}
+
+    # A double command can't share the first key with a single comand
+    keymap = KeyMap(OrderedDict([('REFRESH', ['gg']), ('UPVOTE', ['g'])]))
+    with pytest.raises(exceptions.ConfigError) as e:
+        ControllerA(None, keymap=keymap)
+    assert 'ControllerA' in six.text_type(e)
+
+    # It doesn't matter which order they were entered
+    keymap = KeyMap(OrderedDict([('UPVOTE', ['g']), ('REFRESH', ['gg'])]))
+    with pytest.raises(exceptions.ConfigError) as e:
+        ControllerA(None, keymap=keymap)
+    assert 'ControllerA' in six.text_type(e)
+
+    # Reset the character map
+    ControllerA.character_map = {Command('REFRESH'): 0, Command('UPVOTE'): 0}
+
+    # All commands must be defined in the keymap
+    keymap = KeyMap({'REFRESH': [0x10]})
+    with pytest.raises(exceptions.ConfigError) as e:
+        ControllerB(None, keymap=keymap)
+    assert 'UPVOTE' in six.text_type(e)
+
+
+def test_objects_command():
+
+    c1 = Command("REFRESH")
+    c2 = Command("refresh")
+    c3 = Command("EXIT")
+
+    assert c1 == c2
+    assert c1 != c3
+
+    keymap = {c1: None, c2: None, c3: None}
+    assert len(keymap) == 2
+    assert c1 in keymap
+    assert c2 in keymap
+    assert c3 in keymap
+
+
+def test_objects_keymap():
+
+    bindings = {
+        'refresh': ['a', 0x12, '<LF>', '<KEY_UP>'],
+        'exit': [],
+        Command('UPVOTE'): ['b', '<KEY_F5>'],
+        Command('PAGE_TOP'): ['gg']
+    }
+
+    keymap = KeyMap(bindings)
+    assert keymap.get(Command('REFRESH')) == ['a', 0x12, '<LF>', '<KEY_UP>']
+    assert keymap.get(Command('exit')) == []
+    assert keymap.get(Command('PAGE_TOP')) == ['gg']
+    assert keymap.get('upvote') == ['b', '<KEY_F5>']
+    with pytest.raises(exceptions.ConfigError) as e:
+        keymap.get('downvote')
+    assert 'DOWNVOTE' in six.text_type(e)
+
+    # Updating the bindings wipes out the old ones
+    bindings = {'refresh': ['a', 0x12, '<LF>', '<KEY_UP>']}
+    keymap.set_bindings(bindings)
+    assert keymap.get('refresh')
+    with pytest.raises(exceptions.ConfigError) as e:
+        keymap.get('upvote')
+    assert 'UPVOTE' in six.text_type(e)
+
+    # Strings should be parsed correctly into keys
+    assert KeyMap.parse('a') == 97
+    assert KeyMap.parse(0x12) == 18
+    assert KeyMap.parse('<LF>') == 10
+    assert KeyMap.parse('<KEY_UP>') == 259
+    assert KeyMap.parse('<KEY_F5>') == 269
+    assert KeyMap.parse('gg') == (103, 103)
+    for key in ('', None, '<lf>', '<DNS>', '<KEY_UD>', '♬', 'ggg'):
+        with pytest.raises(exceptions.ConfigError) as e:
+            keymap.parse(key)
+        assert six.text_type(key) in six.text_type(e)
+
+
 def test_objects_navigator_properties():
 
     def valid_page_cb(_):
@@ -255,11 +400,13 @@ def test_objects_navigator_properties():
     assert nav.step == 1
     assert nav.position == (0, 0, False)
     assert nav.absolute_index == 0
+    assert nav.top_item_height is None
 
-    nav = Navigator(valid_page_cb, 5, 2, True)
+    nav = Navigator(valid_page_cb, 5, 2, True, 10)
     assert nav.step == -1
     assert nav.position == (5, 2, True)
     assert nav.absolute_index == 3
+    assert nav.top_item_height == 10
 
 
 def test_objects_navigator_move():
@@ -269,6 +416,7 @@ def test_objects_navigator_move():
             raise IndexError()
 
     nav = Navigator(valid_page_cb)
+    nav.top_item_height = 5
 
     # Try to scroll up past the first item
     valid, redraw = nav.move(-1, 2)
@@ -284,6 +432,7 @@ def test_objects_navigator_move():
 
     # Scroll down, reach last item on the page and flip the screen
     valid, redraw = nav.move(1, 3)
+    assert nav.top_item_height is None
     assert nav.page_index == 2
     assert nav.cursor_index == 0
     assert nav.inverted

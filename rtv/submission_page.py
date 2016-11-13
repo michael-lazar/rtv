@@ -5,10 +5,10 @@ import time
 import curses
 
 from . import docs
-from .content import SubmissionContent
+from .content import SubmissionContent, SubredditContent
 from .page import Page, PageController, logged_in
-from .objects import Navigator, Color
-from .terminal import Terminal
+from .objects import Navigator, Color, Command
+from .exceptions import TemporaryFileError
 
 
 class SubmissionController(PageController):
@@ -17,36 +17,52 @@ class SubmissionController(PageController):
 
 class SubmissionPage(Page):
 
+    FOOTER = docs.FOOTER_SUBMISSION
+
     def __init__(self, reddit, term, config, oauth, url=None, submission=None):
         super(SubmissionPage, self).__init__(reddit, term, config, oauth)
 
+        self.controller = SubmissionController(self, keymap=config.keymap)
+
         if url:
-            self.content = SubmissionContent.from_url(reddit, url, term.loader)
+            self.content = SubmissionContent.from_url(
+                reddit, url, term.loader,
+                max_comment_cols=config['max_comment_cols'])
         else:
-            self.content = SubmissionContent(submission, term.loader)
-        self.controller = SubmissionController(self)
+            self.content = SubmissionContent(
+                submission, term.loader,
+                max_comment_cols=config['max_comment_cols'])
         # Start at the submission post, which is indexed as -1
         self.nav = Navigator(self.content.get, page_index=-1)
+        self.selected_subreddit = None
 
-    @SubmissionController.register(curses.KEY_RIGHT, 'l', ' ')
+    @SubmissionController.register(Command('SUBMISSION_TOGGLE_COMMENT'))
     def toggle_comment(self):
         "Toggle the selected comment tree between visible and hidden"
 
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
-        if self.nav.inverted:
-            # Reset the navigator so that the cursor is at the bottom of the
-            # page. This is a workaround to handle if folding the comment
-            # causes the cursor index to go out of bounds.
-            self.nav.page_index, self.nav.cursor_index = current_index, 0
 
-    @SubmissionController.register(curses.KEY_LEFT, 'h')
+        # This logic handles a display edge case after a comment toggle. We
+        # want to make sure that when we re-draw the page, the cursor stays at
+        # its current absolute position on the screen. In order to do this,
+        # apply a fixed offset if, while inverted, we either try to hide the
+        # bottom comment or toggle any of the middle comments.
+        if self.nav.inverted:
+            data = self.content.get(current_index)
+            if data['hidden'] or self.nav.cursor_index != 0:
+                window = self._subwindows[-1][0]
+                n_rows, _ = window.getmaxyx()
+                self.nav.flip(len(self._subwindows) - 1)
+                self.nav.top_item_height = n_rows
+
+    @SubmissionController.register(Command('SUBMISSION_EXIT'))
     def exit_submission(self):
         "Close the submission and return to the subreddit page"
 
         self.active = False
 
-    @SubmissionController.register(curses.KEY_F5, 'r')
+    @SubmissionController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
         "Re-download comments and reset the page index"
 
@@ -55,30 +71,49 @@ class SubmissionPage(Page):
 
         with self.term.loader('Refreshing page'):
             self.content = SubmissionContent.from_url(
-                self.reddit, url, self.term.loader, order=order)
+                self.reddit, url, self.term.loader, order=order,
+                max_comment_cols=self.config['max_comment_cols'])
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get, page_index=-1)
 
-    @SubmissionController.register(curses.KEY_ENTER, Terminal.RETURN, 'o')
+    @SubmissionController.register(Command('PROMPT'))
+    def prompt_subreddit(self):
+        "Open a prompt to navigate to a different subreddit"
+
+        name = self.term.prompt_input('Enter page: /')
+        if name is not None:
+            with self.term.loader('Loading page'):
+                content = SubredditContent.from_name(
+                    self.reddit, name, self.term.loader)
+            if not self.term.loader.exception:
+                self.selected_subreddit = content
+                self.active = False
+
+    @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):
         "Open the selected item with the webbrowser"
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         url = data.get('permalink')
         if url:
             self.term.open_browser(url)
         else:
             self.term.flash()
 
-    @SubmissionController.register('y')
-    @logged_in
-    def save_comment(self):
-        comment = self.content.get(self.nav.absolute_index).get('object')
-        if comment:
-            with self.term.loader('Saving comment'):
-                comment.save()
+    @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
+    def open_pager(self):
+        "Open the selected item with the system's pager"
+        data = self.get_selected_item()
+        if data['type'] == 'Submission':
+            text = '\n\n'.join((data['permalink'], data['text']))
+            self.term.open_pager(text)
+        elif data['type'] == 'Comment':
+            text = '\n\n'.join((data['permalink'], data['body']))
+            self.term.open_pager(text)
+        else:
+            self.term.flash()
 
-    @SubmissionController.register('c')
+    @SubmissionController.register(Command('SUBMISSION_POST'))
     @logged_in
     def add_comment(self):
         """
@@ -89,7 +124,7 @@ class SubmissionPage(Page):
             Comment - add a comment reply
         """
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data['type'] == 'Submission':
             body = data['text']
             reply = data['object'].add_comment
@@ -109,25 +144,37 @@ class SubmissionPage(Page):
             type=data['type'].lower(),
             content=content)
 
-        comment = self.term.open_editor(comment_info)
-        if not comment:
-            self.term.show_notification('Canceled')
-            return
+        with self.term.open_editor(comment_info) as comment:
+            if not comment:
+                self.term.show_notification('Canceled')
+                return
 
-        with self.term.loader('Posting', delay=0):
-            reply(comment)
-            # Give reddit time to process the submission
-            time.sleep(2.0)
-        if not self.term.loader.exception:
-            self.refresh_content()
+            with self.term.loader('Posting', delay=0):
+                reply(comment)
+                # Give reddit time to process the submission
+                time.sleep(2.0)
 
-    @SubmissionController.register('d')
+            if self.term.loader.exception is None:
+                self.refresh_content()
+            else:
+                raise TemporaryFileError()
+
+    @SubmissionController.register(Command('DELETE'))
     @logged_in
     def delete_comment(self):
-        "Delete a comment as long as it is not the current submission"
+        "Delete the selected comment"
 
-        if self.nav.absolute_index != -1:
+        if self.get_selected_item()['type'] == 'Comment':
             self.delete_item()
+        else:
+            self.term.flash()
+
+    @SubmissionController.register(Command('SUBMISSION_OPEN_IN_URLVIEWER'))
+    def comment_urlview(self):
+        data = self.get_selected_item()
+        comment = data.get('body') or data.get('text') or data.get('url_full')
+        if comment:
+            self.term.open_urlview(comment)
         else:
             self.term.flash()
 
@@ -151,6 +198,16 @@ class SubmissionPage(Page):
         valid_rows = range(0, n_rows)
         offset = 0 if not inverted else -(data['n_rows'] - n_rows)
 
+        # If there isn't enough space to fit the comment body on the screen,
+        # replace the last line with a notification.
+        split_body = data['split_body']
+        if data['n_rows'] > n_rows:
+            # Only when there is a single comment on the page and not inverted
+            if not inverted and len(self._subwindows) == 0:
+                cutoff = data['n_rows'] - n_rows + 1
+                split_body = split_body[:-cutoff]
+                split_body.append('(Not enough space to display)')
+
         row = offset
         if row in valid_rows:
 
@@ -171,14 +228,14 @@ class SubmissionPage(Page):
                 self.term.add_line(win, text, attr=attr)
 
             if data['stickied']:
-                text, attr = self.term.stickied
+                text, attr = '[stickied]', Color.GREEN
                 self.term.add_line(win, text, attr=attr)
 
             if data['saved']:
-                text, attr = 'SAVED', (curses.A_BOLD | Color.BLUE)
+                text, attr = '[saved]', Color.GREEN
                 self.term.add_line(win, text, attr=attr)
 
-        for row, text in enumerate(data['split_body'], start=offset+1):
+        for row, text in enumerate(split_body, start=offset+1):
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1)
 
@@ -197,7 +254,8 @@ class SubmissionPage(Page):
         n_cols -= 1
 
         self.term.add_line(win, '{body}'.format(**data), 0, 1)
-        self.term.add_line(win, ' [{count}]'.format(**data), attr=curses.A_BOLD)
+        self.term.add_line(
+            win, ' [{count}]'.format(**data), attr=curses.A_BOLD)
 
         attr = Color.get_level(data['level'])
         self.term.addch(win, 0, 0, self.term.vline, attr)
@@ -250,7 +308,7 @@ class SubmissionPage(Page):
             self.term.add_line(win, text, attr=attr)
 
         if data['saved']:
-            text, attr = 'SAVED', (curses.A_BOLD | Color.RED)
+            text, attr = '[saved]', Color.GREEN
             self.term.add_line(win, text, attr=attr)
 
         win.border()

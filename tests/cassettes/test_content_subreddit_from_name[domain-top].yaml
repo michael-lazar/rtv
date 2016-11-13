@@ -1,0 +1,55 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [rtv test suite PRAW/3.5.0 Python/3.4.0 b'Linux-3.13.0-92-generic-x86_64-with-Ubuntu-14.04-trusty']
+    method: GET
+    uri: https://api.reddit.com/domain/python.org/top.json?limit=1024
+  response:
+    body:
+      string: !!binary |
+        H4sIAOcXrFcC/3VUyW7bMBD9FUHnJlKcONu5vfUQoEAvQUFQ4tgkzEXhYscw/O+doaRoKXohMAtn
+        3nsz5KU8KCvK16L8qUJUdl9+K0rBI0fXpTROSB4khcnfSqWFB4v2++XrYrxf3BHOcEUpZXeO0tlb
+        53PRhlsLgjVnDNmkNboMCMUZmAao0OWKrpAaD0KoSAXecgG6HEDvInxGJqPRU4HRPQLU6gBhFk77
+        PYSIXYPzlDT4UwDPPHTopOz3P7lUmzywDGnK1Moe2E5z5dnQZwioTP3hc/siJXXeeWfYoMiQskex
+        MrEaDe5RvGM2d1wHIDW1ag8LTw8JkfHg7IwHT6iDp4aGR6kgKWq5ghpa5wHNLV3oOu+OK7XR4dnd
+        86yfVELkaY4OmwxrnTFgszAbdEWZTGO5ItWzxl8TYr0Gccs2H7I+UwwLAhuBjEURZlzQnInahsBa
+        zcM/ZP8fF+6UtSFV50Nb7RFfiu3BuCPXg7Yz1SIOQS1SaZRTggqMtmwV77kPKR14w4kUyVH5ql/b
+        ahSy6rek6qBj280jO3KveKOBCUBqnkflLAtnG/lnlZfYrdbCckN64kNj08K1yKSX9e7hqX6p7+vH
+        +pY0ST6PSsbYhdeqOp1Ot9NDrAQcCUig46ZGOLnlQvPlon8khGjxZ5iPNKqoM6S3H28FFiluborf
+        A63i+0Sr+JVpzfCyFNsB8/PTw2bALPq/J6kgM6Xxf3Bi/UyPKqy2iXZ2ShpfeEfG9nqlOxz/CHo9
+        Q6yBXb+gZF+vfwGPEC+tAgUAAA==
+    headers:
+      CF-RAY: [2d098d03613b071f-SJC]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Length: ['589']
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Thu, 11 Aug 2016 06:15:03 GMT']
+      Server: [cloudflare-nginx]
+      Set-Cookie: ['__cfduid=dc687d02d2ed52376ec4a68a3093ce4b31470896102; expires=Fri,
+          11-Aug-17 06:15:02 GMT; path=/; domain=.reddit.com; HttpOnly', 'loid=hSvo6Y4uOuq8xFTg7K;
+          Domain=reddit.com; Max-Age=63071999; Path=/; expires=Sat, 11-Aug-2018 06:15:03
+          GMT; secure', 'loidcreated=2016-08-11T06%3A15%3A03.202Z; Domain=reddit.com;
+          Max-Age=63071999; Path=/; expires=Sat, 11-Aug-2018 06:15:03 GMT; secure']
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
+      Vary: [accept-encoding]
+      X-Moose: [majestic]
+      access-control-allow-origin: ['*']
+      access-control-expose-headers: ['X-Reddit-Tracking, X-Moose']
+      cache-control: ['max-age=0, must-revalidate']
+      set-cookie: ['__cfduid=dc687d02d2ed52376ec4a68a3093ce4b31470896102; expires=Fri,
+          11-Aug-17 06:15:02 GMT; path=/; domain=.reddit.com; HttpOnly', 'loid=hSvo6Y4uOuq8xFTg7K;
+          Domain=reddit.com; Max-Age=63071999; Path=/; expires=Sat, 11-Aug-2018 06:15:03
+          GMT; secure', 'loidcreated=2016-08-11T06%3A15%3A03.202Z; Domain=reddit.com;
+          Max-Age=63071999; Path=/; expires=Sat, 11-Aug-2018 06:15:03 GMT; secure']
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-reddit-tracking: ['https://pixel.redditmedia.com/pixel/of_destiny.png?v=y7P6l1M%2BIyXPqsLoGouB4NJKS7CeEUBYm7XR9DOYwFiq7y3gtWf9sqMDoK2jsJ3L6yYXljcr3rEz9lqBdwfM4x%2FUf6DJ78yW']
+      x-ua-compatible: [IE=edge]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+version: 1

@@ -2,6 +2,14 @@
 RTV Changelog
 =============
 
+.. _1.13.0: http://github.com/michael-lazar/rtv/releases/tag/v1.13.0
+.. _1.12.1: http://github.com/michael-lazar/rtv/releases/tag/v1.12.1
+.. _1.12.0: http://github.com/michael-lazar/rtv/releases/tag/v1.12.0
+.. _1.11.0: http://github.com/michael-lazar/rtv/releases/tag/v1.11.0
+.. _1.10.0: http://github.com/michael-lazar/rtv/releases/tag/v1.10.0
+.. _1.9.1: http://github.com/michael-lazar/rtv/releases/tag/v1.9.1
+.. _1.9.0: http://github.com/michael-lazar/rtv/releases/tag/v1.9.0
+.. _1.8.1: http://github.com/michael-lazar/rtv/releases/tag/v1.8.1
 .. _1.8.0: http://github.com/michael-lazar/rtv/releases/tag/v1.8.0
 .. _1.7.0: http://github.com/michael-lazar/rtv/releases/tag/v1.7.0
 .. _1.6.1: http://github.com/michael-lazar/rtv/releases/tag/v1.6.1
@@ -15,10 +23,154 @@ RTV Changelog
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
 
+--------------------
+1.13.0_ (2016-10-17)
+--------------------
+Features
 
-------------------
-1.8.0_ (2015-12-20
-------------------
+* Pressing `2` or `5` twice now opens a menu to select the time frame. 
+* Added the `hide_username` config option.
+* Added the `max_comment_cols` config option.
+
+Bugfixes
+
+* Fixed the terminal title from displaying b'' in py3.
+* Flipped j and k in the documentation.
+* Fixed bug when selecting post order for the front page.
+* Added more descriptive error messages for invalid subreddits.
+
+--------------------
+1.12.1_ (2016-09-27)
+--------------------
+Bugfixes
+
+* Fixed security vulnerability where malicious URLs could inject python code.
+* No longer hangs when using mpv on long videos.
+* Now falls back to ascii mode when the system locale is not utf-8.
+
+--------------------
+1.12.0_ (2016-08-25)
+--------------------
+Features
+
+* Added a help banner with common key bindings.
+* Added `gg` and `G` bindings to jump to the top and bottom the the page.
+* Updated help screen now opens with the system PAGER.
+* The `/` prompt now works from inside of submissions.
+* Added an Instagram parser to extract images and videos from urls.
+
+Bugixes
+
+* Shortened reddit links (https://redd.it/) will now work with ``-s``.
+
+Codebase
+  
+* Removed the Tornado dependency from the project.
+* Added a requirements.txt file.
+* Fixed a bunch of tests where cassettes were not being generated.
+* Added compatability for pytest-xdist.
+
+
+--------------------
+1.11.0_ (2016-08-02)
+--------------------
+Features
+
+* Added the ability to open image and video urls with the user's mailcap file.
+* New ``--enable-media`` and ``copy-mailcap`` commands to support mailcap.
+* New command `w` to save submissions and comments.
+* New command `p` to toggle between the front page and the last visited subreddit.
+* New command `S` to view subscribed multireddits.
+* Extended ``/`` prompt to work with users, multireddits, and domains.
+* New page ``/u/saved`` to view saved submissions.
+* You can now specify the sort period by appending **-(period)**,
+  E.g. **/r/python/top-week**.
+
+Bugfixes
+
+* Terminal title is now only set when $DISPLAY is present.
+* Urlview now works on the submission as well as comments.
+* Fixed text encoding when using urlview.
+* Removed `futures` dependency from the python 3 wheel.
+* Unhandled resource warnings on exit are now ignored.
+
+Documentation
+
+* Various README updates.
+* Updated asciinema demo video.
+* Added script to update the AUTHORS.rst file.
+
+--------------------
+1.10.0_ (2016-07-11)
+--------------------
+Features
+
+* New command, `b` extracts urls from comments using urlviewer.
+* Comment files will no longer be destroyed if RTV encounters an error while posting.
+* The terminal title now displays the subreddit name/url.
+
+Bugfixes
+
+* Fixed crash when entering empty or invalid subreddit name.
+* Fixed crash when opening x-posts linked to subreddits.
+* Fixed a bug where the terminal title wasn't getting set.
+* **/r/me** is now displayed as *My Submissions* in the header.
+
+-------------------
+1.9.1_ (2016-06-13)
+-------------------
+Features
+
+* Better support for */r/random*.
+* Added a ``monochrome`` config setting to disable all color.
+* Improved cursor positioning when expanding/hiding comments.
+* Show ``(not enough space)`` when comments are too large.
+
+Bugfixes
+
+* Fixed permissions when copying the config file.
+* Fixed bug where submission indicies were duplicated when paging.
+* Specify praw v3.4.0 to avoid installing praw 4.
+
+Documentation
+
+* Added section to the readme on Arch Linux installation.
+* Updated a few argument descriptions.
+* Added a proper ascii logo.
+
+-------------------
+1.9.0_ (2016-04-05)
+-------------------
+Features
+
+* You can now open long posts/comments with the $PAGER by pressing `l`.
+* Changed a couple of visual separators.
+
+Documentation
+
+* Added testing instructions to the FAQ.
+
+-------------------
+1.8.1_ (2016-03-01)
+-------------------
+Features
+
+* All keys are now rebindable through the config.
+* New bindings - ctrl-d and ctrl-u for page up / page down.
+* Added tag for stickied posts and comments.
+* Added bullet between timestamp and comment count.
+
+Bugfixes
+
+* Links starting with np.reddit.com no longer return `Forbidden`.
+
+Documentation
+
+* Updated README.
+
+-------------------
+1.8.0_ (2015-12-20)
+-------------------
 Features
 
 * A banner on the top of the page now displays the selected page sort order.

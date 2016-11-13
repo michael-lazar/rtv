@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
 import os
 import curses
 import codecs
@@ -10,6 +11,7 @@ import pytest
 
 from rtv.docs import HELP, COMMENT_EDIT_FILE
 from rtv.objects import Color
+from rtv.exceptions import TemporaryFileError, MailcapEntryNotFound
 
 try:
     from unittest import mock
@@ -36,7 +38,7 @@ def test_terminal_properties(terminal, config):
     with mock.patch('rtv.terminal.sys') as sys, \
             mock.patch.dict('os.environ', {'DISPLAY': ''}):
         sys.platform = 'darwin'
-        assert terminal.display is True
+        assert terminal.display is False
 
     terminal._display = None
     with mock.patch.dict('os.environ', {'DISPLAY': ':0', 'BROWSER': 'w3m'}):
@@ -50,7 +52,7 @@ def test_terminal_properties(terminal, config):
     assert terminal.get_arrow(None) is not None
     assert terminal.get_arrow(True) is not None
     assert terminal.get_arrow(False) is not None
-    assert terminal.ascii == config['ascii']
+    assert terminal.config == config
     assert terminal.loader is not None
 
     assert terminal.MIN_HEIGHT is not None
@@ -92,7 +94,7 @@ def test_terminal_functions(terminal):
 
 def test_terminal_clean_ascii(terminal):
 
-    terminal.ascii = True
+    terminal.config['ascii'] = True
 
     # unicode returns ascii
     text = terminal.clean('hello ❤')
@@ -112,7 +114,7 @@ def test_terminal_clean_ascii(terminal):
 
 def test_terminal_clean_unicode(terminal):
 
-    terminal.ascii = False
+    terminal.config['ascii'] = False
 
     # unicode returns utf-8
     text = terminal.clean('hello ❤')
@@ -145,20 +147,20 @@ def test_terminal_clean_ncols(terminal):
     assert text.decode('utf-8') == 'ｈｅｌｌ'
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_terminal_clean_unescape_html(terminal, ascii):
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_terminal_clean_unescape_html(terminal, use_ascii):
 
     # HTML characters get decoded
-    terminal.ascii = ascii
+    terminal.config['ascii'] = use_ascii
     text = terminal.clean('&lt;')
     assert isinstance(text, six.binary_type)
-    assert text.decode('ascii' if ascii else 'utf-8') == '<'
+    assert text.decode('ascii' if use_ascii else 'utf-8') == '<'
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_terminal_add_line(terminal, stdscr, ascii):
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_terminal_add_line(terminal, stdscr, use_ascii):
 
-    terminal.ascii = ascii
+    terminal.config['ascii'] = use_ascii
 
     terminal.add_line(stdscr, 'hello')
     assert stdscr.addstr.called_with(0, 0, 'hello'.encode('ascii'))
@@ -175,17 +177,24 @@ def test_terminal_add_line(terminal, stdscr, ascii):
     stdscr.reset_mock()
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_show_notification(terminal, stdscr, ascii):
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_show_notification(terminal, stdscr, use_ascii):
 
-    terminal.ascii = ascii
+    terminal.config['ascii'] = use_ascii
 
-    # The whole message should fit in 40x80
+    # Multi-line messages should be automatically split
+    text = 'line 1\nline 2\nline3'
+    terminal.show_notification(text)
+    assert stdscr.subwin.nlines == 5
+    assert stdscr.subwin.addstr.call_count == 3
+    stdscr.reset_mock()
+
+    # The text should be trimmed to fit 40x80
     text = HELP.strip().splitlines()
     terminal.show_notification(text)
-    assert stdscr.subwin.nlines == len(text) + 2
-    assert stdscr.subwin.ncols == 80
-    assert stdscr.subwin.addstr.call_count == len(text)
+    assert stdscr.subwin.nlines == 40
+    assert stdscr.subwin.ncols <= 80
+    assert stdscr.subwin.addstr.call_count == 38
     stdscr.reset_mock()
 
     # The text should be trimmed to fit in 20x20
@@ -197,10 +206,10 @@ def test_show_notification(terminal, stdscr, ascii):
     assert stdscr.subwin.addstr.call_count == 13
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_text_input(terminal, stdscr, ascii):
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_text_input(terminal, stdscr, use_ascii):
 
-    terminal.ascii = ascii
+    terminal.config['ascii'] = use_ascii
     stdscr.nlines = 1
 
     # Text will be wrong because stdscr.inch() is not implemented
@@ -218,17 +227,16 @@ def test_text_input(terminal, stdscr, ascii):
     assert terminal.text_input(stdscr, allow_resize=False) is None
 
 
-@pytest.mark.parametrize('ascii', [True, False])
-def test_prompt_input(terminal, stdscr, ascii):
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_prompt_input(terminal, stdscr, use_ascii):
 
-    terminal.ascii = ascii
+    terminal.config['ascii'] = use_ascii
     window = stdscr.derwin()
 
     window.getch.side_effect = [ord('h'), ord('i'), terminal.RETURN]
     assert isinstance(terminal.prompt_input('hi'), six.text_type)
 
-    attr = Color.CYAN | curses.A_BOLD
-    stdscr.subwin.addstr.assert_called_with(0, 0, 'hi'.encode('ascii'), attr)
+    stdscr.subwin.addstr.assert_called_with(0, 0, 'hi'.encode('ascii'))
     assert window.nlines == 1
     assert window.ncols == 78
 
@@ -245,31 +253,33 @@ def test_prompt_input(terminal, stdscr, ascii):
 def test_prompt_y_or_n(terminal, stdscr):
 
     stdscr.getch.side_effect = [ord('y'), ord('N'), terminal.ESCAPE, ord('a')]
-    attr = Color.CYAN | curses.A_BOLD
     text = 'hi'.encode('ascii')
 
     # Press 'y'
     assert terminal.prompt_y_or_n('hi')
-    stdscr.subwin.addstr.assert_called_with(0, 0, text, attr)
+    stdscr.subwin.addstr.assert_called_with(0, 0, text)
     assert not curses.flash.called
 
     # Press 'N'
     assert not terminal.prompt_y_or_n('hi')
-    stdscr.subwin.addstr.assert_called_with(0, 0, text, attr)
+    stdscr.subwin.addstr.assert_called_with(0, 0, text)
     assert not curses.flash.called
 
     # Press Esc
     assert not terminal.prompt_y_or_n('hi')
-    stdscr.subwin.addstr.assert_called_with(0, 0, text, attr)
+    stdscr.subwin.addstr.assert_called_with(0, 0, text)
     assert not curses.flash.called
 
     # Press an invalid key
     assert not terminal.prompt_y_or_n('hi')
-    stdscr.subwin.addstr.assert_called_with(0, 0, text, attr)
+    stdscr.subwin.addstr.assert_called_with(0, 0, text)
     assert curses.flash.called
 
 
-def test_open_editor(terminal):
+@pytest.mark.parametrize('use_ascii', [True, False])
+def test_open_editor(terminal, use_ascii):
+
+    terminal.config['ascii'] = use_ascii
 
     comment = COMMENT_EDIT_FILE.format(content='#| This is a comment! ❤')
     data = {'filename': None}
@@ -284,11 +294,172 @@ def test_open_editor(terminal):
     with mock.patch('subprocess.Popen', autospec=True) as Popen:
         Popen.side_effect = side_effect
 
-        reply_text = terminal.open_editor(comment)
-        assert reply_text == 'This is an amended comment! ❤'
+        with terminal.open_editor(comment) as reply_text:
+            assert reply_text == 'This is an amended comment! ❤'
+            assert os.path.isfile(data['filename'])
+            assert curses.endwin.called
+            assert curses.doupdate.called
         assert not os.path.isfile(data['filename'])
-        assert curses.endwin.called
-        assert curses.doupdate.called
+
+
+def test_open_editor_error(terminal):
+
+    with mock.patch('subprocess.Popen', autospec=True) as Popen, \
+            mock.patch.object(terminal, 'show_notification'):
+
+        # Invalid editor
+        Popen.side_effect = OSError
+        with terminal.open_editor('hello') as text:
+            assert text == 'hello'
+        assert 'Could not open' in terminal.show_notification.call_args[0][0]
+
+        data = {'filename': None}
+
+        def side_effect(args):
+            data['filename'] = args[1]
+            return mock.Mock()
+
+        # Temporary File Errors don't delete the file
+        Popen.side_effect = side_effect
+        with terminal.open_editor('test'):
+            assert os.path.isfile(data['filename'])
+            raise TemporaryFileError()
+        assert os.path.isfile(data['filename'])
+        os.remove(data['filename'])
+
+        # Other Exceptions don't delete the file *and* are propagated
+        Popen.side_effect = side_effect
+        with pytest.raises(ValueError):
+            with terminal.open_editor('test'):
+                assert os.path.isfile(data['filename'])
+                raise ValueError()
+        assert os.path.isfile(data['filename'])
+        os.remove(data['filename'])
+
+        # Gracefully handle the case when we can't remove the file
+        with mock.patch.object(os, 'remove'):
+            os.remove.side_effect = OSError
+            with terminal.open_editor():
+                pass
+            assert os.remove.called
+
+        assert os.path.isfile(data['filename'])
+        os.remove(data['filename'])
+
+
+def test_open_link_mailcap(terminal):
+
+    url = 'http://www.test.com'
+
+    class MockMimeParser(object):
+        pattern = re.compile('')
+
+    mock_mime_parser = MockMimeParser()
+
+    with mock.patch.object(terminal, 'open_browser'), \
+            mock.patch('rtv.terminal.mime_parsers') as mime_parsers:
+        mime_parsers.parsers = [mock_mime_parser]
+
+        # Pass through to open_browser if media is disabled
+        terminal.config['enable_media'] = False
+        terminal.open_link(url)
+        assert terminal.open_browser.called
+        terminal.open_browser.reset_mock()
+
+        # Invalid content type
+        terminal.config['enable_media'] = True
+        mock_mime_parser.get_mimetype = lambda url: (url, None)
+        terminal.open_link(url)
+        assert terminal.open_browser.called
+        terminal.open_browser.reset_mock()
+
+        # Text/html defers to open_browser
+        mock_mime_parser.get_mimetype = lambda url: (url, 'text/html')
+        terminal.open_link(url)
+        assert terminal.open_browser.called
+        terminal.open_browser.reset_mock()
+
+
+def test_open_link_subprocess(terminal):
+
+    url = 'http://www.test.com'
+    terminal.config['enable_media'] = True
+
+    with mock.patch('time.sleep'),                            \
+            mock.patch('os.system'),                          \
+            mock.patch('subprocess.Popen') as Popen,          \
+            mock.patch('six.moves.input') as six_input,       \
+            mock.patch.object(terminal, 'get_mailcap_entry'):
+
+        six_input.return_values = 'y'
+
+        def reset_mock():
+            six_input.reset_mock()
+            os.system.reset_mock()
+            terminal.stdscr.subwin.addstr.reset_mock()
+            Popen.return_value.communicate.return_value = '', 'stderr message'
+            Popen.return_value.poll.return_value = 0
+            Popen.return_value.wait.return_value = 0
+
+        def get_error():
+            # Check if an error message was printed to the terminal
+            status = 'Program exited with status'.encode('utf-8')
+            return any(status in args[0][2] for args in
+                       terminal.stdscr.subwin.addstr.call_args_list)
+
+        # Non-blocking success
+        reset_mock()
+        entry = ('echo ""', 'echo %s')
+        terminal.get_mailcap_entry.return_value = entry
+        terminal.open_link(url)
+        assert not six_input.called
+        assert not get_error()
+
+        # Non-blocking failure
+        reset_mock()
+        Popen.return_value.poll.return_value = 127
+        Popen.return_value.wait.return_value = 127
+        entry = ('fake .', 'fake %s')
+        terminal.get_mailcap_entry.return_value = entry
+        terminal.open_link(url)
+        assert not six_input.called
+        assert get_error()
+
+        # needsterminal success
+        reset_mock()
+        entry = ('echo ""', 'echo %s; needsterminal')
+        terminal.get_mailcap_entry.return_value = entry
+        terminal.open_link(url)
+        assert not six_input.called
+        assert not get_error()
+
+        # needsterminal failure
+        reset_mock()
+        Popen.return_value.poll.return_value = 127
+        Popen.return_value.wait.return_value = 127
+        entry = ('fake .', 'fake %s; needsterminal')
+        terminal.get_mailcap_entry.return_value = entry
+        terminal.open_link(url)
+        assert not six_input.called
+        assert get_error()
+
+        # copiousoutput success
+        reset_mock()
+        entry = ('echo ""', 'echo %s; needsterminal; copiousoutput')
+        terminal.get_mailcap_entry.return_value = entry
+        terminal.open_link(url)
+        assert six_input.called
+        assert not get_error()
+
+        # copiousoutput failure
+        reset_mock()
+        Popen.return_value.poll.return_value = 127
+        Popen.return_value.wait.return_value = 127
+        entry = ('fake .', 'fake %s; needsterminal; copiousoutput')
+        terminal.get_mailcap_entry.return_value = entry
+        terminal.open_link(url)
+        assert six_input.called
+        assert get_error()
 
 
 def test_open_browser(terminal):
@@ -309,3 +480,63 @@ def test_open_browser(terminal):
     open_new_tab.assert_called_with(url)
     assert curses.endwin.called
     assert curses.doupdate.called
+
+
+def test_open_pager(terminal, stdscr):
+
+    data = "Hello World!  ❤"
+
+    def side_effect(args, stdin=None):
+        assert stdin is not None
+        raise OSError
+
+    with mock.patch('subprocess.Popen', autospec=True) as Popen, \
+            mock.patch.dict('os.environ', {'PAGER': 'fake'}):
+        Popen.return_value.stdin = mock.Mock()
+
+        terminal.open_pager(data)
+        assert Popen.called
+        assert not stdscr.addstr.called
+
+        # Raise an OS error
+        Popen.side_effect = side_effect
+        terminal.open_pager(data)
+        message = 'Could not open pager fake'.encode('ascii')
+        assert stdscr.addstr.called_with(0, 0, message)
+
+
+def test_open_urlview(terminal, stdscr):
+
+    data = "Hello World!  ❤"
+
+    def side_effect(args, stdin=None):
+        assert stdin is not None
+        raise OSError
+
+    with mock.patch('subprocess.Popen') as Popen, \
+            mock.patch.dict('os.environ', {'RTV_URLVIEWER': 'fake'}):
+
+        Popen.return_value.poll.return_value = 0
+        terminal.open_urlview(data)
+        assert Popen.called
+        assert not stdscr.addstr.called
+
+        Popen.return_value.poll.return_value = 1
+        terminal.open_urlview(data)
+        assert stdscr.subwin.addstr.called
+
+        # Raise an OS error
+        Popen.side_effect = side_effect
+        terminal.open_urlview(data)
+        message = 'Failed to open fake'.encode('utf-8')
+        assert stdscr.addstr.called_with(0, 0, message)
+
+
+def test_strip_textpad(terminal):
+
+    assert terminal.strip_textpad(None) is None
+    assert terminal.strip_textpad('  foo  ') == '  foo'
+
+    text = 'alpha bravo\ncharlie \ndelta  \n  echo   \n\nfoxtrot\n\n\n'
+    assert terminal.strip_textpad(text) == (
+        'alpha bravocharlie delta\n  echo\n\nfoxtrot')

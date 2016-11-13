@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from rtv.subreddit import SubredditPage
+import six
+
+from rtv.subreddit_page import SubredditPage
+from rtv import __version__
 
 try:
     from unittest import mock
@@ -60,6 +63,28 @@ def test_subreddit_refresh(subreddit_page, terminal):
     assert terminal.loader.exception is None
 
 
+def test_subreddit_title(subreddit_page, terminal, capsys):
+    subreddit_page.content.name = 'hello ❤'
+
+    with mock.patch.dict('os.environ', {'DISPLAY': ':1'}):
+        terminal.config['ascii'] = True
+        subreddit_page.draw()
+        out, _ = capsys.readouterr()
+        assert isinstance(out, six.text_type)
+        assert out == '\x1b]2;hello ? - rtv {}\x07'.format(__version__)
+
+        terminal.config['ascii'] = False
+        subreddit_page.draw()
+        out, _ = capsys.readouterr()
+        assert isinstance(out, six.text_type)
+        assert out == '\x1b]2;hello ❤ - rtv {}\x07'.format(__version__)
+
+    with mock.patch.dict('os.environ', {'DISPLAY': ''}):
+        subreddit_page.draw()
+        out, _ = capsys.readouterr()
+        assert not out
+
+
 def test_subreddit_search(subreddit_page, terminal):
 
     # Search the current subreddit
@@ -88,11 +113,52 @@ def test_subreddit_prompt(subreddit_page, terminal):
         assert not terminal.loader.exception
 
 
+def test_subreddit_order_top(subreddit_page, terminal):
+
+    # Sort by top - First time selects default
+    subreddit_page.controller.trigger('2')
+    assert subreddit_page.content.order == 'top'
+
+    # Second time opens the menu
+    with mock.patch.object(terminal, 'show_notification'):
+        # Invalid selection
+        terminal.show_notification.return_value = ord('x')
+        subreddit_page.controller.trigger('2')
+        terminal.show_notification.assert_called_with('Invalid option')
+        assert subreddit_page.content.order == 'top'
+
+        # Valid selection - sort by week
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('3')
+        subreddit_page.controller.trigger('2')
+        assert subreddit_page.content.order == 'top-week'
+
+
+def test_subreddit_order_controversial(subreddit_page, terminal):
+
+    # Now do controversial
+    subreddit_page.controller.trigger('5')
+    assert subreddit_page.content.order == 'controversial'
+
+    with mock.patch.object(terminal, 'show_notification'):
+        # Invalid selection
+        terminal.show_notification.return_value = ord('x')
+        subreddit_page.controller.trigger('5')
+        terminal.show_notification.assert_called_with('Invalid option')
+        assert subreddit_page.content.order == 'controversial'
+
+        # Valid selection - sort by week
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('3')
+        subreddit_page.controller.trigger('5')
+        assert subreddit_page.content.order == 'controversial-week'
+
+
 def test_subreddit_open(subreddit_page, terminal, config):
 
     # Open the selected submission
     data = subreddit_page.content.get(subreddit_page.nav.absolute_index)
-    with mock.patch('rtv.submission.SubmissionPage.loop') as loop, \
+    with mock.patch('rtv.submission_page.SubmissionPage.loop') as loop, \
             mock.patch.object(config.history, 'add'):
         data['url_type'] = 'selfpost'
         subreddit_page.controller.trigger('l')
@@ -101,19 +167,41 @@ def test_subreddit_open(subreddit_page, terminal, config):
         config.history.add.assert_called_with(data['url_full'])
 
     # Open the selected link externally
-    with mock.patch.object(terminal, 'open_browser'), \
+    data = subreddit_page.content.get(subreddit_page.nav.absolute_index)
+    with mock.patch.object(terminal, 'open_link'), \
             mock.patch.object(config.history, 'add'):
         data['url_type'] = 'external'
         subreddit_page.controller.trigger('o')
-        assert terminal.open_browser.called
+        assert terminal.open_link.called
         config.history.add.assert_called_with(data['url_full'])
 
     # Open the selected link within rtv
+    data = subreddit_page.content.get(subreddit_page.nav.absolute_index)
     with mock.patch.object(subreddit_page, 'open_submission'), \
             mock.patch.object(config.history, 'add'):
         data['url_type'] = 'selfpost'
         subreddit_page.controller.trigger('o')
         assert subreddit_page.open_submission.called
+
+
+def test_subreddit_open_xpost(subreddit_page, config):
+
+    data = subreddit_page.content.get(subreddit_page.nav.absolute_index)
+
+    # Open an x-post subreddit, see /r/TinySubredditoftheDay for an example
+    with mock.patch.object(subreddit_page, 'refresh_content'):
+        data['url_type'] = 'x-post subreddit'
+        data['xpost_subreddit'] = 'goodbye'
+        subreddit_page.controller.trigger('o')
+        subreddit_page.refresh_content.assert_called_with(
+            name='goodbye', order='ignore')
+
+    # Open an x-post submission, see /r/bestof for an example
+    with mock.patch.object(subreddit_page, 'open_submission'):
+        data['url_type'] = 'x-post submission'
+        data['url_full'] = 'www.test.com'
+        subreddit_page.controller.trigger('o')
+        subreddit_page.open_submission.assert_called_with(url='www.test.com')
 
 
 def test_subreddit_unauthenticated(subreddit_page, terminal):
@@ -148,9 +236,9 @@ def test_subreddit_post(subreddit_page, terminal, reddit, refresh_token):
     # Post a submission with a title but with no body
     subreddit_page.refresh_content(name='python')
     with mock.patch.object(terminal, 'open_editor'):
-        terminal.open_editor.return_value = 'title'
+        terminal.open_editor.return_value.__enter__.return_value = 'title'
         subreddit_page.controller.trigger('c')
-        text = 'Canceled'.encode('utf-8')
+        text = 'Missing body'.encode('utf-8')
         terminal.stdscr.subwin.addstr.assert_called_with(1, 1, text)
 
     # Post a fake submission
@@ -160,7 +248,7 @@ def test_subreddit_post(subreddit_page, terminal, reddit, refresh_token):
             mock.patch.object(reddit, 'submit'),      \
             mock.patch('rtv.page.Page.loop') as loop, \
             mock.patch('time.sleep'):
-        terminal.open_editor.return_value = 'test\ncontent'
+        terminal.open_editor.return_value.__enter__.return_value = 'test\ncont'
         reddit.submit.return_value = submission
         subreddit_page.controller.trigger('c')
         assert reddit.submit.called
@@ -173,7 +261,69 @@ def test_subreddit_open_subscriptions(subreddit_page, refresh_token):
     subreddit_page.config.refresh_token = refresh_token
     subreddit_page.oauth.authorize()
 
-    # Open a subscription
+    # Open subscriptions
     with mock.patch('rtv.page.Page.loop') as loop:
         subreddit_page.controller.trigger('s')
         assert loop.called
+
+
+def test_subreddit_open_multireddits(subreddit_page, refresh_token):
+
+    # Log in
+    subreddit_page.config.refresh_token = refresh_token
+    subreddit_page.oauth.authorize()
+
+    # Open multireddits
+    with mock.patch('rtv.page.Page.loop') as loop:
+        subreddit_page.controller.trigger('S')
+        assert loop.called
+
+
+def test_subreddit_draw_header(subreddit_page, refresh_token, terminal):
+
+    # /r/front alias should be renamed in the header
+    subreddit_page.refresh_content(name='/r/front')
+    subreddit_page.draw()
+    text = 'Front Page'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    subreddit_page.refresh_content(name='/r/front/new')
+    subreddit_page.draw()
+    text = 'Front Page'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    # Log in to check the user submissions page
+    subreddit_page.config.refresh_token = refresh_token
+    subreddit_page.oauth.authorize()
+
+    # /u/me alias should be renamed in the header
+    subreddit_page.refresh_content(name='/u/me')
+    subreddit_page.draw()
+    text = 'My Submissions'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    subreddit_page.refresh_content(name='/u/me/new')
+    subreddit_page.draw()
+    text = 'My Submissions'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    # /u/saved alias should be renamed in the header
+    subreddit_page.refresh_content(name='/u/saved')
+    subreddit_page.draw()
+    text = 'My Saved Submissions'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    subreddit_page.refresh_content(name='/u/saved/new')
+    subreddit_page.draw()
+    text = 'My Saved Submissions'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+
+def test_subreddit_frontpage_toggle(subreddit_page, terminal):
+
+    with mock.patch.object(terminal, 'prompt_input'):
+        terminal.prompt_input.return_value = 'aww'
+        subreddit_page.controller.trigger('/')
+        assert subreddit_page.content.name == '/r/aww'
+        subreddit_page.controller.trigger('p')
+        assert subreddit_page.content.name == '/r/front'

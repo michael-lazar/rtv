@@ -4,19 +4,21 @@ from __future__ import unicode_literals
 import os
 import curses
 import logging
+import threading
 from functools import partial
 
 import praw
 import pytest
 from vcr import VCR
 from six.moves.urllib.parse import urlparse, parse_qs
+from six.moves.BaseHTTPServer import HTTPServer
 
-from rtv.oauth import OAuthHelper
+from rtv.oauth import OAuthHelper, OAuthHandler
 from rtv.config import Config
 from rtv.terminal import Terminal
-from rtv.subreddit import SubredditPage
-from rtv.submission import SubmissionPage
-from rtv.subscription import SubscriptionPage
+from rtv.subreddit_page import SubredditPage
+from rtv.submission_page import SubmissionPage
+from rtv.subscription_page import SubscriptionPage
 
 try:
     from unittest import mock
@@ -27,7 +29,9 @@ except ImportError:
 patch = partial(mock.patch, autospec=True)
 
 # Turn on logging, but disable vcr from spamming
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s:%(levelname)s:%(filename)s:%(lineno)d:%(message)s')
 for name in ['vcr.matchers', 'vcr.stubs']:
     logging.getLogger(name).disabled = True
 
@@ -122,9 +126,18 @@ def refresh_token(request):
 
 @pytest.yield_fixture()
 def config():
-    with patch('rtv.config.Config.save_refresh_token'), \
-            patch('rtv.config.Config.save_history'):
-        yield Config()
+    conf = Config()
+    with mock.patch.object(conf, 'save_history'),          \
+            mock.patch.object(conf, 'delete_history'),     \
+            mock.patch.object(conf, 'save_refresh_token'), \
+            mock.patch.object(conf, 'delete_refresh_token'):
+ 
+        def delete_refresh_token():
+            # Skip the os.remove
+            conf.refresh_token = None
+        conf.delete_refresh_token.side_effect = delete_refresh_token
+
+        yield conf
 
 
 @pytest.yield_fixture()
@@ -165,6 +178,10 @@ def reddit(vcr, request):
             reddit = praw.Reddit(user_agent='rtv test suite',
                                  decode_html_entities=False,
                                  disable_update_check=True)
+            # praw uses a global cache for requests, so we need to clear it
+            # before each unit test. Otherwise we may fail to generate new
+            # cassettes.
+            reddit.handler.clear_cache()
             if request.config.option.record_mode == 'none':
                 # Turn off praw rate limiting when using cassettes
                 reddit.config.api_request_delay = 0
@@ -173,7 +190,7 @@ def reddit(vcr, request):
 
 @pytest.fixture()
 def terminal(stdscr, config):
-    term = Terminal(stdscr, ascii=config['ascii'])
+    term = Terminal(stdscr, config=config)
     # Disable the python 3.4 addch patch so that the mock stdscr calls are
     # always made the same way
     term.addch = lambda window, *args: window.addch(*args)
@@ -183,6 +200,21 @@ def terminal(stdscr, config):
 @pytest.fixture()
 def oauth(reddit, terminal, config):
     return OAuthHelper(reddit, terminal, config)
+
+
+@pytest.yield_fixture()
+def oauth_server():
+    # Start the OAuth server on a random port in the background
+    server = HTTPServer(('', 0), OAuthHandler)
+    server.url = 'http://{0}:{1}/'.format(*server.server_address)
+    thread = threading.Thread(target=server.serve_forever)
+    thread.start()
+    try:
+        yield server
+    finally:
+        server.shutdown()
+        thread.join()
+        server.server_close()
 
 
 @pytest.fixture()
@@ -208,13 +240,11 @@ def subreddit_page(reddit, terminal, config, oauth):
 
 
 @pytest.fixture()
-def subscription_page(reddit, terminal, config, oauth, refresh_token):
-    # Must be logged in to view your subscriptions
-    config.refresh_token = refresh_token
-    oauth.authorize()
+def subscription_page(reddit, terminal, config, oauth):
+    content_type = 'popular'
 
     with terminal.loader():
-        page = SubscriptionPage(reddit, terminal, config, oauth)
+        page = SubscriptionPage(reddit, terminal, config, oauth, content_type)
     assert terminal.loader.exception is None
     page.draw()
     return page

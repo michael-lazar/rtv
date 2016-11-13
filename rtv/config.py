@@ -11,13 +11,16 @@ import six
 from six.moves import configparser
 
 from . import docs, __version__
+from .objects import KeyMap
 
 PACKAGE = os.path.dirname(__file__)
 HOME = os.path.expanduser('~')
-TEMPLATE = os.path.join(PACKAGE, 'templates')
-DEFAULT_CONFIG = os.path.join(PACKAGE, 'rtv.cfg')
+TEMPLATES = os.path.join(PACKAGE, 'templates')
+DEFAULT_CONFIG = os.path.join(TEMPLATES, 'rtv.cfg')
+DEFAULT_MAILCAP = os.path.join(TEMPLATES, 'mailcap')
 XDG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
 CONFIG = os.path.join(XDG_HOME, 'rtv', 'rtv.cfg')
+MAILCAP = os.path.join(HOME, '.mailcap')
 TOKEN = os.path.join(XDG_HOME, 'rtv', 'refresh-token')
 HISTORY = os.path.join(XDG_HOME, 'rtv', 'history.log')
 
@@ -26,25 +29,28 @@ def build_parser():
 
     parser = argparse.ArgumentParser(
         prog='rtv', description=docs.SUMMARY,
-        epilog=docs.CONTROLS+docs.HELP,
+        epilog=docs.CONTROLS,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(
         '-V', '--version', action='version', version='rtv '+__version__)
     parser.add_argument(
         '-s', dest='subreddit',
-        help='name of the subreddit that will be opened on start')
+        help='Name of the subreddit that will be opened on start')
     parser.add_argument(
         '-l', dest='link',
-        help='full URL of a submission that will be opened on start')
+        help='Full URL of a submission that will be opened on start')
     parser.add_argument(
         '--log', metavar='FILE', action='store',
-        help='log HTTP requests to the given file')
+        help='Log HTTP requests to the given file')
     parser.add_argument(
         '--config', metavar='FILE', action='store',
         help='Load configuration settings from the given file')
     parser.add_argument(
         '--ascii', action='store_const', const=True,
-        help='enable ascii-only mode')
+        help='Enable ascii-only mode')
+    parser.add_argument(
+        '--monochrome', action='store_const', const=True,
+        help='Disable color')
     parser.add_argument(
         '--non-persistent', dest='persistent', action='store_const',
         const=False,
@@ -55,29 +61,50 @@ def build_parser():
     parser.add_argument(
         '--copy-config', dest='copy_config', action='store_const', const=True,
         help='Copy the default configuration to {HOME}/.config/rtv/rtv.cfg')
+    parser.add_argument(
+        '--copy-mailcap', dest='copy_mailcap', action='store_const', const=True,
+        help='Copy an example mailcap configuration to {HOME}/.mailcap')
+    parser.add_argument(
+        '--enable-media', dest='enable_media', action='store_const', const=True,
+        help='Open external links using programs defined in the mailcap config')
     return parser
+
+
+def copy_default_mailcap(filename=MAILCAP):
+    """
+    Copy the example mailcap configuration to the specified file.
+    """
+    return _copy_settings_file(DEFAULT_MAILCAP, filename, 'mailcap')
 
 
 def copy_default_config(filename=CONFIG):
     """
-    Copy the default configuration file to the user's {HOME}/.config/rtv
+    Copy the default rtv user configuration to the specified file.
+    """
+    return _copy_settings_file(DEFAULT_CONFIG, filename, 'config')
+
+
+def _copy_settings_file(source, destination, name):
+    """
+    Copy a file from the repo to the user's home directory.
     """
 
-    if os.path.exists(filename):
+    if os.path.exists(destination):
         try:
             ch = six.moves.input(
-                'File %s already exists, overwrite? y/[n]):' % filename)
+                'File %s already exists, overwrite? y/[n]):' % destination)
             if ch not in ('Y', 'y'):
                 return
         except KeyboardInterrupt:
             return
 
-    filepath = os.path.dirname(filename)
+    filepath = os.path.dirname(destination)
     if not os.path.exists(filepath):
         os.makedirs(filepath)
 
-    print('Copying default settings to %s' % filename)
-    shutil.copy(DEFAULT_CONFIG, filename)
+    print('Copying default %s to %s' % (name, destination))
+    shutil.copy(source, destination)
+    os.chmod(destination, 0o664)
 
 
 class OrderedSet(object):
@@ -112,7 +139,10 @@ class Config(object):
         self.history_file = history_file
         self.token_file = token_file
         self.config = kwargs
-        self.default = self.get_file(DEFAULT_CONFIG)
+
+        default, bindings = self.get_file(DEFAULT_CONFIG)
+        self.default = default
+        self.keymap = KeyMap(bindings)
 
         # `refresh_token` and `history` are saved/loaded at separate locations,
         # so they are treated differently from the rest of the config options.
@@ -198,23 +228,35 @@ class Config(object):
     @staticmethod
     def _parse_rtv_file(config):
 
-        out = {}
+        rtv = {}
         if config.has_section('rtv'):
-            out = dict(config.items('rtv'))
+            rtv = dict(config.items('rtv'))
 
         params = {
             'ascii': partial(config.getboolean, 'rtv'),
+            'monochrome': partial(config.getboolean, 'rtv'),
             'clear_auth': partial(config.getboolean, 'rtv'),
             'persistent': partial(config.getboolean, 'rtv'),
+            'enable_media': partial(config.getboolean, 'rtv'),
             'history_size': partial(config.getint, 'rtv'),
             'oauth_redirect_port': partial(config.getint, 'rtv'),
-            'oauth_scope': lambda x: out[x].split(',')
+            'oauth_scope': lambda x: rtv[x].split(','),
+            'max_comment_cols': partial(config.getint, 'rtv'),
+            'hide_username': partial(config.getboolean, 'rtv')
         }
 
         for key, func in params.items():
-            if key in out:
-                out[key] = func(key)
-        return out
+            if key in rtv:
+                rtv[key] = func(key)
+
+        bindings = {}
+        if config.has_section('bindings'):
+            bindings = dict(config.items('bindings'))
+
+        for name, keys in bindings.items():
+            bindings[name] = [key.strip() for key in keys.split(',')]
+
+        return rtv, bindings
 
     @staticmethod
     def _ensure_filepath(filename):

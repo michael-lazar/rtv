@@ -6,7 +6,7 @@ import curses
 import praw
 import pytest
 
-from rtv.subscription import SubscriptionPage
+from rtv.subscription_page import SubscriptionPage
 
 try:
     from unittest import mock
@@ -18,34 +18,28 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
                                      refresh_token):
     window = terminal.stdscr.subwin
 
-    # Can't load the page if not logged in
-    with terminal.loader():
-        SubscriptionPage(reddit, terminal, config, oauth)
-    assert isinstance(
-        terminal.loader.exception, praw.errors.LoginOrScopeRequired)
-
     # Log in
     config.refresh_token = refresh_token
     oauth.authorize()
 
     with terminal.loader():
-        page = SubscriptionPage(reddit, terminal, config, oauth)
+        page = SubscriptionPage(reddit, terminal, config, oauth, 'popular')
     assert terminal.loader.exception is None
 
     page.draw()
 
     # Header - Title
-    title = 'Subscriptions'.encode('utf-8')
+    title = 'Popular Subreddits'.encode('utf-8')
     window.addstr.assert_any_call(0, 0, title)
 
     # Header - Name
     name = reddit.user.name.encode('utf-8')
-    window.addstr.assert_any_call(0, 59, name)
+    assert name in [args[0][2] for args in window.addstr.call_args_list]
 
     # Banner shouldn't be drawn
     menu = ('[1]hot         '
             '[2]top         '
-            '[3]rising         '
+            '[3]rising         '  # Whitespace is relevant
             '[4]new         '
             '[5]controversial').encode('utf-8')
     with pytest.raises(AssertionError):
@@ -59,7 +53,7 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
     terminal.stdscr.ncols = 20
     terminal.stdscr.nlines = 10
     with terminal.loader():
-        page = SubscriptionPage(reddit, terminal, config, oauth)
+        page = SubscriptionPage(reddit, terminal, config, oauth, 'popular')
     assert terminal.loader.exception is None
 
     page.draw()
@@ -68,7 +62,7 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
 def test_subscription_refresh(subscription_page):
 
     # Refresh content - invalid order
-    subscription_page.controller.trigger('2')
+    subscription_page.controller.trigger('3')
     assert curses.flash.called
     curses.flash.reset_mock()
 
@@ -77,13 +71,34 @@ def test_subscription_refresh(subscription_page):
     assert not curses.flash.called
 
 
+def test_subscription_prompt(subscription_page, terminal):
+
+    # Prompt for a different subreddit
+    with mock.patch.object(terminal, 'prompt_input'):
+        # Valid input
+        subscription_page.active = True
+        subscription_page.selected_subreddit = None
+        terminal.prompt_input.return_value = 'front/top'
+        subscription_page.controller.trigger('/')
+        assert not subscription_page.active
+        assert subscription_page.selected_subreddit
+
+        # Invalid input
+        subscription_page.active = True
+        subscription_page.selected_subreddit = None
+        terminal.prompt_input.return_value = 'front/pot'
+        subscription_page.controller.trigger('/')
+        assert subscription_page.active
+        assert not subscription_page.selected_subreddit
+
+
 def test_subscription_move(subscription_page):
 
     # Test movement
     with mock.patch.object(subscription_page, 'clear_input_queue'):
 
-        # Move cursor to the bottom of the page
-        while not curses.flash.called:
+        # Move cursor down for a little while
+        for _ in range(50):
             subscription_page.controller.trigger('j')
         curses.flash.reset_mock()
         assert subscription_page.nav.inverted
@@ -116,21 +131,24 @@ def test_subscription_select(subscription_page):
 
     # Select a subreddit
     subscription_page.controller.trigger(curses.KEY_ENTER)
-    assert subscription_page.subreddit_data is not None
+    assert subscription_page.selected_subreddit is not None
     assert subscription_page.active is False
 
 
 def test_subscription_close(subscription_page):
 
     # Close the subscriptions page
-    subscription_page.subreddit_data = None
+    subscription_page.selected_subreddit = None
     subscription_page.active = None
     subscription_page.controller.trigger('h')
-    assert subscription_page.subreddit_data is None
+    assert subscription_page.selected_subreddit is None
     assert subscription_page.active is False
 
 
-def test_subscription_page_invalid(subscription_page):
+def test_subscription_page_invalid(subscription_page, oauth, refresh_token):
+
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
 
     # Test that other commands don't crash
     methods = [
@@ -138,6 +156,7 @@ def test_subscription_page_invalid(subscription_page):
         'z',  # Downvote
         'd',  # Delete
         'e',  # Edit
+        'w',  # Save
     ]
     for ch in methods:
         curses.flash.reset_mock()

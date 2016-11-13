@@ -1,8 +1,6 @@
 interactions:
 - request:
-    body: !!binary |
-      cmVkaXJlY3RfdXJpPWh0dHAlM0ElMkYlMkYxMjcuMC4wLjElM0E2NTAwMCUyRiZncmFudF90eXBl
-      PXJlZnJlc2hfdG9rZW4mcmVmcmVzaF90b2tlbj0qKioqKioqKioq
+    body: redirect_uri=http%3A%2F%2F127.0.0.1%3A65000%2F&grant_type=refresh_token&refresh_token=**********
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
@@ -10,25 +8,25 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['122']
       Content-Type: [application/x-www-form-urlencoded]
-      User-Agent: [rtv test suite PRAW/3.3.0 Python/3.4.0 b'Linux-3.13.0-24-generic-x86_64-with-Ubuntu-14.04-trusty']
+      User-Agent: [rtv test suite PRAW/3.5.0 Python/3.4.0 b'Linux-3.13.0-85-generic-x86_64-with-Ubuntu-14.04-trusty']
     method: POST
     uri: https://api.reddit.com/api/v1/access_token/
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAAyWMuwrCQBBFf2XYWiGiBrH0UaQQG7UNm92Ljhp3mRmDQfx3iVYXDufct/MhQLW2
-        dMPDLcnNZuWimEzm4zzfbKuwCNd2vdtvduWpOp5PdriPV5UbkfsFtfUZQ9XAC2TgeGUWaM3D27Qs
-        ihE5DemvIbLRhdWS9MQRD2Prqe312QhiZFPKwp03tFD1ZygJfCRBTmKkvgPps2nZhtEg3IC6ZHCf
-        L2mPdxLKAAAA
+        H4sIAAAAAAAAAyWMsWrEMBAFf2VRfQZDiIuUbkKKOHCQJo2QpZe7PWPJ7K6d2CH/HnSpHgwz78eF
+        GKHqrUzI7olc//rcvx/T5+O5yfnlq9zWj+7NHwM3rTuRu3ve9gVVHhEEUnnCxhGeU8VDyagQ3wsL
+        1HN9fuja9kROY/lvkdjoympFduKEbGw7zbuuoyAlNqVFeAuGGarhAiVBSCRYihhp2EC6jjNbHY3C
+        I2grBvf7ByGCnzDWAAAA
     headers:
-      CF-RAY: [24e5680fc4e61ea7-SJC]
+      CF-RAY: [2c64c73cbcb311fb-SJC]
       Connection: [keep-alive]
       Content-Encoding: [gzip]
       Content-Type: [application/json; charset=UTF-8]
-      Date: ['Wed, 02 Dec 2015 07:44:25 GMT']
+      Date: ['Fri, 22 Jul 2016 06:18:57 GMT']
       Server: [cloudflare-nginx]
-      Set-Cookie: ['__cfduid=dfbfe38c66c15c17ee9c54aeac98936b11449042265; expires=Thu,
-          01-Dec-16 07:44:25 GMT; path=/; domain=.reddit.com; HttpOnly']
+      Set-Cookie: ['__cfduid=dd3dda140692c93dda58da3daf2b20c8b1469168337; expires=Sat,
+          22-Jul-17 06:18:57 GMT; path=/; domain=.reddit.com; HttpOnly']
       Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
       X-Moose: [majestic]
       cache-control: ['max-age=0, must-revalidate']
@@ -43,27 +41,37 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Authorization: ['**********']
       Connection: [keep-alive]
-      User-Agent: [rtv test suite PRAW/3.3.0 Python/3.4.0 b'Linux-3.13.0-24-generic-x86_64-with-Ubuntu-14.04-trusty']
+      User-Agent: [rtv test suite PRAW/3.5.0 Python/3.4.0 b'Linux-3.13.0-85-generic-x86_64-with-Ubuntu-14.04-trusty']
     method: GET
     uri: https://oauth.reddit.com/api/v1/me.json
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA12QwWrDMBBEf0Xs2YTYuLTxZ5TSq5CtdbNE2k1XUhoI/fei1C5xjxp23ozmBkeX
-        bHQUYDCzCwkbA+wiwmDgFb2n/IYaiV14J/xChcbApOgyehhM2/fd89O+Oxx2+8bAkTzaWSValVFy
-        emBSsqmkM7K/G1d5QdmSpxXXtf2Kq9XE/68XiE/25DS6aqkQiRE5/2nVKxdU275sG3xI8Fslykao
-        D/gMjGP9Zz23eD2TukzCMBguIdQ7HuVqJymcl7ha9YJKM6G3uBTOWnDFTHofMy33v1skEn4IWFao
-        Id8/dZfx5JkBAAA=
+        H4sIANO6kVcC/31U0XKcMAz8lc49dzrJ5dqk/RmNMYLTYGwq21wumfx7JR8E06R9A68srVZrvR4o
+        Ao6TC1fEw68vnXERv345nE2E0ZCrjrwZNeJgaSZHLyZR8DCdzQvCw0Fwy2gSthJyfzp+Pz7c/zjd
+        fbvTXNQidBxG4NCEFKucUjzmOKFvy8X1eEkFOdk13d3xaU2n1EL7Nz1HfoDB8Gjk8Hj8qdk9NJj0
+        /z1xGEf06T3u8SSHnRTLjMrrVe5IIgQaTY8wMc6Elwgu9L3wCTlJUOKsuRh7iglZ5BMm0LlwgYRR
+        I14Ps2EyXr+lpk8cHBxVJHyekKlwIO34+PBWuM8IZzOJEOR78OGylTFtRJ6lDOMUOAm+Yf8lS34L
+        dNgbe4WIhu1ZI7sNG0NDDuGCDSTDPe5LSHkw2eqw68MX5AHaIFQTJDZ22MCYyA5XWKRWVRcgTz0b
+        sYINYaAi965GCtJil73KsgCBje+RUXG1qehcXaOxzww9dZLRi0Jxx1GUNl4Y4rxngXkhAFNwZK8b
+        0gW2MoaUpip8UceL3WVGjfEeeUOnMOAYfB+UQsIy8N3wY26Efkvps+GfHnX4n6soVmuCiAFWSA4F
+        3I++zDzLwxX1tmOPl2X+Yn5r7Pljm6VBkbolRlv5OcqrQ68W+qDZZHJE2BXqi2VjiiBD3QUrhZtX
+        oSUjZGoxzdLorpd3kYCzq42RRCwR4uM4Iia1aQVcJS43glg2Uz0iI96dKan5eSYZ8IUp6SJb8dV8
+        +CwDrMw3hZjEc03ZTGuwBN6MBaMIaGCjvlCqEzcu2GHdCf+iI6tuLaBuCPrU75+2C7Ii++Dq7Uhl
+        /9UH+nNwv70JajMNl24m4rKjBfPZOY3zTXgWp+bizXWXSkHqSBZGeV9V2pLH3tpTpfXCbVvrS6sq
+        LHtaq7z9AZn6ZwRRBgAA
     headers:
-      CF-RAY: [24e5681c46d81e7d-SJC]
+      CF-RAY: [2c64c74ab3041201-SJC]
       Connection: [keep-alive]
       Content-Encoding: [gzip]
+      Content-Length: ['699']
       Content-Type: [application/json; charset=UTF-8]
-      Date: ['Wed, 02 Dec 2015 07:44:27 GMT']
+      Date: ['Fri, 22 Jul 2016 06:18:59 GMT']
       Server: [cloudflare-nginx]
-      Set-Cookie: ['__cfduid=dcab57cae270bb2279df0c2f79274ab6a1449042267; expires=Thu,
-          01-Dec-16 07:44:27 GMT; path=/; domain=.reddit.com; HttpOnly']
+      Set-Cookie: ['__cfduid=d38e492c506e724e0eb4e48e0b2e5dd8c1469168339; expires=Sat,
+          22-Jul-17 06:18:59 GMT; path=/; domain=.reddit.com; HttpOnly']
       Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
+      Vary: [accept-encoding]
       X-Moose: [majestic]
       cache-control: ['private, s-maxage=0, max-age=0, must-revalidate', 'max-age=0,
           must-revalidate']
@@ -71,7 +79,7 @@ interactions:
       x-content-type-options: [nosniff]
       x-frame-options: [SAMEORIGIN]
       x-ratelimit-remaining: ['599.0']
-      x-ratelimit-reset: ['333']
+      x-ratelimit-reset: ['61']
       x-ratelimit-used: ['1']
       x-xss-protection: [1; mode=block]
     status: {code: 200, message: OK}
@@ -82,23 +90,64 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Authorization: ['**********']
       Connection: [keep-alive]
-      Cookie: [__cfduid=dcab57cae270bb2279df0c2f79274ab6a1449042267]
-      User-Agent: [rtv test suite PRAW/3.3.0 Python/3.4.0 b'Linux-3.13.0-24-generic-x86_64-with-Ubuntu-14.04-trusty']
+      Cookie: [__cfduid=d38e492c506e724e0eb4e48e0b2e5dd8c1469168339]
+      User-Agent: [rtv test suite PRAW/3.5.0 Python/3.4.0 b'Linux-3.13.0-85-generic-x86_64-with-Ubuntu-14.04-trusty']
     method: GET
-    uri: https://oauth.reddit.com/user/RedditTerminalViewer/submitted.json?sort=new&t=all
+    uri: https://oauth.reddit.com/user/civilization_phaze_3/submitted.json?limit=1024&t=all&sort=new
   response:
     body:
       string: !!binary |
-        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
+        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
     headers:
-      CF-RAY: [24e56828075d1e7d-SJC]
+      CF-RAY: [2c64c75453601201-SJC]
       Connection: [keep-alive]
       Content-Encoding: [gzip]
+      Content-Length: ['2322']
       Content-Type: [application/json; charset=UTF-8]
-      Date: ['Wed, 02 Dec 2015 07:44:29 GMT']
+      Date: ['Fri, 22 Jul 2016 06:19:01 GMT']
       Server: [cloudflare-nginx]
       Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
+      Vary: [accept-encoding]
       X-Moose: [majestic]
       cache-control: ['private, s-maxage=0, max-age=0, must-revalidate', 'max-age=0,
           must-revalidate']
@@ -106,9 +155,9 @@ interactions:
       x-content-type-options: [nosniff]
       x-frame-options: [SAMEORIGIN]
       x-ratelimit-remaining: ['598.0']
-      x-ratelimit-reset: ['331']
+      x-ratelimit-reset: ['59']
       x-ratelimit-used: ['2']
-      x-reddit-tracking: ['https://pixel.redditmedia.com/pixel/of_destiny.png?v=lN0fUBJ0AoQtSibyqvlNLk6Y%2FE9HOSPds3XzLc0iY5w0g%2Fsj2RbviNMRCWuWOPbzHX2OfFnYnZUf7aVGbZweVdoFLCSciF2O']
+      x-reddit-tracking: ['https://pixel.redditmedia.com/pixel/of_destiny.png?v=L6Cjx%2F%2F0IKxPXhZoIw1jmkokOZ8F0PEAtVCX8a%2FwVuNsQnSy62C63nXCHdiZQLgEA5Kypn%2Blzu%2BHC%2Fk2MeXy1ah05R9RX%2B0p']
       x-ua-compatible: [IE=edge]
       x-xss-protection: [1; mode=block]
     status: {code: 200, message: OK}

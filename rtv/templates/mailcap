@@ -1,0 +1,62 @@
+# Example mailcap file for Reddit Terminal Viewer
+# https://github.com/michael-lazar/rtv/
+#
+# Copy the contents of this file to {HOME}/.mailcap, or point to using $MAILCAPS
+# Then launch RTV using the --enable-media flag. All shell commands defined in
+# this file depend on external programs that must be installed on your system.
+#
+# HELP REQUESTED! If you come up with your own commands (especially for OS X)
+# and would like to share, please post an issue on the GitHub tracker and we
+# can get them added to this file as references.
+#
+#
+#                              Mailcap 101
+# - The first entry with a matching MIME type will be executed, * is a wildcard
+# - %s will be replaced with the image or video url
+# - Add ``test=test -n "$DISPLAY"`` if your command opens a new window
+# - Add ``needstermial`` for commands that use the terminal
+# - Add ``copiousoutput`` for commands that dump text to stdout
+
+###############################################################################
+# Commands below this point will open media in a separate window without
+# pausing execution of RTV.
+###############################################################################
+
+# Feh is a simple and effective image viewer
+# Note that rtv returns a list of urls for imgur albums, so we don't put quotes
+# around the `%s`
+image/x-imgur-album; feh -g 640x480 %s; test=test -n "$DISPLAY"
+image/*; feh -g 640x480 '%s'; test=test -n "$DISPLAY"
+
+# Youtube videos are assigned a custom mime-type, which can be streamed with
+# vlc or youtube-dl.
+video/x-youtube; vlc '%s' --width 640 --height 480; test=test -n "$DISPLAY"
+video/x-youtube; youtube-dl -q -o - '%s' | mpv - --autofit 640x480; test=test -n "$DISPLAY"
+
+# Mpv is a simple and effective video streamer
+video/webm; mpv '%s' --autofit 640x480 --loop=inf; test=test -n "$DISPLAY"
+video/*; mpv '%s' --autofit 640x480 --loop=inf; test=test -n "$DISPLAY"
+
+###############################################################################
+# Commands below this point will attempt to display media directly in the
+# terminal when X is not available.
+###############################################################################
+
+# View true images in the terminal, supported by rxvt-unicode, xterm and st
+# Requires the w3m-img package
+# image/*; w3m -o 'ext_image_viewer=off' '%s'; needsterminal
+
+# Don't have a solution for albums yet
+image/x-imgur-album; echo
+
+# 256 color images using half-width unicode characters
+# Much higher quality that img2txt, but must be built from source
+# https://github.com/rossy/img2xterm
+image/*; curl -s '%s' | convert -resize 80x80 - jpg:/tmp/rtv.jpg && img2xterm /tmp/rtv.jpg; needsterminal; copiousoutput
+
+# Display images in classic ascii using img2txt and lib-caca
+image/*; curl -s '%s' | convert - jpg:/tmp/rtv.jpg && img2txt -f utf8 /tmp/rtv.jpg; needsterminal; copiousoutput
+
+# Ascii videos
+video/x-youtube; youtube-dl -q -o - '%s' | mplayer -cache 8192 -vo caca -quiet -; needsterminal
+video/*; wget '%s' -O - | mplayer -cache 8192 -vo caca -quiet -; needsterminal

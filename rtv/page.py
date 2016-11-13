@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 import sys
+import six
 import time
 import curses
 from functools import wraps
@@ -9,7 +11,9 @@ from functools import wraps
 from kitchen.text.display import textual_width
 
 from . import docs
-from .objects import Controller, Color
+from .objects import Controller, Color, Command
+from .exceptions import TemporaryFileError
+from .__version__ import __version__
 
 
 def logged_in(f):
@@ -31,6 +35,8 @@ class PageController(Controller):
 
 class Page(object):
 
+    FOOTER = None
+
     def __init__(self, reddit, term, config, oauth):
 
         self.reddit = reddit
@@ -51,6 +57,9 @@ class Page(object):
     def _draw_item(self, window, data, inverted):
         raise NotImplementedError
 
+    def get_selected_item(self):
+        return self.content.get(self.nav.absolute_index)
+
     def loop(self):
         """
         Main control loop runs the following steps:
@@ -68,63 +77,119 @@ class Page(object):
             ch = self.term.stdscr.getch()
             self.controller.trigger(ch)
 
-    @PageController.register('q')
+    @PageController.register(Command('EXIT'))
     def exit(self):
         if self.term.prompt_y_or_n('Do you really want to quit? (y/n): '):
             sys.exit()
 
-    @PageController.register('Q')
+    @PageController.register(Command('FORCE_EXIT'))
     def force_exit(self):
         sys.exit()
 
-    @PageController.register('?')
+    @PageController.register(Command('HELP'))
     def show_help(self):
-        self.term.show_notification(docs.HELP.strip().splitlines())
+        self.term.open_pager(docs.HELP.strip())
 
-    @PageController.register('1')
+    @PageController.register(Command('SORT_HOT'))
     def sort_content_hot(self):
         self.refresh_content(order='hot')
 
-    @PageController.register('2')
+    @PageController.register(Command('SORT_TOP'))
     def sort_content_top(self):
-        self.refresh_content(order='top')
 
-    @PageController.register('3')
+        if not self.content.order or 'top' not in self.content.order:
+            self.refresh_content(order='top')
+            return
+
+        choices = {
+            '1': 'top-hour',
+            '2': 'top-day',
+            '3': 'top-week',
+            '4': 'top-month',
+            '5': 'top-year',
+            '6': 'top-all'}
+
+        message = docs.TIME_ORDER_MENU.strip().splitlines()
+        ch = self.term.show_notification(message)
+        ch = six.unichr(ch)
+        if ch not in choices:
+            self.term.show_notification('Invalid option')
+            return
+
+        self.refresh_content(order=choices[ch])
+
+    @PageController.register(Command('SORT_RISING'))
     def sort_content_rising(self):
         self.refresh_content(order='rising')
 
-    @PageController.register('4')
+    @PageController.register(Command('SORT_NEW'))
     def sort_content_new(self):
         self.refresh_content(order='new')
 
-    @PageController.register('5')
+    @PageController.register(Command('SORT_CONTROVERSIAL'))
     def sort_content_controversial(self):
-        self.refresh_content(order='controversial')
 
-    @PageController.register(curses.KEY_UP, 'k')
+        if not self.content.order or 'controversial' not in self.content.order:
+            self.refresh_content(order='controversial')
+            return
+
+        choices = {
+            '1': 'controversial-hour',
+            '2': 'controversial-day',
+            '3': 'controversial-week',
+            '4': 'controversial-month',
+            '5': 'controversial-year',
+            '6': 'controversial-all'}
+
+        message = docs.TIME_ORDER_MENU.strip().splitlines()
+        ch = self.term.show_notification(message)
+        ch = six.unichr(ch)
+        if ch not in choices:
+            self.term.show_notification('Invalid option')
+            return
+
+        self.refresh_content(order=choices[ch])
+
+    @PageController.register(Command('MOVE_UP'))
     def move_cursor_up(self):
         self._move_cursor(-1)
         self.clear_input_queue()
 
-    @PageController.register(curses.KEY_DOWN, 'j')
+    @PageController.register(Command('MOVE_DOWN'))
     def move_cursor_down(self):
         self._move_cursor(1)
         self.clear_input_queue()
 
-    @PageController.register('m', curses.KEY_PPAGE)
+    @PageController.register(Command('PAGE_UP'))
     def move_page_up(self):
         self._move_page(-1)
         self.clear_input_queue()
 
-    @PageController.register('n', curses.KEY_NPAGE)
+    @PageController.register(Command('PAGE_DOWN'))
     def move_page_down(self):
         self._move_page(1)
         self.clear_input_queue()
 
-    @PageController.register('a')
+    @PageController.register(Command('PAGE_TOP'))
+    def move_page_top(self):
+        self._remove_cursor()
+        self.nav.page_index = self.content.range[0]
+        self.nav.cursor_index = 0
+        self.nav.inverted = False
+        self._add_cursor()
+
+    @PageController.register(Command('PAGE_BOTTOM'))
+    def move_page_bottom(self):
+        self._remove_cursor()
+        self.nav.page_index = self.content.range[1]
+        self.nav.cursor_index = 0
+        self.nav.inverted = True
+        self._add_cursor()
+
+    @PageController.register(Command('UPVOTE'))
     @logged_in
     def upvote(self):
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if 'likes' not in data:
             self.term.flash()
         elif data['likes']:
@@ -138,10 +203,10 @@ class Page(object):
             if not self.term.loader.exception:
                 data['likes'] = True
 
-    @PageController.register('z')
+    @PageController.register(Command('DOWNVOTE'))
     @logged_in
     def downvote(self):
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if 'likes' not in data:
             self.term.flash()
         elif data['likes'] or data['likes'] is None:
@@ -155,7 +220,24 @@ class Page(object):
             if not self.term.loader.exception:
                 data['likes'] = None
 
-    @PageController.register('u')
+    @PageController.register(Command('SAVE'))
+    @logged_in
+    def save(self):
+        data = self.get_selected_item()
+        if 'saved' not in data:
+            self.term.flash()
+        elif not data['saved']:
+            with self.term.loader('Saving'):
+                data['object'].save()
+            if not self.term.loader.exception:
+                data['saved'] = True
+        else:
+            with self.term.loader('Unsaving'):
+                data['object'].unsave()
+            if not self.term.loader.exception:
+                data['saved'] = False
+
+    @PageController.register(Command('LOGIN'))
     def login(self):
         """
         Prompt to log into the user's account, or log out of the current
@@ -169,14 +251,14 @@ class Page(object):
         else:
             self.oauth.authorize()
 
-    @PageController.register('d')
+    @PageController.register(Command('DELETE'))
     @logged_in
     def delete_item(self):
         """
         Delete a submission or comment.
         """
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data.get('author') != self.reddit.user.name:
             self.term.flash()
             return
@@ -193,14 +275,14 @@ class Page(object):
         if self.term.loader.exception is None:
             self.refresh_content()
 
-    @PageController.register('e')
+    @PageController.register(Command('EDIT'))
     @logged_in
     def edit(self):
         """
         Edit a submission or comment.
         """
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data.get('author') != self.reddit.user.name:
             self.term.flash()
             return
@@ -217,18 +299,21 @@ class Page(object):
             self.term.flash()
             return
 
-        text = self.term.open_editor(info)
-        if text == content:
-            self.term.show_notification('Canceled')
-            return
+        with self.term.open_editor(info) as text:
+            if text == content:
+                self.term.show_notification('Canceled')
+                return
 
-        with self.term.loader('Editing', delay=0):
-            data['object'].edit(text)
-            time.sleep(2.0)
-        if self.term.loader.exception is None:
-            self.refresh_content()
+            with self.term.loader('Editing', delay=0):
+                data['object'].edit(text)
+                time.sleep(2.0)
 
-    @PageController.register('i')
+            if self.term.loader.exception is None:
+                self.refresh_content()
+            else:
+                raise TemporaryFileError()
+
+    @PageController.register(Command('INBOX'))
     @logged_in
     def get_inbox(self):
         """
@@ -260,6 +345,7 @@ class Page(object):
         self._draw_header()
         self._draw_banner()
         self._draw_content()
+        self._draw_footer()
         self._add_cursor()
         self.term.stdscr.touchwin()
         self.term.stdscr.refresh()
@@ -267,6 +353,7 @@ class Page(object):
     def _draw_header(self):
 
         n_rows, n_cols = self.term.stdscr.getmaxyx()
+
         # Note: 2 argument form of derwin breaks PDcurses on Windows 7!
         window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
         window.erase()
@@ -274,15 +361,41 @@ class Page(object):
         ch, attr = str(' '), curses.A_REVERSE | curses.A_BOLD | Color.CYAN
         window.bkgd(ch, attr)
 
-        sub_name = self.content.name.replace('/r/front', 'Front Page')
+        sub_name = self.content.name
+        sub_name = sub_name.replace('/r/front', 'Front Page')
+        sub_name = sub_name.replace('/u/me', 'My Submissions')
+        sub_name = sub_name.replace('/u/saved', 'My Saved Submissions')
         self.term.add_line(window, sub_name, 0, 0)
+
+        # Set the terminal title
+        if len(sub_name) > 50:
+            title = sub_name.strip('/')
+            title = title.rsplit('/', 1)[1]
+            title = title.replace('_', ' ')
+        else:
+            title = sub_name
+
+        if os.getenv('DISPLAY'):
+            title += ' - rtv {0}'.format(__version__)
+            title = self.term.clean(title)
+            if six.PY3:
+                # In py3 you can't write bytes to stdout
+                title = title.decode('utf-8')
+                title = '\x1b]2;{0}\x07'.format(title)
+            else:
+                title = b'\x1b]2;{0}\x07'.format(title)
+            sys.stdout.write(title)
+            sys.stdout.flush()
 
         if self.reddit.user is not None:
             # The starting position of the name depends on if we're converting
             # to ascii or not
             width = len if self.config['ascii'] else textual_width
 
-            username = self.reddit.user.name
+            if self.config['hide_username']:
+                username = "Logged in"
+            else:
+                username = self.reddit.user.name
             s_col = (n_cols - width(username) - 1)
             # Only print username if it fits in the empty space on the right
             if (s_col - 1) >= width(sub_name):
@@ -298,13 +411,14 @@ class Page(object):
         ch, attr = str(' '), curses.A_BOLD | Color.YELLOW
         window.bkgd(ch, attr)
 
-        items = ['[1]hot', '[2]top', '[3]rising', '[4]new', '[5]controversial']
+        items = docs.BANNER.strip().split(' ')
         distance = (n_cols - sum(len(t) for t in items) - 1) / (len(items) - 1)
         spacing = max(1, int(distance)) * ' '
         text = spacing.join(items)
         self.term.add_line(window, text, 0, 0)
         if self.content.order is not None:
-            col = text.find(self.content.order) - 3
+            order = self.content.order.split('-')[0]
+            col = text.find(order) - 3
             window.chgat(0, col, 3, attr | curses.A_REVERSE)
 
         self._row += 1
@@ -316,7 +430,7 @@ class Page(object):
 
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(
-            n_rows - self._row, n_cols, self._row, 0)
+            n_rows - self._row - 1, n_cols, self._row, 0)
         window.erase()
         win_n_rows, win_n_cols = window.getmaxyx()
 
@@ -327,31 +441,60 @@ class Page(object):
         # If not inverted, align the first submission with the top and draw
         # downwards. If inverted, align the first submission with the bottom
         # and draw upwards.
+        cancel_inverted = True
         current_row = (win_n_rows - 1) if inverted else 0
-        available_rows = (win_n_rows - 1) if inverted else win_n_rows
+        available_rows = win_n_rows
+        top_item_height = None if inverted else self.nav.top_item_height
         for data in self.content.iterate(page_index, step, win_n_cols - 2):
             subwin_n_rows = min(available_rows, data['n_rows'])
-            subwin_n_cols = win_n_cols - data['offset']
-            start = current_row - subwin_n_rows if inverted else current_row
+            subwin_inverted = inverted
+            if top_item_height is not None:
+                # Special case: draw the page as non-inverted, except for the
+                # top element. This element will be drawn as inverted with a
+                # restricted height
+                subwin_n_rows = min(subwin_n_rows, top_item_height)
+                subwin_inverted = True
+                top_item_height = None
+            subwin_n_cols = win_n_cols - data['h_offset']
+            start = current_row - subwin_n_rows + 1 if inverted else current_row
             subwindow = window.derwin(
-                subwin_n_rows, subwin_n_cols, start, data['offset'])
-            attr = self._draw_item(subwindow, data, inverted)
+                subwin_n_rows, subwin_n_cols, start, data['h_offset'])
+            attr = self._draw_item(subwindow, data, subwin_inverted)
             self._subwindows.append((subwindow, attr))
             available_rows -= (subwin_n_rows + 1)  # Add one for the blank line
             current_row += step * (subwin_n_rows + 1)
             if available_rows <= 0:
+                # Indicate the page is full and we can keep the inverted screen.
+                cancel_inverted = False
                 break
-        else:
-            # If the page is not full we need to make sure that it is NOT
+
+        if len(self._subwindows) == 1:
+            # Never draw inverted if only one subwindow. The top of the
+            # subwindow should always be aligned with the top of the screen.
+            cancel_inverted = True
+
+        if cancel_inverted and self.nav.inverted:
+            # In some cases we need to make sure that the screen is NOT
             # inverted. Unfortunately, this currently means drawing the whole
             # page over again. Could not think of a better way to pre-determine
             # if the content will fill up the page, given that it is dependent
             # on the size of the terminal.
-            if self.nav.inverted:
-                self.nav.flip((len(self._subwindows) - 1))
-                self._draw_content()
+            self.nav.flip((len(self._subwindows) - 1))
+            return self._draw_content()
 
-        self._row = n_rows
+        self._row += win_n_rows
+
+    def _draw_footer(self):
+
+        n_rows, n_cols = self.term.stdscr.getmaxyx()
+        window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
+        window.erase()
+        ch, attr = str(' '), curses.A_REVERSE | curses.A_BOLD | Color.CYAN
+        window.bkgd(ch, attr)
+
+        text = self.FOOTER.strip()
+        self.term.add_line(window, text, 0, 0)
+        self._row += 1
 
     def _add_cursor(self):
         self._edit_cursor(curses.A_REVERSE)

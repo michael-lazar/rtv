@@ -4,8 +4,11 @@ from __future__ import unicode_literals
 import os
 import sys
 import time
+import shlex
 import codecs
 import curses
+import logging
+import threading
 import webbrowser
 import subprocess
 import curses.ascii
@@ -14,10 +17,15 @@ from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
 
 import six
+#pylint: disable=import-error
+from six.moves.urllib.parse import quote
 from kitchen.text.display import textual_width_chop
+from mailcap_fix import mailcap
 
 from . import exceptions
+from . import mime_parsers
 from .objects import LoadScreen, Color
+
 
 try:
     # Added in python 3.4+
@@ -25,6 +33,9 @@ try:
 except ImportError:
     from six.moves import html_parser
     unescape = html_parser.HTMLParser().unescape
+
+
+_logger = logging.getLogger(__name__)
 
 
 class Terminal(object):
@@ -35,43 +46,39 @@ class Terminal(object):
     # ASCII code
     ESCAPE = 27
     RETURN = 10
+    SPACE = 32
 
-    def __init__(self, stdscr, ascii=False):
+    def __init__(self, stdscr, config):
 
         self.stdscr = stdscr
-        self.ascii = ascii
+        self.config = config
         self.loader = LoadScreen(self)
         self._display = None
+        self._mailcap_dict = mailcap.getcaps()
 
     @property
     def up_arrow(self):
-        symbol = '^' if self.ascii else '▲'
+        symbol = '^' if self.config['ascii'] else '▲'
         attr = curses.A_BOLD | Color.GREEN
         return symbol, attr
 
     @property
     def down_arrow(self):
-        symbol = 'v' if self.ascii else '▼'
+        symbol = 'v' if self.config['ascii'] else '▼'
         attr = curses.A_BOLD | Color.RED
         return symbol, attr
 
     @property
     def neutral_arrow(self):
-        symbol = 'o' if self.ascii else '•'
+        symbol = 'o' if self.config['ascii'] else '•'
         attr = curses.A_BOLD
         return symbol, attr
 
     @property
     def guilded(self):
-        symbol = '*' if self.ascii else '✪'
+        symbol = '*' if self.config['ascii'] else '✪'
         attr = curses.A_BOLD | Color.YELLOW
         return symbol, attr
-
-    @property
-    def stickied(self):
-        text = '[stickied]'
-        attr = Color.GREEN
-        return text, attr
 
     @property
     def vline(self):
@@ -87,7 +94,14 @@ class Terminal(object):
         if self._display is None:
             if sys.platform == 'darwin':
                 # OSX doesn't always set DISPLAY so we can't use this to check
-                display = True
+                # Note: Disabling for now, with the hope that if this
+                # is a widespread issue then people will complain and we can
+                # come up with a better solution. Checking for $DISPLAY is
+                # used extensively in mailcap files, so it really *should* be
+                # set properly. I don't have a mac anymore so I can't test.
+
+                #  display = True
+                display = bool(os.environ.get("DISPLAY"))
             else:
                 display = bool(os.environ.get("DISPLAY"))
 
@@ -107,6 +121,9 @@ class Terminal(object):
 
     @staticmethod
     def flash():
+        """
+        Flash the screen to indicate that an action was invalid.
+        """
         return curses.flash()
 
     @staticmethod
@@ -123,6 +140,9 @@ class Terminal(object):
         window.addch(y, x, ch, attr)
 
     def getch(self):
+        """
+        Wait for a keypress and return the corresponding character code (int).
+        """
         return self.stdscr.getch()
 
     @staticmethod
@@ -203,7 +223,7 @@ class Terminal(object):
         if isinstance(string, six.text_type):
             string = unescape(string)
 
-        if self.ascii:
+        if self.config['ascii']:
             if isinstance(string, six.binary_type):
                 string = string.decode('utf-8')
             string = string.encode('ascii', 'replace')
@@ -254,7 +274,7 @@ class Terminal(object):
         """
 
         if isinstance(message, six.string_types):
-            message = [message]
+            message = message.splitlines()
 
         n_rows, n_cols = self.stdscr.getmaxyx()
 
@@ -292,6 +312,135 @@ class Terminal(object):
 
         return ch
 
+    def open_link(self, url):
+        """
+        Open a media link using the definitions from the user's mailcap file.
+
+        Most urls are parsed using their file extension, but special cases
+        exist for websites that are prevalent on reddit such as Imgur and
+        Gfycat. If there are no valid mailcap definitions, RTV will fall back
+        to using the default webbrowser.
+
+        RTV checks for certain mailcap fields to determine how to open a link:
+            - If ``copiousoutput`` is specified, the curses application will
+              be paused and stdout will be piped to the system pager.
+            - If `needsterminal`` is specified, the curses application will
+              yield terminal control to the subprocess until it has exited.
+            - Otherwise, we assume that the subprocess is meant to open a new
+              x-window, and we swallow all stdout output.
+
+        Examples:
+            Stream youtube videos with VLC
+            Browse images and imgur albums with feh
+            Watch .webm videos through your terminal with mplayer
+            View images directly in your terminal with fbi or w3m
+            Play .mp3 files with sox player
+            Send HTML pages your pager using to html2text
+            ...anything is possible!
+        """
+
+        if not self.config['enable_media']:
+            return self.open_browser(url)
+
+        try:
+            with self.loader('Checking link', catch_exception=False):
+                command, entry = self.get_mailcap_entry(url)
+        except exceptions.MailcapEntryNotFound:
+            return self.open_browser(url)
+
+        _logger.info('Executing command: %s', command)
+        needs_terminal = 'needsterminal' in entry
+        copious_output = 'copiousoutput' in entry
+
+        if needs_terminal or copious_output:
+            # Blocking, pause rtv until the process returns
+            with self.suspend():
+                os.system('clear')
+                p = subprocess.Popen(
+                    [command], stderr=subprocess.PIPE,
+                    universal_newlines=True, shell=True)
+                _, stderr = p.communicate()
+                if copious_output:
+                    six.moves.input('Press any key to continue')
+            code = p.poll()
+            if code != 0:
+                _logger.warning(stderr)
+                self.show_notification(
+                    'Program exited with status={0}\n{1}'.format(
+                        code, stderr.strip()))
+
+        else:
+            # Non-blocking, open a background process
+            with self.loader('Opening page', delay=0):
+                p = subprocess.Popen(
+                    [command], shell=True, universal_newlines=True,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                # Wait a little while to make sure that the command doesn't
+                # exit with an error. This isn't perfect, but it should be good
+                # enough to catch invalid commands.
+                time.sleep(1.0)
+                code = p.poll()
+                if code is not None and code != 0:
+                    _, stderr = p.communicate()
+                    raise exceptions.BrowserError(
+                        'Program exited with status={0}\n{1}'.format(
+                            code, stderr.strip()))
+
+                # Spin off a thread with p.communicate() to avoid subprocess
+                # hang when the stodout/stderr PIPE gets filled up. This
+                # behavior was discovered when opening long gifs with mpv
+                # because mpv sends a progress bar to stderr.
+                # https://thraxil.org/users/anders/posts/2008/03/13/
+                threading.Thread(target=p.communicate).start()
+
+    def get_mailcap_entry(self, url):
+        """
+        Search through the mime handlers list and attempt to find the
+        appropriate command to open the provided url with.
+
+        Will raise a MailcapEntryNotFound exception if no valid command exists.
+
+        Params:
+            url (text): URL that will be checked
+
+        Returns:
+            command (text): The string of the command that should be executed
+                in a subprocess to open the resource.
+            entry (dict): The full mailcap entry for the corresponding command
+        """
+
+        for parser in mime_parsers.parsers:
+            if parser.pattern.match(url):
+                # modified_url may be the same as the original url, but it
+                # could also be updated to point to a different page, or it
+                # could refer to the location of a temporary file with the
+                # page's downloaded content.
+                try:
+                    modified_url, content_type = parser.get_mimetype(url)
+                except Exception as e:
+                    # If Imgur decides to change its html layout, let it fail
+                    # silently in the background instead of crashing.
+                    _logger.warn('parser %s raised an exception', parser)
+                    _logger.exception(e)
+                    raise exceptions.MailcapEntryNotFound()
+                if not content_type:
+                    _logger.info('Content type could not be determined')
+                    raise exceptions.MailcapEntryNotFound()
+                elif content_type == 'text/html':
+                    _logger.info('Content type text/html, deferring to browser')
+                    raise exceptions.MailcapEntryNotFound()
+
+                command, entry = mailcap.findmatch(
+                    self._mailcap_dict, content_type, filename=modified_url)
+                if not entry:
+                    _logger.info('Could not find a valid mailcap entry')
+                    raise exceptions.MailcapEntryNotFound()
+
+                return command, entry
+
+        # No parsers matched the url
+        raise exceptions.MailcapEntryNotFound()
+
     def open_browser(self, url):
         """
         Open the given url using the default webbrowser. The preferred browser
@@ -318,7 +467,12 @@ class Terminal(object):
         """
 
         if self.display:
-            command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
+            # Note that we need to sanitize the url before inserting it into
+            # the python code to prevent injection attacks.
+            command = (
+                "import webbrowser\n"
+                "from six.moves.urllib.parse import unquote\n"
+                "webbrowser.open_new_tab(unquote('%s'))" % quote(url))
             args = [sys.executable, '-c', command]
             with self.loader('Opening page in a new window'), \
                     open(os.devnull, 'ab+', 0) as null:
@@ -334,10 +488,11 @@ class Terminal(object):
                             break  # Success
                         elif code is not None:
                             raise exceptions.BrowserError(
-                                'Browser exited with status=%s' % code)
+                                'Program exited with status=%s' % code)
                         time.sleep(0.01)
                     else:
-                        raise exceptions.BrowserError('Timeout opening browser')
+                        raise exceptions.BrowserError(
+                            'Timeout opening browser')
                 finally:
                     # Can't check the loader exception because the oauth module
                     # supersedes this loader and we need to always kill the
@@ -350,34 +505,119 @@ class Terminal(object):
             with self.suspend():
                 webbrowser.open_new_tab(url)
 
+    def open_pager(self, data):
+        """
+        View a long block of text using the system's default pager.
+
+        The data string will be piped directly to the pager.
+        """
+
+        pager = os.getenv('PAGER') or 'less'
+        command = shlex.split(pager)
+        try:
+            with self.suspend():
+                _logger.debug('Running command: %s', command)
+                p = subprocess.Popen(command, stdin=subprocess.PIPE)
+                try:
+                    p.communicate(data.encode('utf-8'))
+                except KeyboardInterrupt:
+                    p.terminate()
+        except OSError as e:
+            _logger.exception(e)
+            self.show_notification('Could not open pager %s' % pager)
+
+    @contextmanager
     def open_editor(self, data=''):
         """
-        Open a temporary file using the system's default editor.
+        Open a file for editing using the system's default editor.
 
-        The data string will be written to the file before opening. This
-        function will block until the editor has closed. At that point the file
-        will be read and and lines starting with '#' will be stripped.
+        After the file has been altered, the text will be read back and lines
+        starting with '#' will be stripped. If an error occurs inside of the
+        context manager, the file will be preserved. Otherwise, the file will
+        be deleted when the context manager closes.
+
+        Params:
+            data (str): If provided, text will be written to the file before
+                opening it with the editor.
+
+        Returns:
+            text (str): The text that the user entered into the editor.
         """
 
-        with NamedTemporaryFile(prefix='rtv-', suffix='.txt', mode='wb') as fp:
-            fp.write(codecs.encode(data, 'utf-8'))
-            fp.flush()
-            editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
+        with NamedTemporaryFile(prefix='rtv_', suffix='.txt', delete=False) as fp:
+            # Create a tempory file and grab the name, but close immediately so
+            # we can re-open using the right encoding
+            filepath = fp.name
 
+        with codecs.open(filepath, 'w', 'utf-8') as fp:
+            fp.write(data)
+        _logger.info('File created: %s', filepath)
+
+        editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
+        command = shlex.split(editor) + [filepath]
+        try:
+            with self.suspend():
+                _logger.debug('Running command: %s', command)
+                p = subprocess.Popen(command)
+                try:
+                    p.communicate()
+                except KeyboardInterrupt:
+                    p.terminate()
+        except OSError as e:
+            _logger.exception(e)
+            self.show_notification('Could not open file with %s' % editor)
+
+        with codecs.open(filepath, 'r', 'utf-8') as fp:
+            text = ''.join(line for line in fp if not line.startswith('#'))
+            text = text.rstrip()
+
+        try:
+            yield text
+        except exceptions.TemporaryFileError:
+            # All exceptions will cause the file to *not* be removed, but these
+            # ones should also be swallowed
+            _logger.info('Caught TemporaryFileError')
+            self.show_notification('Post saved as: %s' % filepath)
+        else:
+            # If no errors occurred, try to remove the file
             try:
-                with self.suspend():
-                    subprocess.Popen([editor, fp.name]).wait()
+                os.remove(filepath)
             except OSError:
-                raise exceptions.ProgramError(
-                    'Could not open file with %s' % editor)
+                _logger.warning('Could not delete: %s', filepath)
+            else:
+                _logger.info('File deleted: %s', filepath)
 
-            # Open a second file object to read. This appears to be necessary
-            # in order to read the changes made by some editors (gedit). w+
-            # mode does not work!
-            with codecs.open(fp.name, 'r', 'utf-8') as fp2:
-                text = ''.join(line for line in fp2 if not line.startswith('#'))
-                text = text.rstrip()
-                return text
+    def open_urlview(self, data):
+        """
+        Pipe a block of text to urlview, which displays a list of urls
+        contained in the text and allows the user to open them with their
+        web browser.
+        """
+
+        urlview = os.getenv('RTV_URLVIEWER') or 'urlview'
+        command = shlex.split(urlview)
+        try:
+            with self.suspend():
+                _logger.debug('Running command: %s', command)
+                p = subprocess.Popen(command, stdin=subprocess.PIPE)
+                try:
+                    p.communicate(input=data.encode('utf-8'))
+                except KeyboardInterrupt:
+                    p.terminate()
+
+                code = p.poll()
+                if code == 1:
+                    # Clear the "No URLs found." message from stdout
+                    sys.stdout.write("\033[F")
+                    sys.stdout.flush()
+
+            if code == 1:
+                self.show_notification('No URLs found')
+
+        except OSError as e:
+            _logger.exception(e)
+            self.show_notification(
+                'Failed to open {0}'.format(urlview))
 
     def text_input(self, window, allow_resize=False):
         """
@@ -435,18 +675,20 @@ class Terminal(object):
         """
 
         n_rows, n_cols = self.stdscr.getmaxyx()
-        attr = curses.A_BOLD | Color.CYAN
+        ch, attr = str(' '), curses.A_BOLD | curses.A_REVERSE | Color.CYAN
         prompt = self.clean(prompt, n_cols-1)
 
         # Create a new window to draw the text at the bottom of the screen,
         # so we can erase it when we're done.
         prompt_win = curses.newwin(1, len(prompt)+1, n_rows-1, 0)
-        self.add_line(prompt_win, prompt, attr=attr)
+        prompt_win.bkgd(ch, attr)
+        self.add_line(prompt_win, prompt)
         prompt_win.refresh()
 
         # Create a separate window for text input
         input_win = curses.newwin(1, n_cols-len(prompt), n_rows-1, len(prompt))
-        input_win.attrset(attr)
+        input_win.bkgd(ch, attr)
+        input_win.refresh()
 
         if key:
             curses.curs_set(1)
@@ -500,7 +742,7 @@ class Terminal(object):
         # space, assume that a newline operation was intended by the user
         stack, current_line = [], ''
         for line in text.split('\n'):
-            if line.endswith('  '):
+            if line.endswith('  ') or not line:
                 stack.append(current_line + line.rstrip())
                 current_line = ''
             else:

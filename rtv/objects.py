@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
 import os
 import time
-import curses
 import signal
 import inspect
 import weakref
 import logging
 import threading
+import curses
+import curses.ascii
 from contextlib import contextmanager
 
 import six
@@ -60,7 +62,8 @@ def curses_session():
         # Hide the blinking cursor
         curses.curs_set(0)
 
-        Color.init()
+        # Assign the terminal's default (background) color to code -1
+        curses.use_default_colors()
 
         yield stdscr
 
@@ -113,10 +116,11 @@ class LoadScreen(object):
 
     EXCEPTION_MESSAGES = [
         (exceptions.RTVError, '{0}'),
-        (praw.errors.OAuthException, 'Not logged in'),
+        (praw.errors.OAuthException, 'OAuth Error'),
         (praw.errors.OAuthScopeRequired, 'Not logged in'),
         (praw.errors.LoginRequired, 'Not logged in'),
         (praw.errors.InvalidCaptcha, 'Error, captcha required'),
+        (praw.errors.InvalidSubreddit, '{0.args[0]}'),
         (praw.errors.PRAWException, '{0.__class__.__name__}'),
         (requests.exceptions.RequestException, '{0.__class__.__name__}'),
     ]
@@ -187,7 +191,7 @@ class LoadScreen(object):
 
         self.exception = e
         exc_name = type(e).__name__
-        _logger.info('Loader caught: {0} - {1}'.format(exc_name, e))
+        _logger.info('Loader caught: %s - %s', exc_name, e)
 
         if isinstance(e, KeyboardInterrupt):
             # Don't need to print anything for this one, just swallow it
@@ -252,7 +256,6 @@ class LoadScreen(object):
 
 
 class Color(object):
-
     """
     Color attributes for curses.
     """
@@ -284,9 +287,6 @@ class Color(object):
         curses color pairs can be accessed directly through class attributes.
         """
 
-        # Assign the terminal's default (background) color to code -1
-        curses.use_default_colors()
-
         for index, (attr, code) in enumerate(cls._colors.items(), start=1):
             curses.init_pair(index, code[0], code[1])
             setattr(cls, attr, curses.color_pair(index))
@@ -316,7 +316,8 @@ class Navigator(object):
             valid_page_cb,
             page_index=0,
             cursor_index=0,
-            inverted=False):
+            inverted=False,
+            top_item_height=None):
         """
         Params:
             valid_page_callback (func): This function, usually `Content.get`,
@@ -332,11 +333,16 @@ class Navigator(object):
                 inverted - The page is drawn from the bottom of the screen,
                     starting with the page index, up to the top of the
                     screen.
+            top_item_height (int): If this is set to a non-null value
+            The number of columns that the top-most item
+                should utilize if non-inverted. This is used for a special mode
+                where all items are drawn non-inverted except for the top one.
         """
 
         self.page_index = page_index
         self.cursor_index = cursor_index
         self.inverted = inverted
+        self.top_item_height = top_item_height
         self._page_cb = valid_page_cb
 
     @property
@@ -397,15 +403,21 @@ class Navigator(object):
                     # Flip the orientation and reset the cursor
                     self.flip(self.cursor_index)
                     self.cursor_index = 0
+                    self.top_item_height = None
                     redraw = True
         else:
             if self.cursor_index > 0:
                 self.cursor_index -= 1
+                if self.top_item_height and self.cursor_index == 0:
+                    # Selecting the partially displayed item
+                    self.top_item_height = None
+                    redraw = True
             else:
                 self.page_index -= self.step
                 if self._is_valid(self.absolute_index):
                     # We have reached the beginning of the page - move the
                     # index
+                    self.top_item_height = None
                     redraw = True
                 else:
                     self.page_index += self.step
@@ -479,6 +491,7 @@ class Navigator(object):
         self.page_index += (self.step * n_windows)
         self.cursor_index = n_windows
         self.inverted = not self.inverted
+        self.top_item_height = None
 
     def _is_valid(self, page_index):
         """
@@ -502,10 +515,10 @@ class Controller(object):
     >>> def func(self, *args)
     >>>     ...
 
-    Register a default behavior by using `None`.
-    >>> @Controller.register(None)
-    >>> def default_func(self, *args)
-    >>>     ...
+    Register a KeyBinding that can be defined later by the config file
+    >>> @Controller.register(Command("UPVOTE"))
+    >>> def upvote(self, *args)
+    >>      ...
 
     Bind the controller to a class instance and trigger a key. Additional
     arguments will be passed to the function.
@@ -515,12 +528,47 @@ class Controller(object):
 
     character_map = {}
 
-    def __init__(self, instance):
+    def __init__(self, instance, keymap=None):
 
         self.instance = instance
-        # Build a list of parent controllers that follow the object's MRO to
-        # check if any parent controllers have registered the keypress
+        # Build a list of parent controllers that follow the object's MRO
+        # to check if any parent controllers have registered the keypress
         self.parents = inspect.getmro(type(self))[:-1]
+        # Keep track of last key press for doubles like `gg`
+        self.last_char = None
+
+        if not keymap:
+            return
+
+        # Go through the controller and all of it's parents and look for
+        # Command objects in the character map. Use the keymap the lookup the
+        # keys associated with those command objects and add them to the
+        # character map.
+        for controller in self.parents:
+            for command, func in controller.character_map.copy().items():
+                if isinstance(command, Command):
+                    for key in keymap.get(command):
+                        val = keymap.parse(key)
+                        # If a double key press is defined, the first half
+                        # must be unbound
+                        if isinstance(val, tuple):
+                            if controller.character_map.get(val[0]) is not None:
+                                raise exceptions.ConfigError(
+                                    "Invalid configuration! `%s` is bound to "
+                                    "duplicate commands in the "
+                                    "%s" % (key, controller.__name__))
+                            # Mark the first half of the double with None so
+                            # that no other command can use it
+                            controller.character_map[val[0]] = None
+
+                        # Check if the key is already programmed to trigger a
+                        # different function.
+                        if controller.character_map.get(val, func) != func:
+                            raise exceptions.ConfigError(
+                                "Invalid configuration! `%s` is bound to "
+                                "duplicate commands in the "
+                                "%s" % (key, controller.__name__))
+                        controller.character_map[val] = func
 
     def trigger(self, char, *args, **kwargs):
 
@@ -531,16 +579,19 @@ class Controller(object):
         # Check if the controller (or any of the controller's parents) have
         # registered a function to the given key
         for controller in self.parents:
+            func = controller.character_map.get((self.last_char, char))
             if func:
                 break
             func = controller.character_map.get(char)
-        # If the controller has not registered the key, check if there is a
-        # default function registered
-        for controller in self.parents:
             if func:
                 break
-            func = controller.character_map.get(None)
-        return func(self.instance, *args, **kwargs) if func else None
+
+        if func:
+            self.last_char = None
+            return func(self.instance, *args, **kwargs)
+        else:
+            self.last_char = char
+            return None
 
     @classmethod
     def register(cls, *chars):
@@ -552,3 +603,92 @@ class Controller(object):
                     cls.character_map[char] = f
             return f
         return inner
+
+
+class Command(object):
+    """
+    Minimal class that should be used to wrap abstract commands that may be
+    implemented as one or more physical keystrokes.
+
+    E.g. Command("REFRESH") can be represented by the KeyMap to be triggered
+         by either `r` or `F5`
+    """
+
+    def __init__(self, val):
+        self.val = val.upper()
+
+    def __repr__(self):
+        return 'Command(%s)' % self.val
+
+    def __eq__(self, other):
+        return repr(self) == repr(other)
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __hash__(self):
+        return hash(repr(self))
+
+
+class KeyMap(object):
+    """
+    Mapping between commands and the keys that they represent.
+    """
+
+    def __init__(self, bindings):
+        self._keymap = None
+        self.set_bindings(bindings)
+
+    def set_bindings(self, bindings):
+        # Clear the keymap before applying the bindings to avoid confusion.
+        # If a user defines custom bindings in their config file, they must
+        # explicitly define ALL of the bindings.
+        self._keymap = {}
+        for command, keys in bindings.items():
+            if not isinstance(command, Command):
+                command = Command(command)
+            self._keymap[command] = keys
+
+    def get(self, command):
+        if not isinstance(command, Command):
+            command = Command(command)
+        try:
+            return self._keymap[command]
+        except KeyError:
+            raise exceptions.ConfigError('Invalid configuration! `%s` key is '
+                                         'undefined' % command.val)
+
+    @classmethod
+    def parse(cls, key):
+        """
+        Parse a key represented by a string and return its character code.
+        """
+
+        try:
+            if isinstance(key, int):
+                return key
+            elif re.match('[<]KEY_.*[>]', key):
+                # Curses control character
+                return getattr(curses, key[1:-1])
+            elif re.match('[<].*[>]', key):
+                # Ascii control character
+                return getattr(curses.ascii, key[1:-1])
+            elif key.startswith('0x'):
+                # Ascii hex code
+                return int(key, 16)
+            elif len(key) == 2:
+                # Double presses
+                return tuple(cls.parse(k) for k in key)
+            else:
+                # Ascii character
+                code = ord(key)
+                if 0 <= code <= 255:
+                    return code
+                # Python 3.3 has a curses.get_wch() function that we can use
+                # for unicode keys, but Python 2.7 is limited to ascii.
+                raise exceptions.ConfigError('Invalid configuration! `%s` is '
+                                             'not in the ascii range' % key)
+
+        except (AttributeError, ValueError, TypeError):
+            raise exceptions.ConfigError('Invalid configuration! "%s" is not a '
+                                         'valid key' % key)

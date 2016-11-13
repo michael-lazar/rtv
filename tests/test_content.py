@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import time
 from itertools import islice
+from collections import OrderedDict
 
 import six
 import praw
@@ -11,6 +12,82 @@ import pytest
 from rtv.content import (
     Content, SubmissionContent, SubredditContent, SubscriptionContent)
 from rtv import exceptions
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
+# Test entering a bunch of text into the prompt
+# (text, parsed subreddit, parsed order)
+SUBREDDIT_PROMPTS = OrderedDict([
+    ('plain-0', ('python', '/r/python', None)),
+    ('plain-1', ('python/', '/r/python', None)),
+    ('plain-2', ('r/python', '/r/python', None)),
+    ('plain-3', ('/r/python', '/r/python', None)),
+    ('new', ('/r/pics/new', '/r/pics', 'new')),
+    ('hot', ('/r/pics/hot/', '/r/pics', 'hot')),
+    ('top', ('pics/top', '/r/pics', 'top')),
+    ('rising', ('r/pics/rising', '/r/pics', 'rising')),
+    ('controversial', ('/r/pics/controversial', '/r/pics', 'controversial')),
+    ('top-day', ('/r/pics/top-day', '/r/pics', 'top-day')),
+    ('top-hour', ('/r/pics/top-hour', '/r/pics', 'top-hour')),
+    ('top-month', ('/r/pics/top-month', '/r/pics', 'top-month')),
+    ('top-week', ('/r/pics/top-week', '/r/pics', 'top-week')),
+    ('top-year', ('/r/pics/top-year', '/r/pics', 'top-year')),
+    ('top-all', ('/r/pics/top-all', '/r/pics', 'top-all')),
+    ('pics_linux', ('/r/pics+linux', '/r/pics+linux', None)),
+    ('multi-new', ('/r/pics+linux/new', '/r/pics+linux', 'new')),
+    ('front_0', ('front', '/r/front', None)),
+    ('front-1', ('/r/front', '/r/front', None)),
+    ('front-new', ('/r/front/new', '/r/front', 'new')),
+    ('front-top-week', ('/r/front/top-week', '/r/front', 'top-week')),
+    ('user-0', ('/user/spez', '/u/spez', None)),
+    ('user-1', ('/u/spez', '/u/spez', None)),
+    ('user-new', ('/u/spez/new', '/u/spez', 'new')),
+    ('user-top-all', ('/u/spez/top-all', '/u/spez', 'top-all')),
+    ('multi-0', ('/user/multi-mod/m/art', '/user/multi-mod/m/art', None)),
+    ('multi-1', ('/u/multi-mod/m/art', '/u/multi-mod/m/art', None)),
+    ('multi-top', ('/u/multi-mod/m/art/top', '/u/multi-mod/m/art', 'top')),
+    ('multi-top-all', ('/u/multi-mod/m/art/top-all', '/u/multi-mod/m/art', 'top-all')),
+    ('domain', ('/domain/python.org', '/domain/python.org', None)),
+    ('domain-top', ('/domain/python.org/top', '/domain/python.org', 'top')),
+    ('domain-top-all', ('/domain/python.org/top-all', '/domain/python.org', 'top-all')),
+])
+
+# Will raise an error if not logged in
+SUBREDDIT_AUTH_PROMPTS = OrderedDict([
+    ('me-0', ('/user/me', '/u/me', None)),
+    ('me-1', ('/u/me', '/u/me', None)),
+    ('me-top', ('/u/me/top', '/u/me', 'top')),
+    ('me-top-all', ('/u/me/top-all', '/u/me', 'top-all')),
+    ('user-saved', ('/u/saved', '/u/saved', None)),
+])
+
+# All of these should raise an error when entered
+SUBREDDIT_INVALID_PROMPTS = OrderedDict([
+    ('empty', ''),
+    ('one-slash', '/'),
+    ('two-slashes', '//'),
+    ('many-slashes', '/////////////////'),
+    ('fake', '/r/python/fake'),
+    ('top-fake', '/r/python/top-fake'),
+    ('new-all', '/r/python/new-all'),
+])
+
+# All of these search queries should return at least some submissions
+# (subreddit, search query)
+SUBREDDIT_SEARCH_QUERIES = OrderedDict([
+    ('front', ('/r/front', 'reddit')),
+    ('python', ('/r/python', 'python')),
+    ('python-top', ('/r/python/top-all', 'guido')),
+    ('user', ('/u/spez', 'ama')),
+    ('user-top', ('/user/spez/top-all', 'ama')),
+    ('multi', ('/u/multi-mod/m/art', 'PsBattle')),
+    ('multi-top', ('/u/multi-mod/m/art/top-all', 'PsBattle')),
+    ('domain', ('/domain/python.org', 'Python')),
+    ('domain-top', ('/domain/python.org/top-all', 'Python')),
+])
 
 
 def test_content_humanize_timestamp():
@@ -96,12 +173,13 @@ def test_content_submission(reddit, terminal):
     content = SubmissionContent(submission, terminal.loader)
 
     # Everything is loaded upon instantiation
-    assert len(content._comment_data) == 45
+    assert content.range == (-1, 44)
     assert content.get(-1)['type'] == 'Submission'
     assert content.get(40)['type'] == 'Comment'
 
     for data in content.iterate(-1, 1):
-        assert all(k in data for k in ('object', 'n_rows', 'offset', 'type'))
+        assert all(k in data for k in ('object', 'n_rows', 'h_offset', 'type',
+                                       'hidden'))
         # All text should be converted to unicode by this point
         for val in data.values():
             assert not isinstance(val, six.binary_type)
@@ -121,12 +199,15 @@ def test_content_submission(reddit, terminal):
     data = content.get(2)
     assert data['type'] == 'HiddenComment'
     assert data['count'] == 3
+    assert data['hidden'] is True
     assert data['level'] >= content.get(3)['level']
-    assert len(content._comment_data) == 43
+    assert content.range == (-1, 42)
 
     # Toggling again expands the children
     content.toggle(2)
-    assert len(content._comment_data) == 45
+    data = content.get(2)
+    assert data['hidden'] is False
+    assert content.range == (-1, 44)
 
 
 def test_content_submission_load_more_comments(reddit, terminal):
@@ -139,11 +220,12 @@ def test_content_submission_load_more_comments(reddit, terminal):
     # More comments load when toggled
     assert content.get(390)['type'] == 'MoreComments'
     content.toggle(390)
-    assert len(content._comment_data) > 390
+    assert content.range[0] == -1
+    assert content.range[1] > 390
     assert content.get(390)['type'] == 'Comment'
 
 
-def test_content_submission_from_url(reddit, terminal):
+def test_content_submission_from_url(reddit, oauth, refresh_token, terminal):
 
     url = 'https://www.reddit.com/r/AskReddit/comments/2np694/'
     SubmissionContent.from_url(reddit, url, terminal.loader)
@@ -159,6 +241,14 @@ def test_content_submission_from_url(reddit, terminal):
         SubmissionContent.from_url(reddit, url[:-2], terminal.loader)
     assert isinstance(terminal.loader.exception, praw.errors.NotFound)
 
+    # np.* urls should not raise a 403 error when logged into oauth
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
+    url = 'https://np.reddit.com//r/LifeProTips/comments/441hsf//czmp112.json'
+    with terminal.loader():
+        SubmissionContent.from_url(reddit, url, terminal.loader)
+    assert not terminal.loader.exception
+
 
 def test_content_subreddit_initialize(reddit, terminal):
 
@@ -166,7 +256,7 @@ def test_content_subreddit_initialize(reddit, terminal):
     content = SubredditContent('python', submissions, terminal.loader, 'top')
     assert content.name == 'python'
     assert content.order == 'top'
-    assert len(content._submission_data) == 1
+    assert content.range == (0, 0)
 
 
 def test_content_subreddit_initialize_invalid(reddit, terminal):
@@ -183,12 +273,13 @@ def test_content_subreddit(reddit, terminal):
     content = SubredditContent('front', submissions, terminal.loader)
 
     # Submissions are loaded on demand, excluding for the first one
-    assert len(content._submission_data) == 1
+    assert content.range == (0, 0)
     assert content.get(0)['type'] == 'Submission'
 
     for data in content.iterate(0, 1):
-        assert all(k in data for k in ('object', 'n_rows', 'offset', 'type',
-                                       'index', 'title', 'split_title'))
+        assert all(k in data for k in (
+            'object', 'n_rows', 'h_offset', 'type', 'index', 'title',
+            'split_title', 'hidden'))
         # All text should be converted to unicode by this point
         for val in data.values():
             assert not isinstance(val, six.binary_type)
@@ -206,28 +297,64 @@ def test_content_subreddit_load_more(reddit, terminal):
     content = SubredditContent('front', submissions, terminal.loader)
 
     assert content.get(50)['type'] == 'Submission'
-    assert len(content._submission_data) == 51
+    assert content.range == (0, 50)
 
-    for data in islice(content.iterate(0, 1), 0, 50):
-        assert all(k in data for k in ('object', 'n_rows', 'offset', 'type',
+    for i, data in enumerate(islice(content.iterate(0, 1), 0, 50)):
+        assert all(k in data for k in ('object', 'n_rows', 'h_offset', 'type',
                                        'index', 'title', 'split_title'))
         # All text should be converted to unicode by this point
         for val in data.values():
             assert not isinstance(val, six.binary_type)
 
+        # Index be appended to each title, starting at "1." and incrementing
+        assert data['index'] == i + 1
+        assert data['title'].startswith(six.text_type(i + 1))
 
-def test_content_subreddit_from_name(reddit, terminal):
 
-    name = '/r/python'
-    content = SubredditContent.from_name(reddit, name, terminal.loader)
-    assert content.name == '/r/python'
-    assert content.order is None
+args, ids = SUBREDDIT_PROMPTS.values(), list(SUBREDDIT_PROMPTS)
+@pytest.mark.parametrize('prompt,name,order', args, ids=ids)
+def test_content_subreddit_from_name(prompt, name, order, reddit, terminal):
 
-    # Can submit without the /r/ and with the order in the name
-    name = 'python/top/'
-    content = SubredditContent.from_name(reddit, name, terminal.loader)
-    assert content.name == '/r/python'
-    assert content.order == 'top'
+    content = SubredditContent.from_name(reddit, prompt, terminal.loader)
+    assert content.name == name
+    assert content.order == order
+
+
+args, ids = SUBREDDIT_AUTH_PROMPTS.values(), list(SUBREDDIT_AUTH_PROMPTS)
+@pytest.mark.parametrize('prompt,name,order', args, ids=ids)
+def test_content_subreddit_from_name_authenticated(
+        prompt, name, order, reddit, terminal, oauth, refresh_token):
+
+    with pytest.raises(exceptions.AccountError):
+        SubredditContent.from_name(reddit, prompt, terminal.loader)
+
+    # Login and try again
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
+
+    content = SubredditContent.from_name(reddit, prompt, terminal.loader)
+    assert content.name == name
+    assert content.order == order
+
+
+args, ids = SUBREDDIT_INVALID_PROMPTS.values(), list(SUBREDDIT_INVALID_PROMPTS)
+@pytest.mark.parametrize('prompt', args, ids=ids)
+def test_content_subreddit_from_name_invalid(prompt, reddit, terminal):
+
+    with terminal.loader():
+        SubredditContent.from_name(reddit, prompt, terminal.loader)
+    assert isinstance(terminal.loader.exception, praw.errors.InvalidSubreddit)
+    # Must always have an argument because it gets displayed
+    assert terminal.loader.exception.args[0]
+
+args, ids = SUBREDDIT_SEARCH_QUERIES.values(), list(SUBREDDIT_SEARCH_QUERIES)
+@pytest.mark.parametrize('prompt,query', args, ids=ids)
+def test_content_subreddit_from_name_query(prompt, query, reddit, terminal):
+
+    SubredditContent.from_name(reddit, prompt, terminal.loader, query=query)
+
+
+def test_content_subreddit_from_name_order(reddit, terminal):
 
     # Explicit order trumps implicit
     name = '/r/python/top'
@@ -235,22 +362,6 @@ def test_content_subreddit_from_name(reddit, terminal):
         reddit, name, terminal.loader, order='new')
     assert content.name == '/r/python'
     assert content.order == 'new'
-
-    # Invalid order raises an exception
-    name = '/r/python/fake'
-    with terminal.loader():
-        SubredditContent.from_name(reddit, name, terminal.loader)
-    assert isinstance(terminal.loader.exception, exceptions.SubredditError)
-
-    # Front page alias
-    name = '/r/front/rising'
-    content = SubredditContent.from_name(reddit, name, terminal.loader)
-    assert content.name == '/r/front'
-    assert content.order == 'rising'
-
-    # Queries
-    SubredditContent.from_name(reddit, 'front', terminal.loader, query='pea')
-    SubredditContent.from_name(reddit, 'python', terminal.loader, query='pea')
 
 
 def test_content_subreddit_multireddit(reddit, terminal):
@@ -266,25 +377,34 @@ def test_content_subreddit_multireddit(reddit, terminal):
     assert isinstance(terminal.loader.exception, praw.errors.NotFound)
 
 
+def test_content_subreddit_random(reddit, terminal):
+
+    name = '/r/random'
+    content = SubredditContent.from_name(reddit, name, terminal.loader)
+    assert content.name.startswith('/r/')
+    assert content.name != name
+
+
 def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):
 
     # Not logged in
     with terminal.loader():
-        SubredditContent.from_name(reddit, '/r/me', terminal.loader)
+        SubredditContent.from_name(reddit, '/u/me', terminal.loader)
     assert isinstance(terminal.loader.exception, exceptions.AccountError)
 
     # Logged in
     oauth.config.refresh_token = refresh_token
     oauth.authorize()
     with terminal.loader():
-        SubredditContent.from_name(reddit, 'me', terminal.loader)
+        SubredditContent.from_name(reddit, '/u/me', terminal.loader)
 
     # If there is no submitted content, an error should be raised
     if terminal.loader.exception:
-        assert isinstance(terminal.loader.exception, exceptions.SubredditError)
+        assert isinstance(terminal.loader.exception,
+                          exceptions.NoSubmissionsError)
+        assert terminal.loader.exception.name == '/u/me'
 
-
-def test_content_subscription(reddit, oauth, refresh_token, terminal):
+def test_content_subscription(reddit, terminal):
 
     # Not logged in
     with terminal.loader():
@@ -292,31 +412,46 @@ def test_content_subscription(reddit, oauth, refresh_token, terminal):
     assert isinstance(
         terminal.loader.exception, praw.errors.LoginOrScopeRequired)
 
-    # Logged in
-    oauth.config.refresh_token = refresh_token
-    oauth.authorize()
     with terminal.loader():
-        content = SubscriptionContent.from_user(reddit, terminal.loader)
+        content = SubscriptionContent.from_user(
+            reddit, terminal.loader, 'popular')
     assert terminal.loader.exception is None
 
     # These are static
-    assert content.name == 'Subscriptions'
+    assert content.name == 'Popular Subreddits'
     assert content.order is None
+    assert content.range == (0, 0)
 
     # Validate content
-    for data in content.iterate(0, 1, 70):
-        assert all(k in data for k in ('object', 'n_rows', 'offset', 'type',
+    for data in islice(content.iterate(0, 1), 20):
+        assert all(k in data for k in ('object', 'n_rows', 'h_offset', 'type',
                                        'title', 'split_title'))
         # All text should be converted to unicode by this point
         for val in data.values():
             assert not isinstance(val, six.binary_type)
 
+    assert content.range == (0, 19)
 
-def test_content_subscription_empty(terminal):
 
-    # Simulate an empty subscription generator
-    subscriptions = iter([])
+def test_content_subreddit_saved(reddit, oauth, refresh_token, terminal):
 
+    # Not logged in
     with terminal.loader():
-        SubscriptionContent(subscriptions, terminal.loader)
+        SubredditContent.from_name(reddit, '/u/saved', terminal.loader)
+    assert isinstance(terminal.loader.exception, exceptions.AccountError)
+
+    # Logged in
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
+    with terminal.loader():
+        SubredditContent.from_name(reddit, '/u/saved', terminal.loader)
+
+
+def test_content_subscription_empty(reddit, terminal):
+
+    # Simulate an empty subscription list
+    with mock.patch.object(reddit, 'get_my_subreddits') as func:
+        func.return_value = iter([])
+        with terminal.loader():
+            SubscriptionContent.from_user(reddit, terminal.loader)
     assert isinstance(terminal.loader.exception, exceptions.SubscriptionError)

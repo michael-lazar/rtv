@@ -1,8 +1,8 @@
-.TH "RTV" "1" "December 20, 2015" "Version 1.8.0" "Usage and Commands"
+.TH "RTV" "1" "October 18, 2016" "Version 1.13.0" "Usage and Commands"
 .SH NAME
 RTV - Reddit Terminal Viewer
 .SH SYNOPSIS
-rtv [\-h] [\-V] [\-s SUBREDDIT] [\-l LINK] [\-\-log FILE] [\-\-config FILE] [\-\-ascii] [\-\-non\-persistent] [\-\-clear\-auth] [\-\-copy\-config]
+rtv [\-h] [\-V] [\-s SUBREDDIT] [\-l LINK] [\-\-log FILE] [\-\-config FILE] [\-\-ascii] [\-\-monochrome] [\-\-non\-persistent] [\-\-clear\-auth] [\-\-copy\-config] [\-\-copy\-mailcap] [\-\-enable\-media]
 .SH DESCRIPTION
 Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
 terminal window.
@@ -17,15 +17,15 @@ show program's version number and exit
 
 .TP
 \fB\-s SUBREDDIT\fR
-name of the subreddit that will be opened on start
+Name of the subreddit that will be opened on start
 
 .TP
 \fB\-l LINK\fR
-full URL of a submission that will be opened on start
+Full URL of a submission that will be opened on start
 
 .TP
 \fB\-\-log FILE\fR
-log HTTP requests to the given file
+Log HTTP requests to the given file
 
 .TP
 \fB\-\-config FILE\fR
@@ -33,7 +33,11 @@ Load configuration settings from the given file
 
 .TP
 \fB\-\-ascii\fR
-enable ascii\-only mode
+Enable ascii\-only mode
+
+.TP
+\fB\-\-monochrome\fR
+Disable color
 
 .TP
 \fB\-\-non\-persistent\fR
@@ -47,10 +51,20 @@ Remove any saved user data before launching
 \fB\-\-copy\-config\fR
 Copy the default configuration to {HOME}/.config/rtv/rtv.cfg
 
+.TP
+\fB\-\-copy\-mailcap\fR
+Copy an example mailcap configuration to {HOME}/.mailcap
+
+.TP
+\fB\-\-enable\-media\fR
+Open external links using programs defined in the mailcap config
+
 
 .SH CONTROLS
-Navigate between posts by using the arrow keys or vim-style `hjkl` movement.
-You can view the full list of commands by pressing the \fB?\fR key inside of the program.
+Move the cursor using either the arrow keys or Vim-style movement.
+- Press \fBup\fR and \fBdown\fR to scroll through submissions.
+- Press \fBright\fR to view the selected submission and \fBleft\fR to return.
+- Press \fB?\fR to open the help screen.
 .SH FILES
 .TP
 .BR $XDG_CONFIG_HOME/rtv/rtv.cfg
@@ -64,18 +78,21 @@ for future sessions. You can disable this behavior by setting the option
 .SH ENVIRONMENT
 .TP
 .BR RTV_EDITOR
-Specifies which text editor RTV will attempt to use when editing comments and
-posts. RTV will fallback to \fI$EDITOR\fR if the editor is unspecified.
+Text editor to use when editing comments and submissions. Will fallback to
+\fI$EDITOR\fR. 
+.TP
+.BR RTV_URLVIEWER
+Url Viewer to use to extract links from comments.  Requires a compatible 
+Url Viewer to be installed
 .TP
 .BR BROWSER
-Specifies which webbrowser RTV will attempt to use when opening links.
-This can be set to a terminal browser (w3m, lynx, elinks, etc.) for a true
-terminal experience. RTV will fallback to the system's default browser.
+Web browser to use when opening links.
+.TP
+.BR PAGER
+Pager to use when expanding individual comments and submissions. 
 .SH AUTHOR
-Man page written by Johnathan "ShaggyTwoDope" Jenkins <twodopeshaggy@gmail.com> (2015).
+Michael Lazar <lazar.michael22@gmail.com> (2016).
 .SH BUGS
 Report bugs to \fIhttps://github.com/michael-lazar/rtv/issues\fR
 .SH LICENSE
 The MIT License (MIT)
-.PP
-(c) 2015 Michael Lazar
