@@ -595,8 +595,17 @@ class Navigator(object):
     def _align_top(self, index):
         """
         Set the page paramaters so that the given index lines up with the top
-        of the screen.
+        of the screen. We also try to draw to the bottom of the screen to make
+        sure that there is enough content to fill up the page.
         """
+        if index <= 0:
+            # If we're at the very top of the content it doesn't matter if
+            # there's enough text to fill the page
+            self.page_index = index
+            self.cursor_index = 0
+            self.top_offset = 0
+            return
+
         available_rows = self._n_rows
         content_gen = self._content.iterate(index, 1, self._n_cols - 2)
         for i, data in enumerate(content_gen):
@@ -610,6 +619,7 @@ class Navigator(object):
         else:
             # Need to flip the alignment so the page fills up
             self._align_bottom(self._content.range[1])
+            self.cursor_index = index - self.page_index
 
     def _align_bottom(self, index):
         """
@@ -626,7 +636,7 @@ class Navigator(object):
                 self.page_index = index - i
                 self.cursor_index = i
                 # Throw out the top offset if only one item can fit on the
-                # screen, in this case we want to draw from the top down.
+                # screen, in that case it's better to draw from the top down
                 self.top_offset = data['n_rows'] - available_rows if i else 0
                 break
 
@@ -634,4 +644,6 @@ class Navigator(object):
             available_rows -= data['n_rows']
         else:
             # Need to flip the alignment so the page fills up
+            # TODO: Don't want this to pop up when scrolling
             self._align_top(self._content.range[0])
+            self.cursor_index = index
