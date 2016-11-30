@@ -24,6 +24,7 @@ setuptools.setup(
         'kitchen',
         'beautifulsoup4',
         'mailcap-fix',
+        'Markdown',
         ],
     entry_points={'console_scripts': ['rtv=rtv.__main__:main']},
     classifiers=[
