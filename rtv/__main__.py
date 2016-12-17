@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from __future__ import print_function
 
 import os
 import sys
@@ -9,14 +10,14 @@ import warnings
 
 import six
 import praw
-import tornado
+import requests
 
 from . import docs
 from .config import Config, copy_default_config, copy_default_mailcap
 from .oauth import OAuthHelper
 from .terminal import Terminal
 from .objects import curses_session, Color
-from .subreddit import SubredditPage
+from .subreddit_page import SubredditPage
 from .exceptions import ConfigError
 from .__version__ import __version__
 
@@ -39,8 +40,6 @@ def main():
     if six.PY3:
         # These ones get triggered even when capturing warnings is turned on
         warnings.simplefilter('ignore', ResourceWarning)  #pylint:disable=E0602
-
-    locale.setlocale(locale.LC_ALL, '')
 
     # Set the terminal title
     if os.getenv('DISPLAY'):
@@ -103,6 +102,15 @@ def main():
         # Add an empty handler so the logger doesn't complain
         logging.root.addHandler(logging.NullHandler())
 
+    # Make sure the locale is UTF-8 for unicode support
+    locale.setlocale(locale.LC_ALL, '')
+    encoding = locale.getlocale()[1] or locale.getdefaultlocale()[1]
+    if not encoding or encoding.lower() != 'utf-8':
+        text = ('System encoding was detected as (%s) instead of UTF-8'
+                ', falling back to ascii only mode' % encoding)
+        warnings.warn(text)
+        config['ascii'] = True
+
     # Construct the reddit user agent
     user_agent = docs.AGENT.format(version=__version__)
 
@@ -132,7 +140,13 @@ def main():
 
             # Open the supplied submission link before opening the subreddit
             if config['link']:
-                page.open_submission(url=config['link'])
+                # Expand shortened urls like https://redd.it/
+                # Praw won't accept the shortened versions, add the reddit
+                # headers to avoid a 429 response from reddit.com
+                url = requests.head(config['link'], headers=reddit.http.headers,
+                                    allow_redirects=True).url
+
+                page.open_submission(url=url)
 
             # Launch the subreddit page
             page.loop()
@@ -151,7 +165,5 @@ def main():
         # Ensure sockets are closed to prevent a ResourceWarning
         if 'reddit' in locals():
             reddit.handler.http.close()
-        # Explicitly close file descriptors opened by Tornado's IOLoop
-        tornado.ioloop.IOLoop.current().close(all_fds=True)
 
 sys.exit(main())

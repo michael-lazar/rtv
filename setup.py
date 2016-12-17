@@ -3,12 +3,6 @@ import setuptools
 
 from version import __version__ as version
 
-requirements = ['tornado', 'praw==3.5.0', 'six', 'requests', 'kitchen',
-                'beautifulsoup4', 'mailcap-fix']
-
-# Python 2: add required concurrent.futures backport from Python 3.2
-if sys.version_info.major <= 2:
-    requirements.append('futures')
 
 setuptools.setup(
     name='rtv',
@@ -23,9 +17,14 @@ setuptools.setup(
     packages=['rtv'],
     package_data={'rtv': ['templates/*']},
     data_files=[("share/man/man1", ["rtv.1"])],
-    extras_require={
-        ':python_version=="2.6" or python_version=="2.7"': ['futures']},
-    install_requires=requirements,
+    install_requires=[
+        'praw >=3.5, <4',
+        'six',
+        'requests',
+        'kitchen',
+        'beautifulsoup4',
+        'mailcap-fix',
+        ],
     entry_points={'console_scripts': ['rtv=rtv.__main__:main']},
     classifiers=[
         'Intended Audience :: End Users/Desktop',

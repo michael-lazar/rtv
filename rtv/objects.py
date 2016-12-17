@@ -116,10 +116,11 @@ class LoadScreen(object):
 
     EXCEPTION_MESSAGES = [
         (exceptions.RTVError, '{0}'),
-        (praw.errors.OAuthException, 'Not logged in'),
+        (praw.errors.OAuthException, 'OAuth Error'),
         (praw.errors.OAuthScopeRequired, 'Not logged in'),
         (praw.errors.LoginRequired, 'Not logged in'),
         (praw.errors.InvalidCaptcha, 'Error, captcha required'),
+        (praw.errors.InvalidSubreddit, '{0.args[0]}'),
         (praw.errors.PRAWException, '{0.__class__.__name__}'),
         (requests.exceptions.RequestException, '{0.__class__.__name__}'),
     ]

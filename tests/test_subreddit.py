@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from rtv.subreddit import SubredditPage
+import six
+
+from rtv.subreddit_page import SubredditPage
+from rtv import __version__
 
 try:
     from unittest import mock
@@ -60,6 +63,28 @@ def test_subreddit_refresh(subreddit_page, terminal):
     assert terminal.loader.exception is None
 
 
+def test_subreddit_title(subreddit_page, terminal, capsys):
+    subreddit_page.content.name = 'hello ❤'
+
+    with mock.patch.dict('os.environ', {'DISPLAY': ':1'}):
+        terminal.config['ascii'] = True
+        subreddit_page.draw()
+        out, _ = capsys.readouterr()
+        assert isinstance(out, six.text_type)
+        assert out == '\x1b]2;hello ? - rtv {}\x07'.format(__version__)
+
+        terminal.config['ascii'] = False
+        subreddit_page.draw()
+        out, _ = capsys.readouterr()
+        assert isinstance(out, six.text_type)
+        assert out == '\x1b]2;hello ❤ - rtv {}\x07'.format(__version__)
+
+    with mock.patch.dict('os.environ', {'DISPLAY': ''}):
+        subreddit_page.draw()
+        out, _ = capsys.readouterr()
+        assert not out
+
+
 def test_subreddit_search(subreddit_page, terminal):
 
     # Search the current subreddit
@@ -88,11 +113,52 @@ def test_subreddit_prompt(subreddit_page, terminal):
         assert not terminal.loader.exception
 
 
+def test_subreddit_order_top(subreddit_page, terminal):
+
+    # Sort by top - First time selects default
+    subreddit_page.controller.trigger('2')
+    assert subreddit_page.content.order == 'top'
+
+    # Second time opens the menu
+    with mock.patch.object(terminal, 'show_notification'):
+        # Invalid selection
+        terminal.show_notification.return_value = ord('x')
+        subreddit_page.controller.trigger('2')
+        terminal.show_notification.assert_called_with('Invalid option')
+        assert subreddit_page.content.order == 'top'
+
+        # Valid selection - sort by week
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('3')
+        subreddit_page.controller.trigger('2')
+        assert subreddit_page.content.order == 'top-week'
+
+
+def test_subreddit_order_controversial(subreddit_page, terminal):
+
+    # Now do controversial
+    subreddit_page.controller.trigger('5')
+    assert subreddit_page.content.order == 'controversial'
+
+    with mock.patch.object(terminal, 'show_notification'):
+        # Invalid selection
+        terminal.show_notification.return_value = ord('x')
+        subreddit_page.controller.trigger('5')
+        terminal.show_notification.assert_called_with('Invalid option')
+        assert subreddit_page.content.order == 'controversial'
+
+        # Valid selection - sort by week
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('3')
+        subreddit_page.controller.trigger('5')
+        assert subreddit_page.content.order == 'controversial-week'
+
+
 def test_subreddit_open(subreddit_page, terminal, config):
 
     # Open the selected submission
     data = subreddit_page.content.get(subreddit_page.nav.absolute_index)
-    with mock.patch('rtv.submission.SubmissionPage.loop') as loop, \
+    with mock.patch('rtv.submission_page.SubmissionPage.loop') as loop, \
             mock.patch.object(config.history, 'add'):
         data['url_type'] = 'selfpost'
         subreddit_page.controller.trigger('l')
@@ -195,9 +261,21 @@ def test_subreddit_open_subscriptions(subreddit_page, refresh_token):
     subreddit_page.config.refresh_token = refresh_token
     subreddit_page.oauth.authorize()
 
-    # Open a subscription
+    # Open subscriptions
     with mock.patch('rtv.page.Page.loop') as loop:
         subreddit_page.controller.trigger('s')
+        assert loop.called
+
+
+def test_subreddit_open_multireddits(subreddit_page, refresh_token):
+
+    # Log in
+    subreddit_page.config.refresh_token = refresh_token
+    subreddit_page.oauth.authorize()
+
+    # Open multireddits
+    with mock.patch('rtv.page.Page.loop') as loop:
+        subreddit_page.controller.trigger('S')
         assert loop.called
 
 

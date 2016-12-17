@@ -15,9 +15,9 @@ from .objects import KeyMap
 
 PACKAGE = os.path.dirname(__file__)
 HOME = os.path.expanduser('~')
-TEMPLATE = os.path.join(PACKAGE, 'templates')
-DEFAULT_CONFIG = os.path.join(TEMPLATE, 'rtv.cfg')
-DEFAULT_MAILCAP = os.path.join(TEMPLATE, 'mailcap')
+TEMPLATES = os.path.join(PACKAGE, 'templates')
+DEFAULT_CONFIG = os.path.join(TEMPLATES, 'rtv.cfg')
+DEFAULT_MAILCAP = os.path.join(TEMPLATES, 'mailcap')
 XDG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
 CONFIG = os.path.join(XDG_HOME, 'rtv', 'rtv.cfg')
 MAILCAP = os.path.join(HOME, '.mailcap')
@@ -240,8 +240,11 @@ class Config(object):
             'enable_media': partial(config.getboolean, 'rtv'),
             'history_size': partial(config.getint, 'rtv'),
             'oauth_redirect_port': partial(config.getint, 'rtv'),
-            'oauth_scope': lambda x: rtv[x].split(',')
+            'oauth_scope': lambda x: rtv[x].split(','),
+            'max_comment_cols': partial(config.getint, 'rtv'),
+            'hide_username': partial(config.getboolean, 'rtv')
         }
+
         for key, func in params.items():
             if key in rtv:
                 rtv[key] = func(key)

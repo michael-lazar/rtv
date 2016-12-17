@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import curses
 
-from rtv.submission import SubmissionPage
+from rtv.submission_page import SubmissionPage
 
 try:
     from unittest import mock
@@ -22,6 +22,21 @@ def test_submission_page_construct(reddit, terminal, config, oauth):
 
     # Toggle the second comment so we can check the draw more comments method
     page.content.toggle(1)
+
+    # Set some special flags to make sure that we can draw them
+    submission_data = page.content.get(-1)
+    submission_data['gold'] = True
+    submission_data['stickied'] = True
+    submission_data['saved'] = True
+    submission_data['flair'] = 'flair'
+
+    # Set some special flags to make sure that we can draw them
+    comment_data = page.content.get(0)
+    comment_data['gold'] = True
+    comment_data['stickied'] = True
+    comment_data['saved'] = True
+    comment_data['flair'] = 'flair'
+
     page.draw()
 
     #  Title
@@ -35,6 +50,11 @@ def test_submission_page_construct(reddit, terminal, config, oauth):
             '[4]new         '
             '[5]controversial').encode('utf-8')
     window.addstr.assert_any_call(0, 0, menu)
+
+    # Footer
+    text = ('[?]Help [q]Quit [h]Return [space]Fold/Expand [o]Open [c]Comment '
+            '[a/z]Vote'.encode('utf-8'))
+    window.addstr.assert_any_call(0, 0, text)
 
     # Submission
     submission_data = page.content.get(-1)
@@ -68,6 +88,14 @@ def test_submission_refresh(submission_page):
 
     # Should be able to refresh content
     submission_page.refresh_content()
+
+
+def test_submission_exit(submission_page):
+
+    # Exiting should set active to false
+    submission_page.active = True
+    submission_page.controller.trigger('h')
+    assert not submission_page.active
 
 
 def test_submission_unauthenticated(submission_page, terminal):
@@ -116,6 +144,47 @@ def test_submission_prompt(submission_page, terminal):
         assert not submission_page.selected_subreddit
 
 
+def test_submission_order_top(submission_page, terminal):
+
+    # Sort by top - First time selects default
+    submission_page.controller.trigger('2')
+    assert submission_page.content.order == 'top'
+
+    # Second time opens the menu
+    with mock.patch.object(terminal, 'show_notification'):
+        # Invalid selection
+        terminal.show_notification.return_value = ord('x')
+        submission_page.controller.trigger('2')
+        terminal.show_notification.assert_called_with('Invalid option')
+        assert submission_page.content.order == 'top'
+
+        # Valid selection - sort by week
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('3')
+        submission_page.controller.trigger('2')
+        assert submission_page.content.order == 'top-week'
+
+
+def test_submission_order_controversial(submission_page, terminal):
+
+    # Now do controversial
+    submission_page.controller.trigger('5')
+    assert submission_page.content.order == 'controversial'
+
+    with mock.patch.object(terminal, 'show_notification'):
+        # Invalid selection
+        terminal.show_notification.return_value = ord('x')
+        submission_page.controller.trigger('5')
+        terminal.show_notification.assert_called_with('Invalid option')
+        assert submission_page.content.order == 'controversial'
+
+        # Valid selection - sort by week
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('3')
+        submission_page.controller.trigger('5')
+        assert submission_page.content.order == 'controversial-week'
+
+
 def test_submission_move_top_bottom(submission_page):
 
     submission_page.controller.trigger('G')
@@ -158,7 +227,7 @@ def test_submission_comment_not_enough_space(submission_page, terminal):
 
     text = '(Not enough space to display)'.encode('ascii')
     window = terminal.stdscr.subwin
-    window.subwin.addstr.assert_any_call(7, 1, text)
+    window.subwin.addstr.assert_any_call(6, 1, text)
 
 
 def test_submission_vote(submission_page, refresh_token):
@@ -173,6 +242,16 @@ def test_submission_vote(submission_page, refresh_token):
             mock.patch('praw.objects.Submission.clear_vote') as clear_vote:
 
         data = submission_page.content.get(submission_page.nav.absolute_index)
+
+        # Upvote
+        submission_page.controller.trigger('a')
+        assert upvote.called
+        assert data['likes'] is True
+
+        # Clear vote
+        submission_page.controller.trigger('a')
+        assert clear_vote.called
+        assert data['likes'] is None
 
         # Upvote
         submission_page.controller.trigger('a')
@@ -271,7 +350,6 @@ def test_submission_comment(submission_page, terminal, refresh_token):
             mock.patch.object(terminal, 'open_editor') as open_editor,     \
             mock.patch('time.sleep'):
         open_editor.return_value.__enter__.return_value = 'comment text'
-
         submission_page.controller.trigger('c')
         assert open_editor.called
         add_comment.assert_called_with('comment text')

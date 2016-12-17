@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import os
 import sys
+import six
 import time
 import curses
 from functools import wraps
@@ -34,6 +35,8 @@ class PageController(Controller):
 
 class Page(object):
 
+    FOOTER = None
+
     def __init__(self, reddit, term, config, oauth):
 
         self.reddit = reddit
@@ -53,6 +56,9 @@ class Page(object):
 
     def _draw_item(self, window, data, inverted):
         raise NotImplementedError
+
+    def get_selected_item(self):
+        return self.content.get(self.nav.absolute_index)
 
     def loop(self):
         """
@@ -90,7 +96,27 @@ class Page(object):
 
     @PageController.register(Command('SORT_TOP'))
     def sort_content_top(self):
-        self.refresh_content(order='top')
+
+        if not self.content.order or 'top' not in self.content.order:
+            self.refresh_content(order='top')
+            return
+
+        choices = {
+            '1': 'top-hour',
+            '2': 'top-day',
+            '3': 'top-week',
+            '4': 'top-month',
+            '5': 'top-year',
+            '6': 'top-all'}
+
+        message = docs.TIME_ORDER_MENU.strip().splitlines()
+        ch = self.term.show_notification(message)
+        ch = six.unichr(ch)
+        if ch not in choices:
+            self.term.show_notification('Invalid option')
+            return
+
+        self.refresh_content(order=choices[ch])
 
     @PageController.register(Command('SORT_RISING'))
     def sort_content_rising(self):
@@ -102,7 +128,27 @@ class Page(object):
 
     @PageController.register(Command('SORT_CONTROVERSIAL'))
     def sort_content_controversial(self):
-        self.refresh_content(order='controversial')
+
+        if not self.content.order or 'controversial' not in self.content.order:
+            self.refresh_content(order='controversial')
+            return
+
+        choices = {
+            '1': 'controversial-hour',
+            '2': 'controversial-day',
+            '3': 'controversial-week',
+            '4': 'controversial-month',
+            '5': 'controversial-year',
+            '6': 'controversial-all'}
+
+        message = docs.TIME_ORDER_MENU.strip().splitlines()
+        ch = self.term.show_notification(message)
+        ch = six.unichr(ch)
+        if ch not in choices:
+            self.term.show_notification('Invalid option')
+            return
+
+        self.refresh_content(order=choices[ch])
 
     @PageController.register(Command('MOVE_UP'))
     def move_cursor_up(self):
@@ -143,7 +189,7 @@ class Page(object):
     @PageController.register(Command('UPVOTE'))
     @logged_in
     def upvote(self):
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if 'likes' not in data:
             self.term.flash()
         elif data['likes']:
@@ -160,7 +206,7 @@ class Page(object):
     @PageController.register(Command('DOWNVOTE'))
     @logged_in
     def downvote(self):
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if 'likes' not in data:
             self.term.flash()
         elif data['likes'] or data['likes'] is None:
@@ -177,7 +223,7 @@ class Page(object):
     @PageController.register(Command('SAVE'))
     @logged_in
     def save(self):
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if 'saved' not in data:
             self.term.flash()
         elif not data['saved']:
@@ -212,7 +258,7 @@ class Page(object):
         Delete a submission or comment.
         """
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data.get('author') != self.reddit.user.name:
             self.term.flash()
             return
@@ -236,7 +282,7 @@ class Page(object):
         Edit a submission or comment.
         """
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data.get('author') != self.reddit.user.name:
             self.term.flash()
             return
@@ -299,6 +345,7 @@ class Page(object):
         self._draw_header()
         self._draw_banner()
         self._draw_content()
+        self._draw_footer()
         self._add_cursor()
         self.term.stdscr.touchwin()
         self.term.stdscr.refresh()
@@ -306,6 +353,7 @@ class Page(object):
     def _draw_header(self):
 
         n_rows, n_cols = self.term.stdscr.getmaxyx()
+
         # Note: 2 argument form of derwin breaks PDcurses on Windows 7!
         window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
         window.erase()
@@ -321,13 +369,22 @@ class Page(object):
 
         # Set the terminal title
         if len(sub_name) > 50:
-            title = sub_name.strip('/').rsplit('/', 1)[1].replace('_', ' ')
+            title = sub_name.strip('/')
+            title = title.rsplit('/', 1)[1]
+            title = title.replace('_', ' ')
         else:
             title = sub_name
 
         if os.getenv('DISPLAY'):
             title += ' - rtv {0}'.format(__version__)
-            sys.stdout.write('\x1b]2;{0}\x07'.format(title))
+            title = self.term.clean(title)
+            if six.PY3:
+                # In py3 you can't write bytes to stdout
+                title = title.decode('utf-8')
+                title = '\x1b]2;{0}\x07'.format(title)
+            else:
+                title = b'\x1b]2;{0}\x07'.format(title)
+            sys.stdout.write(title)
             sys.stdout.flush()
 
         if self.reddit.user is not None:
@@ -335,7 +392,10 @@ class Page(object):
             # to ascii or not
             width = len if self.config['ascii'] else textual_width
 
-            username = self.reddit.user.name
+            if self.config['hide_username']:
+                username = "Logged in"
+            else:
+                username = self.reddit.user.name
             s_col = (n_cols - width(username) - 1)
             # Only print username if it fits in the empty space on the right
             if (s_col - 1) >= width(sub_name):
@@ -351,7 +411,7 @@ class Page(object):
         ch, attr = str(' '), curses.A_BOLD | Color.YELLOW
         window.bkgd(ch, attr)
 
-        items = ['[1]hot', '[2]top', '[3]rising', '[4]new', '[5]controversial']
+        items = docs.BANNER.strip().split(' ')
         distance = (n_cols - sum(len(t) for t in items) - 1) / (len(items) - 1)
         spacing = max(1, int(distance)) * ' '
         text = spacing.join(items)
@@ -370,7 +430,7 @@ class Page(object):
 
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(
-            n_rows - self._row, n_cols, self._row, 0)
+            n_rows - self._row - 1, n_cols, self._row, 0)
         window.erase()
         win_n_rows, win_n_cols = window.getmaxyx()
 
@@ -383,7 +443,7 @@ class Page(object):
         # and draw upwards.
         cancel_inverted = True
         current_row = (win_n_rows - 1) if inverted else 0
-        available_rows = (win_n_rows - 1) if inverted else win_n_rows
+        available_rows = win_n_rows
         top_item_height = None if inverted else self.nav.top_item_height
         for data in self.content.iterate(page_index, step, win_n_cols - 2):
             subwin_n_rows = min(available_rows, data['n_rows'])
@@ -395,10 +455,10 @@ class Page(object):
                 subwin_n_rows = min(subwin_n_rows, top_item_height)
                 subwin_inverted = True
                 top_item_height = None
-            subwin_n_cols = win_n_cols - data['offset']
-            start = current_row - subwin_n_rows if inverted else current_row
+            subwin_n_cols = win_n_cols - data['h_offset']
+            start = current_row - subwin_n_rows + 1 if inverted else current_row
             subwindow = window.derwin(
-                subwin_n_rows, subwin_n_cols, start, data['offset'])
+                subwin_n_rows, subwin_n_cols, start, data['h_offset'])
             attr = self._draw_item(subwindow, data, subwin_inverted)
             self._subwindows.append((subwindow, attr))
             available_rows -= (subwin_n_rows + 1)  # Add one for the blank line
@@ -420,9 +480,21 @@ class Page(object):
             # if the content will fill up the page, given that it is dependent
             # on the size of the terminal.
             self.nav.flip((len(self._subwindows) - 1))
-            self._draw_content()
+            return self._draw_content()
 
-        self._row = n_rows
+        self._row += win_n_rows
+
+    def _draw_footer(self):
+
+        n_rows, n_cols = self.term.stdscr.getmaxyx()
+        window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
+        window.erase()
+        ch, attr = str(' '), curses.A_REVERSE | curses.A_BOLD | Color.CYAN
+        window.bkgd(ch, attr)
+
+        text = self.FOOTER.strip()
+        self.term.add_line(window, text, 0, 0)
+        self._row += 1
 
     def _add_cursor(self):
         self._edit_cursor(curses.A_REVERSE)

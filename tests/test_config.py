@@ -25,6 +25,25 @@ def test_copy_default_config():
             assert permissions == 0o664
 
 
+def test_copy_default_config_cancel():
+    "Pressing ``n`` should cancel the copy"
+
+    with NamedTemporaryFile(suffix='.cfg') as fp:
+        with mock.patch('rtv.config.six.moves.input', return_value='n'):
+            copy_default_config(fp.name)
+            assert not fp.read()
+
+
+def test_copy_config_interrupt():
+    "Pressing ``Ctrl-C`` should cancel the copy"
+
+    with NamedTemporaryFile(suffix='.cfg') as fp:
+        with mock.patch('rtv.config.six.moves.input') as func:
+            func.side_effect = KeyboardInterrupt
+            copy_default_config(fp.name)
+            assert not fp.read()
+
+
 def test_copy_default_mailcap():
     "Make sure the example mailcap file was included in the package"
 
@@ -105,7 +124,9 @@ def test_config_from_file():
         'log': 'logfile.log',
         'link': 'https://reddit.com/permalink •',
         'subreddit': 'cfb',
-        'enable_media': True}
+        'enable_media': True,
+        'max_comment_cols': 150,
+        'hide_username': True}
 
     bindings = {
         'REFRESH': 'r, <KEY_F5>',
@@ -179,6 +200,11 @@ def test_config_refresh_token():
 
 def test_config_history():
     "Ensure that the history can be loaded and saved"
+
+    # Should still be able to load if the file doesn't exist
+    config = Config(history_file='/fake_path/fake_file')
+    config.load_history()
+    assert len(config.history) == 0
 
     with NamedTemporaryFile(delete=False) as fp:
         config = Config(history_file=fp.name, history_size=3)

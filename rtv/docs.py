@@ -16,47 +16,49 @@ Move the cursor using either the arrow keys or *Vim* style movement.
 Press `?` to open the help screen.
 """
 
-HELP = """
+HELP = """\
+====================================
 Reddit Terminal Viewer
 
 https://github.com/michael-lazar/rtv
 ====================================
 
-[Basic Commands]
-  j/k or ▲/▼       : Move the cursor up/down
-  m/n or PgUp/PgDn : Jump to the previous/next page
-  gg/G             : Jump to the top/bottom of the page
-  1-5              : Toggle post order
-  r or F5          : Refresh page content
-  u                : Log in or switch accounts
-  /                : Open a prompt to switch subreddits
-  ?                : Show the help screen
-  q/Q              : Quit/Force quit
+[Commands]
+  j     : Move the cursor down
+  k     : Move the cursor up
+  n     : Move down one page
+  m     : Move up one page
+  gg    : Jump to the first post
+  G     : Jump to the last post
+  1     : Sort by hot
+  2     : Sort by top
+  3     : Sort by rising
+  4     : Sort by new
+  5     : Sort by controversial
+  p     : Return to the front page
+  r     : Refresh page
+  u     : Login or logout
+  /     : Open the subreddit prompt
+  f     : Open the search prompt
+  ?     : Show the help screen
+  q     : Quit
+  Q     : Force quit
+  a     : Upvote
+  z     : Downvote
+  c     : Compose a new submission/comment
+  e     : Edit a submission/comment
+  d     : Delete a submission/comment
+  i     : Display new messages
+  s     : Show subscribed subreddits
+  S     : Show subscribed multireddits
+  w     : Save a submission/comment 
+  l     : View comments, or open comment in pager
+  h     : Return to subreddit
+  o     : Open the submission or comment url
+  SPACE : Fold or expand the selected comment tree
+  b     : Display urls with urlview
 
-[Authenticated Commands]
-  a/z              : Upvote/downvote
-  c                : Compose a new post or comment
-  e                : Edit an existing post or comment
-  d                : Delete an existing post or comment
-  i                : Display new messages prompt
-  s                : View a list of subscribed subreddits
-  S                : View a list of subscribed multireddits
-  w                : Save a submission
-
-[Subreddit Commands]
-  l or ►           : Enter the selected submission
-  o or ENTER       : Open the submission link with your web browser
-  f                : Open a prompt to search the current subreddit
-  p                : Return to the front page
-
-[Submission Commands]
-  h or ◄           : Return to the subreddit
-  l or ►           : Open the selected comment in a new window
-  o or ENTER       : Open the comment permalink with your web browser
-  SPACE            : Fold the selected comment, or load additional comments
-  b                : Display URLs with urlview
-
-[Navigating]
+[Prompt]
   The `/` prompt accepts subreddits in the following formats
 
   - python
@@ -70,6 +72,22 @@ https://github.com/michael-lazar/rtv
   - /u/spez                      (a user's submissions)
   - /u/multi-mod/m/android       (curated multireddit)
   - /domain/python.org           (search by domain)
+"""
+
+BANNER = """
+[1]hot [2]top [3]rising [4]new [5]controversial
+"""
+
+FOOTER_SUBREDDIT = """
+[?]Help [q]Quit [l]Comments [/]Prompt [u]Login [o]Open [c]Post [a/z]Vote
+"""
+
+FOOTER_SUBMISSION = """
+[?]Help [q]Quit [h]Return [space]Fold/Expand [o]Open [c]Comment [a/z]Vote
+"""
+
+FOOTER_SUBSCRIPTION = """
+[?]Help [q]Quit [h]Return [l]Select
 """
 
 COMMENT_FILE = """
@@ -102,4 +120,38 @@ SUBMISSION_EDIT_FILE = """{content}
 # and an empty message aborts the submission.
 #
 # Editing {name}
+"""
+
+OAUTH_ACCESS_DENIED = """\
+        <h1 style="color: red">Access Denied</h1><hr>
+        <p><span style="font-weight: bold">Reddit Terminal Viewer</span> was
+        denied access and will continue to operate in unauthenticated mode,
+        you can close this window.</p>
+"""
+
+OAUTH_ERROR = """\
+       <h1 style="color: red">Error</h1><hr>
+       <p>{error}</p>
+"""
+
+OAUTH_INVALID = """\
+       <h1>Wait...</h1><hr>
+       <p>This page is supposed to be a Reddit OAuth callback.
+       You can't just come here hands in your pocket!</p>
+"""
+
+OAUTH_SUCCESS = """\
+       <h1 style="color: green">Access Granted</h1><hr>
+       <p><span style="font-weight: bold">Reddit Terminal Viewer</span>
+       will now log in, you can close this window.</p>
+"""
+
+TIME_ORDER_MENU = """
+Links from:
+  [1] Past hour
+  [2] Past 24 hours
+  [3] Past week
+  [4] Past month
+  [5] Past year
+  [6] All time
 """

@@ -8,8 +8,8 @@ from . import docs
 from .content import SubredditContent
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Color, Command
-from .submission import SubmissionPage
-from .subscription import SubscriptionPage
+from .submission_page import SubmissionPage
+from .subscription_page import SubscriptionPage
 from .exceptions import TemporaryFileError
 
 
@@ -18,6 +18,8 @@ class SubredditController(PageController):
 
 
 class SubredditPage(Page):
+
+    FOOTER = docs.FOOTER_SUBREDDIT
 
     def __init__(self, reddit, term, config, oauth, name):
         """
@@ -97,7 +99,7 @@ class SubredditPage(Page):
 
         data = {}
         if url is None:
-            data = self.content.get(self.nav.absolute_index)
+            data = self.get_selected_item()
             url = data['permalink']
 
         with self.term.loader('Loading submission'):
@@ -114,14 +116,12 @@ class SubredditPage(Page):
         if page.selected_subreddit is not None:
             self.content = page.selected_subreddit
             self.nav = Navigator(self.content.get)
-        else:
-            self.refresh_content()
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_IN_BROWSER'))
     def open_link(self):
         "Open a link with the webbrowser"
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data['url_type'] == 'selfpost':
             self.open_submission()
         elif data['url_type'] == 'x-post subreddit':
@@ -140,7 +140,7 @@ class SubredditPage(Page):
 
         # Check that the subreddit can be submitted to
         name = self.content.name
-        if '+' in name or name in ('/r/all', '/r/front', '/r/me','/u/saved'):
+        if '+' in name or name in ('/r/all', '/r/front', '/r/me', '/u/saved'):
             self.term.show_notification("Can't post to {0}".format(name))
             return
 
@@ -197,8 +197,6 @@ class SubredditPage(Page):
         if page.selected_subreddit is not None:
             self.content = page.selected_subreddit
             self.nav = Navigator(self.content.get)
-        else:
-            self.refresh_content()
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_MULTIREDDITS'))
     @logged_in
@@ -218,8 +216,6 @@ class SubredditPage(Page):
         if page.selected_subreddit is not None:
             self.content = page.selected_subreddit
             self.nav = Navigator(self.content.get)
-        else:
-            self.refresh_content()
 
     def _draw_item(self, win, data, inverted):
 
@@ -248,16 +244,16 @@ class SubredditPage(Page):
             text, attr = self.term.get_arrow(data['likes'])
             self.term.add_line(win, text, attr=attr)
             self.term.add_line(win, ' {created} '.format(**data))
-            text, attr = self.term.timestamp_sep
+            text, attr = '-', curses.A_BOLD
             self.term.add_line(win, text, attr=attr)
             self.term.add_line(win, ' {comments} '.format(**data))
 
             if data['saved']:
-                text, attr = self.term.saved
+                text, attr = '[saved]', Color.GREEN
                 self.term.add_line(win, text, attr=attr)
 
             if data['stickied']:
-                text, attr = self.term.stickied
+                text, attr = '[stickied]', Color.GREEN
                 self.term.add_line(win, text, attr=attr)
 
             if data['gold']:
@@ -271,7 +267,7 @@ class SubredditPage(Page):
         row = n_title + offset + 2
         if row in valid_rows:
             text = '{author}'.format(**data)
-            self.term.add_line(win, text, row, 1, curses.A_BOLD)
+            self.term.add_line(win, text, row, 1, Color.GREEN)
             text = ' /r/{subreddit}'.format(**data)
             self.term.add_line(win, text, attr=Color.YELLOW)
             if data['flair']:

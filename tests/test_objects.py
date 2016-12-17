@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import time
 import curses
+from collections import OrderedDict
 
 import six
 import pytest
@@ -314,7 +315,13 @@ def test_objects_controller_command():
     ControllerA.character_map = {Command('REFRESH'): 0, Command('UPVOTE'): 0}
 
     # A double command can't share the first key with a single comand
-    keymap = KeyMap({'REFRESH': ['gg'], 'UPVOTE': ['g']})
+    keymap = KeyMap(OrderedDict([('REFRESH', ['gg']), ('UPVOTE', ['g'])]))
+    with pytest.raises(exceptions.ConfigError) as e:
+        ControllerA(None, keymap=keymap)
+    assert 'ControllerA' in six.text_type(e)
+
+    # It doesn't matter which order they were entered
+    keymap = KeyMap(OrderedDict([('UPVOTE', ['g']), ('REFRESH', ['gg'])]))
     with pytest.raises(exceptions.ConfigError) as e:
         ControllerA(None, keymap=keymap)
     assert 'ControllerA' in six.text_type(e)

@@ -14,6 +14,8 @@ RTV (Reddit Terminal Viewer)
 
 |pypi| |python| |travis-ci| |coveralls| |gitter|
 
+Note to users - a security `vulnerability <https://github.com/michael-lazar/rtv/issues/295>`_ has been discovered in rtv versions prior to v1.12.1. A patch has been applied and it is strongly advised that you upgrade to the latest version.
+
 ---------------
 
 * `Demo`_
@@ -165,7 +167,21 @@ Why am I getting an error during installation/when launching rtv?
     $ sudo pip uninstall rtv
     $ sudo pip3 install -U rtv
 
-How do I run the repository code directly?
+Why do I see garbled text like ``M-b~@M-"`` or ``^@``?
+  Short answer
+    Start rtv in ascii-only mode with ``rtv --ascii``
+  
+  Long answer
+    This type of text usually shows up when python is unable to render
+    unicode properly.
+    
+    1. Make sure that the terminal/font that you're using supports unicode
+    2. Try `setting the LOCALE to utf-8 <https://perlgeek.de/en/article/set-up-a-clean-utf8-environment>`_
+    3. Your python may have been built against the wrong curses library,
+       see `here <stackoverflow.com/questions/19373027>`_ and
+       `here <https://bugs.python.org/issue4787>`_ for more information
+  
+How do I run the code directly from the repository?
   This project is structured to be run as a python *module*. This means that in
   order to resolve imports you need to launch using python's ``-m`` flag.
   This method works for all versions of python. See the example below, which

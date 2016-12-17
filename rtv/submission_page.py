@@ -17,14 +17,21 @@ class SubmissionController(PageController):
 
 class SubmissionPage(Page):
 
+    FOOTER = docs.FOOTER_SUBMISSION
+
     def __init__(self, reddit, term, config, oauth, url=None, submission=None):
         super(SubmissionPage, self).__init__(reddit, term, config, oauth)
 
         self.controller = SubmissionController(self, keymap=config.keymap)
+
         if url:
-            self.content = SubmissionContent.from_url(reddit, url, term.loader)
+            self.content = SubmissionContent.from_url(
+                reddit, url, term.loader,
+                max_comment_cols=config['max_comment_cols'])
         else:
-            self.content = SubmissionContent(submission, term.loader)
+            self.content = SubmissionContent(
+                submission, term.loader,
+                max_comment_cols=config['max_comment_cols'])
         # Start at the submission post, which is indexed as -1
         self.nav = Navigator(self.content.get, page_index=-1)
         self.selected_subreddit = None
@@ -64,7 +71,8 @@ class SubmissionPage(Page):
 
         with self.term.loader('Refreshing page'):
             self.content = SubmissionContent.from_url(
-                self.reddit, url, self.term.loader, order=order)
+                self.reddit, url, self.term.loader, order=order,
+                max_comment_cols=self.config['max_comment_cols'])
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get, page_index=-1)
 
@@ -85,7 +93,7 @@ class SubmissionPage(Page):
     def open_link(self):
         "Open the selected item with the webbrowser"
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         url = data.get('permalink')
         if url:
             self.term.open_browser(url)
@@ -95,7 +103,7 @@ class SubmissionPage(Page):
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
     def open_pager(self):
         "Open the selected item with the system's pager"
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data['type'] == 'Submission':
             text = '\n\n'.join((data['permalink'], data['text']))
             self.term.open_pager(text)
@@ -116,7 +124,7 @@ class SubmissionPage(Page):
             Comment - add a comment reply
         """
 
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         if data['type'] == 'Submission':
             body = data['text']
             reply = data['object'].add_comment
@@ -154,16 +162,16 @@ class SubmissionPage(Page):
     @SubmissionController.register(Command('DELETE'))
     @logged_in
     def delete_comment(self):
-        "Delete a comment as long as it is not the current submission"
+        "Delete the selected comment"
 
-        if self.nav.absolute_index != -1:
+        if self.get_selected_item()['type'] == 'Comment':
             self.delete_item()
         else:
             self.term.flash()
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_URLVIEWER'))
     def comment_urlview(self):
-        data = self.content.get(self.nav.absolute_index)
+        data = self.get_selected_item()
         comment = data.get('body') or data.get('text') or data.get('url_full')
         if comment:
             self.term.open_urlview(comment)
@@ -220,11 +228,11 @@ class SubmissionPage(Page):
                 self.term.add_line(win, text, attr=attr)
 
             if data['stickied']:
-                text, attr = self.term.stickied
+                text, attr = '[stickied]', Color.GREEN
                 self.term.add_line(win, text, attr=attr)
 
             if data['saved']:
-                text, attr = self.term.saved
+                text, attr = '[saved]', Color.GREEN
                 self.term.add_line(win, text, attr=attr)
 
         for row, text in enumerate(split_body, start=offset+1):
@@ -300,7 +308,7 @@ class SubmissionPage(Page):
             self.term.add_line(win, text, attr=attr)
 
         if data['saved']:
-            text, attr = self.term.saved
+            text, attr = '[saved]', Color.GREEN
             self.term.add_line(win, text, attr=attr)
 
         win.border()

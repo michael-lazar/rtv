@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import curses
 
+from . import docs
 from .page import Page, PageController
 from .content import SubscriptionContent, SubredditContent
 from .objects import Color, Navigator, Command
@@ -13,6 +14,8 @@ class SubscriptionController(PageController):
 
 
 class SubscriptionPage(Page):
+
+    FOOTER = docs.FOOTER_SUBSCRIPTION
 
     def __init__(self, reddit, term, config, oauth, content_type='subreddit'):
         super(SubscriptionPage, self).__init__(reddit, term, config, oauth)
@@ -56,7 +59,7 @@ class SubscriptionPage(Page):
     def select_subreddit(self):
         "Store the selected subreddit and return to the subreddit page"
 
-        name = self.content.get(self.nav.absolute_index)['name']
+        name = self.get_selected_item()['name']
         with self.term.loader('Loading page'):
             content = SubredditContent.from_name(
                 self.reddit, name, self.term.loader)

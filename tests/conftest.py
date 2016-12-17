@@ -4,19 +4,21 @@ from __future__ import unicode_literals
 import os
 import curses
 import logging
+import threading
 from functools import partial
 
 import praw
 import pytest
 from vcr import VCR
 from six.moves.urllib.parse import urlparse, parse_qs
+from six.moves.BaseHTTPServer import HTTPServer
 
-from rtv.oauth import OAuthHelper
+from rtv.oauth import OAuthHelper, OAuthHandler
 from rtv.config import Config
 from rtv.terminal import Terminal
-from rtv.subreddit import SubredditPage
-from rtv.submission import SubmissionPage
-from rtv.subscription import SubscriptionPage
+from rtv.subreddit_page import SubredditPage
+from rtv.submission_page import SubmissionPage
+from rtv.subscription_page import SubscriptionPage
 
 try:
     from unittest import mock
@@ -176,6 +178,10 @@ def reddit(vcr, request):
             reddit = praw.Reddit(user_agent='rtv test suite',
                                  decode_html_entities=False,
                                  disable_update_check=True)
+            # praw uses a global cache for requests, so we need to clear it
+            # before each unit test. Otherwise we may fail to generate new
+            # cassettes.
+            reddit.handler.clear_cache()
             if request.config.option.record_mode == 'none':
                 # Turn off praw rate limiting when using cassettes
                 reddit.config.api_request_delay = 0
@@ -194,6 +200,21 @@ def terminal(stdscr, config):
 @pytest.fixture()
 def oauth(reddit, terminal, config):
     return OAuthHelper(reddit, terminal, config)
+
+
+@pytest.yield_fixture()
+def oauth_server():
+    # Start the OAuth server on a random port in the background
+    server = HTTPServer(('', 0), OAuthHandler)
+    server.url = 'http://{0}:{1}/'.format(*server.server_address)
+    thread = threading.Thread(target=server.serve_forever)
+    thread.start()
+    try:
+        yield server
+    finally:
+        server.shutdown()
+        thread.join()
+        server.server_close()
 
 
 @pytest.fixture()

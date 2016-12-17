@@ -4,18 +4,21 @@ from __future__ import unicode_literals
 import os
 import sys
 import time
+import shlex
 import codecs
 import curses
 import logging
-import tempfile
+import threading
 import webbrowser
 import subprocess
 import curses.ascii
 from curses import textpad
-from datetime import datetime
 from contextlib import contextmanager
+from tempfile import NamedTemporaryFile
 
 import six
+#pylint: disable=import-error
+from six.moves.urllib.parse import quote
 from kitchen.text.display import textual_width_chop
 from mailcap_fix import mailcap
 
@@ -72,28 +75,10 @@ class Terminal(object):
         return symbol, attr
 
     @property
-    def timestamp_sep(self):
-        symbol = '-'
-        attr = curses.A_BOLD
-        return symbol, attr
-
-    @property
     def guilded(self):
         symbol = '*' if self.config['ascii'] else '✪'
         attr = curses.A_BOLD | Color.YELLOW
         return symbol, attr
-
-    @property
-    def stickied(self):
-        text = '[stickied]'
-        attr = Color.GREEN
-        return text, attr
-
-    @property
-    def saved(self):
-        text = '[saved]'
-        attr = Color.GREEN
-        return text, attr
 
     @property
     def vline(self):
@@ -136,6 +121,9 @@ class Terminal(object):
 
     @staticmethod
     def flash():
+        """
+        Flash the screen to indicate that an action was invalid.
+        """
         return curses.flash()
 
     @staticmethod
@@ -152,6 +140,9 @@ class Terminal(object):
         window.addch(y, x, ch, attr)
 
     def getch(self):
+        """
+        Wait for a keypress and return the corresponding character code (int).
+        """
         return self.stdscr.getch()
 
     @staticmethod
@@ -368,11 +359,11 @@ class Terminal(object):
                 p = subprocess.Popen(
                     [command], stderr=subprocess.PIPE,
                     universal_newlines=True, shell=True)
-                code = p.wait()
+                _, stderr = p.communicate()
                 if copious_output:
                     six.moves.input('Press any key to continue')
+            code = p.poll()
             if code != 0:
-                _, stderr = p.communicate()
                 _logger.warning(stderr)
                 self.show_notification(
                     'Program exited with status={0}\n{1}'.format(
@@ -394,6 +385,13 @@ class Terminal(object):
                     raise exceptions.BrowserError(
                         'Program exited with status={0}\n{1}'.format(
                             code, stderr.strip()))
+
+                # Spin off a thread with p.communicate() to avoid subprocess
+                # hang when the stodout/stderr PIPE gets filled up. This
+                # behavior was discovered when opening long gifs with mpv
+                # because mpv sends a progress bar to stderr.
+                # https://thraxil.org/users/anders/posts/2008/03/13/
+                threading.Thread(target=p.communicate).start()
 
     def get_mailcap_entry(self, url):
         """
@@ -474,7 +472,12 @@ class Terminal(object):
         """
 
         if self.display:
-            command = "import webbrowser; webbrowser.open_new_tab('%s')" % url
+            # Note that we need to sanitize the url before inserting it into
+            # the python code to prevent injection attacks.
+            command = (
+                "import webbrowser\n"
+                "from six.moves.urllib.parse import unquote\n"
+                "webbrowser.open_new_tab(unquote('%s'))" % quote(url))
             args = [sys.executable, '-c', command]
             with self.loader('Opening page in a new window'), \
                     open(os.devnull, 'ab+', 0) as null:
@@ -515,16 +518,17 @@ class Terminal(object):
         """
 
         pager = os.getenv('PAGER') or 'less'
+        command = shlex.split(pager)
         try:
             with self.suspend():
-                p = subprocess.Popen([pager], stdin=subprocess.PIPE)
-                p.stdin.write(data.encode('utf-8'))
-                p.stdin.close()
+                _logger.debug('Running command: %s', command)
+                p = subprocess.Popen(command, stdin=subprocess.PIPE)
                 try:
-                    p.wait()
+                    p.communicate(data.encode('utf-8'))
                 except KeyboardInterrupt:
                     p.terminate()
-        except OSError:
+        except OSError as e:
+            _logger.exception(e)
             self.show_notification('Could not open pager %s' % pager)
 
     @contextmanager
@@ -545,22 +549,27 @@ class Terminal(object):
             text (str): The text that the user entered into the editor.
         """
 
-        filename = 'rtv_{:%Y%m%d_%H%M%S}.txt'.format(datetime.now())
-        filepath = os.path.join(tempfile.gettempdir(), filename)
+        with NamedTemporaryFile(prefix='rtv_', suffix='.txt', delete=False) as fp:
+            # Create a tempory file and grab the name, but close immediately so
+            # we can re-open using the right encoding
+            filepath = fp.name
 
         with codecs.open(filepath, 'w', 'utf-8') as fp:
             fp.write(data)
         _logger.info('File created: %s', filepath)
 
         editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
+        command = shlex.split(editor) + [filepath]
         try:
             with self.suspend():
-                p = subprocess.Popen([editor, filepath])
+                _logger.debug('Running command: %s', command)
+                p = subprocess.Popen(command)
                 try:
-                    p.wait()
+                    p.communicate()
                 except KeyboardInterrupt:
                     p.terminate()
-        except OSError:
+        except OSError as e:
+            _logger.exception(e)
             self.show_notification('Could not open file with %s' % editor)
 
         with codecs.open(filepath, 'r', 'utf-8') as fp:
@@ -573,7 +582,7 @@ class Terminal(object):
             # All exceptions will cause the file to *not* be removed, but these
             # ones should also be swallowed
             _logger.info('Caught TemporaryFileError')
-            self.show_notification('Post saved as: %s', filepath)
+            self.show_notification('Post saved as: %s' % filepath)
         else:
             # If no errors occurred, try to remove the file
             try:
@@ -591,9 +600,11 @@ class Terminal(object):
         """
 
         urlview = os.getenv('RTV_URLVIEWER') or 'urlview'
+        command = shlex.split(urlview)
         try:
             with self.suspend():
-                p = subprocess.Popen([urlview], stdin=subprocess.PIPE)
+                _logger.debug('Running command: %s', command)
+                p = subprocess.Popen(command, stdin=subprocess.PIPE)
                 try:
                     p.communicate(input=data.encode('utf-8'))
                 except KeyboardInterrupt:
@@ -608,7 +619,8 @@ class Terminal(object):
             if code == 1:
                 self.show_notification('No URLs found')
 
-        except OSError:
+        except OSError as e:
+            _logger.exception(e)
             self.show_notification(
                 'Failed to open {0}'.format(urlview))
 
@@ -668,18 +680,20 @@ class Terminal(object):
         """
 
         n_rows, n_cols = self.stdscr.getmaxyx()
-        attr = curses.A_BOLD | Color.CYAN
+        ch, attr = str(' '), curses.A_BOLD | curses.A_REVERSE | Color.CYAN
         prompt = self.clean(prompt, n_cols-1)
 
         # Create a new window to draw the text at the bottom of the screen,
         # so we can erase it when we're done.
         prompt_win = curses.newwin(1, len(prompt)+1, n_rows-1, 0)
-        self.add_line(prompt_win, prompt, attr=attr)
+        prompt_win.bkgd(ch, attr)
+        self.add_line(prompt_win, prompt)
         prompt_win.refresh()
 
         # Create a separate window for text input
         input_win = curses.newwin(1, n_cols-len(prompt), n_rows-1, len(prompt))
-        input_win.attrset(attr)
+        input_win.bkgd(ch, attr)
+        input_win.refresh()
 
         if key:
             curses.curs_set(1)
@@ -733,7 +747,7 @@ class Terminal(object):
         # space, assume that a newline operation was intended by the user
         stack, current_line = [], ''
         for line in text.split('\n'):
-            if line.endswith('  '):
+            if line.endswith('  ') or not line:
                 stack.append(current_line + line.rstrip())
                 current_line = ''
             else:

@@ -22,8 +22,13 @@ class SubmissionError(RTVError):
     "Submission could not be loaded"
 
 
-class SubredditError(RTVError):
-    "Subreddit could not be reached"
+class NoSubmissionsError(RTVError):
+    "No submissions for the given page"
+
+    def __init__(self, name):
+        self.name = name
+        message = '`{0}` has no submissions'.format(name)
+        super(NoSubmissionsError, self).__init__(message)
 
 
 class SubscriptionError(RTVError):

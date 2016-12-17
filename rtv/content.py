@@ -295,7 +295,7 @@ class SubmissionContent(Content):
     """
 
     def __init__(self, submission, loader, indent_size=2, max_indent_level=8,
-                 order=None):
+                 order=None, max_comment_cols=120):
 
         submission_data = self.strip_praw_submission(submission)
         comments = self.flatten_comments(submission.comments)
@@ -308,17 +308,19 @@ class SubmissionContent(Content):
         self._submission = submission
         self._submission_data = submission_data
         self._comment_data = [self.strip_praw_comment(c) for c in comments]
+        self._max_comment_cols = max_comment_cols
 
     @classmethod
     def from_url(cls, reddit, url, loader, indent_size=2, max_indent_level=8,
-                 order=None):
+                 order=None, max_comment_cols=120):
 
         url = url.replace('http:', 'https:')  # Reddit forces SSL
         # Sometimes reddit will return a 403 FORBIDDEN when trying to access an
         # np link while using OAUTH. Cause is unknown.
         url = url.replace('https://np.', 'https://www.')
         submission = reddit.get_submission(url, comment_sort=order)
-        return cls(submission, loader, indent_size, max_indent_level, order)
+        return cls(submission, loader, indent_size, max_indent_level, order,
+            max_comment_cols)
 
     @property
     def range(self):
@@ -338,15 +340,15 @@ class SubmissionContent(Content):
             data['split_title'] = self.wrap_text(data['title'], width=n_cols-2)
             data['split_text'] = self.wrap_text(data['text'], width=n_cols-2)
             data['n_rows'] = len(data['split_title'] + data['split_text']) + 5
-            data['offset'] = 0
+            data['h_offset'] = 0
 
         else:
             data = self._comment_data[index]
             indent_level = min(data['level'], self.max_indent_level)
-            data['offset'] = indent_level * self.indent_size
+            data['h_offset'] = indent_level * self.indent_size
 
             if data['type'] == 'Comment':
-                width = n_cols - data['offset']
+                width = min(n_cols - data['h_offset'], self._max_comment_cols)
                 data['split_body'] = self.wrap_text(data['body'], width=width)
                 data['n_rows'] = len(data['split_body']) + 1
             else:
@@ -427,7 +429,10 @@ class SubredditContent(Content):
         try:
             self.get(0)
         except IndexError:
-            raise exceptions.SubredditError('No submissions')
+            full_name = self.name
+            if self.order:
+                full_name += '/' + self.order
+            raise exceptions.NoSubmissionsError(full_name)
 
     @classmethod
     def from_name(cls, reddit, name, loader, order=None, query=None):
@@ -470,12 +475,12 @@ class SubredditContent(Content):
         elif len(parts) == 2:
             resource, resource_order = parts
         else:
-            raise InvalidSubreddit()
+            raise InvalidSubreddit('`{}` is an invalid format'.format(name))
 
         if not resource:
             # Praw does not correctly handle empty strings
             # https://github.com/praw-dev/praw/issues/615
-            raise InvalidSubreddit()
+            raise InvalidSubreddit('Subreddit cannot be empty')
 
         # If the order was explicitly passed in, it will take priority over
         # the order that was extracted from the name
@@ -491,12 +496,12 @@ class SubredditContent(Content):
             period = None
 
         if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
-            raise InvalidSubreddit('Invalid order "%s"' % order)
+            raise InvalidSubreddit('Invalid order `%s`' % order)
         if period not in ['all', 'day', 'hour', 'month', 'week', 'year', None]:
-            raise InvalidSubreddit('Invalid period "%s"' % period)
+            raise InvalidSubreddit('Invalid period `%s`' % period)
         if period and order not in ['top', 'controversial']:
-            raise InvalidSubreddit('"%s" order does not allow sorting by'
-                                   'period' % order)
+            raise InvalidSubreddit('`%s` order does not allow sorting by'
+                                   ' period' % order)
 
         # On some objects, praw doesn't allow you to pass arguments for the
         # order and period. Instead you need to call special helper functions
@@ -563,7 +568,7 @@ class SubredditContent(Content):
                 # instead of calling reddit.get_hot_from_week()
                 method_alias = 'get_{0}'.format(order)
                 method = getattr(reddit, method_alias)
-                submissions = method(limit=None, t=period)
+                submissions = method(limit=None, params={'t': period})
             else:
                 submissions = getattr(reddit, method_alias)(limit=None)
 
@@ -621,7 +626,7 @@ class SubredditContent(Content):
             data['split_title'] = data['split_title'][:self.max_title_rows-1]
             data['split_title'].append('(Not enough space to display)')
         data['n_rows'] = len(data['split_title']) + 3
-        data['offset'] = 0
+        data['h_offset'] = 0
 
         return data
 
@@ -695,6 +700,6 @@ class SubscriptionContent(Content):
         data = self._subscription_data[index]
         data['split_title'] = self.wrap_text(data['title'], width=n_cols)
         data['n_rows'] = len(data['split_title']) + 1
-        data['offset'] = 0
+        data['h_offset'] = 0
 
         return data
