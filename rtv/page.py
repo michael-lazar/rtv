@@ -97,11 +97,8 @@ class Page(object):
     @PageController.register(Command('SORT_TOP'))
     def sort_content_top(self):
 
-        if not self.content.order or 'top' not in self.content.order:
-            self.refresh_content(order='top')
-            return
-
         choices = {
+            '\n': 'top',
             '1': 'top-hour',
             '2': 'top-day',
             '3': 'top-week',
@@ -129,11 +126,8 @@ class Page(object):
     @PageController.register(Command('SORT_CONTROVERSIAL'))
     def sort_content_controversial(self):
 
-        if not self.content.order or 'controversial' not in self.content.order:
-            self.refresh_content(order='controversial')
-            return
-
         choices = {
+            '\n': 'controversial',
             '1': 'controversial-hour',
             '2': 'controversial-day',
             '3': 'controversial-week',
