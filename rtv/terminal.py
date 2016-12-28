@@ -93,15 +93,11 @@ class Terminal(object):
 
         if self._display is None:
             if sys.platform == 'darwin':
-                # OSX doesn't always set DISPLAY so we can't use this to check
-                # Note: Disabling for now, with the hope that if this
-                # is a widespread issue then people will complain and we can
-                # come up with a better solution. Checking for $DISPLAY is
-                # used extensively in mailcap files, so it really *should* be
-                # set properly. I don't have a mac anymore so I can't test.
-
-                #  display = True
-                display = bool(os.environ.get("DISPLAY"))
+                # OS X won't set $DISPLAY unless xQuartz is installed.
+                # If you're using OS X and you want to access a terminal
+                # browser, you need to set it manually via $BROWSER.
+                # See issue #166
+                display = True
             else:
                 display = bool(os.environ.get("DISPLAY"))
 
