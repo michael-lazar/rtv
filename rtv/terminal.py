@@ -26,7 +26,6 @@ from . import exceptions
 from . import mime_parsers
 from .objects import LoadScreen, Color
 
-
 try:
     # Added in python 3.4+
     from html import unescape
@@ -121,6 +120,17 @@ class Terminal(object):
         Flash the screen to indicate that an action was invalid.
         """
         return curses.flash()
+
+    @staticmethod
+    def curs_set(val):
+        """
+        Change the cursor visibility, may fail for some terminals with limited
+        cursor support.
+        """
+        try:
+            curses.curs_set(val)
+        except:
+            pass
 
     @staticmethod
     def addch(window, y, x, ch, attr):
@@ -628,7 +638,7 @@ class Terminal(object):
         window.clear()
 
         # Set cursor mode to 1 because 2 doesn't display on some terminals
-        curses.curs_set(1)
+        self.curs_set(1)
 
         # Keep insert_mode off to avoid the recursion error described here
         # http://bugs.python.org/issue13051
@@ -656,7 +666,7 @@ class Terminal(object):
         except exceptions.EscapeInterrupt:
             out = None
 
-        curses.curs_set(0)
+        self.curs_set(0)
         return self.strip_textpad(out)
 
     def prompt_input(self, prompt, key=False):
@@ -687,13 +697,13 @@ class Terminal(object):
         input_win.refresh()
 
         if key:
-            curses.curs_set(1)
+            self.curs_set(1)
             ch = self.getch()
             # We can't convert the character to unicode, because it may return
             # Invalid values for keys that don't map to unicode characters,
             # e.g. F1
             text = ch if ch != self.ESCAPE else None
-            curses.curs_set(0)
+            self.curs_set(0)
         else:
             text = self.text_input(input_win)
 
