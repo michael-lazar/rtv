@@ -57,10 +57,14 @@ def curses_session():
         try:
             curses.start_color()
         except:
+            _logger.warning('Curses failed to initialize color support')
             pass
 
         # Hide the blinking cursor
-        curses.curs_set(0)
+        try:
+            curses.curs_set(0)
+        except:
+            _logger.warning('Curses failed to initialize the cursor mode')
 
         # Assign the terminal's default (background) color to code -1
         curses.use_default_colors()
