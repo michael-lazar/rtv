@@ -25,7 +25,7 @@ RTV Changelog
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
 
 --------------------
-1.14.0_ (2017-01-12)
+1.14.1_ (2017-01-12)
 --------------------
 Features
 
