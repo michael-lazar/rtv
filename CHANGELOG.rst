@@ -2,7 +2,7 @@
 RTV Changelog
 =============
 
-.. _1.14.0: http://github.com/michael-lazar/rtv/releases/tag/v1.14.0
+.. _1.14.1: http://github.com/michael-lazar/rtv/releases/tag/v1.14.1
 .. _1.13.0: http://github.com/michael-lazar/rtv/releases/tag/v1.13.0
 .. _1.12.1: http://github.com/michael-lazar/rtv/releases/tag/v1.12.1
 .. _1.12.0: http://github.com/michael-lazar/rtv/releases/tag/v1.12.0
