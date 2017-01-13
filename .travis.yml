@@ -10,7 +10,8 @@ before_install:
 install:
   - pip install .
 script:
-  - pylint --rcfile .pylintrc -E rtv/
+    # https://github.com/PyCQA/pylint/issues/1113
+  - if [[ $TRAVIS_PYTHON_VERSION != 3.6 ]]; then pylint --rcfile .pylintrc -E rtv/; fi
   - coverage run -m py.test -v
 after_success:
   - coveralls
