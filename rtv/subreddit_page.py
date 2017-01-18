@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
 import time
 import curses
 
@@ -74,7 +75,20 @@ class SubredditPage(Page):
 
         name = self.term.prompt_input('Enter page: /')
         if name is not None:
-            self.refresh_content(order='ignore', name=name)
+            # Check if opening a submission url or a subreddit url
+            # Example patterns for submissions:
+            #     comments/571dw3
+            #     /comments/571dw3
+            #     /r/pics/comments/571dw3/
+            #     https://www.reddit.com/r/pics/comments/571dw3/at_disneyland
+            submission_pattern = re.compile(r'(^|/)comments/(?P<id>.+?)($|/)')
+
+            match = submission_pattern.search(name)
+            if match:
+                submission_url = 'https://www.reddit.com/comments/{0}'
+                self.open_submission(submission_url.format(match.group('id')))
+            else:
+                self.refresh_content(order='ignore', name=name)
 
     @SubredditController.register(Command('SUBREDDIT_FRONTPAGE'))
     def show_frontpage(self):
@@ -95,7 +109,9 @@ class SubredditPage(Page):
 
     @SubredditController.register(Command('SUBREDDIT_OPEN'))
     def open_submission(self, url=None):
-        "Select the current submission to view posts"
+        """
+        Select the current submission to view posts.
+        """
 
         data = {}
         if url is None:
