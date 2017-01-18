@@ -206,7 +206,7 @@ License
 This project is distributed under the `MIT <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_ license.
 
 
-.. |python| image:: https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg
+.. |python| image:: https://img.shields.io/badge/python-2.7%2C%203.6-blue.svg
     :target: https://pypi.python.org/pypi/rtv/
     :alt: Supported Python versions
 
