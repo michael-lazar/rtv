@@ -66,6 +66,8 @@ https://github.com/michael-lazar/rtv
   - /r/python/new                (sort)
   - /r/python/controversial-year (sort and order)
   - /r/python+linux              (multireddit)
+  - /r/python/comments/30rwj2    (submission comments)
+  - /comments/30rwj2             (submission comments shorthand)
   - /r/front                     (front page)
   - /u/me                        (your submissions)
   - /u/saved                     (your saved posts)

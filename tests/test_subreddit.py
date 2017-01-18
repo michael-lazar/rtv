@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import six
+from praw.errors import NotFound
 
 from rtv.subreddit_page import SubredditPage
 from rtv import __version__
@@ -111,6 +112,34 @@ def test_subreddit_prompt(subreddit_page, terminal):
         assert subreddit_page.content.name == '/r/front'
         assert subreddit_page.content.order == 'top'
         assert not terminal.loader.exception
+
+
+def test_subreddit_prompt_submission(subreddit_page, terminal):
+
+    prompts = [
+        'comments/571dw3',
+        '///comments/571dw3',
+        '/comments/571dw3',
+        '/r/pics/comments/571dw3/',
+        'https://www.reddit.com/r/pics/comments/571dw3/at_disneyland']
+    url = 'https://www.reddit.com/comments/571dw3'
+
+    for text in prompts:
+        with mock.patch.object(subreddit_page, 'open_submission'), \
+                mock.patch.object(terminal, 'prompt_input'):
+
+            terminal.prompt_input.return_value = text
+            subreddit_page.controller.trigger('/')
+            subreddit_page.open_submission.assert_called_with(url)
+            assert not terminal.loader.exception
+
+
+def test_subreddit_prompt_submission_invalid(subreddit_page, terminal):
+
+    with mock.patch.object(terminal, 'prompt_input'):
+        terminal.prompt_input.return_value = 'comments/571dw3fakeid'
+        subreddit_page.controller.trigger('/')
+        assert isinstance(terminal.loader.exception, NotFound)
 
 
 def test_subreddit_order_top(subreddit_page, terminal):
