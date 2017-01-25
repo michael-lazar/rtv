@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.14.1: http://github.com/michael-lazar/rtv/releases/tag/v1.14.1
 .. _1.13.0: http://github.com/michael-lazar/rtv/releases/tag/v1.13.0
 .. _1.12.1: http://github.com/michael-lazar/rtv/releases/tag/v1.12.1
 .. _1.12.0: http://github.com/michael-lazar/rtv/releases/tag/v1.12.0
@@ -22,6 +23,26 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.14.1_ (2017-01-12)
+--------------------
+Features
+
+* The order-by option menu now triggers after a single '2' or '5' keystroke
+  instead of needing to double press.
+
+Bugfixes
+
+* Mailcap now handles multi-part shell commands correctly, e.g. "emacs -nw"
+* OS X no longer relies on $DISPLAY to check if there is a display available.
+* Added error handling for terminals that don't support hiding the cursor.
+* Fixed a bug on tmux that prevented scrolling when $TERM was set to
+  "xterm-256color" instead of screen.
+
+Documentation
+
+* Added section to FAQ about garbled characters output by curses.
 
 --------------------
 1.13.0_ (2016-10-17)

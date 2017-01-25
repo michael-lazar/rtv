@@ -78,14 +78,10 @@ def test_page_unauthenticated(reddit, terminal, config, oauth):
         # Sort content
         page.controller.trigger('1')
         page.refresh_content.assert_called_with(order='hot')
-        page.controller.trigger('2')
-        page.refresh_content.assert_called_with(order='top')
         page.controller.trigger('3')
         page.refresh_content.assert_called_with(order='rising')
         page.controller.trigger('4')
         page.refresh_content.assert_called_with(order='new')
-        page.controller.trigger('5')
-        page.refresh_content.assert_called_with(order='controversial')
 
         logged_in_methods = [
             'a',  # Upvote

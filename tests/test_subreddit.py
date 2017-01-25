@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import six
+from praw.errors import NotFound
 
 from rtv.subreddit_page import SubredditPage
 from rtv import __version__
@@ -113,19 +114,43 @@ def test_subreddit_prompt(subreddit_page, terminal):
         assert not terminal.loader.exception
 
 
+def test_subreddit_prompt_submission(subreddit_page, terminal):
+
+    prompts = [
+        'comments/571dw3',
+        '///comments/571dw3',
+        '/comments/571dw3',
+        '/r/pics/comments/571dw3/',
+        'https://www.reddit.com/r/pics/comments/571dw3/at_disneyland']
+    url = 'https://www.reddit.com/comments/571dw3'
+
+    for text in prompts:
+        with mock.patch.object(subreddit_page, 'open_submission'), \
+                mock.patch.object(terminal, 'prompt_input'):
+
+            terminal.prompt_input.return_value = text
+            subreddit_page.controller.trigger('/')
+            subreddit_page.open_submission.assert_called_with(url)
+            assert not terminal.loader.exception
+
+
+def test_subreddit_prompt_submission_invalid(subreddit_page, terminal):
+
+    with mock.patch.object(terminal, 'prompt_input'):
+        terminal.prompt_input.return_value = 'comments/571dw3fakeid'
+        subreddit_page.controller.trigger('/')
+        assert isinstance(terminal.loader.exception, NotFound)
+
+
 def test_subreddit_order_top(subreddit_page, terminal):
 
-    # Sort by top - First time selects default
-    subreddit_page.controller.trigger('2')
-    assert subreddit_page.content.order == 'top'
-
-    # Second time opens the menu
+    # Sort by top
     with mock.patch.object(terminal, 'show_notification'):
         # Invalid selection
         terminal.show_notification.return_value = ord('x')
         subreddit_page.controller.trigger('2')
         terminal.show_notification.assert_called_with('Invalid option')
-        assert subreddit_page.content.order == 'top'
+        assert subreddit_page.content.order is None
 
         # Valid selection - sort by week
         terminal.show_notification.reset_mock()
@@ -136,22 +161,19 @@ def test_subreddit_order_top(subreddit_page, terminal):
 
 def test_subreddit_order_controversial(subreddit_page, terminal):
 
-    # Now do controversial
-    subreddit_page.controller.trigger('5')
-    assert subreddit_page.content.order == 'controversial'
-
+    # Sort by controversial
     with mock.patch.object(terminal, 'show_notification'):
         # Invalid selection
         terminal.show_notification.return_value = ord('x')
         subreddit_page.controller.trigger('5')
         terminal.show_notification.assert_called_with('Invalid option')
-        assert subreddit_page.content.order == 'controversial'
+        assert subreddit_page.content.order is None
 
-        # Valid selection - sort by week
+        # Valid selection - sort by default
         terminal.show_notification.reset_mock()
-        terminal.show_notification.return_value = ord('3')
+        terminal.show_notification.return_value = ord('\n')
         subreddit_page.controller.trigger('5')
-        assert subreddit_page.content.order == 'controversial-week'
+        assert subreddit_page.content.order == 'controversial'
 
 
 def test_subreddit_open(subreddit_page, terminal, config):

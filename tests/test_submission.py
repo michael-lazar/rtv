@@ -146,17 +146,13 @@ def test_submission_prompt(submission_page, terminal):
 
 def test_submission_order_top(submission_page, terminal):
 
-    # Sort by top - First time selects default
-    submission_page.controller.trigger('2')
-    assert submission_page.content.order == 'top'
-
-    # Second time opens the menu
+    # Open the menu
     with mock.patch.object(terminal, 'show_notification'):
         # Invalid selection
         terminal.show_notification.return_value = ord('x')
         submission_page.controller.trigger('2')
         terminal.show_notification.assert_called_with('Invalid option')
-        assert submission_page.content.order == 'top'
+        assert submission_page.content.order is None
 
         # Valid selection - sort by week
         terminal.show_notification.reset_mock()
@@ -167,22 +163,19 @@ def test_submission_order_top(submission_page, terminal):
 
 def test_submission_order_controversial(submission_page, terminal):
 
-    # Now do controversial
-    submission_page.controller.trigger('5')
-    assert submission_page.content.order == 'controversial'
-
+    # Open the menu
     with mock.patch.object(terminal, 'show_notification'):
         # Invalid selection
         terminal.show_notification.return_value = ord('x')
         submission_page.controller.trigger('5')
         terminal.show_notification.assert_called_with('Invalid option')
-        assert submission_page.content.order == 'controversial'
+        assert submission_page.content.order is None
 
-        # Valid selection - sort by week
+        # Valid selection - sort by default
         terminal.show_notification.reset_mock()
-        terminal.show_notification.return_value = ord('3')
+        terminal.show_notification.return_value = ord('\n')
         submission_page.controller.trigger('5')
-        assert submission_page.content.order == 'controversial-week'
+        assert submission_page.content.order == 'controversial'
 
 
 def test_submission_move_top_bottom(submission_page):
