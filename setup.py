@@ -20,7 +20,7 @@ setuptools.setup(
     install_requires=[
         'praw >=3.5, <4',
         'six',
-        'requests',
+        'requests >=2.4.0',
         'kitchen',
         'beautifulsoup4',
         'mailcap-fix',
