@@ -51,17 +51,6 @@ or clone the repository
     $ cd rtv
     $ python3 setup.py install
 
-on Arch Linux or Arch based distros (Antergos, Manjaro, `etc.`_) you can install directly with an `aur helper`_ such as yaourt.
-
-.. code:: bash
-
-    $ yaourt -S rtv
-    $ # or to keep up to date with the master branch
-    $ yaourt -S rtv-git
-
-.. _etc.: https://wiki.archlinux.org/index.php/Arch_based_distributions_(active)
-.. _aur helper: https://wiki.archlinux.org/index.php/AUR_helpers#AUR_search.2Fbuild_helpers
-
 =====
 Usage
 =====
