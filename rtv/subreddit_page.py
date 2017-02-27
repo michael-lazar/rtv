@@ -4,6 +4,10 @@ from __future__ import unicode_literals
 import re
 import time
 import curses
+import textwrap
+
+from bs4 import BeautifulSoup
+from markdown import markdown
 
 from . import docs
 from .content import SubredditContent
@@ -34,6 +38,15 @@ class SubredditPage(Page):
         self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.nav = Navigator(self.content.get)
         self.toggled_subreddit = None
+
+    @SubredditController.register('t')
+    def get_sidebar(self):
+        "Gets the subreddit's sidebar information and displays it"
+        n_rows, n_cols = self.term.stdscr.getmaxyx()
+        t = textwrap.TextWrapper(width=n_cols - 10)
+        html = markdown(self.content.get_description(self.reddit))
+        text = ''.join(BeautifulSoup(html).findAll(text=True))
+        self.term.show_notification(t.wrap(text))
 
     @SubredditController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):

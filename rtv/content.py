@@ -434,6 +434,18 @@ class SubredditContent(Content):
                 full_name += '/' + self.order
             raise exceptions.NoSubmissionsError(full_name)
 
+    def get_description(self, reddit):
+        """
+        Gets the subreddit's description
+        """
+        # Strip leading and trailing backslashes
+        self.name = self.name.strip(' /')
+        if self.name.startswith('r/'):
+            self.name = self.name[2:]
+
+        subreddit = reddit.get_subreddit(self.name)
+        return subreddit.description
+
     @classmethod
     def from_name(cls, reddit, name, loader, order=None, query=None):
         """
