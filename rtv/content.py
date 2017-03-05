@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import re
+import logging
 from datetime import datetime
 
 import six
@@ -10,6 +11,8 @@ from praw.errors import InvalidSubreddit
 from kitchen.text.display import wrap
 
 from . import exceptions
+
+_logger = logging.getLogger(__name__)
 
 
 class Content(object):
@@ -50,45 +53,62 @@ class Content(object):
         """
         Flatten a PRAW comment tree while preserving the nested level of each
         comment via the `nested_level` attribute.
+
+        There are a couple of different ways that the input comment list can be
+        organized depending on its source:
+
+            1. Comments that are returned from the get_submission() api call.
+               In this case, the comments list will contain only top level
+               comments and replies will be attached to those comments via
+               the `comment.replies` property.
+
+            2. Comments that are returned from the comments() method on a
+               MoreComments object. In this case, the api returns all of the
+               comments and replies as a flat list. We need to sort out which
+               ones are replies to other comments by looking at the parent_id
+               parameter and checking if the id matches another comment.
+
+        In addition, there is a bug in praw where a MoreComments object that is
+        also a reply will be added below the comment as a sibling instead of
+        a child. So it is especially important that this method is robust and
+        double-checks all of the parent_id's of the comments.
+
+        Reference:
+            https://github.com/praw-dev/praw/issues/391
+
         """
 
         stack = comments[:]
         for item in stack:
             item.nested_level = root_level
 
-        retval = []
+        retval, parent_candidates = [], {}
         while stack:
             item = stack.pop(0)
 
-            # MoreComments item count should never be zero, but if it is then
-            # discard the MoreComment object. Need to look into this further.
+            # The MoreComments item count should never be zero, discard it if
+            # it is. Need to look into this further.
             if isinstance(item, praw.objects.MoreComments) and item.count == 0:
                 continue
 
-            # https://github.com/praw-dev/praw/issues/391
-            # Attach children replies to parents. Children will have the
-            # same parent_id, but with a suffix attached.
-            # E.g.
-            #   parent_comment.id = c0tprcm
-            #   comment.parent_id = t1_c0tprcm
             if item.parent_id:
-                level = None
-                # Search through previous comments for a possible parent
-                for parent in retval[::-1]:
-                    if level and parent.nested_level >= level:
-                        # Stop if we reach a sibling or a child, we know that
-                        # nothing before this point is a candidate for parent.
-                        break
-                    level = parent.nested_level
-                    if item.parent_id.endswith(parent.id):
-                        item.nested_level = parent.nested_level + 1
+                # Search the list of previous comments for a possible parent
+                # The match is based off of the parent_id parameter E.g.
+                #   parent.id = c0tprcm
+                #   child.parent_id = t1_c0tprcm
+                parent = parent_candidates.get(item.parent_id[3:])
+                if parent:
+                    item.nested_level = parent.nested_level + 1
 
-            # Otherwise, grab all of the attached replies and add them back to
-            # the list of comments to parse
+            # Add all of the attached replies to the front of the stack to be
+            # parsed separately
             if hasattr(item, 'replies'):
                 for n in item.replies:
                     n.nested_level = item.nested_level + 1
                 stack[0:0] = item.replies
+
+            # The comment is now a potential parent for the rest of the items
+            parent_candidates[item.id] = item
 
             retval.append(item)
         return retval
