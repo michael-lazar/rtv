@@ -154,6 +154,65 @@ def test_content_flatten_comments(reddit):
             assert comment.nested_level > 2
 
 
+def test_content_flatten_comments_2(reddit):
+
+    # Grab a large MoreComments instance to test
+    url = 'https://www.reddit.com/r/CollegeBasketball/comments/31owr1'
+    submission = reddit.get_submission(url, comment_sort='top')
+    more_comment = submission.comments[-1]
+    assert isinstance(more_comment, praw.objects.MoreComments)
+
+    # Make sure that all comments are displayed one level below their parents
+    comments = more_comment.comments()
+    flattened = Content.flatten_comments(comments)
+    for i, item in enumerate(flattened):
+        for j in range(i-1, -1, -1):
+            prev = flattened[j]
+            if item.parent_id and item.parent_id.endswith(prev.id):
+                x, y = item.nested_level, prev.nested_level
+                assert item.nested_level == prev.nested_level + 1
+                break
+        else:
+            assert item.nested_level == 0
+
+
+def test_content_flatten_comments_3(reddit):
+    # Build the comment structure as described in issue
+    # https://github.com/michael-lazar/rtv/issues/327
+
+    class MockComment(object):
+        def __init__(self, comment_id, parent_id='t3_xxxxx'):
+            self.id = comment_id
+            self.parent_id = parent_id
+            self.replies = []
+        def __repr__(self):
+            return '%s (%s)' % (self.id, self.parent_id)
+
+    # This is an example of something that might be returned by PRAW after
+    # clicking to expand a "More comments [6]" link.
+    comments = [
+        MockComment('axxxx'),
+        MockComment('a1xxx', parent_id='t1_axxxx'),
+        MockComment('a11xx', parent_id='t1_a1xxx'),
+        MockComment('a12xx', parent_id='t1_a1xxx'),
+        MockComment('a2xxx', parent_id='t1_axxxx'),
+        MockComment('a3xxx', parent_id='t1_axxxx'),
+        MockComment('bxxxx'),
+    ]
+
+    # Make sure that all comments are displayed one level below their parents
+    flattened = Content.flatten_comments(comments)
+    for i, item in enumerate(flattened):
+        for j in range(i-1, -1, -1):
+            prev = flattened[j]
+            if item.parent_id and item.parent_id.endswith(prev.id):
+                x, y = item.nested_level, prev.nested_level
+                assert item.nested_level == prev.nested_level + 1
+                break
+        else:
+            assert item.nested_level == 0
+
+
 def test_content_submission_initialize(reddit, terminal):
 
     url = 'https://www.reddit.com/r/Python/comments/2xmo63/'
