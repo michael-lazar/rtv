@@ -107,7 +107,8 @@ class Content(object):
                     n.nested_level = item.nested_level + 1
                 stack[0:0] = item.replies
 
-            # The comment is now a potential parent for the rest of the items
+            # The comment is now a potential parent for the items that are
+            # remaining on the stack.
             parent_candidates[item.id] = item
 
             retval.append(item)
