@@ -1,10 +1,15 @@
 language: python
 python:
-  - "2.7"
-  - "3.3"
-  - "3.4"
-  - "3.5"
-  - "3.6"
+  - 2.7
+  - 3.3
+  - 3.4
+  - 3.5
+  - 3.6
+  - nightly
+matrix:
+  allow_failures:
+    - python: nightly
+  fast_finish: true
 before_install:
   - pip install coveralls pytest coverage mock pylint vcrpy
 install:
