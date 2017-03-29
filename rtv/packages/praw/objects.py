@@ -30,16 +30,16 @@ from heapq import heappop, heappush
 from json import dumps
 from requests.compat import urljoin
 from warnings import warn, warn_explicit
-from praw import (AuthenticatedReddit as AR, ModConfigMixin as MCMix,
-                  ModFlairMixin as MFMix, ModLogMixin as MLMix,
-                  ModOnlyMixin as MOMix, ModSelfMixin as MSMix,
-                  MultiredditMixin as MultiMix, PrivateMessagesMixin as PMMix,
-                  SubmitMixin, SubscribeMixin, UnauthenticatedReddit as UR)
-from praw.decorators import (alias_function, limit_chars, restrict_access,
-                             deprecated)
-from praw.errors import ClientException
-from praw.internal import (_get_redditor_listing, _get_sorter,
-                           _modify_relationship)
+from . import (AuthenticatedReddit as AR, ModConfigMixin as MCMix,
+               ModFlairMixin as MFMix, ModLogMixin as MLMix,
+               ModOnlyMixin as MOMix, ModSelfMixin as MSMix,
+               MultiredditMixin as MultiMix, PrivateMessagesMixin as PMMix,
+               SubmitMixin, SubscribeMixin, UnauthenticatedReddit as UR)
+from .decorators import (alias_function, limit_chars, restrict_access,
+                         deprecated)
+from .errors import ClientException
+from .internal import (_get_redditor_listing, _get_sorter,
+                       _modify_relationship)
 
 
 REDDITOR_KEYS = ('approved_by', 'author', 'banned_by', 'redditor',

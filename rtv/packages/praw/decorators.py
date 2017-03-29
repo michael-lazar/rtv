@@ -27,12 +27,12 @@ import decorator
 import six
 import sys
 from functools import wraps
-from praw.decorator_helpers import (
+from .decorator_helpers import (
     _get_captcha,
     _is_mod_of_all,
     _make_func_args
 )
-from praw import errors
+from . import errors
 from warnings import filterwarnings, warn
 
 
@@ -238,7 +238,7 @@ def restrict_access(scope, mod=None, login=None, oauth_only=False,
                 # Defer access until necessary for RedditContentObject.
                 # This is because scoped sessions may not require this
                 # attribute to exist, thus it might not be set.
-                from praw.objects import Subreddit
+                from .objects import Subreddit
                 subreddit = args[0] if isinstance(args[0], Subreddit) \
                     else False
             else:

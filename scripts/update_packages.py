@@ -35,7 +35,7 @@ def main():
 
     # Overwrite the project files
     src = os.path.join(tmpdir, 'praw')
-    dest = os.path.join(ROOT, 'packages', 'praw')
+    dest = os.path.join(ROOT, 'rtv', 'packages', 'praw')
     print('Copying package files to %s' % dest)
     shutil.rmtree(dest, ignore_errors=True)
     shutil.copytree(src, dest)

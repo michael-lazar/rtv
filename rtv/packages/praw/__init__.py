@@ -32,14 +32,14 @@ import platform
 import re
 import six
 import sys
-from praw import decorators, errors
-from praw.handlers import DefaultHandler
-from praw.helpers import chunk_sequence, normalize_url
-from praw.internal import (_image_type, _prepare_request,
-                           _raise_redirect_exceptions,
-                           _raise_response_exceptions,
-                           _to_reddit_list, _warn_pyopenssl)
-from praw.settings import CONFIG
+from . import decorators, errors
+from .handlers import DefaultHandler
+from .helpers import chunk_sequence, normalize_url
+from .internal import (_image_type, _prepare_request,
+                       _raise_redirect_exceptions,
+                       _raise_response_exceptions,
+                       _to_reddit_list, _warn_pyopenssl)
+from .settings import CONFIG
 from requests import Session
 from requests.compat import urljoin
 from requests.utils import to_native_string
@@ -2791,4 +2791,4 @@ class Reddit(ModConfigMixin, ModFlairMixin, ModLogMixin, ModOnlyMixin,
     """
 
 # Prevent recursive import
-from praw import objects  # NOQA
+from . import objects  # NOQA

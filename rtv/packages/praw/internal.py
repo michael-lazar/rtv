@@ -25,11 +25,11 @@ import six
 import sys
 from requests import Request, codes, exceptions
 from requests.compat import urljoin
-from praw.decorators import restrict_access
-from praw.errors import (ClientException, HTTPException, Forbidden, NotFound,
-                         InvalidSubreddit, OAuthException,
-                         OAuthInsufficientScope, OAuthInvalidToken,
-                         RedirectException)
+from .decorators import restrict_access
+from .errors import (ClientException, HTTPException, Forbidden, NotFound,
+                     InvalidSubreddit, OAuthException,
+                     OAuthInsufficientScope, OAuthInvalidToken,
+                     RedirectException)
 from warnings import warn
 try:
     from OpenSSL import __version__ as _opensslversion

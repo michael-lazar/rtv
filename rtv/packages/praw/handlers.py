@@ -6,8 +6,8 @@ import socket
 import sys
 import time
 from functools import wraps
-from praw.errors import ClientException
-from praw.helpers import normalize_url
+from .errors import ClientException
+from .helpers import normalize_url
 from requests import Session
 from six import text_type
 from six.moves import cPickle  # pylint: disable=F0401

@@ -5,8 +5,8 @@ from __future__ import print_function, unicode_literals
 import socket
 import sys
 from optparse import OptionParser
-from praw import __version__
-from praw.handlers import DefaultHandler
+from . import __version__
+from .handlers import DefaultHandler
 from requests import Session
 from six.moves import cPickle, socketserver  # pylint: disable=F0401
 from threading import Lock

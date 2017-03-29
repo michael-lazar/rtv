@@ -27,7 +27,7 @@ import time
 from collections import deque
 from functools import partial
 from timeit import default_timer as timer
-from praw.errors import HTTPException, PRAWException
+from .errors import HTTPException, PRAWException
 from operator import attrgetter
 
 BACKOFF_START = 4  # Minimum number of seconds to sleep during errors
