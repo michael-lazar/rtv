@@ -10,8 +10,7 @@ import six
 import pytest
 
 from rtv.docs import HELP, COMMENT_EDIT_FILE
-from rtv.objects import Color
-from rtv.exceptions import TemporaryFileError, MailcapEntryNotFound
+from rtv.exceptions import TemporaryFileError
 
 try:
     from unittest import mock

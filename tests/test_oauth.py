@@ -2,9 +2,9 @@
 from __future__ import unicode_literals
 
 import requests
-from praw.errors import OAuthException
 
 from rtv.oauth import OAuthHelper, OAuthHandler
+from rtv.packages.praw.errors import OAuthException
 
 
 try:

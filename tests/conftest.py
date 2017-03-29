@@ -7,7 +7,6 @@ import logging
 import threading
 from functools import partial
 
-import praw
 import pytest
 from vcr import VCR
 from six.moves.urllib.parse import urlparse, parse_qs
@@ -15,6 +14,7 @@ from six.moves.BaseHTTPServer import HTTPServer
 
 from rtv.oauth import OAuthHelper, OAuthHandler
 from rtv.config import Config
+from rtv.packages import praw
 from rtv.terminal import Terminal
 from rtv.subreddit_page import SubredditPage
 from rtv.submission_page import SubmissionPage

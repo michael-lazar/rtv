@@ -6,12 +6,12 @@ from itertools import islice
 from collections import OrderedDict
 
 import six
-import praw
 import pytest
 
+from rtv import exceptions
+from rtv.packages import praw
 from rtv.content import (
     Content, SubmissionContent, SubredditContent, SubscriptionContent)
-from rtv import exceptions
 
 try:
     from unittest import mock

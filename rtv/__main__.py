@@ -9,10 +9,10 @@ import logging
 import warnings
 
 import six
-import praw
 import requests
 
 from . import docs
+from .packages import praw
 from .config import Config, copy_default_config, copy_default_mailcap
 from .oauth import OAuthHelper
 from .terminal import Terminal

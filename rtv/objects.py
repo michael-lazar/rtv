@@ -14,10 +14,10 @@ import curses.ascii
 from contextlib import contextmanager
 
 import six
-import praw
 import requests
 
 from . import exceptions
+from .packages import praw
 
 
 _logger = logging.getLogger(__name__)
