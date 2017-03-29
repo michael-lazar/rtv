@@ -13,7 +13,11 @@ setuptools.setup(
     author_email='lazar.michael22@gmail.com',
     license='MIT',
     keywords='reddit terminal praw curses',
-    packages=['rtv'],
+    packages=[
+        'rtv',
+        'rtv.packages',
+        'rtv.packages.praw',
+        ],
     package_data={'rtv': ['templates/*']},
     data_files=[("share/man/man1", ["rtv.1"])],
     install_requires=[
