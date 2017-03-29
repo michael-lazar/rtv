@@ -58,7 +58,6 @@ def curses_session():
             curses.start_color()
         except:
             _logger.warning('Curses failed to initialize color support')
-            pass
 
         # Hide the blinking cursor
         try:

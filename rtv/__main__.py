@@ -115,10 +115,10 @@ def main():
     # Check the praw version
     if packages.__praw_bundled__:
         _logger.info('Using packaged PRAW distribution, '
-                     'commit %s' % packages.__praw_hash__)
+                     'commit %s', packages.__praw_hash__)
     else:
         _logger.info('Packaged PRAW not found, falling back to system '
-                     'installed version %s' % praw.__version__)
+                     'installed version %s', praw.__version__)
 
     # Construct the reddit user agent
     user_agent = docs.AGENT.format(version=__version__)

@@ -341,7 +341,7 @@ class SubmissionContent(Content):
         url = url.replace('https://np.', 'https://www.')
         submission = reddit.get_submission(url, comment_sort=order)
         return cls(submission, loader, indent_size, max_indent_level, order,
-            max_comment_cols)
+                   max_comment_cols)
 
     @property
     def range(self):

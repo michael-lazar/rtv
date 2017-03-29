@@ -426,7 +426,7 @@ class Terminal(object):
                 except Exception as e:
                     # If Imgur decides to change its html layout, let it fail
                     # silently in the background instead of crashing.
-                    _logger.warn('parser %s raised an exception', parser)
+                    _logger.warning('parser %s raised an exception', parser)
                     _logger.exception(e)
                     raise exceptions.MailcapEntryNotFound()
                 if not content_type:
