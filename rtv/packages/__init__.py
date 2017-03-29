@@ -19,7 +19,7 @@ try:
 except ImportError:
     import praw
     if not praw.__version__.startswith('3.'):
-        msg = 'Invalid PRAW version {0}, exiting'.format(praw.__version__)
-        raise RuntimeError(msg)
+        raise RuntimeError('Invalid PRAW version ({0}) detected, '
+                           'rtv requires PRAW version 3'.format(praw.__version__))
     sys.modules['%s.praw' % __name__] = praw
     __praw_bundled__ = False
