@@ -1,7 +1,7 @@
 """
-This stub allows the end-user to fallback to their system installation of praw 
-if the bundled package missing. This technique was inspired by the requests
-library and how it handles dependencies.
+This stub allows the the package to fallback to their system installation of
+praw if the bundled package is missing. This technique was inspired by the
+requests library and how it handles dependencies.
 
 Reference:
     https://github.com/kennethreitz/requests/blob/master/requests/packages/__init__.py
@@ -11,6 +11,7 @@ import sys
 
 
 __praw_hash__ = 'a632ff005fc09e74a8d3d276adc10aa92638962c'
+__praw_bundled__ = True
 
 
 try:
@@ -21,3 +22,4 @@ except ImportError:
         msg = 'Invalid PRAW version {0}, exiting'.format(praw.__version__)
         raise RuntimeError(msg)
     sys.modules['%s.praw' % __name__] = praw
+    __praw_bundled__ = False

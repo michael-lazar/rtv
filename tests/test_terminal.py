@@ -30,7 +30,9 @@ def test_terminal_properties(terminal, config):
     assert isinstance(terminal.guilded[0], six.text_type)
 
     terminal._display = None
-    with mock.patch.dict('os.environ', {'DISPLAY': ''}):
+    with mock.patch('rtv.terminal.sys') as sys, \
+            mock.patch.dict('os.environ', {'DISPLAY': ''}):
+        sys.platform = 'linux'
         assert terminal.display is False
 
     terminal._display = None

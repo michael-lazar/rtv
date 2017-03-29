@@ -174,7 +174,7 @@ def reddit(vcr, request):
             os.remove(filename)
 
     with vcr.use_cassette(cassette_name):
-        with patch('praw.Reddit.get_access_information'):
+        with patch('rtv.packages.praw.Reddit.get_access_information'):
             reddit = praw.Reddit(user_agent='rtv test suite',
                                  decode_html_entities=False,
                                  disable_update_check=True)

@@ -12,6 +12,7 @@ import six
 import requests
 
 from . import docs
+from . import packages
 from .packages import praw
 from .config import Config, copy_default_config, copy_default_mailcap
 from .oauth import OAuthHelper
@@ -110,6 +111,14 @@ def main():
                 ', falling back to ascii only mode' % encoding)
         warnings.warn(text)
         config['ascii'] = True
+
+    # Check the praw version
+    if packages.__praw_bundled__:
+        _logger.info('Using packaged PRAW distribution')
+        _logger.info('PRAW commit hash %s' % packages.__praw_hash__)
+    else:
+        _logger.info('Packaged PRAW not found, falling back to system distribution')
+        _logger.info('PRAW version %s' % praw.__version__)
 
     # Construct the reddit user agent
     user_agent = docs.AGENT.format(version=__version__)
