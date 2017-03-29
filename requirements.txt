@@ -6,3 +6,4 @@ requests==2.11.0
 six==1.10.0
 pytest==3.0.7
 vcrpy==1.10.5
+pylint==1.6.5
