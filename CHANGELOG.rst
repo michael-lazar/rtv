@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.15.0: http://github.com/michael-lazar/rtv/releases/tag/v1.15.0
 .. _1.14.1: http://github.com/michael-lazar/rtv/releases/tag/v1.14.1
 .. _1.13.0: http://github.com/michael-lazar/rtv/releases/tag/v1.13.0
 .. _1.12.1: http://github.com/michael-lazar/rtv/releases/tag/v1.12.1
@@ -23,6 +24,27 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.15.0_ (2017-03-30)
+--------------------
+Features
+
+* Added the ability to open comment threads using the submission's
+  permalink. E.g. **/comments/30rwj2**
+
+Bugfixes
+
+* Updated ``requests`` requirement to fix a bug in version 2.3.0.
+* Fixed an edge case where comment trees were unfolding out of order.  
+
+Codebase
+
+* Removed dependency on the PyPI ``praw`` package. A version of PRAW 3
+  is now bundled with rtv. This should make installation easier because
+  users are no longer required to maintain a legacy version of praw in
+  their python dependencies.
+* Removed ``update-checker`` dependency.  
 
 --------------------
 1.14.1_ (2017-01-12)

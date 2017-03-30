@@ -28,7 +28,7 @@ def main():
     p.wait()
     commit = p.stdout.read().strip()
     print('Found commit %s' % commit)
-    regex = '"s/^__praw_hash__ =.*$/__praw_hash__ = \'%s\'/g"' % commit
+    regex = 's/^__praw_hash__ =.*$/__praw_hash__ = \'%s\'/g' % commit
     packages_root = os.path.join(ROOT, 'rtv', 'packages', '__init__.py')
     print('Updating commit hash in %s' % packages_root)
     subprocess.check_call(['sed', '-i', '', regex, packages_root])

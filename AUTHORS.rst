@@ -19,13 +19,12 @@ Thanks to the following people for their contributions to this project.
 * `mardiqwop <https://github.com/mardiqwop>`_
 * `5225225 <https://github.com/5225225>`_
 * `Shawn Hind <https://github.com/shawnhind>`_
-* `Alex Kahan <https://github.com/alexk307>`_
 * `JuanPablo <https://github.com/juanpabloaj>`_
 * `Robert Greener <https://github.com/ragreener1>`_
+* `nagracks <https://github.com/nagracks>`_
 * `Gustavo Zambonin <https://github.com/zambonin>`_
 * `Lorenz Leitner <https://github.com/LoLei>`_
 * `Reshef Elisha <https://github.com/ReshefElisha>`_
-* `nagracks <https://github.com/nagracks>`_
 * `afloofloo <https://github.com/afloofloo>`_
 * `Charles Saracco <https://github.com/crsaracco>`_
 * `Fabio Alessandro Locati <https://github.com/Fale>`_
@@ -34,3 +33,4 @@ Thanks to the following people for their contributions to this project.
 * `Matthew Smith <https://github.com/msmith491>`_
 * `Ram-Z <https://github.com/Ram-Z>`_
 * `Wieland Hoffmann <https://github.com/mineo>`_
+* `Adam Talsma <https://github.com/a-tal>`_
