@@ -1,5 +1,5 @@
 """
-This stub allows the the package to fallback to their system installation of
+This stub allows the user to fallback to their system installation of
 praw if the bundled package is missing. This technique was inspired by the
 requests library and how it handles dependencies.
 
