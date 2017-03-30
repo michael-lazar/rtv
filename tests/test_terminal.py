@@ -10,8 +10,7 @@ import six
 import pytest
 
 from rtv.docs import HELP, COMMENT_EDIT_FILE
-from rtv.objects import Color
-from rtv.exceptions import TemporaryFileError, MailcapEntryNotFound
+from rtv.exceptions import TemporaryFileError
 
 try:
     from unittest import mock
@@ -31,7 +30,9 @@ def test_terminal_properties(terminal, config):
     assert isinstance(terminal.guilded[0], six.text_type)
 
     terminal._display = None
-    with mock.patch.dict('os.environ', {'DISPLAY': ''}):
+    with mock.patch('rtv.terminal.sys') as sys, \
+            mock.patch.dict('os.environ', {'DISPLAY': ''}):
+        sys.platform = 'linux'
         assert terminal.display is False
 
     terminal._display = None

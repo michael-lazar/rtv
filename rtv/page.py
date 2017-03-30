@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import os
 import sys
-import six
 import time
 import curses
 from functools import wraps
 
+import six
 from kitchen.text.display import textual_width
 
 from . import docs

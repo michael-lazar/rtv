@@ -14,10 +14,10 @@ import curses.ascii
 from contextlib import contextmanager
 
 import six
-import praw
 import requests
 
 from . import exceptions
+from .packages import praw
 
 
 _logger = logging.getLogger(__name__)
@@ -58,7 +58,6 @@ def curses_session():
             curses.start_color()
         except:
             _logger.warning('Curses failed to initialize color support')
-            pass
 
         # Hide the blinking cursor
         try:

@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import curses
 
-import praw
 import pytest
 
 from rtv.subscription_page import SubscriptionPage

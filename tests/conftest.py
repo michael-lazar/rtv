@@ -7,7 +7,6 @@ import logging
 import threading
 from functools import partial
 
-import praw
 import pytest
 from vcr import VCR
 from six.moves.urllib.parse import urlparse, parse_qs
@@ -15,6 +14,7 @@ from six.moves.BaseHTTPServer import HTTPServer
 
 from rtv.oauth import OAuthHelper, OAuthHandler
 from rtv.config import Config
+from rtv.packages import praw
 from rtv.terminal import Terminal
 from rtv.subreddit_page import SubredditPage
 from rtv.submission_page import SubmissionPage
@@ -174,7 +174,7 @@ def reddit(vcr, request):
             os.remove(filename)
 
     with vcr.use_cassette(cassette_name):
-        with patch('praw.Reddit.get_access_information'):
+        with patch('rtv.packages.praw.Reddit.get_access_information'):
             reddit = praw.Reddit(user_agent='rtv test suite',
                                  decode_html_entities=False,
                                  disable_update_check=True)

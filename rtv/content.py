@@ -6,11 +6,11 @@ import logging
 from datetime import datetime
 
 import six
-import praw
-from praw.errors import InvalidSubreddit
 from kitchen.text.display import wrap
 
 from . import exceptions
+from .packages import praw
+from .packages.praw.errors import InvalidSubreddit
 
 _logger = logging.getLogger(__name__)
 
@@ -341,7 +341,7 @@ class SubmissionContent(Content):
         url = url.replace('https://np.', 'https://www.')
         submission = reddit.get_submission(url, comment_sort=order)
         return cls(submission, loader, indent_size, max_indent_level, order,
-            max_comment_cols)
+                   max_comment_cols)
 
     @property
     def range(self):

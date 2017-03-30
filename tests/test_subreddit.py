@@ -2,10 +2,10 @@
 from __future__ import unicode_literals
 
 import six
-from praw.errors import NotFound
 
-from rtv.subreddit_page import SubredditPage
 from rtv import __version__
+from rtv.subreddit_page import SubredditPage
+from rtv.packages.praw.errors import NotFound
 
 try:
     from unittest import mock
