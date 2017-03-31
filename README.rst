@@ -14,8 +14,6 @@ RTV (Reddit Terminal Viewer)
 
 |pypi| |python| |travis-ci| |coveralls| |gitter|
 
-Note to users - a security `vulnerability <https://github.com/michael-lazar/rtv/issues/295>`_ has been discovered in rtv versions prior to v1.12.1. A patch has been applied and it is strongly advised that you upgrade to the latest version.
-
 ---------------
 
 * `Demo`_
@@ -129,16 +127,13 @@ Environment
 RTV will respect the following environment variables when accessing external programs
 
 ``$BROWSER``
-  | Submission links will be opened inside of your web browser.
-  | On most systems the default web browser will open in a new window. If you prefer the complete terminal experience, try using a console-based web browser (`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices).
+  Submission links will be opened inside of your web browser. On most systems, the default web browser will pop up in a new window. If you prefer the complete terminal experience, try using a console-based web browser (`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices).
 ``$PAGER``
-  | Extra long comments and submissions wil be viewed through the system pager.
+  Extra long comments and submissions can be opened using the system's pager.
 ``$RTV_EDITOR``
- | Compose posts and replying to comments is done using your preferred text editor.
- | If not specified, the default system ``$EDITOR`` (or `nano <https://www.nano-editor.org/>`_) will be used.
+  Composing posts and replying to comments is done using your preferred text editor. If not specified, the default system ``$EDITOR`` (or *nano*) will be used.
 ``$RTV_URLVIEWER``
- | A url viewer can be used to extract links from inside of comments.
- | `urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible. These applications don't come pre-installed, but are available through most systems' package managers.
+ A url viewer is a tool that can be used to extract hyperlinks from inside of blocks of text. `urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible with rtv. These applications don't come pre-installed, but are available through most systems' package managers.
 
 ===
 FAQ
