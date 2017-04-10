@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.15.1: http://github.com/michael-lazar/rtv/releases/tag/v1.15.1
 .. _1.15.0: http://github.com/michael-lazar/rtv/releases/tag/v1.15.0
 .. _1.14.1: http://github.com/michael-lazar/rtv/releases/tag/v1.14.1
 .. _1.13.0: http://github.com/michael-lazar/rtv/releases/tag/v1.13.0
@@ -24,6 +25,14 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.15.1_ (2017-04-09)
+--------------------
+Codebase
+
+* Removed the mailcap-fix dependency for python versions >= 3.6.0.
+* Enabled installing test dependencies with ``pip install rtv[test]``.
 
 --------------------
 1.15.0_ (2017-03-30)
