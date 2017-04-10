@@ -59,13 +59,13 @@ An `AUR <https://aur.archlinux.org/packages/rtv/>`_ package is provided:
 
 **pip**
 
-On other Linux distributions, install by using pip (Python's package manager):
+On other Linux distributions, install rtv through pip (Python's package manager):
 
 .. code-block:: bash
 
     $ pip install rtv
 
-**Source**
+**source**
 
 Or you can always clone the repository:
 
