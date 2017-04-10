@@ -73,7 +73,7 @@ Or you can always clone the repository:
 
     $ git clone https://github.com/michael-lazar/rtv.git
     $ cd rtv
-    $ python3 setup.py install
+    $ python setup.py install
 
 
 =====
