@@ -45,7 +45,7 @@ On macOS, rtv can be installed via `Homebrew <https://brew.sh/>`_:
 
 **Arch Linux**
 
-An `AUR <https://aur.archlinux.org/packages/rtv/>`_ package is provided:
+On Arch, an `AUR <https://aur.archlinux.org/packages/rtv/>`_ package is provided:
 
 .. code:: bash
 
@@ -59,7 +59,7 @@ An `AUR <https://aur.archlinux.org/packages/rtv/>`_ package is provided:
 
 **pip**
 
-On other Linux distributions, install rtv through pip (Python's package manager):
+On all other Linux distributions, install rtv through pip (Python's package manager):
 
 .. code-block:: bash
 
