@@ -20,11 +20,16 @@ import six
 #pylint: disable=import-error
 from six.moves.urllib.parse import quote
 from kitchen.text.display import textual_width_chop
-from mailcap_fix import mailcap
 
 from . import exceptions
 from . import mime_parsers
 from .objects import LoadScreen, Color
+
+try:
+    # Fix only needed for versions prior to python 3.6
+    from mailcap_fix import mailcap
+except ImportError:
+    import mailcap
 
 try:
     # Added in python 3.4+

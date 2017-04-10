@@ -10,9 +10,8 @@ matrix:
   allow_failures:
     - python: nightly
   fast_finish: true
-before_install:
-  - pip install coveralls pytest coverage mock pylint vcrpy
 install:
+  - pip install .[test]
   - pip install .
 script:
     # https://github.com/PyCQA/pylint/issues/1113
