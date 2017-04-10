@@ -22,8 +22,9 @@ tests_require = [
     'vcrpy',
 ]
 
-extras_require = {}
-
+extras_require = {
+    'test': tests_require
+}
 
 # https://hynek.me/articles/conditional-python-dependencies/
 if int(setuptools.__version__.split(".", 1)[0]) < 18:
