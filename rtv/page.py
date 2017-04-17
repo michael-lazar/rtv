@@ -5,6 +5,7 @@ import os
 import sys
 import time
 import curses
+import pyperclip
 from functools import wraps
 
 import six
@@ -317,6 +318,28 @@ class Page(object):
         inbox = len(list(self.reddit.get_unread(limit=1)))
         message = 'New Messages' if inbox > 0 else 'No New Messages'
         self.term.show_notification(message)
+
+    @PageController.register(Command('COPY_SUBMISSION_PERMALINK'))
+    def copy_submission_permalink(self):
+        """
+        Copies submission permalink to OS clipboard
+        """
+
+        data = self.get_selected_item()
+        url = data.get('permalink')
+        if url is not None:
+            pyperclip.copy(url)
+
+    @PageController.register(Command('COPY_SUBMISSION_URL'))
+    def copy_post_permalink(self):
+        """
+        Copies submission url to OS clipboard
+        """
+
+        data = self.get_selected_item()
+        url = data.get('url')
+        if url is not None:
+            pyperclip.copy(url)
 
     def clear_input_queue(self):
         """
