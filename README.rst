@@ -37,44 +37,26 @@ Installation
 
 **macOS**
 
-On macOS, rtv can be installed via `Homebrew <https://brew.sh/>`_:
-
 .. code-block:: bash
 
     $ brew install rtv
 
 **Arch Linux**
 
-On Arch, an `AUR <https://aur.archlinux.org/packages/rtv/>`_ package is provided:
-
 .. code:: bash
 
-    $ # Install the latest release
+    $ # Install the latest official release
     $ yaourt -S rtv
-
-.. code:: bash
-
     $ # Or to keep up to date with the master branch
     $ yaourt -S rtv-git
 
 **pip**
 
-On all other Linux distributions, install rtv through pip (Python's package manager):
+For other Linux distributions, use **pip** (Python's package manager):
 
 .. code-block:: bash
 
     $ pip install rtv
-
-**source**
-
-Or you can always clone the repository:
-
-.. code-block:: bash
-
-    $ git clone https://github.com/michael-lazar/rtv.git
-    $ cd rtv
-    $ python setup.py install
-
 
 =====
 Usage
