@@ -35,6 +35,20 @@ Demo
 Installation
 ============
 
+--------------
+Python package
+--------------
+
+**rtv** is available on `PyPI <https://pypi.python.org/pypi/rtv/>`_ and can be installed with pip:
+
+.. code-block:: bash
+
+    $ pip install rtv
+
+---------------
+Native packages
+---------------
+
 **macOS**
 
 .. code-block:: bash
@@ -49,14 +63,6 @@ Installation
     $ yaourt -S rtv
     $ # Or to keep up to date with the master branch
     $ yaourt -S rtv-git
-
-**pip**
-
-For other Linux distributions, use **pip** (Python's package manager):
-
-.. code-block:: bash
-
-    $ pip install rtv
 
 =====
 Usage
