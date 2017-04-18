@@ -63,7 +63,7 @@ On all other Linux distributions, install rtv through pip (Python's package mana
 
 .. code-block:: bash
 
-    $ pip install rtv
+  # pip install rtv
 
 **source**
 
