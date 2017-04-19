@@ -39,7 +39,7 @@ Installation
 Python package
 --------------
 
-**rtv** is available on `PyPI <https://pypi.python.org/pypi/rtv/>`_ and can be installed with pip:
+RTV is available on `PyPI <https://pypi.python.org/pypi/rtv/>`_ and can be installed with pip:
 
 .. code-block:: bash
 
