@@ -130,7 +130,7 @@ This feature is disabled by default because it takes a a few extra steps to conf
 
     $ rtv --copy-mailcap
 
-This template contains examples for common MIME types as well as popular reddit websites like `imgur <http://imgur.com/>`_, `youtube <https://www.youtube.com/>`_, and `gfycat <https://gfycat.com/>`_. Open the mailcap template and follow the `instructions <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap>`_ listed inside. 
+This template contains examples for common MIME types that work with popular reddit websites like *imgur*, *youtube*, and *gfycat*. Open the mailcap template and follow the `instructions <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap>`_ listed inside. 
 
 Once you've setup your mailcap file, enable it by launching rtv with the ``rtv --enable-media`` flag (or set it in your **rtv.cfg**)
 
@@ -166,10 +166,10 @@ Why am I getting an error during installation/when launching rtv?
     $ sudo pip3 install -U rtv
 
 Why do I see garbled text like ``M-b~@M-"`` or ``^@``?
-  Short answer
-    Start rtv in ascii-only mode with ``rtv --ascii``
+  Quick fix
+    Try starting RTV in ascii-only mode with ``rtv --ascii``
   
-  Long answer
+  Explanation
     This type of text usually shows up when python is unable to render
     unicode properly.
     
@@ -204,6 +204,10 @@ License
 This project is distributed under the `MIT <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_ license.
 
 
+.. figure:: http://i.imgur.com/quDzox3.png
+   :target: https://github.com/Swordfish90/cool-retro-term
+   
+
 .. |python| image:: https://img.shields.io/badge/python-2.7%2C%203.6-blue.svg
     :target: https://pypi.python.org/pypi/rtv/
     :alt: Supported Python versions
@@ -223,4 +227,3 @@ This project is distributed under the `MIT <https://github.com/michael-lazar/rtv
 .. |gitter| image:: https://img.shields.io/gitter/room/michael-lazar/rtv.js.svg
     :target: https://gitter.im/michael-lazar/rtv
     :alt: Chat
-
