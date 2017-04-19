@@ -28,8 +28,7 @@ RTV (Reddit Terminal Viewer)
 Demo
 ====
 
-.. figure:: http://i.imgur.com/UeKbK8z.png
-   :target: https://asciinema.org/a/81251?speed=2
+.. image:: http://i.imgur.com/aNZWxnW.gif
 
 ============
 Installation
