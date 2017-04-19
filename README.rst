@@ -203,6 +203,9 @@ License
 =======
 This project is distributed under the `MIT <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_ license.
 
+.. figure:: http://i.imgur.com/quDzox3.png
+   :target: https://github.com/Swordfish90/cool-retro-term
+   
 
 .. |python| image:: https://img.shields.io/badge/python-2.7%2C%203.6-blue.svg
     :target: https://pypi.python.org/pypi/rtv/
@@ -223,5 +226,3 @@ This project is distributed under the `MIT <https://github.com/michael-lazar/rtv
 .. |gitter| image:: https://img.shields.io/gitter/room/michael-lazar/rtv.js.svg
     :target: https://gitter.im/michael-lazar/rtv
     :alt: Chat
-
-.. image:: http://i.imgur.com/quDzox3.png
