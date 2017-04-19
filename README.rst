@@ -5,7 +5,7 @@ RTV (Reddit Terminal Viewer)
 | RTV provides an interface to view and interact with reddit from your terminal.
 | It's compatible with *most* terminal emulators on Linux and OS X.
 
-.. image:: http://i.imgur.com/Ek13lqM.png
+.. image:: http://i.imgur.com/9utJir2.png
 
 |
 | RTV is built in **python** using the **curses** library.
