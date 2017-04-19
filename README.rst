@@ -224,3 +224,4 @@ This project is distributed under the `MIT <https://github.com/michael-lazar/rtv
     :target: https://gitter.im/michael-lazar/rtv
     :alt: Chat
 
+.. image:: http://i.imgur.com/quDzox3.png
