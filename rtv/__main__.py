@@ -104,8 +104,18 @@ def main():
         logging.root.addHandler(logging.NullHandler())
 
     # Make sure the locale is UTF-8 for unicode support
-    locale.setlocale(locale.LC_ALL, '')
-    encoding = locale.getlocale()[1] or locale.getdefaultlocale()[1]
+    default_locale = locale.setlocale(locale.LC_ALL, '')
+    try:
+        encoding = locale.getlocale()[1] or locale.getdefaultlocale()[1]
+    except ValueError:
+        # http://stackoverflow.com/a/19961403
+        # OS X on some terminals will set the LC_CTYPE to "UTF-8"
+        # (as opposed to something like "en_US.UTF-8") and python
+        # doesn't know how to handle it.
+        _logger.warning('Error parsing system locale: `%s`,'
+                        ' falling back to utf-8', default_locale)
+        encoding = 'UTF-8'
+
     if not encoding or encoding.lower() != 'utf-8':
         text = ('System encoding was detected as (%s) instead of UTF-8'
                 ', falling back to ascii only mode' % encoding)
