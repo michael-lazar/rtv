@@ -5,7 +5,7 @@ import os
 import sys
 import time
 import curses
-import pyperclip
+import logging
 from functools import wraps
 
 import six
@@ -13,9 +13,11 @@ from kitchen.text.display import textual_width
 
 from . import docs
 from .objects import Controller, Color, Command
-from .exceptions import TemporaryFileError
+from .clipboard import copy
+from .exceptions import TemporaryFileError, ProgramError
 from .__version__ import __version__
 
+_logger = logging.getLogger(__name__)
 
 def logged_in(f):
     """
@@ -51,6 +53,7 @@ class Page(object):
         self.active = True
         self._row = 0
         self._subwindows = None
+        self.copy_to_clipboard = copy
 
     def refresh_content(self, order=None, name=None):
         raise NotImplementedError
@@ -328,7 +331,12 @@ class Page(object):
         data = self.get_selected_item()
         url = data.get('permalink')
         if url is not None:
-            pyperclip.copy(url)
+            try:
+                self.copy_to_clipboard(url)
+            except ProgramError as e:
+               _logger.exception(e)
+               self.term.show_notification(
+                   'Failed to copy {} to clipboard, {}'.format(url, str(e)))
 
     @PageController.register(Command('COPY_SUBMISSION_URL'))
     def copy_post_permalink(self):
@@ -339,7 +347,12 @@ class Page(object):
         data = self.get_selected_item()
         url = data.get('url')
         if url is not None:
-            pyperclip.copy(url)
+            try:
+                self.copy_to_clipboard(url)
+            except ProgramError as e:
+               _logger.exception(e)
+               self.term.show_notification(
+                   'Failed to copy {} to clipboard, {}'.format(url, str(e)))
 
     def clear_input_queue(self):
         """

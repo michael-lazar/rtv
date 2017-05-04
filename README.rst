@@ -162,6 +162,12 @@ RTV will respect the following environment variables when accessing external pro
 ``$RTV_URLVIEWER``
  A url viewer is a tool that can be used to extract hyperlinks from inside of blocks of text. `urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible with rtv. These applications don't come pre-installed, but are available through most systems' package managers.
 
+----
+Copy
+----
+RTV supports copying submission links to the OS clipboard. For macOS it is supported out of the box,
+in Linux systems RTV will need `xsel <http://www.vergenet.net/~conrad/software/xsel/>`_ or `xclip <https://sourceforge.net/projects/xclip/>`_ commands to be installed in the system.
+
 ===
 FAQ
 ===
