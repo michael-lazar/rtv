@@ -57,6 +57,8 @@ https://github.com/michael-lazar/rtv
   o     : Open the submission or comment url
   SPACE : Fold or expand the selected comment tree
   b     : Display urls with urlview
+  y     : Copy submission permalink to clipboard
+  Y     : Copy submission link to clipboard
 
 [Prompt]
   The `/` prompt accepts subreddits in the following formats

@@ -11,6 +11,7 @@ install_requires = [
     'kitchen',
     'requests >=2.4.0',  # https://github.com/michael-lazar/rtv/issues/325
     'six',
+    'pyperclip'
 ]
 
 tests_require = [
