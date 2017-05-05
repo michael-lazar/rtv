@@ -345,7 +345,7 @@ class Page(object):
         """
 
         data = self.get_selected_item()
-        url = data.get('url')
+        url = data.get('url_full')
         if url is not None:
             try:
                 self.copy_to_clipboard(url)
