@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
+import platform
+import subprocess
 import curses
 
 from rtv.submission_page import SubmissionPage
@@ -443,3 +446,58 @@ def test_submission_urlview(submission_page, terminal, refresh_token):
             mock.patch('subprocess.Popen'):
         submission_page.controller.trigger('b')
         open_urlview.assert_called_with('http://test.url.com  ❤')
+
+
+def test_submission_copy_to_clipboard(submission_page, terminal, refresh_token):
+    def get_linux_clipboard_content():
+        paste_cmd = None
+        for cmd in ['xsel', 'xclip']:
+            cmd_exists = subprocess.call(
+                ['which', cmd],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE) is 0
+            if cmd_exists:
+                paste_cmd = cmd
+                break
+        if paste_cmd is not None:
+            cmd_args = {'xsel' : ['xsel', '-b', '-o'],
+                        'xclip' : ['xclip', '-selection', 'c', '-o']}
+
+            p = subprocess.Popen(cmd_args.get(paste_cmd),
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE,
+                                 close_fds=True)
+            stdout, stderr = p.communicate()
+            return stdout.decode('utf-8')
+
+    def get_clipboard_content():
+        paste_content = None
+        #Check OS type
+        os_type = None
+        if os.name == 'mac' or platform.system() == 'Darwin':
+            os_type = 'macOs'
+        elif os.name == 'posix' or platform.system() == 'Linux':
+            os_type = 'linux'
+        if os_type is not None:
+            if os_type == 'macOs':
+                p = subprocess.Popen(['pbpaste', 'r'],
+                                     stdin=subprocess.PIPE,
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE,
+                                     close_fds=True)
+                stdout, stderr = p.communicate()
+                paste_content = stdout.decode('utf-8')
+            elif os_type == 'linux':
+                paste_content = get_linux_clipboard_content()
+        return paste_content
+
+    # Log in
+    submission_page.config.refresh_token = refresh_token
+    submission_page.oauth.authorize()
+    #Get submission
+    data = submission_page.content.get(submission_page.nav.absolute_index)
+    #Trigger copy command for permalink
+    submission_page.controller.trigger('y')
+    assert  data.get('permalink') == get_clipboard_content()
+    #Trigger copy command for submission
+    submission_page.controller.trigger('Y')
+    assert  data.get('url_full') == get_clipboard_content()
