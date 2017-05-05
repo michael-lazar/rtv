@@ -336,7 +336,7 @@ class Page(object):
             except ProgramError as e:
                _logger.exception(e)
                self.term.show_notification(
-                   'Failed to copy {} to clipboard, {}'.format(url, str(e)))
+                   'Failed to copy {} to clipboard, {}'.format(url, e)
 
     @PageController.register(Command('COPY_SUBMISSION_URL'))
     def copy_post_permalink(self):
@@ -352,7 +352,7 @@ class Page(object):
             except ProgramError as e:
                _logger.exception(e)
                self.term.show_notification(
-                   'Failed to copy {} to clipboard, {}'.format(url, str(e)))
+                   'Failed to copy {} to clipboard, {}'.format(url, e)
 
     def clear_input_queue(self):
         """
