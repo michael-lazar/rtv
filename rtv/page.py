@@ -333,10 +333,12 @@ class Page(object):
         if url is not None:
             try:
                 self.copy_to_clipboard(url)
+                self.term.show_notification(
+                    'Copied {} to clipboard'.format(url), timeout=1)
             except ProgramError as e:
                _logger.exception(e)
                self.term.show_notification(
-                   'Failed to copy {} to clipboard, {}'.format(url, str(e)))
+                   'Failed to copy {} to clipboard, {}'.format(url, e))
 
     @PageController.register(Command('COPY_SUBMISSION_URL'))
     def copy_post_permalink(self):
@@ -345,14 +347,16 @@ class Page(object):
         """
 
         data = self.get_selected_item()
-        url = data.get('url')
+        url = data.get('url_full')
         if url is not None:
             try:
                 self.copy_to_clipboard(url)
+                self.term.show_notification(
+                    'Copied {} to clipboard'.format(url), timeout=1)
             except ProgramError as e:
                _logger.exception(e)
                self.term.show_notification(
-                   'Failed to copy {} to clipboard, {}'.format(url, str(e)))
+                   'Failed to copy {} to clipboard, {}'.format(url, e))
 
     def clear_input_queue(self):
         """

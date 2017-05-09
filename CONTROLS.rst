@@ -35,7 +35,6 @@ Once you are logged in your username will appear in the top-right corner of the 
 :``S``: View a list of subscribed multireddits
 :``w``: Save a submission
 
-
 --------------
 Subreddit Mode
 --------------
@@ -72,3 +71,5 @@ In submission mode you can view the self text for a submission and browse commen
 :``o`` or ``ENTER``: Open the comment permalink with your web browser
 :``SPACE``: Fold the selected comment, or load additional comments
 :``b``: Display URLs with urlview
+:``y``: Copy submission permalink to clipboard
+:``Y``: Copy submission link to clipboard
