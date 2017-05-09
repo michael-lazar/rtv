@@ -17,6 +17,8 @@ Basic Commands
 :``/``: Open a prompt to switch subreddits
 :``?``: Show the help screen
 :``q``/``Q``: Quit/Force quit
+:``y``: Copy submission permalink to clipboard
+:``Y``: Copy submission link to clipboard
 
 ----------------------
 Authenticated Commands
@@ -71,5 +73,3 @@ In submission mode you can view the self text for a submission and browse commen
 :``o`` or ``ENTER``: Open the comment permalink with your web browser
 :``SPACE``: Fold the selected comment, or load additional comments
 :``b``: Display URLs with urlview
-:``y``: Copy submission permalink to clipboard
-:``Y``: Copy submission link to clipboard

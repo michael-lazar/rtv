@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os
-import platform
-import subprocess
+import sys
 import curses
+import subprocess
+
+import pytest
 
 from rtv.submission_page import SubmissionPage
 
@@ -448,20 +449,54 @@ def test_submission_urlview(submission_page, terminal, refresh_token):
         open_urlview.assert_called_with('http://test.url.com  ❤')
 
 
-def test_submission_copy_to_clipboard(submission_page, terminal, refresh_token):
-    def get_linux_clipboard_content():
+@pytest.mark.skipif(sys.platform != 'darwin', reason='Test uses osx clipboard')
+def test_copy_to_clipboard_osx(submission_page, terminal, refresh_token):
+
+    def get_clipboard_content():
+        p = subprocess.Popen(['pbpaste', 'r'],
+                             stdin=subprocess.PIPE,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE,
+                             close_fds=True)
+        stdout, stderr = p.communicate()
+        return stdout.decode('utf-8')
+
+    window = terminal.stdscr.subwin
+
+    # Log in
+    submission_page.config.refresh_token = refresh_token
+    submission_page.oauth.authorize()
+
+    # Get submission
+    data = submission_page.content.get(submission_page.nav.absolute_index)
+
+    # Trigger copy command for permalink
+    submission_page.controller.trigger('y')
+    assert data.get('permalink') == get_clipboard_content()
+    window.addstr.assert_called_with(1, 1, b'Copied permalink to clipboard')
+
+    # Trigger copy command for submission
+    submission_page.controller.trigger('Y')
+    assert data.get('url_full') == get_clipboard_content()
+    window.addstr.assert_called_with(1, 1, b'Copied url to clipboard')
+
+
+@pytest.mark.skipif(sys.platform == 'darwin', reason='Test uses linux clipboard')
+def test_copy_to_clipboard_linux(submission_page, terminal, refresh_token):
+
+    def get_clipboard_content():
         paste_cmd = None
         for cmd in ['xsel', 'xclip']:
             cmd_exists = subprocess.call(
                 ['which', cmd],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE) is 0
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
             if cmd_exists:
                 paste_cmd = cmd
                 break
-        if paste_cmd is not None:
-            cmd_args = {'xsel' : ['xsel', '-b', '-o'],
-                        'xclip' : ['xclip', '-selection', 'c', '-o']}
 
+        if paste_cmd is not None:
+            cmd_args = {'xsel': ['xsel', '-b', '-o'],
+                        'xclip': ['xclip', '-selection', 'c', '-o']}
             p = subprocess.Popen(cmd_args.get(paste_cmd),
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE,
@@ -469,35 +504,29 @@ def test_submission_copy_to_clipboard(submission_page, terminal, refresh_token):
             stdout, stderr = p.communicate()
             return stdout.decode('utf-8')
 
-    def get_clipboard_content():
-        paste_content = None
-        #Check OS type
-        os_type = None
-        if os.name == 'mac' or platform.system() == 'Darwin':
-            os_type = 'macOs'
-        elif os.name == 'posix' or platform.system() == 'Linux':
-            os_type = 'linux'
-        if os_type is not None:
-            if os_type == 'macOs':
-                p = subprocess.Popen(['pbpaste', 'r'],
-                                     stdin=subprocess.PIPE,
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE,
-                                     close_fds=True)
-                stdout, stderr = p.communicate()
-                paste_content = stdout.decode('utf-8')
-            elif os_type == 'linux':
-                paste_content = get_linux_clipboard_content()
-        return paste_content
+    window = terminal.stdscr.subwin
 
     # Log in
     submission_page.config.refresh_token = refresh_token
     submission_page.oauth.authorize()
-    #Get submission
+
+    # Get submission
     data = submission_page.content.get(submission_page.nav.absolute_index)
-    #Trigger copy command for permalink
+
+    # Trigger copy command for permalink
     submission_page.controller.trigger('y')
-    assert  data.get('permalink') == get_clipboard_content()
-    #Trigger copy command for submission
+    content = get_clipboard_content()
+    if content is not None:
+        assert data.get('permalink') == content
+        window.addstr.assert_called_with(1, 1, b'Copied permalink to clipboard')
+    else:
+        window.addstr.assert_called_with(1, 1, b'Failed to copy permalink to clipboard')
+
+    # Trigger copy command for submission
     submission_page.controller.trigger('Y')
-    assert  data.get('url_full') == get_clipboard_content()
+    content = get_clipboard_content()
+    if content is not None:
+        assert data.get('url_full') == content
+        window.addstr.assert_called_with(1, 1, b'Copied url to clipboard')
+    else:
+        window.addstr.assert_called_with(1, 1, b'Failed to copy url to clipboard')

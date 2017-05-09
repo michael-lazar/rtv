@@ -19,6 +19,7 @@ from .__version__ import __version__
 
 _logger = logging.getLogger(__name__)
 
+
 def logged_in(f):
     """
     Decorator for Page methods that require the user to be authenticated.
@@ -49,11 +50,11 @@ class Page(object):
         self.content = None
         self.nav = None
         self.controller = None
+        self.copy_to_clipboard = copy
 
         self.active = True
         self._row = 0
         self._subwindows = None
-        self.copy_to_clipboard = copy
 
     def refresh_content(self, order=None, name=None):
         raise NotImplementedError
@@ -322,41 +323,49 @@ class Page(object):
         message = 'New Messages' if inbox > 0 else 'No New Messages'
         self.term.show_notification(message)
 
-    @PageController.register(Command('COPY_SUBMISSION_PERMALINK'))
-    def copy_submission_permalink(self):
+    @PageController.register(Command('COPY_PERMALINK'))
+    def copy_permalink(self):
         """
         Copies submission permalink to OS clipboard
         """
 
         data = self.get_selected_item()
         url = data.get('permalink')
-        if url is not None:
-            try:
-                self.copy_to_clipboard(url)
-                self.term.show_notification(
-                    'Copied {} to clipboard'.format(url), timeout=1)
-            except ProgramError as e:
-               _logger.exception(e)
-               self.term.show_notification(
-                   'Failed to copy {} to clipboard, {}'.format(url, e))
+        if url is None:
+            self.term.flash()
+            return
 
-    @PageController.register(Command('COPY_SUBMISSION_URL'))
-    def copy_post_permalink(self):
+        try:
+            self.copy_to_clipboard(url)
+        except (ProgramError, OSError) as e:
+            _logger.exception(e)
+            self.term.show_notification(
+                'Failed to copy permalink to clipboard\n{0}'.format(e))
+        else:
+            self.term.show_notification(
+                'Copied permalink to clipboard', timeout=1)
+
+    @PageController.register(Command('COPY_URL'))
+    def copy_url(self):
         """
         Copies submission url to OS clipboard
         """
 
         data = self.get_selected_item()
         url = data.get('url_full')
-        if url is not None:
-            try:
-                self.copy_to_clipboard(url)
-                self.term.show_notification(
-                    'Copied {} to clipboard'.format(url), timeout=1)
-            except ProgramError as e:
-               _logger.exception(e)
-               self.term.show_notification(
-                   'Failed to copy {} to clipboard, {}'.format(url, e))
+        if url is None:
+            self.term.flash()
+            return
+
+        try:
+            self.copy_to_clipboard(url)
+        except (ProgramError, OSError) as e:
+            _logger.exception(e)
+            self.term.show_notification(
+                'Failed to copy url to clipboard\n{0}'.format(e))
+        else:
+            self.term.show_notification(
+                'Copied url to clipboard', timeout=1)
 
     def clear_input_queue(self):
         """
