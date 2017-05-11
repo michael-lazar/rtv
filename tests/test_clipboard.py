@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import pytest
 
 from rtv.clipboard import copy_linux, copy_osx
