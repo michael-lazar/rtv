@@ -94,15 +94,18 @@ class SubmissionPage(Page):
         "Open the selected item with the webbrowser"
 
         data = self.get_selected_item()
-        url = data.get('permalink')
-        if url:
-            self.term.open_browser(url)
+        if data['type'] == 'Submission':
+            self.term.open_link(data['url_full'])
+            self.config.history.add(data['url_full'])
+        elif data['type'] == 'Comment' and data['permalink']:
+            self.term.open_browser(data['permalink'])
         else:
             self.term.flash()
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
     def open_pager(self):
         "Open the selected item with the system's pager"
+
         data = self.get_selected_item()
         if data['type'] == 'Submission':
             text = '\n\n'.join((data['permalink'], data['text']))
@@ -279,7 +282,9 @@ class SubmissionPage(Page):
         self.term.add_line(win, ' {created} {subreddit}'.format(**data))
 
         row = len(data['split_title']) + 2
-        attr = curses.A_UNDERLINE | Color.BLUE
+        seen = (data['url_full'] in self.config.history)
+        link_color = Color.MAGENTA if seen else Color.BLUE
+        attr = curses.A_UNDERLINE | link_color
         self.term.add_line(win, '{url}'.format(**data), row, 1, attr)
         offset = len(data['split_title']) + 3
 
