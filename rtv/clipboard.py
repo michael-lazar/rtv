@@ -46,7 +46,6 @@ def copy_linux(text):
     cmd_name = get_command_name()
 
     if cmd_name is None:
-        raise ProgramError("External copy application not found,\n"
-                           "try installing either `xsel` or `xclip`")
+        raise ProgramError("External copy application not found")
 
     _subprocess_copy(text, cmd_args.get(cmd_name))

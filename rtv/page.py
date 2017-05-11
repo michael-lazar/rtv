@@ -340,7 +340,7 @@ class Page(object):
         except (ProgramError, OSError) as e:
             _logger.exception(e)
             self.term.show_notification(
-                'Failed to copy permalink to clipboard\n{0}'.format(e))
+                'Failed to copy permalink: {0}'.format(e))
         else:
             self.term.show_notification(
                 'Copied permalink to clipboard', timeout=1)
@@ -362,7 +362,7 @@ class Page(object):
         except (ProgramError, OSError) as e:
             _logger.exception(e)
             self.term.show_notification(
-                'Failed to copy url to clipboard\n{0}'.format(e))
+                'Failed to copy url: {0}'.format(e))
         else:
             self.term.show_notification(
                 'Copied url to clipboard', timeout=1)

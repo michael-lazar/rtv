@@ -520,13 +520,17 @@ def test_copy_to_clipboard_linux(submission_page, terminal, refresh_token):
         assert data.get('permalink') == content
         window.addstr.assert_called_with(1, 1, b'Copied permalink to clipboard')
     else:
-        window.addstr.assert_called_with(1, 1, b'Failed to copy permalink to clipboard')
+        # Nither xclip or xsel installed, this is what happens on Travis CI
+        text = b'Failed to copy permalink: External copy application not found'
+        window.addstr.assert_called_with(1, 1, text)
 
-    # Trigger copy command for submission
+    # Trigger copy command for url
     submission_page.controller.trigger('Y')
     content = get_clipboard_content()
     if content is not None:
         assert data.get('url_full') == content
         window.addstr.assert_called_with(1, 1, b'Copied url to clipboard')
     else:
-        window.addstr.assert_called_with(1, 1, b'Failed to copy url to clipboard')
+        # Nither xclip or xsel installed, this is what happens on Travis CI
+        text = b'Failed to copy url: External copy application not found'
+        window.addstr.assert_called_with(1, 1, text)
