@@ -99,8 +99,7 @@ def _copy_settings_file(source, destination, name):
             return
 
     filepath = os.path.dirname(destination)
-    if not os.path.exists(filepath):
-        os.makedirs(filepath)
+    os.makedirs(filepath, exist_ok=True)
 
     print('Copying default %s to %s' % (name, destination))
     shutil.copy(source, destination)
@@ -265,5 +264,4 @@ class Config(object):
         """
 
         filepath = os.path.dirname(filename)
-        if not os.path.exists(filepath):
-            os.makedirs(filepath)
+        os.makedirs(filepath, exist_ok=True)
