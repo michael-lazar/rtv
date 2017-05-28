@@ -36,6 +36,32 @@ class BaseMIMEParser(object):
         return url, content_type
 
 
+class OpenGraphMIMEParser(BaseMIMEParser):
+    """
+    Open graph protocol is used on many web pages.
+
+    <meta property="og:image" content="https://xxxx.jpg?ig_cache_key=xxxxx" />
+    <meta property="og:video:secure_url" content="https://xxxxx.mp4" />
+
+    If the page is a video page both of the above tags will be present and
+    priority is given to video content.
+
+    see http://ogp.me
+    """
+    pattern = re.compile(r'.*$')
+
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        tag = soup.find('meta', attrs={'property': 'og:video:secure_url'})
+        tag = tag or soup.find('meta', attrs={'property':  'og:image'})
+        if tag:
+            return BaseMIMEParser.get_mimetype(tag.get('content'))
+        else:
+            return url, None
+
+
 class GfycatMIMEParser(BaseMIMEParser):
     """
     Gfycat provides a primitive json api to generate image links. URLs can be
@@ -164,32 +190,23 @@ class ImgurAlbumMIMEParser(BaseMIMEParser):
             return url, None
 
 
-class InstagramMIMEParser(BaseMIMEParser):
+class InstagramMIMEParser(OpenGraphMIMEParser):
     """
-    Instagram pages can contain either an embedded image or video. The <meta>
-    tags below provide the relevant info.
-
-    <meta property="og:image" content="https://xxxx.jpg?ig_cache_key=xxxxx" />
-    <meta property="og:video:secure_url" content="https://xxxxx.mp4" />
-
-    If the page is a video page both of the above tags will be present.
+    Instagram uses the Open Graph protocol
     """
     pattern = re.compile(r'https?://(www\.)?instagr((am\.com)|\.am)/p/[^.]+$')
 
-    @staticmethod
-    def get_mimetype(url):
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
-        tag = soup.find('meta', attrs={'property': 'og:video:secure_url'})
-        tag = tag or soup.find('meta', attrs={'property':  'og:image'})
-        if tag:
-            return BaseMIMEParser.get_mimetype(tag.get('content'))
-        else:
-            return url, None
+
+class StreamableMIMEParser(OpenGraphMIMEParser):
+    """
+    Streamable uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?streamable\.com/[^.]+$')
 
 
 # Parsers should be listed in the order they will be checked
 parsers = [
+    StreamableMIMEParser,
     InstagramMIMEParser,
     GfycatMIMEParser,
     ImgurAlbumMIMEParser,
