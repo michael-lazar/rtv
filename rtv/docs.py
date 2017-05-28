@@ -51,7 +51,7 @@ https://github.com/michael-lazar/rtv
   i     : Display new messages
   s     : Show subscribed subreddits
   S     : Show subscribed multireddits
-  w     : Save a submission/comment 
+  w     : Save a submission/comment
   l     : View comments, or open comment in pager
   h     : Return to subreddit
   o     : Open the submission or comment url
