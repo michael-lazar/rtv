@@ -56,6 +56,10 @@ URLS = OrderedDict([
         'https://www.instagram.com/p/3Whn5uL5UF/',
         'https://instagram.fsan1-1.fna.fbcdn.net/t50.2886-16/11389587_1439828686321376_1437626724_n.mp4',
         'video/mp4')),
+    ('streamable_video', (
+        'https://streamable.com/vkc0y',
+        'https://cf-e2.streamablevideo.com/video/mp4/vkc0y.mp4?token=1495953214-H96luU%2FLC4WZAqLtX2vn5YgimlripZ%2FDC1qCTm1I0Ro%3D',
+        'video/mp4')),
 ])
 
 
