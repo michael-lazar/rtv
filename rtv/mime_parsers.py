@@ -124,19 +124,19 @@ class ImgurMIMEParser(BaseMIMEParser):
 
         r = requests.get(endpoint.format(domain=domain, page_hash=page_hash),
                                          headers=header)
-        if r.status_code == 404:
+        if r.status_code != 200:
             r = requests.get(endpoint.format(domain='image',
                                 page_hash=page_hash), headers=header)
+            if r.status_code != 200:
+                return url, None
 
         data = json.loads(r.text)['data']
         if 'images' in data:
             # TODO: handle imgur albums with mixed content, i.e. jpeg and gifv
             urls = ' '.join([d['link'] for d in data['images'] if not d['animated']])
             return urls, 'image/x-imgur-album'
-        else:
+        else :
             return (data['mp4'], 'video/mp4') if data['animated'] else (data['link'], data['type'])
-
-        return url, None
 
 
 class InstagramMIMEParser(BaseMIMEParser):
