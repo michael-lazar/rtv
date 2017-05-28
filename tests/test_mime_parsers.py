@@ -50,15 +50,15 @@ URLS = OrderedDict([
         'image/x-imgur-album')),
     ('instagram_image', (
         'https://www.instagram.com/p/BIxQ0vrBN2Y/?taken-by=kimchi_chic',
-        'https://instagram.fsan1-1.fna.fbcdn.net/t51.2885-15/e35/13694516_861010040698614_1723649992_n.jpg?ig_cache_key=MTMxMDkwMjk1OTg4NjA5NzgxNg%3D%3D.2',
+        'https://instagram.ford1-1.fna.fbcdn.net/t51.2885-15/e35/13694516_861010040698614_1723649992_n.jpg',
         'image/jpeg')),
     ('instagram_video', (
-        'https://www.instagram.com/p/3Whn5uL5UF/',
-        'https://instagram.fsan1-1.fna.fbcdn.net/t50.2886-16/11389587_1439828686321376_1437626724_n.mp4',
+        'https://www.instagram.com/p/BUm3cvEhFMt/',
+        'https://instagram.ford1-1.fna.fbcdn.net/t50.2886-16/18810405_133991250485563_3572356769483063296_n.mp4',
         'video/mp4')),
     ('streamable_video', (
         'https://streamable.com/vkc0y',
-        'https://cf-e2.streamablevideo.com/video/mp4/vkc0y.mp4?token=1495953214-H96luU%2FLC4WZAqLtX2vn5YgimlripZ%2FDC1qCTm1I0Ro%3D',
+        'https://cf-e2.streamablevideo.com/video/mp4/vkc0y.mp4?token=1495976477-wL6I6OJC70pTfPsjfDQl23UYGkomSXVtcP2cPcMKljc%3D',
         'video/mp4')),
 ])
 
