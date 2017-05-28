@@ -60,6 +60,7 @@ URLS = OrderedDict([
 
 
 args, ids = URLS.values(), list(URLS)
+
 @pytest.mark.parametrize('url,modified_url,mime_type', args, ids=ids)
 def test_parser(url, modified_url, mime_type, reddit):
     # Include the reddit fixture so the cassettes get generated
