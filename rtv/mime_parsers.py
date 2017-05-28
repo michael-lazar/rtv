@@ -133,10 +133,12 @@ class ImgurMIMEParser(BaseMIMEParser):
         data = json.loads(r.text)['data']
         if 'images' in data:
             # TODO: handle imgur albums with mixed content, i.e. jpeg and gifv
-            urls = ' '.join([d['link'] for d in data['images'] if not d['animated']])
-            return urls, 'image/x-imgur-album'
+            links = ' '.join([d['link'] for d in data['images'] if not d['animated']])
+            return links.replace('http://', 'https://'), 'image/x-imgur-album'
         else :
-            return (data['mp4'], 'video/mp4') if data['animated'] else (data['link'], data['type'])
+            link = data['mp4'] if data['animated'] else data['link']
+            mime = 'video/mp4' if data['animated'] else data['type']
+            return link.replace('http://', 'https://'), mime
 
 
 class InstagramMIMEParser(BaseMIMEParser):
