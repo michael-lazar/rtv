@@ -4,7 +4,6 @@ import mimetypes
 
 import requests
 from bs4 import BeautifulSoup
-import json
 
 _logger = logging.getLogger(__name__)
 
@@ -130,7 +129,7 @@ class ImgurMIMEParser(BaseMIMEParser):
             if r.status_code != 200:
                 return url, None
 
-        data = json.loads(r.text)['data']
+        data = r.json()['data']
         if 'images' in data:
             # TODO: handle imgur albums with mixed content, i.e. jpeg and gifv
             links = ' '.join([d['link'] for d in data['images'] if not d['animated']])
