@@ -199,8 +199,10 @@ class VidmeMIMEParser(BaseMIMEParser):
     @staticmethod
     def get_mimetype(url):
         resp = requests.get('https://api.vid.me/videoByUrl?url=' + url)
-        video_url = resp.json()['video']['complete_url']
-        return video_url, 'video/mp4'
+        if resp.json()['status']:
+            return resp.json()['video']['complete_url'], 'video/mp4'
+        else:
+            url, None
 
 
 # Parsers should be listed in the order they will be checked
