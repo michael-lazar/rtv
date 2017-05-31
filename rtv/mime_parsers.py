@@ -188,8 +188,24 @@ class InstagramMIMEParser(BaseMIMEParser):
             return url, None
 
 
+class VidmeMIMEParser(BaseMIMEParser):
+    """
+    Vidme provides a json api.
+
+    https://doc.vid.me
+    """
+    pattern = re.compile(r'https?://(www\.)?vid\.me/[^.]+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        resp = requests.get('https://api.vid.me/videoByUrl?url=' + url)
+        video_url = resp.json()['video']['complete_url']
+        return video_url, 'video/mp4'
+
+
 # Parsers should be listed in the order they will be checked
 parsers = [
+    VidmeMIMEParser,
     InstagramMIMEParser,
     GfycatMIMEParser,
     ImgurAlbumMIMEParser,

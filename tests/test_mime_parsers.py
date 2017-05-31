@@ -56,6 +56,10 @@ URLS = OrderedDict([
         'https://www.instagram.com/p/3Whn5uL5UF/',
         'https://instagram.fsan1-1.fna.fbcdn.net/t50.2886-16/11389587_1439828686321376_1437626724_n.mp4',
         'video/mp4')),
+    ('vidme_video', (
+        'https://vid.me/rHlb',
+        'https://d1wst0behutosd.cloudfront.net/videos/15694926/52450725.mp4?Expires=1496269971&Signature=W4l-nipmi3tqEwUNAA~4MpkaT3tfKm6~EFmZ-TnzdUCo~9N96BhCfIiHqv1DAU657VEnBIQp7OgfhmD3~SuwfkZuoTJWJTOgsyVI86X-rwJa9-7Y8qXgSVwCwscLqdkKfw4uiuL2K6GTl5aEStqGcASn5E9p-6Y-6xSsGHbluX17ByIWX0RCRBa4uKKPj32~9kGLSx415U-sA5h9F~tFVPwgzs4NSQPrukO~j1HhBR6rvfaO8AsBARoH875hTuPTGScmdUFlAompAHqKgWV9ngHx4cINbO2m5CN38tx2UfjD8qm6Tq6SSb-WjMKdJ1DUmgwbCFGtpqWPDSPLkX6Kew__&Key-Pair-Id=APKAJJ6WELAPEP47UKWQ',
+        'video/mp4'))
 ])
 
 
