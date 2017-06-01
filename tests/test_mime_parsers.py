@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
 from collections import OrderedDict
 
 import pytest
 
 from rtv.mime_parsers import parsers
 
+
+RegexpType = type(re.compile(''))
+
+
 URLS = OrderedDict([
     ('simple_png', (
-        'http://www.example.com/i/image.png',
-        'http://www.example.com/i/image.png',
-        'image/png')),
+        'http://www.example.com/i/image.png',  # 1. URL
+        'http://www.example.com/i/image.png',  # 2. Direct media link
+        'image/png')),                         # 3. MIME type of media
     ('simple_mpeg', (
         'http://www.example.com/v/video.mpeg',
         'http://www.example.com/v/video.mpeg',
@@ -50,15 +55,15 @@ URLS = OrderedDict([
         'image/x-imgur-album')),
     ('instagram_image', (
         'https://www.instagram.com/p/BIxQ0vrBN2Y/?taken-by=kimchi_chic',
-        'https://instagram.ford1-1.fna.fbcdn.net/t51.2885-15/e35/13694516_861010040698614_1723649992_n.jpg',
+        re.compile('https://instagram(.*)\.jpg'),
         'image/jpeg')),
     ('instagram_video', (
         'https://www.instagram.com/p/BUm3cvEhFMt/',
-        'https://instagram.ford1-1.fna.fbcdn.net/t50.2886-16/18810405_133991250485563_3572356769483063296_n.mp4',
+        re.compile('https://instagram(.*)\.mp4'),
         'video/mp4')),
     ('streamable_video', (
         'https://streamable.com/vkc0y',
-        'https://cf-e2.streamablevideo.com/video/mp4/vkc0y.mp4?token=1495976477-wL6I6OJC70pTfPsjfDQl23UYGkomSXVtcP2cPcMKljc%3D',
+        re.compile('https://(.*)\.streamablevideo\.com/video/mp4/(.*)\.mp4?(.*)'),
         'video/mp4')),
 ])
 
@@ -70,7 +75,12 @@ def test_parser(url, modified_url, mime_type, reddit):
 
     for parser in parsers:
         if parser.pattern.match(url):
-            assert parser.get_mimetype(url) == (modified_url, mime_type)
+            parsed_url, parsed_type = parser.get_mimetype(url)
+            if isinstance(modified_url, RegexpType):
+                assert modified_url.match(parsed_url)
+            else:
+                assert modified_url == parsed_url
+            assert parsed_type == mime_type
             break
     else:
         # The base parser should catch all urls before this point
