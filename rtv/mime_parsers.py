@@ -204,9 +204,27 @@ class StreamableMIMEParser(OpenGraphMIMEParser):
     pattern = re.compile(r'https?://(www\.)?streamable\.com/[^.]+$')
 
 
+class VidmeMIMEParser(BaseMIMEParser):
+    """
+    Vidme provides a json api.
+
+    https://doc.vid.me
+    """
+    pattern = re.compile(r'https?://(www\.)?vid\.me/[^.]+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        resp = requests.get('https://api.vid.me/videoByUrl?url=' + url)
+        if resp.status_code == 200 and resp.json()['status']:
+            return resp.json()['video']['complete_url'], 'video/mp4'
+        else:
+            return url, None
+
+
 # Parsers should be listed in the order they will be checked
 parsers = [
     StreamableMIMEParser,
+    VidmeMIMEParser,
     InstagramMIMEParser,
     GfycatMIMEParser,
     ImgurAlbumMIMEParser,
