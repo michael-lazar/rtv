@@ -5,42 +5,38 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.5.1 CPython/3.4.0 Linux/3.13.0-92-generic]
+      User-Agent: [python-requests/2.11.0]
     method: GET
     uri: https://gfycat.com/cajax/get/DeliciousUnfortunateAdouri
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA6yVTW/UMBCG/0o157B1vnd9qRAVCAkhBPTEIuQkE2eKnQR/tN1W/e/Im6QtSBxQ
-        9pYZv/N4xrLfPIBsD+8dauAPx88GODSoqKbBW9+3g3G+Fw5FM3hDEAXRR6EROFwusqtn2euXMq8r
-        NMAhKdMsSVhcQATeopnrqb8RDZoGNURwS43rgEO8SxhE0CHJzoWYbUPcGqHxs3ChLg2J3uu3IWeB
-        Q3Ys0WN2ZRRw6JwbLd+f788lid5tZHuohdvUg96f/7vnjR6z0AdWehUmACbO+DfHdV5X9j9AYxhr
-        qEjhKtSriTFPOAWfBuvQnAR7PUqIYDwBcGLMwGNpWrB1yLRg89wL7xSTL6yXrcbsdOiYLWgt7nJd
-        vaN2BdLSPf4waJ2h2mGzkdRO5GQ1WQulFt71KNfdeD2NLKld9QKndiS1X+g++EWcFOWWFWk+mcSS
-        Tcu83LFifvNzNovjmCVBWRsUDi8ny4mzYrvLiiJJIIIbwlsLPEtzVkbgyKmjJD+zWA99c6ZIk7u4
-        uIAI8M4Z8QG1FhZ475WKQDc5cBB1KvJEJKxi2G6rGqs8LuKSbUsmknyXhkslpAX+DTqS3S8vFLmD
-        pNZCBCQsBWt4YaDfI+htewscghVaEWw3DnYbDnLa2A7e1Djnm0Mv9PC05CuDTUNuSUxR+Bn8GX/F
-        uyeNop9H9z3iyM7htDb6SpHtsFnW0daGRkdDv0jqYTyYYPJvlCAtqH8Gi156IfF5s8fH3wAAAP//
-        AwCCMwEoqAYAAA==
+        H4sIAAAAAAAAA6yVTU/cMBCG/wrKmS753l0uqCotRaoQbaE9AKqceJJMa8eR7bAsiP/ecZyULVIP
+        VfYS7bwz83gmyb55Cupqe25BBsdPw08eHAccBJaoetO3ldK2b5kFxlWvMTh0RRdMApWdTmXXL2Vv
+        d8t6WYCmwniZpHEcRjnpvQE99mN7zzhoTocfBhvktiExWschhQ1g3VgXhysXV5p6vtABJCVOaHv5
+        wWmGhHRokV16rQWFjbWdOb49uj2qkbV2QaOUzC5KJW+P/j3zgvrdHFDIWRgH8JzuNcc2dEfMf4A6
+        t5YqUMAs1BvPGDf0waUyFvResD+7mrDdHoCeMQKH1iQP5yEJMO498fax+cTaHTUK94cm1oiW7CGT
+        xRlWM5AGH+GHBmM1lhb4oibaQI5nkyUTYuLRwPPeeOlXJtysf6Afh65faW9nIXG+XIV5knmTmNRk
+        mS3XYT7+50c1jaIojF1lqYGQp95yojRfrdM8j2PK3CNsyHbSLM2iMbqAzftOlc7ABtm9E2jF0Jod
+        GChVyw8ESrQnJyeUhAer2SeQkhGo7YWgyXhG1axMWBazOCxCqFZFCUUW5dEyXC1DFmfrxIFZTU03
+        wUdyyM89E2i39BANZZAZdJaxY6x33nGvxh5fQWJrqg0d53zTMOfRbuTe3XU/jaE7WcKo823LpPqT
+        6gsNnKOdBB+5L8ff8RVtOWkCfw1WPeDQjKHPdX0h0DTApzyYUmNnUbVTSam6rXZfhHeCoWTYvoBZ
+        W/esht3DKrqeKlf2vUFLL4qh1M2dT5yBeqXi8HG51KoiNzuXBPuGBgv39ComDDw//wYAAP//AwDn
+        ZS9cJgcAAA==
     headers:
       Access-Control-Allow-Origin: ['*']
-      Age: ['198']
-      CF-RAY: [2c864ef7dd9251ca-SJC]
-      Cache-Control: ['max-age=3600, public', no-cache="set-cookie"]
-      Cache-control: ['max-age=3600, public', no-cache="set-cookie"]
+      Age: ['1536']
+      Cache-Control: ['max-age=3600, public']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
       Content-Type: [application/json]
-      Date: ['Tue, 26 Jul 2016 07:58:47 GMT']
-      Server: [cloudflare-nginx]
-      Set-Cookie: ['__cfduid=d7ad36c869d5bc651ffecbeaa256ec04a1469519927; expires=Wed,
-          26-Jul-17 07:58:47 GMT; path=/; domain=.gfycat.com; HttpOnly', AWSELB=45571F3D1CB564660610CD8E78AF6C77C484B1D1B8960B10499E0D136B44904A9FF7E1200AF9BC33EB2308C475B459AC4129063CBA85B180E94588869669B8CE501B3E8F88;PATH=/;MAX-AGE=200]
-      Vary: [CF-Visitor]
-      Via: [1.1 varnish]
-      X-Powered-By: [PHP/5.5.30]
-      X-Varnish: [3112173893 3112153573]
-      X-orig: ['{"scheme":"https"}']
-      X-prot: [http]
-      X-secure: ['YES']
+      Date: ['Thu, 01 Jun 2017 02:40:29 GMT']
+      Server: [nginx]
+      Vary: ['Accept-Encoding,CloudFront-Is-Mobile-Viewer,CloudFront-Is-Desktop-Viewer,CloudFront-Is-Tablet-Viewer']
+      Via: ['1.1 varnish, 1.1 64fc1ccc427044d03aa5724d4825ec8f.cloudfront.net (CloudFront)']
+      X-Amz-Cf-Id: [bDV12jgzqEihpcfv72_2_jkQWKP4Dyqbvln4KQUS9srUhqvSuGd3Fw==]
+      X-Cache: [Hit from cloudfront]
+      X-Powered-By: [PHP/5.5.38]
+      X-Varnish: ['510885232']
     status: {code: 200, message: OK}
 version: 1
