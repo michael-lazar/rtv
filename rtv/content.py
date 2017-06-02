@@ -171,6 +171,7 @@ class Content(object):
             data['comments'] = ''
             data['url_full'] = comment._fast_permalink
             data['url'] = comment._fast_permalink
+            data['permalink'] = comment._fast_permalink
             data['nsfw'] = comment.over_18
             data['subreddit'] = six.text_type(comment.subreddit)
             data['url_type'] = 'selfpost'
