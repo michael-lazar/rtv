@@ -566,7 +566,7 @@ class SubredditContent(Content):
                 raise exceptions.AccountError('Not logged in')
             else:
                 order = order or 'new'
-                submissions = reddit.user.get_submitted(sort=order, limit=None)
+                submissions = reddit.user.get_overview(sort=order, limit=None)
 
         elif resource_root == 'u' and resource == 'saved':
             if not reddit.is_oauth_session():
@@ -579,7 +579,7 @@ class SubredditContent(Content):
             order = order or 'new'
             period = period or 'all'
             redditor = reddit.get_redditor(resource)
-            submissions = redditor.get_submitted(
+            submissions = redditor.get_overview(
                 sort=order, time=period, limit=None)
 
         elif resource == 'front':
