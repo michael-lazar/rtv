@@ -46,12 +46,12 @@ URLS = OrderedDict([
         'https://i.imgur.com/yW0kbMi.jpg',
         'image/jpeg')),
     ('imgur_2', (
-        'http://imgur.com/yjP1v4B',
-        'https://i.imgur.com/yjP1v4Bh.jpg',
-        'image/jpeg')),
+        'http://imgur.com/gallery/yjP1v4B',
+        'https://i.imgur.com/yjP1v4B.mp4',
+        'video/mp4')),
     ('imgur_album', (
         'http://imgur.com/a/qx9t5',
-        'http://i.imgur.com/uEt0YLI.jpg',
+        'https://i.imgur.com/uEt0YLI.jpg',
         'image/x-imgur-album')),
     ('instagram_image', (
         'https://www.instagram.com/p/BIxQ0vrBN2Y/?taken-by=kimchi_chic',
