@@ -463,6 +463,7 @@ def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):
                           exceptions.NoSubmissionsError)
         assert terminal.loader.exception.name == '/u/me'
 
+
 def test_content_subscription(reddit, terminal):
 
     # Not logged in

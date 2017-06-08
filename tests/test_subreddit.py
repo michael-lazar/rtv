@@ -301,6 +301,29 @@ def test_subreddit_open_multireddits(subreddit_page, refresh_token):
         assert loop.called
 
 
+def test_subreddit_saved(subreddit_page, refresh_token):
+
+    # Log in
+    subreddit_page.config.refresh_token = refresh_token
+    subreddit_page.oauth.authorize()
+
+    subreddit_page.refresh_content(name='/u/saved')
+    subreddit_page.draw()
+
+
+def test_subreddit_user_overview(subreddit_page, refresh_token):
+
+    # Log in
+    subreddit_page.config.refresh_token = refresh_token
+    subreddit_page.oauth.authorize()
+
+    # Pick a user that has a lot of recent comments, so we can make sure that
+    # SavedComment objects have all of the properties necessary to be drawn
+    # on the submission page.
+    subreddit_page.refresh_content(name='/u/spez')
+    subreddit_page.draw()
+
+
 def test_subreddit_draw_header(subreddit_page, refresh_token, terminal):
 
     # /r/front alias should be renamed in the header
