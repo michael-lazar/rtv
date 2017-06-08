@@ -11,6 +11,18 @@ import warnings
 import six
 import requests
 
+# Need to check for curses comparability before performing the rtv imports
+try:
+    import curses
+except ImportError:
+    if sys.platform == 'win32':
+        sys.exit('Fatal Error: This program is not compatible with Windows '
+                 'Operating Systems.\nPlease try installing on either Linux '
+                 'or Mac OS')
+    else:
+        sys.exit('Fatal Error: Your python distribution appears to be missing '
+                 '_curses.so.\nWas it compiled without support for curses?')
+
 from . import docs
 from . import packages
 from .packages import praw
