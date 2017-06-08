@@ -260,9 +260,11 @@ class SubredditPage(Page):
             text, attr = self.term.get_arrow(data['likes'])
             self.term.add_line(win, text, attr=attr)
             self.term.add_line(win, ' {created} '.format(**data))
-            text, attr = '-', curses.A_BOLD
-            self.term.add_line(win, text, attr=attr)
-            self.term.add_line(win, ' {comments} '.format(**data))
+
+            if data['comments'] is not None:
+                text, attr = '-', curses.A_BOLD
+                self.term.add_line(win, text, attr=attr)
+                self.term.add_line(win, ' {comments} '.format(**data))
 
             if data['saved']:
                 text, attr = '[saved]', Color.GREEN

@@ -159,7 +159,7 @@ class Content(object):
         else:
             # Saved comments don't have a nested level and are missing a couple
             # of fields like ``submission``. As a result, we can only load a
-            # subset of fields to avoid triggering a seperate api call to load
+            # subset of fields to avoid triggering a separate api call to load
             # the full comment.
             author = getattr(comment, 'author', '[deleted]')
             stickied = getattr(comment, 'stickied', False)
@@ -167,10 +167,11 @@ class Content(object):
 
             data['type'] = 'SavedComment'
             data['level'] = None
-            data['title'] = comment.body
-            data['comments'] = ''
+            data['title'] = '[Comment] {0}'.format(comment.body)
+            data['comments'] = None
             data['url_full'] = comment._fast_permalink
             data['url'] = comment._fast_permalink
+            data['permalink'] = comment._fast_permalink
             data['nsfw'] = comment.over_18
             data['subreddit'] = six.text_type(comment.subreddit)
             data['url_type'] = 'selfpost'
@@ -565,7 +566,7 @@ class SubredditContent(Content):
                 raise exceptions.AccountError('Not logged in')
             else:
                 order = order or 'new'
-                submissions = reddit.user.get_submitted(sort=order, limit=None)
+                submissions = reddit.user.get_overview(sort=order, limit=None)
 
         elif resource_root == 'u' and resource == 'saved':
             if not reddit.is_oauth_session():
@@ -578,7 +579,7 @@ class SubredditContent(Content):
             order = order or 'new'
             period = period or 'all'
             redditor = reddit.get_redditor(resource)
-            submissions = redditor.get_submitted(
+            submissions = redditor.get_overview(
                 sort=order, time=period, limit=None)
 
         elif resource == 'front':
