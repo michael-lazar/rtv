@@ -60,6 +60,9 @@ class Terminal(object):
         self._display = None
         self._mailcap_dict = mailcap.getcaps()
 
+        # Hack to allow setting the Imgur OAuth cred in the config file
+        mime_parsers.ImgurApiMIMEParser.client_id = config['imgur_client_id']
+
     @property
     def up_arrow(self):
         symbol = '^' if self.config['ascii'] else '▲'

@@ -128,43 +128,119 @@ class RedditUploadsMIMEParser(BaseMIMEParser):
         return url, content_type
 
 
-class ImgurMIMEParser(BaseMIMEParser):
+class ImgurApiMIMEParser(BaseMIMEParser):
+    """   
+    Imgur now provides a json API exposing its entire infrastructure. Each Imgur
+    page has an associated hash and can either contain an album, a gallery,
+    or single image.
+    
+    The default client token for RTV is shared among users and allows a maximum
+    global number of requests per day of 12,500. If we find that this limit is
+    not sufficient for all of rtv's traffic, this method will be revisited.
+    
+    Reference:
+        https://apidocs.imgur.com
     """
-    Imgur provides a json api exposing its entire infrastructure. Each imgur
-    page has an associated hash and can either contain an album, a gallery, or single image.
 
-    see https://apidocs.imgur.com
+    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/((?P<domain>a|album|gallery)/)?(?P<hash>[a-zA-Z0-9]+)[^.]+$')
+    client_id = None
+
+    @classmethod
+    def get_mimetype(cls, url):
+
+        endpoint = 'https://api.imgur.com/3/{domain}/{page_hash}'
+        headers = {'authorization': 'Client-ID {0}'.format(cls.client_id)}
+
+        m = cls.pattern.match(url)
+        page_hash = m.group('hash')
+        domain = 'album' if m.group('domain') in ('a', 'album') else 'gallery'
+
+        url = endpoint.format(domain=domain, page_hash=page_hash)
+        r = requests.get(url, headers=headers)
+
+        if r.status_code != 200:
+            url = endpoint.format(domain='image', page_hash=page_hash)
+            r = requests.get(url, headers=headers)
+
+            if r.status_code != 200:
+                if domain == 'album':
+                    return ImgurScrapeAlbumMIMEParser.get_mimetype(url)
+                else:
+                    return ImgurScrapeMIMEParser.get_mimetype(url)
+
+        data = r.json()['data']
+        if 'images' in data:
+            # TODO: handle imgur albums with mixed content, i.e. jpeg and gifv
+            link = ' '.join([d['link'] for d in data['images'] if not d['animated']])
+            mime = 'image/x-imgur-album'
+        else:
+            link = data['mp4'] if data['animated'] else data['link']
+            mime = 'video/mp4' if data['animated'] else data['type']
+
+        link = link.replace('http://', 'https://')
+        return link, mime
+
+
+class ImgurScrapeMIMEParser(BaseMIMEParser):
+    """
+    The majority of imgur links don't point directly to the image, so we need
+    to open the provided url and scrape the page for the link.
+
+    Scrape the actual image url from an imgur landing page. Imgur intentionally
+    obscures this on most reddit links in order to draw more traffic for their
+    advertisements.
+
+    There are a couple of <meta> tags that supply the relevant info:
+        <meta name="twitter:image" content="https://i.imgur.com/xrqQ4LEh.jpg">
+        <meta property="og:image" content="http://i.imgur.com/xrqQ4LE.jpg?fb">
+        <link rel="image_src" href="http://i.imgur.com/xrqQ4LE.jpg">
     """
     pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/[^.]+$')
 
     @staticmethod
     def get_mimetype(url):
-        endpoint = 'https://api.imgur.com/3/{domain}/{page_hash}'
-        header = {'authorization': 'Client-ID {}'.format('d8842d573e8b9dd')}
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        tag = soup.find('meta', attrs={'name': 'twitter:image'})
+        if tag:
+            url = tag.get('content')
+            if GifvMIMEParser.pattern.match(url):
+                return GifvMIMEParser.get_mimetype(url)
+        return BaseMIMEParser.get_mimetype(url)
 
-        pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/((?P<domain>a|album|gallery)/)?(?P<hash>.+)$')
-        m = pattern.match(url)
-        page_hash = m.group('hash')
-        domain = 'album' if m.group('domain') in ['a', 'album'] else 'gallery'
 
-        r = requests.get(endpoint.format(domain=domain, page_hash=page_hash),
-                                         headers=header)
-        if r.status_code != 200:
-            r = requests.get(endpoint.format(domain='image',
-                                page_hash=page_hash), headers=header)
-            if r.status_code != 200:
-                return url, None
+class ImgurScrapeAlbumMIMEParser(BaseMIMEParser):
+    """
+    Imgur albums can contain several images, which need to be scraped from the
+    landing page. Assumes the following html structure:
 
-        data = r.json()['data']
-        if 'images' in data:
-            # TODO: handle imgur albums with mixed content, i.e. jpeg and gifv
-            links = ' '.join([d['link'] for d in data['images'] if not d['animated']])
-            return links.replace('http://', 'https://'), 'image/x-imgur-album'
-        else :
-            link = data['mp4'] if data['animated'] else data['link']
-            mime = 'video/mp4' if data['animated'] else data['type']
-            return link.replace('http://', 'https://'), mime
+        <div class="post-image">
+            <a href="//i.imgur.com/L3Lfp1O.jpg" class="zoom">
+                <img class="post-image-placeholder"
+                     src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
+                <img class="js-post-image-thumb"
+                     src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
+            </a>
+        </div>
+    """
+    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/a(lbum)?/[^.]+$')
 
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        urls = []
+        for div in soup.find_all('div', class_='post-image'):
+            img = div.find('img')
+            src = img.get('src') if img else None
+            if src:
+                urls.append('http:{0}'.format(src))
+
+        if urls:
+            return " ".join(urls), 'image/x-imgur-album'
+        else:
+            return url, None
 
 class InstagramMIMEParser(OpenGraphMIMEParser):
     """
@@ -203,7 +279,7 @@ parsers = [
     VidmeMIMEParser,
     InstagramMIMEParser,
     GfycatMIMEParser,
-    ImgurMIMEParser,
+    ImgurApiMIMEParser,
     RedditUploadsMIMEParser,
     YoutubeMIMEParser,
     GifvMIMEParser,
