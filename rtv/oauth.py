@@ -15,6 +15,8 @@ from six.moves.BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 from . import docs
 from .config import TEMPLATES
+from .exceptions import InvalidRefreshToken
+from .packages.praw.errors import HTTPException, OAuthException
 
 
 _logger = logging.getLogger(__name__)
@@ -131,8 +133,25 @@ class OAuthHelper(object):
         # If we already have a token, request new access credentials
         if self.config.refresh_token:
             with self.term.loader('Logging in'):
-                self.reddit.refresh_access_information(
-                    self.config.refresh_token)
+                try:
+                    self.reddit.refresh_access_information(
+                        self.config.refresh_token)
+                except (HTTPException, OAuthException) as e:
+                    # Reddit didn't accept the refresh-token
+                    # This appears to throw a generic 400 error instead of the
+                    # more specific invalid_token message that it used to send
+                    if isinstance(e, HTTPException):
+                        if e._raw.status_code != 400:
+                            # No special handling if the error is something
+                            # temporary like a 5XX.
+                            raise e
+
+                    # Otherwise we know the token is bad, so we can remove it.
+                    _logger.exception(e)
+                    self.clear_oauth_data()
+                    raise InvalidRefreshToken(
+                        '       Invalid user credentials!\n'
+                        'The cached refresh token has been removed')
             return
 
         state = uuid.uuid4().hex

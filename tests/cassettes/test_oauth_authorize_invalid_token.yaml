@@ -1,0 +1,51 @@
+interactions:
+- request:
+    body: grant_type=refresh_token&redirect_uri=http%3A%2F%2F127.0.0.1%3A65000%2F&refresh_token=**********
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: ['**********']
+      Connection: [keep-alive]
+      Content-Length: ['99']
+      Content-Type: [application/x-www-form-urlencoded]
+      User-Agent: [rtv test suite PRAW/3.6.1 Python/3.6.1 b'Darwin-14.5.0-x86_64-i386-64bit']
+    method: POST
+    uri: https://api.reddit.com/api/v1/access_token/
+  response:
+    body: {string: '{"message": "Bad Request", "error": 400}'}
+    headers:
+      Accept-Ranges: [bytes]
+      Connection: [keep-alive]
+      Content-Length: ['40']
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Thu, 08 Jun 2017 04:57:59 GMT']
+      Server: [snooserv]
+      Set-Cookie: ['session_tracker=2Pb665rWf1oCGZfV3L.0.1496897879415.Z0FBQUFBQlpPTmxYQl9PVkQ5ekc5U3FDdWZ3cTZMRlRMWVMtZmdhd1duVGdLYTFva09aZmVIazNucGdHSV9tOV9qUy1FZ0M0RS15aWNYVDNxSWpzU1lOTnBQcGpoU19fY0JuM3NnczVyZ3JBcGhKYUQ0RzVPWXUyb0t4dkt3Y1kzRkRvWHg0TXFJbjI;
+          Domain=reddit.com; Max-Age=7199; Path=/; expires=Thu, 08-Jun-2017 06:57:59
+          GMT; secure', 'loid=000000000003fg1hbe.2.1496897879427.Z0FBQUFBQlpPTmxYX2xyMng2Mlk4bmVsUmt6bU04M01ZdTZmZGZ6a3JINnlqdnJKWjZINHNvUFNKc0FJUGVkU2NTem1ycXk3LW1WdXp1bERTM0RsU1J6MlFZZVNsRGZoOGFoREY2QU16ckpHQm01dHI0N2lES2JocmM2ZXVnVXphdFUzUi1yQ3VsQTQ;
+          Domain=reddit.com; Max-Age=63071999; Path=/; expires=Sat, 08-Jun-2019 04:57:59
+          GMT; secure', 'session_tracker=vxk8Omjl7TIIb6u89z.0.1496897879423.Z0FBQUFBQlpPTmxYSmFBVDFlRG42OWZCN1V2R2QyVWlhd3VoaWxHWXBUZE9KRGpLSHZOWmhVVHVrTEdIaWQyWW04cXpnMG1TZ2JRUWRMMU5zc1JQQ21ta2NGcGx5RzZtZjNocmlrVEJzTmVuMnBER04ycWN0bzJpaVJnQ0dvS3ZNUWdWOXZIcmJvWEQ;
+          Domain=reddit.com; Max-Age=7199; Path=/; expires=Thu, 08-Jun-2017 06:57:59
+          GMT; secure', edgebucket=Tgg4R0Ag556DPxZZBR; Domain=reddit.com; Max-Age=63071999;
+          Path=/;  secure]
+      Via: [1.1 varnish]
+      X-Cache: [MISS]
+      X-Cache-Hits: ['0']
+      X-Moose: [majestic]
+      X-Served-By: [cache-ord1735-ORD]
+      X-Timer: ['S1496897879.401425,VS0,VE37']
+      cache-control: ['max-age=0, must-revalidate']
+      set-cookie: ['session_tracker=2Pb665rWf1oCGZfV3L.0.1496897879415.Z0FBQUFBQlpPTmxYQl9PVkQ5ekc5U3FDdWZ3cTZMRlRMWVMtZmdhd1duVGdLYTFva09aZmVIazNucGdHSV9tOV9qUy1FZ0M0RS15aWNYVDNxSWpzU1lOTnBQcGpoU19fY0JuM3NnczVyZ3JBcGhKYUQ0RzVPWXUyb0t4dkt3Y1kzRkRvWHg0TXFJbjI;
+          Domain=reddit.com; Max-Age=7199; Path=/; expires=Thu, 08-Jun-2017 06:57:59
+          GMT; secure', 'loid=000000000003fg1hbe.2.1496897879427.Z0FBQUFBQlpPTmxYX2xyMng2Mlk4bmVsUmt6bU04M01ZdTZmZGZ6a3JINnlqdnJKWjZINHNvUFNKc0FJUGVkU2NTem1ycXk3LW1WdXp1bERTM0RsU1J6MlFZZVNsRGZoOGFoREY2QU16ckpHQm01dHI0N2lES2JocmM2ZXVnVXphdFUzUi1yQ3VsQTQ;
+          Domain=reddit.com; Max-Age=63071999; Path=/; expires=Sat, 08-Jun-2019 04:57:59
+          GMT; secure', 'session_tracker=vxk8Omjl7TIIb6u89z.0.1496897879423.Z0FBQUFBQlpPTmxYSmFBVDFlRG42OWZCN1V2R2QyVWlhd3VoaWxHWXBUZE9KRGpLSHZOWmhVVHVrTEdIaWQyWW04cXpnMG1TZ2JRUWRMMU5zc1JQQ21ta2NGcGx5RzZtZjNocmlrVEJzTmVuMnBER04ycWN0bzJpaVJnQ0dvS3ZNUWdWOXZIcmJvWEQ;
+          Domain=reddit.com; Max-Age=7199; Path=/; expires=Thu, 08-Jun-2017 06:57:59
+          GMT; secure', edgebucket=Tgg4R0Ag556DPxZZBR; Domain=reddit.com; Max-Age=63071999;
+          Path=/;  secure]
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-ua-compatible: [IE=edge]
+      x-xss-protection: [1; mode=block]
+    status: {code: 400, message: Bad Request}
+version: 1

@@ -49,3 +49,7 @@ class TemporaryFileError(RTVError):
 
 class MailcapEntryNotFound(RTVError):
     "A valid mailcap entry could not be coerced from the given url"
+
+
+class InvalidRefreshToken(RTVError):
+    "The refresh token is corrupt and cannot be used to login"
