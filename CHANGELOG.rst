@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.16.0: http://github.com/michael-lazar/rtv/releases/tag/v1.16.0
 .. _1.15.1: http://github.com/michael-lazar/rtv/releases/tag/v1.15.1
 .. _1.15.0: http://github.com/michael-lazar/rtv/releases/tag/v1.15.0
 .. _1.14.1: http://github.com/michael-lazar/rtv/releases/tag/v1.14.1
@@ -25,6 +26,26 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.16.0_ (2017-06-08)
+--------------------
+
+Features
+
+* Added the ability to copy links to the OS clipboad with ``y`` and ``Y``.
+* Both submissions and comments can now be viewed on **/user/** pages.
+* A MIME parser has been added for www.streamable.com.
+* A MIME parser has been added for www.vidme.com.
+* Submission URLs can now be opened while viewing the comments page.
+
+Bugfixes
+
+* More graceful handling for the invalid LOCALE error on MacOS.
+* A fatal error is now raised when trying to run on Windows without curses.
+* Fixed an error when trying to view saved comments.
+* Invalid refresh-tokens are now automatically deleted.
+* Users who are signed up for Reddit's beta profiles can now launch RTV.
 
 --------------------
 1.15.1_ (2017-04-09)
