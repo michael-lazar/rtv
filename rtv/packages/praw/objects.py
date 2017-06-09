@@ -113,7 +113,7 @@ class RedditContentObject(object):
 
     def __setattr__(self, name, value):
         """Set the `name` attribute to `value."""
-        if value and name == 'subreddit':
+        if value and name == 'subreddit' and isinstance(value, six.string_types):
             value = Subreddit(self.reddit_session, value, fetch=False)
         elif value and name in REDDITOR_KEYS:
             if isinstance(value, bool):
