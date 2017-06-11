@@ -51,7 +51,7 @@ class SubscriptionPage(Page):
         listing = self.get_selected_item()['object']
         name = self.term.prompt_input('Add: /')
         if name is not None:
-            with self.term.loader('Adding {} to /r/{}'.format(name, context)):
+            with self.term.loader('Adding /r/{} to {}'.format(name, context)):
                 if isinstance(listing, praw.objects.Multireddit):
                     self.reddit.create_multireddit(name)
                 elif hasattr(self.content, '_multireddit'):
@@ -86,17 +86,22 @@ class SubscriptionPage(Page):
         data = self.get_selected_item()
         listing = data['object']
         name = data['name']
-        with self.term.loader('Deleting {} from {}'.format(name, context)):
-            if isinstance(listing, praw.objects.Multireddit):
+
+        if isinstance(listing, praw.objects.Multireddit) and \
+                self.term.prompt_y_or_n('Delete {}? (y/n): '.format(name)):
+            with self.term.loader('Deleting {} from {}'.format(name, context)):
                 modhash = self.reddit.modhash
                 self.reddit.modhash = ''
                 self.reddit.delete_multireddit(listing.name)
                 self.reddit.modhash = modhash
-            elif hasattr(self.content, '_multireddit'):
-                self.content._multireddit.remove_subreddit(name)
-            elif isinstance(listing, praw.objects.Subreddit):
-                listing.unsubscribe()
-            self.refresh_content()
+                self.refresh_content()
+        else:
+            with self.term.loader('Deleting {} from {}'.format(name, context)):
+                if hasattr(self.content, '_multireddit'):
+                    self.content._multireddit.remove_subreddit(name)
+                elif isinstance(listing, praw.objects.Subreddit):
+                    listing.unsubscribe()
+                self.refresh_content()
 
     @SubscriptionController.register(Command('SUBMISSION_TOGGLE_COMMENT'))
     def open_multireddit(self):
