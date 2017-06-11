@@ -55,7 +55,6 @@ class SubscriptionPage(Page):
                 if isinstance(listing, praw.objects.Multireddit):
                     self.reddit.create_multireddit(name)
                 elif hasattr(self.content, '_multireddit'):
-                    adsf
                     self.content._multireddit.add_subreddit(name)
                 elif isinstance(listing, praw.objects.Subreddit):
                     self.reddit.get_subreddit(name).subscribe()
