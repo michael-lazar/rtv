@@ -397,7 +397,10 @@ class Page(object):
         # tmux) but many people override ther $TERM in their tmux.conf or
         # .bashrc file. Using clearok() instead seems to fix the problem, at
         # the expense of slightly more expensive screen refreshes.
-        self.term.stdscr.clearok(True)
+        # However clearok() introduced a screen flash bug to urxvt users so the 
+        # clear_screen() method chooses which of the two stdscr methods to use
+        # based on the $TERM environment variable
+        self.term.clear_screen()
         self.term.stdscr.refresh()
 
     def _draw_header(self):

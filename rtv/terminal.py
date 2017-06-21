@@ -769,3 +769,11 @@ class Terminal(object):
 
         out = '\n'.join(stack)
         return out
+    
+    # Resolves tmux touchwin() bug and urxvt clearok() flashing bug
+    def clear_screen(self):
+        if os.environ['TERM'] is not 'xterm-256color':
+            self.stdscr.touchwin()
+        else:
+            self.stdscr.clearok(True)
+    
