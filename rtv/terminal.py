@@ -59,6 +59,7 @@ class Terminal(object):
         self.loader = LoadScreen(self)
         self._display = None
         self._mailcap_dict = mailcap.getcaps()
+        self._term = os.environ['TERM']
 
     @property
     def up_arrow(self):
@@ -772,7 +773,7 @@ class Terminal(object):
     
     # Resolves tmux touchwin() bug and urxvt clearok() flashing bug
     def clear_screen(self):
-        if os.environ['TERM'] is not 'xterm-256color':
+        if self._term != 'xterm-256color':
             self.stdscr.touchwin()
         else:
             self.stdscr.clearok(True)
