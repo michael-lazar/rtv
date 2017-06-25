@@ -697,7 +697,7 @@ class SubscriptionContent(Content):
     @classmethod
     def from_multireddit(cls, reddit, loader, multi):
         items = iter(multi.subreddits)
-        content = cls('Multireddit: {}'.format(multi.path), items, loader)
+        content = cls('My Multireddit: {}'.format(multi.path), items, loader)
         content._multireddit = multi
         return content
 

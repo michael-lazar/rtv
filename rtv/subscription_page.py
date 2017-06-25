@@ -48,17 +48,33 @@ class SubscriptionPage(Page):
         "Open a prompt to add or remove multi/subreddit"
 
         context = self.content.name
-        listing = self.get_selected_item()['object']
-        name = self.term.prompt_input('Add: /')
-        if name is not None:
-            with self.term.loader('Adding /r/{} to {}'.format(name, context)):
-                if isinstance(listing, praw.objects.Multireddit):
-                    self.reddit.create_multireddit(name)
-                elif hasattr(self.content, '_multireddit'):
-                    self.content._multireddit.add_subreddit(name)
-                elif isinstance(listing, praw.objects.Subreddit):
+        obj = self.get_selected_item()['object']
+
+        if context == 'My Subreddits':
+            name = self.term.prompt_input('Subscribe to: /')
+            if name is not None:
+                with self.term.loader('Adding /r/{} to {}'.format(name, context)):
                     self.reddit.get_subreddit(name).subscribe()
-                self.refresh_content()
+        elif context == 'My Multireddits':
+            name = self.term.prompt_input('Initialize multireddit (multi/sub1+sub2): ')
+            if name is not None:
+                try:
+                    multi, subreddits = name.split('/')
+                    subreddits = subreddits.split('+')
+                    subreddits[0];
+                except:
+                    return None
+                else:
+                    with self.term.loader('Creating {} with {}'.format(multi, subreddits)):
+                        self.reddit.create_multireddit(multi, subreddits=subreddits)
+        elif context.startswith('My Multireddit:'):
+            name = self.term.prompt_input('Add to {}: /'.format(self.content._multireddit.path))
+            if name is not None:
+                with self.term.loader('Adding /r/{} to {}'.format(name, self.content._multireddit.path)):
+                    self.content._multireddit.add_subreddit(name)
+        else:
+            return None
+        self.refresh_content()
 
     @SubscriptionController.register(Command('SUBSCRIPTION_SELECT'))
     def select_subreddit(self):
