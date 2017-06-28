@@ -390,16 +390,6 @@ class Page(object):
         self._draw_content()
         self._draw_footer()
         self._add_cursor()
-        # Note: There used to be a call to stdscr.touchwin() here. However, a
-        # bug was discovered in tmux when $TERM was set to `xterm-256color`,
-        # where only part of the screen got redrawn when scrolling. The correct
-        # solution is to use `screen-256color` (which gets set automatically by
-        # tmux) but many people override ther $TERM in their tmux.conf or
-        # .bashrc file. Using clearok() instead seems to fix the problem, at
-        # the expense of slightly more expensive screen refreshes.
-        # However clearok() introduced a screen flash bug to urxvt users so the 
-        # clear_screen() method chooses which of the two stdscr methods to use
-        # based on the $TERM environment variable
         self.term.clear_screen()
         self.term.stdscr.refresh()
 
