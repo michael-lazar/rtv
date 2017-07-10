@@ -230,7 +230,7 @@ class LiveleakMIMEParser(BaseMIMEParser):
     </video>
     Sometimes only one video source is available
     """
-    pattern = re.compile(r'https?://((www|m)\.)?liveleak\.com/view\?i\=\w+$')
+    pattern = re.compile(r'https?://((www|m)\.)?liveleak\.com/view\?i=\w+$')
 
     @staticmethod
     def get_mimetype(url):
