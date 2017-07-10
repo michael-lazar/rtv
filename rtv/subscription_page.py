@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import curses
-
 from . import docs
 from .page import Page, PageController
 from .content import SubscriptionContent, SubredditContent
-from .objects import Color, Navigator, Command
+from .objects import Navigator, Command
 
 
 class SubscriptionController(PageController):
@@ -29,7 +27,9 @@ class SubscriptionPage(Page):
 
     @SubscriptionController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
-        "Re-download all subscriptions and reset the page index"
+        """
+        Re-download all subscriptions and reset the page index
+        """
 
         # reddit.get_my_subreddits() does not support sorting by order
         if order:
@@ -44,7 +44,9 @@ class SubscriptionPage(Page):
 
     @SubscriptionController.register(Command('PROMPT'))
     def prompt_subreddit(self):
-        "Open a prompt to navigate to a different subreddit"
+        """
+        Open a prompt to navigate to a different subreddit
+        """
 
         name = self.term.prompt_input('Enter page: /')
         if name is not None:
@@ -57,7 +59,9 @@ class SubscriptionPage(Page):
 
     @SubscriptionController.register(Command('SUBSCRIPTION_SELECT'))
     def select_subreddit(self):
-        "Store the selected subreddit and return to the subreddit page"
+        """
+        Store the selected subreddit and return to the subreddit page
+        """
 
         name = self.get_selected_item()['name']
         with self.term.loader('Loading page'):
@@ -69,7 +73,9 @@ class SubscriptionPage(Page):
 
     @SubscriptionController.register(Command('SUBSCRIPTION_EXIT'))
     def close_subscriptions(self):
-        "Close subscriptions and return to the subreddit page"
+        """
+        Close subscriptions and return to the subreddit page
+        """
 
         self.active = False
 
@@ -87,10 +93,17 @@ class SubscriptionPage(Page):
 
         row = offset
         if row in valid_rows:
-            attr = curses.A_BOLD | Color.YELLOW
+            if data['type'] == 'Multireddit':
+                attr = self.term.attr('multireddit_name')
+            else:
+                attr = self.term.attr('subscription_name')
             self.term.add_line(win, '{name}'.format(**data), row, 1, attr)
 
         row = offset + 1
         for row, text in enumerate(data['split_title'], start=row):
             if row in valid_rows:
-                self.term.add_line(win, text, row, 1)
+                if data['type'] == 'Multireddit':
+                    attr = self.term.attr('multireddit_text')
+                else:
+                    attr = self.term.attr('subscription_text')
+                self.term.add_line(win, text, row, 1, attr)

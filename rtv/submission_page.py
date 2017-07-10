@@ -7,7 +7,7 @@ import curses
 from . import docs
 from .content import SubmissionContent, SubredditContent
 from .page import Page, PageController, logged_in
-from .objects import Navigator, Color, Command
+from .objects import Navigator, Command
 from .exceptions import TemporaryFileError
 
 
@@ -38,7 +38,9 @@ class SubmissionPage(Page):
 
     @SubmissionController.register(Command('SUBMISSION_TOGGLE_COMMENT'))
     def toggle_comment(self):
-        "Toggle the selected comment tree between visible and hidden"
+        """
+        Toggle the selected comment tree between visible and hidden
+        """
 
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
@@ -58,13 +60,17 @@ class SubmissionPage(Page):
 
     @SubmissionController.register(Command('SUBMISSION_EXIT'))
     def exit_submission(self):
-        "Close the submission and return to the subreddit page"
+        """
+        Close the submission and return to the subreddit page
+        """
 
         self.active = False
 
     @SubmissionController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
-        "Re-download comments and reset the page index"
+        """
+        Re-download comments and reset the page index
+        """
 
         order = order or self.content.order
         url = name or self.content.name
@@ -78,7 +84,9 @@ class SubmissionPage(Page):
 
     @SubmissionController.register(Command('PROMPT'))
     def prompt_subreddit(self):
-        "Open a prompt to navigate to a different subreddit"
+        """
+        Open a prompt to navigate to a different subreddit
+        """
 
         name = self.term.prompt_input('Enter page: /')
         if name is not None:
@@ -91,7 +99,9 @@ class SubmissionPage(Page):
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):
-        "Open the selected item with the webbrowser"
+        """
+        Open the selected item with the web browser 
+        """
 
         data = self.get_selected_item()
         if data['type'] == 'Submission':
@@ -104,7 +114,9 @@ class SubmissionPage(Page):
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
     def open_pager(self):
-        "Open the selected item with the system's pager"
+        """
+        Open the selected item with the system's pager
+        """
 
         data = self.get_selected_item()
         if data['type'] == 'Submission':
@@ -165,7 +177,9 @@ class SubmissionPage(Page):
     @SubmissionController.register(Command('DELETE'))
     @logged_in
     def delete_comment(self):
-        "Delete the selected comment"
+        """
+        Delete the selected comment
+        """
 
         if self.get_selected_item()['type'] == 'Comment':
             self.delete_item()
@@ -174,6 +188,10 @@ class SubmissionPage(Page):
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_URLVIEWER'))
     def comment_urlview(self):
+        """
+        Open the selected comment with the URL viewer
+        """
+
         data = self.get_selected_item()
         comment = data.get('body') or data.get('text') or data.get('url_full')
         if comment:
@@ -213,38 +231,52 @@ class SubmissionPage(Page):
 
         row = offset
         if row in valid_rows:
-
-            attr = curses.A_BOLD
-            attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
-            self.term.add_line(win, '{author} '.format(**data), row, 1, attr)
+            if data['is_author']:
+                attr = self.term.attr('comment_author_self')
+            else:
+                attr = self.term.attr('comment_author')
+            self.term.add_line(win, '{author}'.format(**data), row, 1, attr)
 
             if data['flair']:
-                attr = curses.A_BOLD | Color.YELLOW
-                self.term.add_line(win, '{flair} '.format(**data), attr=attr)
+                attr = self.term.attr('user_flair')
+                self.term.add_space(win)
+                self.term.add_line(win, '{flair}'.format(**data), attr=attr)
 
-            text, attr = self.term.get_arrow(data['likes'])
-            self.term.add_line(win, text, attr=attr)
-            self.term.add_line(win, ' {score} {created} '.format(**data))
+            arrow, attr = self.term.get_arrow(data['likes'])
+            self.term.add_space(win)
+            self.term.add_line(win, arrow, attr=attr)
+
+            attr = self.term.attr('score')
+            self.term.add_space(win)
+            self.term.add_line(win, '{score}'.format(**data), attr=attr)
+
+            attr = self.term.attr('created')
+            self.term.add_space(win)
+            self.term.add_line(win, '{created}'.format(**data), attr=attr)
 
             if data['gold']:
-                text, attr = self.term.guilded
-                self.term.add_line(win, text, attr=attr)
+                attr = self.term.attr('gold')
+                self.term.add_space(win)
+                self.term.add_line(win, self.term.guilded, attr=attr)
 
             if data['stickied']:
-                text, attr = '[stickied]', Color.GREEN
-                self.term.add_line(win, text, attr=attr)
+                attr = self.term.attr('stickied')
+                self.term.add_space(win)
+                self.term.add_line(win, '[stickied]', attr=attr)
 
             if data['saved']:
-                text, attr = '[saved]', Color.GREEN
-                self.term.add_line(win, text, attr=attr)
+                attr = self.term.attr('saved')
+                self.term.add_space(win)
+                self.term.add_line(win, '[saved]', attr=attr)
 
         for row, text in enumerate(split_body, start=offset+1):
+            attr = self.term.attr('comment_text')
             if row in valid_rows:
-                self.term.add_line(win, text, row, 1)
+                self.term.add_line(win, text, row, 1, attr=attr)
 
         # Unfortunately vline() doesn't support custom color so we have to
         # build it one segment at a time.
-        attr = Color.get_level(data['level'])
+        attr = self.term.theme.get_bar_level(data['level'])
         x = 0
         for y in range(n_rows):
             self.term.addch(win, y, x, self.term.vline, attr)
@@ -256,11 +288,14 @@ class SubmissionPage(Page):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
 
-        self.term.add_line(win, '{body}'.format(**data), 0, 1)
-        self.term.add_line(
-            win, ' [{count}]'.format(**data), attr=curses.A_BOLD)
+        attr = self.term.attr('hidden_comment_text')
+        self.term.add_line(win, '{body}'.format(**data), 0, 1, attr=attr)
 
-        attr = Color.get_level(data['level'])
+        attr = self.term.attr('hidden_comment_expand')
+        self.term.add_space(win)
+        self.term.add_line(win, '[{count}]'.format(**data), attr=attr)
+
+        attr = self.term.theme.get_bar_level(data['level'])
         self.term.addch(win, 0, 0, self.term.vline, attr)
 
         return attr | self.term.vline
@@ -270,22 +305,34 @@ class SubmissionPage(Page):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 3  # one for each side of the border + one for offset
 
+        attr = self.term.attr('submission_title')
         for row, text in enumerate(data['split_title'], start=1):
-            self.term.add_line(win, text, row, 1, curses.A_BOLD)
+            self.term.add_line(win, text, row, 1, attr)
 
         row = len(data['split_title']) + 1
-        attr = curses.A_BOLD | Color.GREEN
+        attr = self.term.attr('submission_author')
         self.term.add_line(win, '{author}'.format(**data), row, 1, attr)
-        attr = curses.A_BOLD | Color.YELLOW
+
         if data['flair']:
-            self.term.add_line(win, ' {flair}'.format(**data), attr=attr)
-        self.term.add_line(win, ' {created} {subreddit}'.format(**data))
+            attr = self.term.attr('submission_flair')
+            self.term.add_space(win)
+            self.term.add_line(win, '{flair}'.format(**data), attr=attr)
+
+        attr = self.term.attr('created')
+        self.term.add_space(win)
+        self.term.add_line(win, '{created}'.format(**data), attr=attr)
+
+        attr = self.term.attr('submission_subreddit')
+        self.term.add_space(win)
+        self.term.add_line(win, '/r/{subreddit}'.format(**data), attr=attr)
 
         row = len(data['split_title']) + 2
-        seen = (data['url_full'] in self.config.history)
-        link_color = Color.MAGENTA if seen else Color.BLUE
-        attr = curses.A_UNDERLINE | link_color
+        if data['url_full'] in self.config.history:
+            attr = self.term.attr('url_seen')
+        else:
+            attr = self.term.attr('url')
         self.term.add_line(win, '{url}'.format(**data), row, 1, attr)
+
         offset = len(data['split_title']) + 3
 
         # Cut off text if there is not enough room to display the whole post
@@ -295,25 +342,35 @@ class SubmissionPage(Page):
             split_text = split_text[:-cutoff]
             split_text.append('(Not enough space to display)')
 
+        attr = self.term.attr('submission_text')
         for row, text in enumerate(split_text, start=offset):
-            self.term.add_line(win, text, row, 1)
+            self.term.add_line(win, text, row, 1, attr=attr)
 
         row = len(data['split_title']) + len(split_text) + 3
-        self.term.add_line(win, '{score} '.format(**data), row, 1)
-        text, attr = self.term.get_arrow(data['likes'])
-        self.term.add_line(win, text, attr=attr)
-        self.term.add_line(win, ' {comments} '.format(**data))
+        attr = self.term.attr('score')
+        self.term.add_line(win, '{score}'.format(**data), row, 1, attr=attr)
+
+        arrow, attr = self.term.get_arrow(data['likes'])
+        self.term.add_space(win)
+        self.term.add_line(win, arrow, attr=attr)
+
+        attr = self.term.attr('comment_count')
+        self.term.add_space(win)
+        self.term.add_line(win, '{comments}'.format(**data), attr=attr)
 
         if data['gold']:
-            text, attr = self.term.guilded
-            self.term.add_line(win, text, attr=attr)
+            attr = self.term.attr('gold')
+            self.term.add_space(win)
+            self.term.add_line(win, self.term.guilded, attr=attr)
 
         if data['nsfw']:
-            text, attr = 'NSFW', (curses.A_BOLD | Color.RED)
-            self.term.add_line(win, text, attr=attr)
+            attr = self.term.attr('nsfw')
+            self.term.add_space(win)
+            self.term.add_line(win, 'NSFW', attr=attr)
 
         if data['saved']:
-            text, attr = '[saved]', Color.GREEN
-            self.term.add_line(win, text, attr=attr)
+            attr = self.term.attr('saved')
+            self.term.add_space(win)
+            self.term.add_line(win, '[saved]', attr=attr)
 
         win.border()

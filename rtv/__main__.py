@@ -27,9 +27,10 @@ from . import docs
 from . import packages
 from .packages import praw
 from .config import Config, copy_default_config, copy_default_mailcap
+from .theme import Theme
 from .oauth import OAuthHelper
 from .terminal import Terminal
-from .objects import curses_session, Color
+from .objects import curses_session
 from .subreddit_page import SubredditPage
 from .exceptions import ConfigError
 from .__version__ import __version__
@@ -79,6 +80,10 @@ def main():
 
     if config['copy_mailcap']:
         copy_default_mailcap()
+        return
+
+    if config['list_themes']:
+        Theme.print_themes()
         return
 
     # Load the browsing history from previous sessions
@@ -148,11 +153,13 @@ def main():
     try:
         with curses_session() as stdscr:
 
-            # Initialize global color-pairs with curses
-            if not config['monochrome']:
-                Color.init()
+            if config['theme']:
+                theme = Theme.from_name(config['theme'], config['monochrome'])
+            else:
+                theme = Theme(monochrome=config['monochrome'])
 
-            term = Terminal(stdscr, config)
+            term = Terminal(stdscr, config, theme)
+
             with term.loader('Initializing', catch_exception=False):
                 reddit = praw.Reddit(user_agent=user_agent,
                                      decode_html_entities=False,

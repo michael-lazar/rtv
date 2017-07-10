@@ -8,7 +8,7 @@ import curses
 from . import docs
 from .content import SubredditContent
 from .page import Page, PageController, logged_in
-from .objects import Navigator, Color, Command
+from .objects import Navigator, Command
 from .submission_page import SubmissionPage
 from .subscription_page import SubscriptionPage
 from .exceptions import TemporaryFileError
@@ -244,50 +244,71 @@ class SubredditPage(Page):
 
         n_title = len(data['split_title'])
         for row, text in enumerate(data['split_title'], start=offset):
+            attr = self.term.attr('submission_title')
             if row in valid_rows:
-                self.term.add_line(win, text, row, 1, curses.A_BOLD)
+                self.term.add_line(win, text, row, 1, attr)
 
         row = n_title + offset
         if row in valid_rows:
-            seen = (data['url_full'] in self.config.history)
-            link_color = Color.MAGENTA if seen else Color.BLUE
-            attr = curses.A_UNDERLINE | link_color
+            if data['url_full'] in self.config.history:
+                attr = self.term.attr('url_seen')
+            else:
+                attr = self.term.attr('url')
             self.term.add_line(win, '{url}'.format(**data), row, 1, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
-            self.term.add_line(win, '{score} '.format(**data), row, 1)
-            text, attr = self.term.get_arrow(data['likes'])
-            self.term.add_line(win, text, attr=attr)
-            self.term.add_line(win, ' {created} '.format(**data))
+
+            attr = self.term.attr('score')
+            self.term.add_line(win, '{score}'.format(**data), row, 1, attr)
+            self.term.add_space(win)
+
+            arrow, attr = self.term.get_arrow(data['likes'])
+            self.term.add_line(win, arrow, attr=attr)
+            self.term.add_space(win)
+
+            attr = self.term.attr('created')
+            self.term.add_line(win, '{created}'.format(**data), attr=attr)
 
             if data['comments'] is not None:
-                text, attr = '-', curses.A_BOLD
-                self.term.add_line(win, text, attr=attr)
-                self.term.add_line(win, ' {comments} '.format(**data))
+                attr = self.term.attr('separator')
+                self.term.add_space(win)
+                self.term.add_line(win, '-', attr=attr)
+
+                attr = self.term.attr('comment_count')
+                self.term.add_space(win)
+                self.term.add_line(win, '{comments}'.format(**data), attr=attr)
 
             if data['saved']:
-                text, attr = '[saved]', Color.GREEN
-                self.term.add_line(win, text, attr=attr)
+                attr = self.term.attr('saved')
+                self.term.add_space(win)
+                self.term.add_line(win, '[saved]', attr=attr)
 
             if data['stickied']:
-                text, attr = '[stickied]', Color.GREEN
-                self.term.add_line(win, text, attr=attr)
+                attr = self.term.attr('stickied')
+                self.term.add_space(win)
+                self.term.add_line(win, '[stickied]', attr=attr)
 
             if data['gold']:
-                text, attr = self.term.guilded
-                self.term.add_line(win, text, attr=attr)
+                attr = self.term.attr('gold')
+                self.term.add_space(win)
+                self.term.add_line(win, self.term.guilded, attr=attr)
 
             if data['nsfw']:
-                text, attr = 'NSFW', (curses.A_BOLD | Color.RED)
-                self.term.add_line(win, text, attr=attr)
+                attr = self.term.attr('nsfw')
+                self.term.add_space(win)
+                self.term.add_line(win, 'NSFW', attr=attr)
 
         row = n_title + offset + 2
         if row in valid_rows:
-            text = '{author}'.format(**data)
-            self.term.add_line(win, text, row, 1, Color.GREEN)
-            text = ' /r/{subreddit}'.format(**data)
-            self.term.add_line(win, text, attr=Color.YELLOW)
+            attr = self.term.attr('submission_author')
+            self.term.add_line(win, '{author}'.format(**data), row, 1, attr)
+            self.term.add_space(win)
+
+            attr = self.term.attr('submission_subreddit')
+            self.term.add_line(win, '/r/{subreddit}'.format(**data), attr=attr)
+
             if data['flair']:
-                text = ' {flair}'.format(**data)
-                self.term.add_line(win, text, attr=Color.RED)
+                attr = self.term.attr('submission_flair')
+                self.term.add_space(win)
+                self.term.add_line(win, '{flair}'.format(**data), attr=attr)
