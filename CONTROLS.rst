@@ -73,3 +73,24 @@ In submission mode you can view the self text for a submission and browse commen
 :``o`` or ``ENTER``: Open the comment permalink with your web browser
 :``SPACE``: Fold the selected comment, or load additional comments
 :``b``: Display URLs with urlview
+
+-----------------
+Subscription Mode
+-----------------
+
+In subscription mode you can view either the subreddits you are subscribed to
+or the multireddits you've curated.
+
+:``SPACE``: View contents of multireddit
+:``d``: Unsubscribe from subreddit or delete multireddit
+
+The ``/`` prompt allows you to subscribe to subreddits or create multireddits.
+
+When viewing your subscriptions you may add new subscriptions:
+
+* ``python``
+* ``python+commandline+linux``
+
+When viewing a list of your multireddits you may initialize a new one:
+
+``programming/python+ruby+haskell``
