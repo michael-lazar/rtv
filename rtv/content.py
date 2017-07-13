@@ -264,8 +264,8 @@ class Content(object):
         else:
             data['type'] = 'Subscription'
             data['name'] = "/r/" + subscription.display_name
-            data['title'] = subscription.title
-
+            data['title'] = subscription.title if subscription._has_fetched \
+                                else ''
         return data
 
     @staticmethod
@@ -693,6 +693,13 @@ class SubscriptionContent(Content):
             raise exceptions.SubscriptionError('Invalid type %s', content_type)
 
         return cls(name, items, loader)
+
+    @classmethod
+    def from_multireddit(cls, reddit, loader, multi):
+        items = iter(multi.subreddits)
+        content = cls('My Multireddit: {}'.format(multi.path), items, loader)
+        content._multireddit = multi
+        return content
 
     @property
     def range(self):
