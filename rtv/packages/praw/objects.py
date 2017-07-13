@@ -1688,7 +1688,7 @@ class Multireddit(Refreshable):
                  json_dict=None, fetch=False, **kwargs):
         """Construct an instance of the Multireddit object."""
         author = six.text_type(author) if author \
-            else json_dict['path'].split('/')[-3]
+            else json_dict['path'].split('/')[-4]
         if not name:
             name = json_dict['path'].split('/')[-1]
 
