@@ -358,7 +358,7 @@ class BaseReddit(object):
                 self.http.proxies['http'] = self.config.http_proxy
             if self.config.https_proxy:
                 self.http.proxies['https'] = self.config.https_proxy
-        self.modhash = None
+        self.modhash = ''
 
         # Check for updates if permitted and this is the first Reddit instance
         # if not disable_update_check and not BaseReddit.update_checked \
@@ -631,7 +631,7 @@ class BaseReddit(object):
         # Update the modhash
         if isinstance(data, dict) and 'data' in data \
                 and 'modhash' in data['data']:
-            self.modhash = data['data']['modhash']
+            self.modhash = data['data']['modhash'] or ''
         return data
 
 
