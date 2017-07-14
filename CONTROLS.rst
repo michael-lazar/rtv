@@ -81,6 +81,7 @@ Subscription Mode
 In subscription mode you can view either the subreddits you are subscribed to
 or the multireddits you've curated.
 
+:``l`` or ``►``: Open the selected subreddit in a new window
 :``SPACE``: View contents of multireddit
 :``d``: Unsubscribe from subreddit or delete multireddit
 
