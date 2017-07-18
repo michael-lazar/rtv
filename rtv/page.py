@@ -118,7 +118,7 @@ class Page(object):
             self.term.show_notification('Invalid option')
             return
 
-        self.refresh_content(order=choices[ch])
+        self.refresh_content(order=choices[ch], with_search=True)
 
     @PageController.register(Command('SORT_RISING'))
     def sort_content_rising(self):
@@ -126,7 +126,7 @@ class Page(object):
 
     @PageController.register(Command('SORT_NEW'))
     def sort_content_new(self):
-        self.refresh_content(order='new')
+        self.refresh_content(order='new', with_search=True)
 
     @PageController.register(Command('SORT_CONTROVERSIAL'))
     def sort_content_controversial(self):
@@ -147,7 +147,7 @@ class Page(object):
             self.term.show_notification('Invalid option')
             return
 
-        self.refresh_content(order=choices[ch])
+        self.refresh_content(order=choices[ch], with_search=True)
 
     @PageController.register(Command('MOVE_UP'))
     def move_cursor_up(self):

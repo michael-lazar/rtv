@@ -36,12 +36,12 @@ class SubredditPage(Page):
         self.toggled_subreddit = None
 
     @SubredditController.register(Command('REFRESH'))
-    def refresh_content(self, order=None, name=None):
+    def refresh_content(self, order=None, name=None, with_search=False):
         "Re-download all submissions and reset the page index"
 
         order = order or self.content.order
         name = name or self.content.name
-        query = self.content.query
+        query = self.content.query if with_search else None
 
         # Hack to allow an order specified in the name by prompt_subreddit() to
         # override the current default
