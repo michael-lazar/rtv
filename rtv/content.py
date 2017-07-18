@@ -435,10 +435,12 @@ class SubredditContent(Content):
     list for repeat access.
     """
 
-    def __init__(self, name, submissions, loader, order=None, max_title_rows=4):
+    def __init__(self, name, submissions, loader, order=None,
+                 max_title_rows=4, query=None):
 
         self.name = name
         self.order = order
+        self.query = query
         self.max_title_rows = max_title_rows
         self._loader = loader
         self._submissions = submissions
@@ -603,7 +605,8 @@ class SubredditContent(Content):
             display_name = '/r/{0}'.format(subreddit.display_name)
 
         # We made it!
-        return cls(display_name, submissions, loader, order=display_order)
+        return cls(display_name, submissions, loader, order=display_order,
+                   query=query)
 
     @property
     def range(self):

@@ -41,6 +41,7 @@ class SubredditPage(Page):
 
         order = order or self.content.order
         name = name or self.content.name
+        query = self.content.query
 
         # Hack to allow an order specified in the name by prompt_subreddit() to
         # override the current default
@@ -49,7 +50,7 @@ class SubredditPage(Page):
 
         with self.term.loader('Refreshing page'):
             self.content = SubredditContent.from_name(
-                self.reddit, name, self.term.loader, order=order)
+                self.reddit, name, self.term.loader, order=order, query=query)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
