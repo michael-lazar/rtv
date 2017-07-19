@@ -192,6 +192,22 @@ def test_submission_move_top_bottom(submission_page):
     assert submission_page.nav.absolute_index == -1
 
 
+def test_submission_move_sibling_parent(submission_page):
+
+    # Jump to sibling
+    with mock.patch.object(submission_page, 'clear_input_queue'):
+        submission_page.controller.trigger('j')
+        submission_page.controller.trigger('J')
+    assert submission_page.nav.absolute_index == 7
+
+    # Jump to parent
+    with mock.patch.object(submission_page, 'clear_input_queue'):
+        submission_page.controller.trigger('k')
+        submission_page.controller.trigger('k')
+        submission_page.controller.trigger('K')
+    assert submission_page.nav.absolute_index == 0
+
+
 def test_submission_pager(submission_page, terminal):
 
     # View a submission with the pager
@@ -314,7 +330,7 @@ def test_submission_comment_save(submission_page, terminal, refresh_token):
     with mock.patch.object(submission_page, 'clear_input_queue'):
         submission_page.controller.trigger('j')
 
-    # Test save on the coment submission
+    # Test save on the comment submission
     with mock.patch('rtv.packages.praw.objects.Comment.save') as save,        \
             mock.patch('rtv.packages.praw.objects.Comment.unsave') as unsave:
 

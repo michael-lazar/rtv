@@ -181,6 +181,34 @@ class SubmissionPage(Page):
         else:
             self.term.flash()
 
+    @PageController.register(Command('SUBMISSION_GOTO_PARENT'))
+    def move_parent_up(self):
+        cur = self.nav.absolute_index
+        if cur > 0:
+            child_level = self.content.get(cur)['level']
+            while self.content.get(cur-1)['level'] >= 1 \
+                    and self.content.get(cur-1)['level'] >= child_level:
+                self._move_cursor(-1)
+                cur -= 1
+            self._move_cursor(-1)
+            self.clear_input_queue()
+
+    @PageController.register(Command('SUBMISSION_GOTO_SIBLING'))
+    def move_sibling_next(self):
+        cur = self.nav.absolute_index
+        if cur in range(self.content.range[1]):
+            sibling_level = self.content.get(cur)['level']
+            try:
+                move = 1
+                while self.content.get(cur + move)['level'] > sibling_level:
+                    move += 1
+            except IndexError:
+                pass
+            else:
+                if self.content.get(cur + move)['level'] == sibling_level:
+                    [self._move_cursor(1) for _ in range(move)]
+            self.clear_input_queue()
+
     def _draw_item(self, win, data, inverted):
 
         if data['type'] == 'MoreComments':
