@@ -136,7 +136,7 @@ def test_config_from_file():
 
         fargs, fbindings = Config.get_file(filename=fp.name)
         config = Config(**fargs)
-        config.keymap.set_bindings(fbindings)
+        config.keymap.set_bindings(fbindings, 'replace')
         assert config.config == {}
         assert config.keymap._keymap == {}
 
@@ -153,7 +153,7 @@ def test_config_from_file():
         fp.flush()
         fargs, fbindings = Config.get_file(filename=fp.name)
         config.update(**fargs)
-        config.keymap.set_bindings(fbindings)
+        config.keymap.set_bindings(fbindings, 'replace')
         assert config.config == args
         assert config.keymap.get('REFRESH') == ['r', '<KEY_F5>']
         assert config.keymap.get('UPVOTE') == ['']

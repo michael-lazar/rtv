@@ -370,13 +370,16 @@ def test_objects_keymap():
         keymap.get('downvote')
     assert 'DOWNVOTE' in six.text_type(e)
 
-    # Updating the bindings wipes out the old ones
     bindings = {'refresh': ['a', 0x12, '<LF>', '<KEY_UP>']}
-    keymap.set_bindings(bindings)
+    bindings2 = {'upvote': ['b', 0x13, '<KEY_DOWN>']}
+    keymap.set_bindings(bindings, 'replace')
     assert keymap.get('refresh')
     with pytest.raises(exceptions.ConfigError) as e:
         keymap.get('upvote')
     assert 'UPVOTE' in six.text_type(e)
+    keymap.set_bindings(bindings2, 'update')
+    assert keymap.get('refresh')
+    assert keymap.get('upvote')
 
     # Strings should be parsed correctly into keys
     assert KeyMap.parse('a') == 97
