@@ -144,8 +144,6 @@ def test_theme_initialize_attributes(stdscr):
     for element in Theme.DEFAULT_THEME:
         assert isinstance(theme.get(element), int)
 
-    assert theme.get_bar_level(0) == theme.get_bar_level(4)
-
 
 def test_theme_initialize_attributes_monochrome(stdscr):
 

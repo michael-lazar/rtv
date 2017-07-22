@@ -180,7 +180,7 @@ class Terminal(object):
         finally:
             self.stdscr.nodelay(0)
 
-    def get_arrow(self, likes):
+    def get_arrow(self, likes, highlight=False):
         """
         Curses does define constants for symbols (e.g. curses.ACS_BULLET).
         However, they rely on using the curses.addch() function, which has been
@@ -190,11 +190,11 @@ class Terminal(object):
         """
 
         if likes is None:
-            return self.neutral_arrow, self.attr('neutral_vote')
+            return self.neutral_arrow, self.attr('neutral_vote', highlight)
         elif likes:
-            return self.up_arrow, self.attr('upvote')
+            return self.up_arrow, self.attr('upvote', highlight)
         else:
-            return self.down_arrow, self.attr('downvote')
+            return self.down_arrow, self.attr('downvote', highlight)
 
     def clean(self, string, n_cols=None):
         """
@@ -816,11 +816,11 @@ class Terminal(object):
         else:
             self.stdscr.clearok(True)
 
-    def attr(self, element):
+    def attr(self, element, highlight=False):
         """
         Shortcut for fetching the color + attribute code for an element.
         """
-        return self.theme.get(element)
+        return self.theme.get(element, highlight=highlight)
 
     def set_theme(self, theme=None):
         """
@@ -855,6 +855,6 @@ class Terminal(object):
         theme.bind_curses()
 
         # Apply the default color to the whole screen
-        self.stdscr.bkgd(str(' '), theme.get('default'))
+        self.stdscr.bkgd(str(' '), theme.get('@normal'))
 
         self.theme = theme

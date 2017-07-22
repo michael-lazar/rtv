@@ -83,7 +83,7 @@ class SubscriptionPage(Page):
         # Subscriptions can't be sorted, so disable showing the order menu
         pass
 
-    def _draw_item(self, win, data, inverted):
+    def _draw_item(self, win, data, inverted, highlight):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1  # Leave space for the cursor in the first column
 
@@ -94,16 +94,20 @@ class SubscriptionPage(Page):
         row = offset
         if row in valid_rows:
             if data['type'] == 'Multireddit':
-                attr = self.term.attr('multireddit_name')
+                attr = self.term.attr('multireddit_name', highlight)
             else:
-                attr = self.term.attr('subscription_name')
+                attr = self.term.attr('subscription_name', highlight)
             self.term.add_line(win, '{name}'.format(**data), row, 1, attr)
 
         row = offset + 1
         for row, text in enumerate(data['split_title'], start=row):
             if row in valid_rows:
                 if data['type'] == 'Multireddit':
-                    attr = self.term.attr('multireddit_text')
+                    attr = self.term.attr('multireddit_text', highlight)
                 else:
-                    attr = self.term.attr('subscription_text')
+                    attr = self.term.attr('subscription_text', highlight)
                 self.term.add_line(win, text, row, 1, attr)
+
+        attr = self.term.attr('cursor', highlight)
+        for y in range(n_rows):
+            self.term.addch(win, y, 0, str(' '), attr)

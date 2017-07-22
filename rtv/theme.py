@@ -13,6 +13,7 @@ _logger = logging.getLogger(__name__)
 class Theme(object):
 
     ATTRIBUTE_CODES = {
+        '-': None,
         '': curses.A_NORMAL,
         'bold': curses.A_BOLD,
         'reverse': curses.A_REVERSE,
@@ -21,6 +22,7 @@ class Theme(object):
     }
 
     COLOR_CODES = {
+        '-': None,
         'default': -1,
         'black': curses.COLOR_BLACK,
         'red': curses.COLOR_RED,
@@ -47,50 +49,58 @@ class Theme(object):
     # For compatibility with as many terminals as possible, the default theme
     # can only use the 8 basic colors with the default background.
     DEFAULT_THEME = {
-        'bar_level_1':           (curses.COLOR_MAGENTA, -1, curses.A_NORMAL),
-        'bar_level_2':           (curses.COLOR_CYAN,    -1, curses.A_NORMAL),
-        'bar_level_3':           (curses.COLOR_GREEN,   -1, curses.A_NORMAL),
-        'bar_level_4':           (curses.COLOR_YELLOW,  -1, curses.A_NORMAL),
-        'comment_author':        (curses.COLOR_BLUE,    -1, curses.A_BOLD),
-        'comment_author_self':   (curses.COLOR_GREEN,   -1, curses.A_BOLD),
-        'comment_count':         (-1,                   -1, curses.A_NORMAL),
-        'comment_text':          (-1,                   -1, curses.A_NORMAL),
-        'created':               (-1,                   -1, curses.A_NORMAL),
-        'cursor':                (-1,                   -1, curses.A_REVERSE),
-        'default':               (-1,                   -1, curses.A_NORMAL),
-        'downvote':              (curses.COLOR_RED,     -1, curses.A_BOLD),
-        'gold':                  (curses.COLOR_YELLOW,  -1, curses.A_BOLD),
-        'help_bar':              (curses.COLOR_CYAN,    -1, curses.A_BOLD | curses.A_REVERSE),
-        'hidden_comment_expand': (-1,                   -1, curses.A_BOLD),
-        'hidden_comment_text':   (-1,                   -1, curses.A_NORMAL),
-        'multireddit_name':      (curses.COLOR_YELLOW,  -1, curses.A_BOLD),
-        'multireddit_text':      (-1,                   -1, curses.A_NORMAL),
-        'neutral_vote':          (-1,                   -1, curses.A_BOLD),
-        'notice_info':           (-1,                   -1, curses.A_NORMAL),
-        'notice_loading':        (-1,                   -1, curses.A_NORMAL),
-        'notice_error':          (curses.COLOR_RED,     -1, curses.A_NORMAL),
-        'notice_success':        (curses.COLOR_GREEN,   -1, curses.A_NORMAL),
-        'nsfw':                  (curses.COLOR_RED,     -1, curses.A_BOLD),
-        'order_bar':             (curses.COLOR_YELLOW,  -1, curses.A_BOLD),
-        'order_selected':        (curses.COLOR_YELLOW,  -1, curses.A_BOLD | curses.A_REVERSE),
-        'prompt':                (curses.COLOR_CYAN,    -1, curses.A_BOLD | curses.A_REVERSE),
-        'saved':                 (curses.COLOR_GREEN,   -1, curses.A_NORMAL),
-        'score':                 (-1,                   -1, curses.A_NORMAL),
-        'separator':             (-1,                   -1, curses.A_BOLD),
-        'stickied':              (curses.COLOR_GREEN,   -1, curses.A_NORMAL),
-        'subscription_name':     (curses.COLOR_YELLOW,  -1, curses.A_BOLD),
-        'subscription_text':     (-1,                   -1, curses.A_NORMAL),
-        'submission_author':     (curses.COLOR_GREEN,   -1, curses.A_NORMAL),
-        'submission_flair':      (curses.COLOR_RED,     -1, curses.A_NORMAL),
-        'submission_subreddit':  (curses.COLOR_YELLOW,  -1, curses.A_NORMAL),
-        'submission_text':       (-1,                   -1, curses.A_NORMAL),
-        'submission_title':      (-1,                   -1, curses.A_BOLD),
-        'title_bar':             (curses.COLOR_CYAN,    -1, curses.A_BOLD | curses.A_REVERSE),
-        'upvote':                (curses.COLOR_GREEN,   -1, curses.A_BOLD),
-        'url':                   (curses.COLOR_BLUE,    -1, curses.A_UNDERLINE),
-        'url_seen':              (curses.COLOR_MAGENTA, -1, curses.A_UNDERLINE),
-        'user_flair':            (curses.COLOR_YELLOW,  -1, curses.A_BOLD)
+        '@normal':               (-1,                   -1,   curses.A_NORMAL),
+        '@highlight':            (-1,                   -1,   curses.A_NORMAL),
+        'bar_level_1':           (curses.COLOR_MAGENTA, None, curses.A_NORMAL),
+        'bar_level_1.highlight': (curses.COLOR_MAGENTA, None, curses.A_REVERSE),
+        'bar_level_2':           (curses.COLOR_CYAN,    None, curses.A_NORMAL),
+        'bar_level_2.highlight': (curses.COLOR_CYAN,    None, curses.A_REVERSE),
+        'bar_level_3':           (curses.COLOR_GREEN,   None, curses.A_NORMAL),
+        'bar_level_3.highlight': (curses.COLOR_GREEN,   None, curses.A_REVERSE),
+        'bar_level_4':           (curses.COLOR_YELLOW,  None, curses.A_NORMAL),
+        'bar_level_4.highlight': (curses.COLOR_YELLOW,  None, curses.A_REVERSE),
+        'comment_author':        (curses.COLOR_BLUE,    None, curses.A_BOLD),
+        'comment_author_self':   (curses.COLOR_GREEN,   None, curses.A_BOLD),
+        'comment_count':         (None,                 None, curses.A_NORMAL),
+        'comment_text':          (None,                 None, curses.A_NORMAL),
+        'created':               (None,                 None, curses.A_NORMAL),
+        'cursor':                (None,                 None, curses.A_NORMAL),
+        'cursor.highlight':      (None,                 None, curses.A_REVERSE),
+        'downvote':              (curses.COLOR_RED,     None, curses.A_BOLD),
+        'gold':                  (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+        'help_bar':              (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
+        'hidden_comment_expand': (None,                 None, curses.A_BOLD),
+        'hidden_comment_text':   (None,                 None, curses.A_NORMAL),
+        'multireddit_name':      (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+        'multireddit_text':      (None,                 None, curses.A_NORMAL),
+        'neutral_vote':          (None,                 None, curses.A_BOLD),
+        'notice_info':           (None,                 None, curses.A_NORMAL),
+        'notice_loading':        (None,                 None, curses.A_NORMAL),
+        'notice_error':          (curses.COLOR_RED,     None, curses.A_NORMAL),
+        'notice_success':        (curses.COLOR_GREEN,   None, curses.A_NORMAL),
+        'nsfw':                  (curses.COLOR_RED,     None, curses.A_BOLD),
+        'order_bar':             (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+        'order_bar.highlight':   (curses.COLOR_YELLOW,  None, curses.A_BOLD | curses.A_REVERSE),
+        'prompt':                (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
+        'saved':                 (curses.COLOR_GREEN,   None, curses.A_NORMAL),
+        'score':                 (None,                 None, curses.A_NORMAL),
+        'separator':             (None,                 None, curses.A_BOLD),
+        'stickied':              (curses.COLOR_GREEN,   None, curses.A_NORMAL),
+        'subscription_name':     (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+        'subscription_text':     (None,                 None, curses.A_NORMAL),
+        'submission_author':     (curses.COLOR_GREEN,   None, curses.A_NORMAL),
+        'submission_flair':      (curses.COLOR_RED,     None, curses.A_NORMAL),
+        'submission_subreddit':  (curses.COLOR_YELLOW,  None, curses.A_NORMAL),
+        'submission_text':       (None,                 None, curses.A_NORMAL),
+        'submission_title':      (None,                 None, curses.A_BOLD),
+        'title_bar':             (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
+        'upvote':                (curses.COLOR_GREEN,   None, curses.A_BOLD),
+        'url':                   (curses.COLOR_BLUE,    None, curses.A_UNDERLINE),
+        'url_seen':              (curses.COLOR_MAGENTA, None, curses.A_UNDERLINE),
+        'user_flair':            (curses.COLOR_YELLOW,  None, curses.A_BOLD)
     }
+
+    BAR_LEVELS = ['bar_level_1', 'bar_level_2', 'bar_level_3', 'bar_level_4']
 
     def __init__(self, name='default', elements=None, monochrome=False):
         """
@@ -102,10 +112,6 @@ class Theme(object):
                 terminal's default foreground/background color.
         """
 
-        self.elements = self.DEFAULT_THEME.copy()
-        if elements:
-            self.elements.update(elements)
-
         self.name = name
         self.monochrome = monochrome
         self._color_pair_map = None
@@ -113,6 +119,44 @@ class Theme(object):
 
         self.required_color_pairs = 0
         self.required_colors = 0
+
+        if elements is None:
+            elements = self.DEFAULT_THEME.copy()
+
+        # Fill in missing elements
+        for key in self.DEFAULT_THEME.keys():
+
+            # Set undefined modifiers to the system default
+            if key.startswith('@'):
+                if key not in elements:
+                    elements[key] = self.DEFAULT_THEME[key]
+                continue
+
+            if key.endswith('.highlight'):
+                continue
+
+            # Set undefined elements to bubble up to the modifier
+            if key not in elements:
+                elements[key] = (None, None, None)
+
+            # Set undefined highlight elements to match their base element
+            modifier_key = key + '.highlight'
+            if modifier_key not in elements:
+                elements[modifier_key] = elements[key]
+
+        # Replace ``None`` attributes with their default modifiers
+        for key, val in elements.items():
+            if key.endswith('.highlight'):
+                default = elements['@highlight']
+            else:
+                default = elements['@normal']
+
+            elements[key] = (
+                default[0] if val[0] is None else val[0],
+                default[1] if val[1] is None else val[1],
+                default[2] if val[2] is None else val[2])
+
+        self.elements = elements
 
         if not self.monochrome:
             colors, color_pairs = set(), set()
@@ -162,23 +206,18 @@ class Theme(object):
 
             self._attribute_map[element] = attrs
 
-    def get(self, val):
+    def get(self, val, highlight=False):
         """
         Returns the curses attribute code for the given element.
         """
         if self._attribute_map is None:
             raise RuntimeError('Attempted to access theme attribute before '
                                'calling initialize_curses_theme()')
+
+        if highlight:
+            val = val + '.highlight'
+
         return self._attribute_map[val]
-
-    def get_bar_level(self, indentation_level):
-        """
-        Helper method for loading the bar format given the indentation level.
-        """
-
-        levels = ['bar_level_1', 'bar_level_2', 'bar_level_3', 'bar_level_4']
-        level = levels[indentation_level % len(levels)]
-        return self.get(level)
 
     @classmethod
     def list_themes(cls, path=THEMES):
@@ -317,26 +356,30 @@ class Theme(object):
         if bg.startswith('#'):
             bg = cls.rgb_to_ansi(bg)
 
-        fg_code = cls.COLOR_CODES.get(fg)
-        if fg_code is None:
+        if fg not in cls.COLOR_CODES:
             raise ConfigError(
                 'Error loading {0}, invalid <foreground>:\n'
                 '    {1} = {2}'.format(filename, element, line))
+        fg_code = cls.COLOR_CODES[fg]
 
-        bg_code = cls.COLOR_CODES.get(bg)
-        if bg_code is None:
+        if bg not in cls.COLOR_CODES:
             raise ConfigError(
                 'Error loading {0}, invalid <background>:\n'
                 '    {1} = {2}'.format(filename, element, line))
+        bg_code = cls.COLOR_CODES[bg]
 
         attrs_code = curses.A_NORMAL
         for attr in attrs.split('+'):
-            attr_code = cls.ATTRIBUTE_CODES.get(attr)
-            if attr_code is None:
+            if attr not in cls.ATTRIBUTE_CODES:
                 raise ConfigError(
                     'Error loading {0}, invalid <attributes>:\n'
                     '    {1} = {2}'.format(filename, element, line))
-            attrs_code |= attr_code
+            attr_code = cls.ATTRIBUTE_CODES[attr]
+            if attr_code is None:
+                attrs_code = None
+                break
+            else:
+                attrs_code |= attr_code
 
         return fg_code, bg_code, attrs_code
 

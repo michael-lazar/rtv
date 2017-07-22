@@ -55,11 +55,12 @@ class Page(object):
         self.active = True
         self._row = 0
         self._subwindows = None
+        self._theme_list = None
 
     def refresh_content(self, order=None, name=None):
         raise NotImplementedError
 
-    def _draw_item(self, window, data, inverted):
+    def _draw_item(self, window, data, inverted, highlight):
         raise NotImplementedError
 
     def get_selected_item(self):
@@ -90,6 +91,24 @@ class Page(object):
     @PageController.register(Command('FORCE_EXIT'))
     def force_exit(self):
         sys.exit()
+
+    @PageController.register(Command('NEXT_THEME'))
+    def next_theme(self):
+        if self._theme_list is None:
+            self._theme_list = self.term.theme.list_themes()['default']
+
+        names = sorted(self._theme_list.keys())
+        if self.term.theme.name in self._theme_list:
+            index = names.index(self.term.theme.name) + 1
+            if index >= len(names):
+                index = 0
+        else:
+            index = 0
+
+        new_theme = self._theme_list[names[index]]
+        self.term.set_theme(new_theme)
+        self.draw()
+        self.term.show_notification(new_theme.name, timeout=1)
 
     @PageController.register(Command('HELP'))
     def show_help(self):
@@ -385,7 +404,6 @@ class Page(object):
         self._draw_banner()
         self._draw_content()
         self._draw_footer()
-        self._add_cursor()
         self.term.clear_screen()
         self.term.stdscr.refresh()
 
@@ -456,7 +474,7 @@ class Page(object):
         if self.content.order is not None:
             order = self.content.order.split('-')[0]
             col = text.find(order) - 3
-            window.chgat(0, col, 3, self.term.attr('order_selected'))
+            window.chgat(0, col, 3, self.term.attr('order_bar', True))
 
         self._row += 1
 
@@ -466,8 +484,7 @@ class Page(object):
         """
 
         n_rows, n_cols = self.term.stdscr.getmaxyx()
-        window = self.term.stdscr.derwin(
-            n_rows - self._row - 1, n_cols, self._row, 0)
+        window = self.term.stdscr.derwin(n_rows - self._row - 1, n_cols, self._row, 0)
         window.erase()
         win_n_rows, win_n_cols = window.getmaxyx()
 
@@ -494,11 +511,8 @@ class Page(object):
                 top_item_height = None
             subwin_n_cols = win_n_cols - data['h_offset']
             start = current_row - subwin_n_rows + 1 if inverted else current_row
-            subwindow = window.derwin(
-                subwin_n_rows, subwin_n_cols, start, data['h_offset'])
-
-            attr = self._draw_item(subwindow, data, subwin_inverted)
-            self._subwindows.append((subwindow, attr))
+            subwindow = window.derwin(subwin_n_rows, subwin_n_cols, start, data['h_offset'])
+            self._subwindows.append((subwindow, data, subwin_inverted))
             available_rows -= (subwin_n_rows + 1)  # Add one for the blank line
             current_row += step * (subwin_n_rows + 1)
             if available_rows <= 0:
@@ -519,6 +533,22 @@ class Page(object):
             # on the size of the terminal.
             self.nav.flip((len(self._subwindows) - 1))
             return self._draw_content()
+
+        if self.nav.cursor_index >= len(self._subwindows):
+            # Don't allow the cursor to go over the number of subwindows
+            # This could happen if the window is resized and the cursor index is
+            # pushed out of bounds
+            self.nav.cursor_index = len(self._subwindows) - 1
+
+        # Now that the windows are setup, we can take a second pass through
+        # to draw the content
+        for index, (win, data, inverted) in enumerate(self._subwindows):
+            highlight = (index == self.nav.cursor_index)
+            if highlight:
+                win.bkgd(str(' '), self.term.attr('@highlight'))
+            else:
+                win.bkgd(str(' '), self.term.attr('@normal'))
+            self._draw_item(win, data, inverted, highlight)
 
         self._row += win_n_rows
 
@@ -544,25 +574,3 @@ class Page(object):
         valid, redraw = self.nav.move_page(direction, len(self._subwindows)-1)
         if not valid:
             self.term.flash()
-
-    def _add_cursor(self):
-
-        # Don't allow the cursor to go below page index 0
-        if self.nav.absolute_index < 0:
-            return
-
-        # Don't allow the cursor to go over the number of subwindows
-        # This could happen if the window is resized and the cursor index is
-        # pushed out of bounds
-        if self.nav.cursor_index >= len(self._subwindows):
-            self.nav.cursor_index = len(self._subwindows) - 1
-
-        window, cursor_attr = self._subwindows[self.nav.cursor_index]
-        if cursor_attr is None:
-            attr = self.term.attr('cursor')
-        else:
-            attr = cursor_attr | curses.A_REVERSE
-
-        n_rows, _ = window.getmaxyx()
-        for row in range(n_rows):
-            window.chgat(row, 0, 1, attr)
