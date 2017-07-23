@@ -30,8 +30,8 @@ https://github.com/michael-lazar/rtv
   m     : Move up one page
   gg    : Jump to the first post
   G     : Jump to the last post
-  J     : Jump to next sibling comment
-  K     : Jump to parent comment
+  J     : Jump to the next sibling comment
+  K     : Jump to the parent comment
   1     : Sort by hot
   2     : Sort by top
   3     : Sort by rising

@@ -183,31 +183,49 @@ class SubmissionPage(Page):
 
     @PageController.register(Command('SUBMISSION_GOTO_PARENT'))
     def move_parent_up(self):
-        cur = self.nav.absolute_index
-        if cur > 0:
-            child_level = self.content.get(cur)['level']
-            while self.content.get(cur-1)['level'] >= 1 \
-                    and self.content.get(cur-1)['level'] >= child_level:
+        """
+        Move the cursor up to the comment's parent. If the comment is
+        top-level, jump to the previous top-level comment.
+        """
+
+        cursor = self.nav.absolute_index
+        if cursor > 0:
+            level = max(self.content.get(cursor)['level'], 1)
+            while self.content.get(cursor - 1)['level'] >= level:
                 self._move_cursor(-1)
-                cur -= 1
+                cursor -= 1
             self._move_cursor(-1)
-            self.clear_input_queue()
+        else:
+            self.term.flash()
+
+        self.clear_input_queue()
 
     @PageController.register(Command('SUBMISSION_GOTO_SIBLING'))
     def move_sibling_next(self):
-        cur = self.nav.absolute_index
-        if cur in range(self.content.range[1]):
-            sibling_level = self.content.get(cur)['level']
+        """
+        Jump to the next comment that's at the same level as the selected
+        comment and shares the same parent.
+        """
+
+        cursor = self.nav.absolute_index
+        if cursor >= 0:
+            level = self.content.get(cursor)['level']
             try:
                 move = 1
-                while self.content.get(cur + move)['level'] > sibling_level:
+                while self.content.get(cursor + move)['level'] > level:
                     move += 1
             except IndexError:
-                pass
+                self.term.flash()
             else:
-                if self.content.get(cur + move)['level'] == sibling_level:
-                    [self._move_cursor(1) for _ in range(move)]
-            self.clear_input_queue()
+                if self.content.get(cursor + move)['level'] == level:
+                    for _ in range(move):
+                        self._move_cursor(1)
+                else:
+                    self.term.flash()
+        else:
+            self.term.flash()
+
+        self.clear_input_queue()
 
     def _draw_item(self, win, data, inverted):
 
