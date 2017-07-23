@@ -28,7 +28,7 @@ class SubscriptionPage(Page):
         self.selected_subreddit = None
 
     @SubscriptionController.register(Command('REFRESH'))
-    def refresh_content(self, order=None, name=None, with_search=False):
+    def refresh_content(self, order=None, name=None):
         "Re-download all subscriptions and reset the page index"
 
         # reddit.get_my_subreddits() does not support sorting by order

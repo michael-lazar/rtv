@@ -326,6 +326,7 @@ class SubmissionContent(Content):
         self.max_indent_level = max_indent_level
         self.name = submission_data['permalink']
         self.order = order
+        self.query = None
         self._loader = loader
         self._submission = submission
         self._submission_data = submission_data
@@ -662,6 +663,7 @@ class SubscriptionContent(Content):
 
         self.name = name
         self.order = None
+        self.query = None
         self._loader = loader
         self._subscriptions = subscriptions
         self._subscription_data = []

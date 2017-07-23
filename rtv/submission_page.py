@@ -63,7 +63,7 @@ class SubmissionPage(Page):
         self.active = False
 
     @SubmissionController.register(Command('REFRESH'))
-    def refresh_content(self, order=None, name=None, with_search=False):
+    def refresh_content(self, order=None, name=None):
         "Re-download comments and reset the page index"
 
         order = order or self.content.order

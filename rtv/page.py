@@ -56,7 +56,7 @@ class Page(object):
         self._row = 0
         self._subwindows = None
 
-    def refresh_content(self, order=None, name=None, with_search=False):
+    def refresh_content(self, order=None, name=None):
         raise NotImplementedError
 
     def _draw_item(self, window, data, inverted):
@@ -118,7 +118,7 @@ class Page(object):
             self.term.show_notification('Invalid option')
             return
 
-        self.refresh_content(order=choices[ch], with_search=True)
+        self.refresh_content(order=choices[ch])
 
     @PageController.register(Command('SORT_RISING'))
     def sort_content_rising(self):
@@ -126,7 +126,7 @@ class Page(object):
 
     @PageController.register(Command('SORT_NEW'))
     def sort_content_new(self):
-        self.refresh_content(order='new', with_search=True)
+        self.refresh_content(order='new')
 
     @PageController.register(Command('SORT_CONTROVERSIAL'))
     def sort_content_controversial(self):
@@ -147,7 +147,7 @@ class Page(object):
             self.term.show_notification('Invalid option')
             return
 
-        self.refresh_content(order=choices[ch], with_search=True)
+        self.refresh_content(order=choices[ch])
 
     @PageController.register(Command('MOVE_UP'))
     def move_cursor_up(self):
@@ -408,6 +408,10 @@ class Page(object):
         sub_name = sub_name.replace('/r/front', 'Front Page')
         sub_name = sub_name.replace('/u/me', 'My Submissions')
         sub_name = sub_name.replace('/u/saved', 'My Saved Submissions')
+
+        query = self.content.query
+        if query:
+            sub_name = 'Searching {0}: {1}'.format(sub_name, query)
         self.term.add_line(window, sub_name, 0, 0)
 
         # Set the terminal title
