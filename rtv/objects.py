@@ -642,16 +642,16 @@ class KeyMap(object):
         self._keymap = None
         self.set_bindings(bindings)
 
-    def set_bindings(self, bindings, mode='update'):
+    def set_bindings(self, bindings):
         new_keymap = {}
         for command, keys in bindings.items():
             if not isinstance(command, Command):
                 command = Command(command)
             new_keymap[command] = keys
 
-        if not self._keymap or mode == 'replace':
+        if not self._keymap:
             self._keymap = new_keymap
-        elif mode == 'update':
+        else:
             self._keymap.update(new_keymap)
 
     def get(self, command):
