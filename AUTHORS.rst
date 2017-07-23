@@ -14,6 +14,7 @@ Thanks to the following people for their contributions to this project.
 * `Alexandre Kaskasoli <https://github.com/alx-k>`_
 * `mekhami <https://github.com/mekhami>`_
 * `obosob <https://github.com/obosob>`_
+* `Josue Ortega <https://github.com/noahfx>`_
 * `Toby Hughes <https://github.com/tobywhughes>`_
 * `Noah Morrison <https://github.com/noahmorrison>`_
 * `mardiqwop <https://github.com/mardiqwop>`_
@@ -33,4 +34,3 @@ Thanks to the following people for their contributions to this project.
 * `Matthew Smith <https://github.com/msmith491>`_
 * `Ram-Z <https://github.com/Ram-Z>`_
 * `Wieland Hoffmann <https://github.com/mineo>`_
-* `Adam Talsma <https://github.com/a-tal>`_

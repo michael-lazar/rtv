@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import requests
 
 from rtv.oauth import OAuthHelper, OAuthHandler
+from rtv.exceptions import InvalidRefreshToken
 from rtv.packages.praw.errors import OAuthException
 
 
@@ -75,6 +76,16 @@ def test_oauth_terminal_mobile_authorize(reddit, terminal, config):
     assert '.compact' in oauth.reddit.config.API_PATHS['authorize']
 
 
+def test_oauth_authorize_invalid_token(oauth):
+
+    oauth.config.refresh_token = 'invalid_token'
+    oauth.authorize()
+
+    assert isinstance(oauth.term.loader.exception, InvalidRefreshToken)
+    assert oauth.server is None
+    assert oauth.config.refresh_token is None
+
+
 def test_oauth_authorize_with_refresh_token(oauth, refresh_token):
 
     oauth.config.refresh_token = refresh_token
@@ -86,8 +97,10 @@ def test_oauth_authorize_with_refresh_token(oauth, refresh_token):
         exception = OAuthException('', '')
         oauth.reddit.refresh_access_information.side_effect = exception
         oauth.authorize()
-    assert isinstance(oauth.term.loader.exception, OAuthException)
+
+    assert isinstance(oauth.term.loader.exception, InvalidRefreshToken)
     assert oauth.server is None
+    assert oauth.config.refresh_token is None
 
 
 def test_oauth_clear_data(oauth):

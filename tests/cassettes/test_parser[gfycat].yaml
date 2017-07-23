@@ -5,7 +5,7 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.11.0]
+      User-Agent: [python-requests/2.13.0]
     method: GET
     uri: https://gfycat.com/cajax/get/DeliciousUnfortunateAdouri
   response:
@@ -17,26 +17,26 @@ interactions:
         wWmGhHRokV16rQWFjbWdOb49uj2qkbV2QaOUzC5KJW+P/j3zgvrdHFDIWRgH8JzuNcc2dEfMf4A6
         t5YqUMAs1BvPGDf0waUyFvResD+7mrDdHoCeMQKH1iQP5yEJMO498fax+cTaHTUK94cm1oiW7CGT
         xRlWM5AGH+GHBmM1lhb4oibaQI5nkyUTYuLRwPPeeOlXJtysf6Afh65faW9nIXG+XIV5knmTmNRk
-        mS3XYT7+50c1jaIojF1lqYGQp95yojRfrdM8j2PK3CNsyHbSLM2iMbqAzftOlc7ABtm9E2jF0Jod
-        GChVyw8ESrQnJyeUhAer2SeQkhGo7YWgyXhG1axMWBazOCxCqFZFCUUW5dEyXC1DFmfrxIFZTU03
-        wUdyyM89E2i39BANZZAZdJaxY6x33nGvxh5fQWJrqg0d53zTMOfRbuTe3XU/jaE7WcKo823LpPqT
-        6gsNnKOdBB+5L8ff8RVtOWkCfw1WPeDQjKHPdX0h0DTApzyYUmNnUbVTSam6rXZfhHeCoWTYvoBZ
-        W/esht3DKrqeKlf2vUFLL4qh1M2dT5yBeqXi8HG51KoiNzuXBPuGBgv39ComDDw//wYAAP//AwDn
-        ZS9cJgcAAA==
+        mS3XYT7+50c1jaIojF1lqYGQp95yojRfrdM8j2PK3CNsyHbSLF2lY3QBm/edKp2BDbJ7J9CKoTU7
+        MFCqlh8IlGhPTk4oCQ9Ws08gJSNQ2wtBk/GMqlmZsCxmcViEUK2KEoosyqNluFqGLM7WiQOzmppu
+        go/kkJ97JtBu6SEayiAz6Cxjx1jvvONejT2+gsTWVBs6zvmmYc6jI+fN7q77aQzdyRJGnW9bJtWf
+        VF9o4BztJPjIfTn+jq9oy0kT+Guw6gGHZgx9rusLgaYBPuXBlBo7i6qdSkrVbbX7IrwTDCXD9gXM
+        2rpnNeweVtH1VLmy7w1aelEMpW7ufOIM1CsVh4/LpVYVudm5JNg3NFi4p1cxYeD5+TcAAAD//wMA
+        hhr+cCYHAAA=
     headers:
       Access-Control-Allow-Origin: ['*']
-      Age: ['1536']
+      Age: ['0']
       Cache-Control: ['max-age=3600, public']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
       Content-Type: [application/json]
-      Date: ['Thu, 01 Jun 2017 02:40:29 GMT']
+      Date: ['Thu, 08 Jun 2017 15:18:33 GMT']
       Server: [nginx]
       Vary: ['Accept-Encoding,CloudFront-Is-Mobile-Viewer,CloudFront-Is-Desktop-Viewer,CloudFront-Is-Tablet-Viewer']
-      Via: ['1.1 varnish, 1.1 64fc1ccc427044d03aa5724d4825ec8f.cloudfront.net (CloudFront)']
-      X-Amz-Cf-Id: [bDV12jgzqEihpcfv72_2_jkQWKP4Dyqbvln4KQUS9srUhqvSuGd3Fw==]
-      X-Cache: [Hit from cloudfront]
+      Via: ['1.1 varnish, 1.1 7eee2615532f6e00d61824ea522ec684.cloudfront.net (CloudFront)']
+      X-Amz-Cf-Id: [vXvNCBaUv1-p-7xmfRXv4GZgoEILqI4-uvXsAl8NpcHgygAbRUiS-g==]
+      X-Cache: [Miss from cloudfront]
       X-Powered-By: [PHP/5.5.38]
-      X-Varnish: ['510885232']
+      X-Varnish: ['2774454054']
     status: {code: 200, message: OK}
 version: 1

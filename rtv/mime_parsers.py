@@ -273,6 +273,36 @@ class VidmeMIMEParser(BaseMIMEParser):
             return url, None
 
 
+class LiveleakMIMEParser(BaseMIMEParser):
+    """
+    https://www.liveleak.com/view?i=12c_3456789
+    <video>
+        <source src="https://cdn.liveleak.com/..mp4" res="HD" type="video/mp4">
+        <source src="https://cdn.liveleak.com/..mp4" res="SD" type="video/mp4">
+    </video>
+    Sometimes only one video source is available
+    """
+    pattern = re.compile(r'https?://((www|m)\.)?liveleak\.com/view\?i=\w+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        urls = []
+        videos = soup.find_all('video')
+        for vid in videos:
+            source = vid.find('source', attr={'res': 'HD'}) \
+                        or vid.find('source')
+            if source:
+                urls.append((source.get('src'), source.get('type')))
+        # TODO: Handle pages with multiple videos
+        # TODO: Handle pages with youtube embeds
+        if urls:
+            return urls[0]
+        else:
+            return url, None
+
 # Parsers should be listed in the order they will be checked
 parsers = [
     StreamableMIMEParser,
@@ -282,5 +312,6 @@ parsers = [
     ImgurApiMIMEParser,
     RedditUploadsMIMEParser,
     YoutubeMIMEParser,
+    LiveleakMIMEParser,
     GifvMIMEParser,
     BaseMIMEParser]

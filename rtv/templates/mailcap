@@ -14,7 +14,7 @@
 # - The first entry with a matching MIME type will be executed, * is a wildcard
 # - %s will be replaced with the image or video url
 # - Add ``test=test -n "$DISPLAY"`` if your command opens a new window
-# - Add ``needstermial`` for commands that use the terminal
+# - Add ``needsterminal`` for commands that use the terminal
 # - Add ``copiousoutput`` for commands that dump text to stdout
 
 ###############################################################################

@@ -181,6 +181,52 @@ class SubmissionPage(Page):
         else:
             self.term.flash()
 
+    @PageController.register(Command('SUBMISSION_GOTO_PARENT'))
+    def move_parent_up(self):
+        """
+        Move the cursor up to the comment's parent. If the comment is
+        top-level, jump to the previous top-level comment.
+        """
+
+        cursor = self.nav.absolute_index
+        if cursor > 0:
+            level = max(self.content.get(cursor)['level'], 1)
+            while self.content.get(cursor - 1)['level'] >= level:
+                self._move_cursor(-1)
+                cursor -= 1
+            self._move_cursor(-1)
+        else:
+            self.term.flash()
+
+        self.clear_input_queue()
+
+    @PageController.register(Command('SUBMISSION_GOTO_SIBLING'))
+    def move_sibling_next(self):
+        """
+        Jump to the next comment that's at the same level as the selected
+        comment and shares the same parent.
+        """
+
+        cursor = self.nav.absolute_index
+        if cursor >= 0:
+            level = self.content.get(cursor)['level']
+            try:
+                move = 1
+                while self.content.get(cursor + move)['level'] > level:
+                    move += 1
+            except IndexError:
+                self.term.flash()
+            else:
+                if self.content.get(cursor + move)['level'] == level:
+                    for _ in range(move):
+                        self._move_cursor(1)
+                else:
+                    self.term.flash()
+        else:
+            self.term.flash()
+
+        self.clear_input_queue()
+
     def _draw_item(self, win, data, inverted):
 
         if data['type'] == 'MoreComments':
