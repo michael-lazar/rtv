@@ -61,8 +61,9 @@ class Terminal(object):
         self._mailcap_dict = mailcap.getcaps()
         self._term = os.environ['TERM']
 
-        # Hack to allow setting the Imgur OAuth cred in the config file
-        mime_parsers.ImgurApiMIMEParser.client_id = config['imgur_client_id']
+        # This is a hack, the MIME parsers should be stateless
+        # but we need to load the imgur credentials from the config
+        mime_parsers.ImgurApiMIMEParser.CLIENT_ID = config['imgur_client_id']
 
     @property
     def up_arrow(self):

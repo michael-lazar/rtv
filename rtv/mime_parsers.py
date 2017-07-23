@@ -141,28 +141,37 @@ class ImgurApiMIMEParser(BaseMIMEParser):
     Reference:
         https://apidocs.imgur.com
     """
-
-    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/((?P<domain>a|album|gallery)/)?(?P<hash>[a-zA-Z0-9]+)[^.]+$')
-    client_id = None
+    CLIENT_ID = None
+    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/((?P<domain>a|album|gallery)/)?(?P<hash>[a-zA-Z0-9]+)$')
 
     @classmethod
     def get_mimetype(cls, url):
 
         endpoint = 'https://api.imgur.com/3/{domain}/{page_hash}'
-        headers = {'authorization': 'Client-ID {0}'.format(cls.client_id)}
+        headers = {'authorization': 'Client-ID {0}'.format(cls.CLIENT_ID)}
 
         m = cls.pattern.match(url)
         page_hash = m.group('hash')
-        domain = 'album' if m.group('domain') in ('a', 'album') else 'gallery'
+
+        if m.group('domain') in ('a', 'album'):
+            domain = 'album'
+        else:
+            # This could be a gallery or a single image, but there doesn't
+            # seem to be a way to reliably distinguish between the two just
+            # from the URL. So we assume a gallery, which appear to be more
+            # common, and fallback to an image request upon failure.
+            domain = 'gallery'
 
         url = endpoint.format(domain=domain, page_hash=page_hash)
         r = requests.get(url, headers=headers)
 
-        if r.status_code != 200:
+        if r.status_code != 200 and domain == 'gallery':
+            # Fallback and try to download using the image endpoint
             url = endpoint.format(domain='image', page_hash=page_hash)
             r = requests.get(url, headers=headers)
 
             if r.status_code != 200:
+                # Fallback and use the old page scraper
                 if domain == 'album':
                     return ImgurScrapeAlbumMIMEParser.get_mimetype(url)
                 else:
@@ -241,6 +250,7 @@ class ImgurScrapeAlbumMIMEParser(BaseMIMEParser):
             return " ".join(urls), 'image/x-imgur-album'
         else:
             return url, None
+
 
 class InstagramMIMEParser(OpenGraphMIMEParser):
     """
