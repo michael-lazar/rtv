@@ -136,9 +136,10 @@ def test_config_from_file():
 
         fargs, fbindings = Config.get_file(filename=fp.name)
         config = Config(**fargs)
+        default_keymap = config.keymap._keymap.copy()
         config.keymap.set_bindings(fbindings)
         assert config.config == {}
-        assert config.keymap._keymap == {}
+        assert config.keymap._keymap == default_keymap
 
         # [rtv]
         rows = ['{0}={1}'.format(key, val) for key, val in args.items()]

@@ -643,14 +643,16 @@ class KeyMap(object):
         self.set_bindings(bindings)
 
     def set_bindings(self, bindings):
-        # Clear the keymap before applying the bindings to avoid confusion.
-        # If a user defines custom bindings in their config file, they must
-        # explicitly define ALL of the bindings.
-        self._keymap = {}
+        new_keymap = {}
         for command, keys in bindings.items():
             if not isinstance(command, Command):
                 command = Command(command)
-            self._keymap[command] = keys
+            new_keymap[command] = keys
+
+        if not self._keymap:
+            self._keymap = new_keymap
+        else:
+            self._keymap.update(new_keymap)
 
     def get(self, command):
         if not isinstance(command, Command):

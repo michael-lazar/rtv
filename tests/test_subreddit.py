@@ -87,6 +87,7 @@ def test_subreddit_title(subreddit_page, terminal, capsys):
 
 
 def test_subreddit_search(subreddit_page, terminal):
+    window = terminal.stdscr.subwin
 
     # Search the current subreddit
     with mock.patch.object(terminal, 'prompt_input'):
@@ -96,11 +97,30 @@ def test_subreddit_search(subreddit_page, terminal):
         assert terminal.prompt_input.called
         assert not terminal.loader.exception
 
+        # The page title should display the query
+        subreddit_page.draw()
+        title = 'Searching /r/python: search term'.encode('utf-8')
+        window.addstr.assert_any_call(0, 0, title)
+
+    # Ordering the results should preserve the query
+    window.addstr.reset_mock()
+    subreddit_page.refresh_content(order='hot')
+    subreddit_page.refresh_content(order='top-all')
+    subreddit_page.refresh_content(order='new')
+    assert subreddit_page.content.name == '/r/python'
+    assert subreddit_page.content.query == 'search term'
+    assert not terminal.loader.exception
+
     # Searching with an empty query shouldn't crash
     with mock.patch.object(terminal, 'prompt_input'):
         terminal.prompt_input.return_value = None
         subreddit_page.controller.trigger('f')
         assert not terminal.loader.exception
+
+    # Changing to a new subreddit should clear the query
+    window.addstr.reset_mock()
+    subreddit_page.refresh_content(name='/r/learnpython')
+    assert subreddit_page.content.query is None
 
 
 def test_subreddit_prompt(subreddit_page, terminal):
