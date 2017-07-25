@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 import pytest
 
-from rtv.mime_parsers import parsers
+from rtv.mime_parsers import parsers, ImgurApiMIMEParser
 
 
 RegexpType = type(re.compile(''))
@@ -78,8 +78,10 @@ URLS = OrderedDict([
 
 args, ids = URLS.values(), list(URLS)
 @pytest.mark.parametrize('url,modified_url,mime_type', args, ids=ids)
-def test_parser(url, modified_url, mime_type, reddit):
+def test_parser(url, modified_url, mime_type, reddit, config):
     # Include the reddit fixture so the cassettes get generated
+
+    ImgurApiMIMEParser.CLIENT_ID = config['imgur_client_id']
 
     for parser in parsers:
         if parser.pattern.match(url):
@@ -93,3 +95,21 @@ def test_parser(url, modified_url, mime_type, reddit):
     else:
         # The base parser should catch all urls before this point
         assert False
+
+
+def test_imgur_fallback(reddit):
+    """
+    If something happens to the imgur API key, the code should fallback
+    to manually scraping the page.
+    """
+
+    ImgurApiMIMEParser.CLIENT_ID = 'invalid_api_key'
+
+    for key in ['imgur_1', 'imgur_2', 'imgur_album']:
+        url, modified_url, mime_type = URLS[key]
+
+        assert ImgurApiMIMEParser.pattern.match(url)
+        parsed_url, parsed_type = ImgurApiMIMEParser.get_mimetype(url)
+        # Not sure why, but http://imgur.com/gallery/yjP1v4B (a .gif)
+        # appears to incorrectly return as a JPG type from the scraper
+        assert parsed_type is not None

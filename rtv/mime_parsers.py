@@ -158,20 +158,32 @@ class ImgurApiMIMEParser(BaseMIMEParser):
         else:
             # This could be a gallery or a single image, but there doesn't
             # seem to be a way to reliably distinguish between the two just
-            # from the URL. So we assume a gallery, which appear to be more
+            # from the URL. So we assume a gallery, which appears to be more
             # common, and fallback to an image request upon failure.
             domain = 'gallery'
 
-        url = endpoint.format(domain=domain, page_hash=page_hash)
-        r = requests.get(url, headers=headers)
+        if not cls.CLIENT_ID:
+            # Use the old page scraper if no API key was provided
+            if domain == 'album':
+                return ImgurScrapeAlbumMIMEParser.get_mimetype(url)
+            else:
+                return ImgurScrapeMIMEParser.get_mimetype(url)
 
-        if r.status_code != 200 and domain == 'gallery':
+        api_url = endpoint.format(domain=domain, page_hash=page_hash)
+        r = requests.get(api_url, headers=headers)
+
+        if r.status_code != 200 or 'error' in r.json():
             # Fallback and try to download using the image endpoint
-            url = endpoint.format(domain='image', page_hash=page_hash)
-            r = requests.get(url, headers=headers)
+            api_url = endpoint.format(domain='image', page_hash=page_hash)
+            r = requests.get(api_url, headers=headers)
 
-            if r.status_code != 200:
-                # Fallback and use the old page scraper
+            if r.status_code != 200 or 'error' in r.json():
+                if r.status_code != 200:
+                    _logger.warning('Imgur API request failed, status %s', r.status_code)
+                else:
+                    _logger.warning('Imgur API request failed, resp %s', r.json())
+
+                # Fallback to using the old page scraper
                 if domain == 'album':
                     return ImgurScrapeAlbumMIMEParser.get_mimetype(url)
                 else:
