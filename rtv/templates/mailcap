@@ -42,6 +42,10 @@ video/*; mpv '%s' --autofit 640x480 --loop=inf; test=test -n "$DISPLAY"
 # terminal when X is not available.
 ###############################################################################
 
+# View images directly in your terminal with iTerm2
+# curl -L https://iterm2.com/misc/install_shell_integration_and_utilities.sh | bash
+# image/*; curl -s %s | ~/.iterm2/imgcat && read -n 1; needsterminal
+
 # View true images in the terminal, supported by rxvt-unicode, xterm and st
 # Requires the w3m-img package
 # image/*; w3m -o 'ext_image_viewer=off' '%s'; needsterminal
@@ -57,6 +61,10 @@ image/*; curl -s '%s' | convert -resize 80x80 - jpg:/tmp/rtv.jpg && img2xterm /t
 # Display images in classic ascii using img2txt and lib-caca
 image/*; curl -s '%s' | convert - jpg:/tmp/rtv.jpg && img2txt -f utf8 /tmp/rtv.jpg; needsterminal; copiousoutput
 
+# Full motion videos - requires a framebuffer to view
+video/x-youtube; mpv -vo drm -quiet '%s'; needsterminal
+video/*; mpv -vo drm -quiet '%s'; needsterminal
+
 # Ascii videos
-video/x-youtube; youtube-dl -q -o - '%s' | mplayer -cache 8192 -vo caca -quiet -; needsterminal
-video/*; wget '%s' -O - | mplayer -cache 8192 -vo caca -quiet -; needsterminal
+# video/x-youtube; youtube-dl -q -o - '%s' | mplayer -cache 8192 -vo caca -quiet -; needsterminal
+# video/*; wget '%s' -O - | mplayer -cache 8192 -vo caca -quiet -; needsterminal
