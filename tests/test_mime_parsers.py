@@ -103,8 +103,17 @@ def test_imgur_fallback(reddit):
     to manually scraping the page.
     """
 
-    ImgurApiMIMEParser.CLIENT_ID = 'invalid_api_key'
+    ImgurApiMIMEParser.CLIENT_ID = ''
+    for key in ['imgur_1', 'imgur_2', 'imgur_album']:
+        url, modified_url, mime_type = URLS[key]
 
+        assert ImgurApiMIMEParser.pattern.match(url)
+        parsed_url, parsed_type = ImgurApiMIMEParser.get_mimetype(url)
+        # Not sure why, but http://imgur.com/gallery/yjP1v4B (a .gif)
+        # appears to incorrectly return as a JPG type from the scraper
+        assert parsed_type is not None
+
+    ImgurApiMIMEParser.CLIENT_ID = 'invalid_api_key'
     for key in ['imgur_1', 'imgur_2', 'imgur_album']:
         url, modified_url, mime_type = URLS[key]
 
