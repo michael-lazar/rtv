@@ -157,39 +157,31 @@ class ImgurApiMIMEParser(BaseMIMEParser):
             domain = 'album'
         else:
             # This could be a gallery or a single image, but there doesn't
-            # seem to be a way to reliably distinguish between the two just
-            # from the URL. So we assume a gallery, which appears to be more
-            # common, and fallback to an image request upon failure.
+            # seem to be a way to reliably distinguish between the two.
+            # Assume a gallery, which appears to be more common, and fallback
+            # to an image request upon failure.
             domain = 'gallery'
 
         if not cls.CLIENT_ID:
-            # Use the old page scraper if no API key was provided
-            if domain == 'album':
-                return ImgurScrapeAlbumMIMEParser.get_mimetype(url)
-            else:
-                return ImgurScrapeMIMEParser.get_mimetype(url)
+            return cls.fallback(url, domain)
 
         api_url = endpoint.format(domain=domain, page_hash=page_hash)
         r = requests.get(api_url, headers=headers)
 
-        if r.status_code != 200 or 'error' in r.json():
-            # Fallback and try to download using the image endpoint
+        if domain == 'gallery' and r.status_code != 200:
+            # Not a gallery, try to download using the image endpoint
             api_url = endpoint.format(domain='image', page_hash=page_hash)
             r = requests.get(api_url, headers=headers)
 
-            if r.status_code != 200 or 'error' in r.json():
-                if r.status_code != 200:
-                    _logger.warning('Imgur API request failed, status %s', r.status_code)
-                else:
-                    _logger.warning('Imgur API request failed, resp %s', r.json())
+        if r.status_code != 200:
+            _logger.warning('Imgur API failure, status %s', r.status_code)
+            return cls.fallback(url, domain)
 
-                # Fallback to using the old page scraper
-                if domain == 'album':
-                    return ImgurScrapeAlbumMIMEParser.get_mimetype(url)
-                else:
-                    return ImgurScrapeMIMEParser.get_mimetype(url)
+        data = r.json().get('data')
+        if not data:
+            _logger.warning('Imgur API failure, resp %s', r.json())
+            return cls.fallback(url, domain)
 
-        data = r.json()['data']
         if 'images' in data:
             # TODO: handle imgur albums with mixed content, i.e. jpeg and gifv
             link = ' '.join([d['link'] for d in data['images'] if not d['animated']])
@@ -200,6 +192,16 @@ class ImgurApiMIMEParser(BaseMIMEParser):
 
         link = link.replace('http://', 'https://')
         return link, mime
+
+    @classmethod
+    def fallback(cls, url, domain):
+        """
+        Attempt to use one of the scrapers if the API doesn't work
+        """
+        if domain == 'album':
+            return ImgurScrapeAlbumMIMEParser.get_mimetype(url)
+        else:
+            return ImgurScrapeMIMEParser.get_mimetype(url)
 
 
 class ImgurScrapeMIMEParser(BaseMIMEParser):
