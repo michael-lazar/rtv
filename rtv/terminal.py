@@ -10,6 +10,7 @@ import curses
 import logging
 import threading
 import webbrowser
+import youtube_dl
 import subprocess
 import curses.ascii
 from curses import textpad
@@ -443,6 +444,11 @@ class Terminal(object):
                     _logger.info('Content type could not be determined')
                     raise exceptions.MailcapEntryNotFound()
                 elif content_type == 'text/html':
+                    if [a for a in youtube_dl.list_extractors(100)
+                                    if a.ie_key().lower() in url]:
+                        return mailcap.findmatch(self._mailcap_dict,
+                                                 'video/x-youtube',
+                                                 filename=url)
                     _logger.info('Content type text/html, deferring to browser')
                     raise exceptions.MailcapEntryNotFound()
 
