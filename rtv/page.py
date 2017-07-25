@@ -408,6 +408,10 @@ class Page(object):
         sub_name = sub_name.replace('/r/front', 'Front Page')
         sub_name = sub_name.replace('/u/me', 'My Submissions')
         sub_name = sub_name.replace('/u/saved', 'My Saved Submissions')
+
+        query = self.content.query
+        if query:
+            sub_name = 'Searching {0}: {1}'.format(sub_name, query)
         self.term.add_line(window, sub_name, 0, 0)
 
         # Set the terminal title

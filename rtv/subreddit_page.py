@@ -40,6 +40,13 @@ class SubredditPage(Page):
         "Re-download all submissions and reset the page index"
 
         order = order or self.content.order
+
+        # Preserve the query if staying on the current page
+        if name is None:
+            query = self.content.query
+        else:
+            query = None
+
         name = name or self.content.name
 
         # Hack to allow an order specified in the name by prompt_subreddit() to
@@ -49,7 +56,7 @@ class SubredditPage(Page):
 
         with self.term.loader('Refreshing page'):
             self.content = SubredditContent.from_name(
-                self.reddit, name, self.term.loader, order=order)
+                self.reddit, name, self.term.loader, order=order, query=query)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
