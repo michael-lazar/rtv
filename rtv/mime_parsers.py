@@ -128,7 +128,83 @@ class RedditUploadsMIMEParser(BaseMIMEParser):
         return url, content_type
 
 
-class ImgurMIMEParser(BaseMIMEParser):
+class ImgurApiMIMEParser(BaseMIMEParser):
+    """   
+    Imgur now provides a json API exposing its entire infrastructure. Each Imgur
+    page has an associated hash and can either contain an album, a gallery,
+    or single image.
+    
+    The default client token for RTV is shared among users and allows a maximum
+    global number of requests per day of 12,500. If we find that this limit is
+    not sufficient for all of rtv's traffic, this method will be revisited.
+    
+    Reference:
+        https://apidocs.imgur.com
+    """
+    CLIENT_ID = None
+    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/((?P<domain>a|album|gallery)/)?(?P<hash>[a-zA-Z0-9]+)$')
+
+    @classmethod
+    def get_mimetype(cls, url):
+
+        endpoint = 'https://api.imgur.com/3/{domain}/{page_hash}'
+        headers = {'authorization': 'Client-ID {0}'.format(cls.CLIENT_ID)}
+
+        m = cls.pattern.match(url)
+        page_hash = m.group('hash')
+
+        if m.group('domain') in ('a', 'album'):
+            domain = 'album'
+        else:
+            # This could be a gallery or a single image, but there doesn't
+            # seem to be a way to reliably distinguish between the two.
+            # Assume a gallery, which appears to be more common, and fallback
+            # to an image request upon failure.
+            domain = 'gallery'
+
+        if not cls.CLIENT_ID:
+            return cls.fallback(url, domain)
+
+        api_url = endpoint.format(domain=domain, page_hash=page_hash)
+        r = requests.get(api_url, headers=headers)
+
+        if domain == 'gallery' and r.status_code != 200:
+            # Not a gallery, try to download using the image endpoint
+            api_url = endpoint.format(domain='image', page_hash=page_hash)
+            r = requests.get(api_url, headers=headers)
+
+        if r.status_code != 200:
+            _logger.warning('Imgur API failure, status %s', r.status_code)
+            return cls.fallback(url, domain)
+
+        data = r.json().get('data')
+        if not data:
+            _logger.warning('Imgur API failure, resp %s', r.json())
+            return cls.fallback(url, domain)
+
+        if 'images' in data:
+            # TODO: handle imgur albums with mixed content, i.e. jpeg and gifv
+            link = ' '.join([d['link'] for d in data['images'] if not d['animated']])
+            mime = 'image/x-imgur-album'
+        else:
+            link = data['mp4'] if data['animated'] else data['link']
+            mime = 'video/mp4' if data['animated'] else data['type']
+
+        link = link.replace('http://', 'https://')
+        return link, mime
+
+    @classmethod
+    def fallback(cls, url, domain):
+        """
+        Attempt to use one of the scrapers if the API doesn't work
+        """
+        if domain == 'album':
+            return ImgurScrapeAlbumMIMEParser.get_mimetype(url)
+        else:
+            return ImgurScrapeMIMEParser.get_mimetype(url)
+
+
+class ImgurScrapeMIMEParser(BaseMIMEParser):
     """
     The majority of imgur links don't point directly to the image, so we need
     to open the provided url and scrape the page for the link.
@@ -156,7 +232,7 @@ class ImgurMIMEParser(BaseMIMEParser):
         return BaseMIMEParser.get_mimetype(url)
 
 
-class ImgurAlbumMIMEParser(BaseMIMEParser):
+class ImgurScrapeAlbumMIMEParser(BaseMIMEParser):
     """
     Imgur albums can contain several images, which need to be scraped from the
     landing page. Assumes the following html structure:
@@ -257,8 +333,7 @@ parsers = [
     VidmeMIMEParser,
     InstagramMIMEParser,
     GfycatMIMEParser,
-    ImgurAlbumMIMEParser,
-    ImgurMIMEParser,
+    ImgurApiMIMEParser,
     RedditUploadsMIMEParser,
     YoutubeMIMEParser,
     LiveleakMIMEParser,

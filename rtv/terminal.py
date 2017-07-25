@@ -61,6 +61,10 @@ class Terminal(object):
         self._mailcap_dict = mailcap.getcaps()
         self._term = os.environ.get('TERM')
 
+        # This is a hack, the MIME parsers should be stateless
+        # but we need to load the imgur credentials from the config
+        mime_parsers.ImgurApiMIMEParser.CLIENT_ID = config['imgur_client_id']
+
     @property
     def up_arrow(self):
         symbol = '^' if self.config['ascii'] else '▲'
