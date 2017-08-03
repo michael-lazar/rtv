@@ -141,19 +141,16 @@ Environment Variables
 The default programs that RTV interacts with can be configured through environment variables
 
 ``$RTV_EDITOR``
-  | A program used to compose text submissions and comments.
-  | If not specified, will fallback to ``$VISUAL`` and ``$EDITOR`` in that order.
-  | *Examples: vim, emacs, gedit*
+  | A program used to compose text submissions and comments, e.g. **vim**, **emacs**, **gedit**
+  | *If not specified, will fallback to ``$VISUAL`` and ``$EDITOR`` in that order.*
 
 ``$RTV_BROWSER``
-  | A program used to open links to external websites.
-  | If not specified, will fallback to ``$BROWSER``, or attempt to intelligently choose a browser supported by your system.
-  | *Examples: firefox, google-chrome, w3m, lynx, elinks*
+  | A program used to open links to external websites, e.g. **firefox**, **google-chrome**, **w3m**, **lynx**, **elinks**
+  | *If not specified, will fallback to ``$BROWSER``, or try to intelligently choose a browser supported by your system.*
 
 ``$RTV_URLVIEWER``
-  | A tool used to extract hyperlinks from from text.
-  | If not specified, will fallback to **urlview** if it is installed.
-  | *Examples: `urlview <https://github.com/sigpipe/urlview>`_, `urlscan <https://github.com/firecat53/urlscan>`_*
+  | A tool used to extract hyperlinks from blocks of text, e.g.  `urlview <https://github.com/sigpipe/urlview>`_, `urlscan <https://github.com/firecat53/urlscan>`_
+  | *If not specified, will fallback to urlview if it is installed.*
 
 ------------------------
 Copying to the Clipboard
