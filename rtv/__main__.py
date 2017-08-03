@@ -103,6 +103,7 @@ def main():
             filename=config['log'],
             format='%(asctime)s:%(levelname)s:%(filename)s:%(lineno)d:%(message)s')
         _logger.info('Starting new session, RTV v%s', __version__)
+        _logger.info('%s, %s', sys.executable, sys.version)
         env = [
             ('$DISPLAY', os.getenv('DISPLAY')),
             ('$XDG_CONFIG_HOME', os.getenv('XDG_CONFIG_HOME')),
@@ -111,6 +112,7 @@ def main():
             ('$RTV_EDITOR', os.getenv('RTV_EDITOR')),
             ('$RTV_URLVIEWER', os.getenv('RTV_URLVIEWER'))]
         _logger.info('Environment: %s', env)
+
     else:
         # Add an empty handler so the logger doesn't complain
         logging.root.addHandler(logging.NullHandler())
