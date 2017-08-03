@@ -142,15 +142,15 @@ The default programs that RTV interacts with can be configured through environme
 
 ``$RTV_EDITOR``
   | A program used to compose text submissions and comments, e.g. **vim**, **emacs**, **gedit**
-  | *If not specified, will fallback to ``$VISUAL`` and ``$EDITOR`` in that order*
+  | *If not specified, will fallback to ``$VISUAL`` and ``$EDITOR`` in that order.*
 
 ``$RTV_BROWSER``
   | A program used to open links to external websites, e.g. **firefox**, **google-chrome**, **w3m**, **lynx**, **elinks**
-  | *If not specified, will fallback to ``$BROWSER``, or try to intelligently choose a browser supported by your system*
+  | *If not specified, will fallback to ``$BROWSER``, or try to intelligently choose a browser supported by your system.*
 
 ``$RTV_URLVIEWER``
   | A tool used to extract hyperlinks from blocks of text, e.g.  `urlview <https://github.com/sigpipe/urlview>`_, `urlscan <https://github.com/firecat53/urlscan>`_
-  | *If not specified, will fallback to urlview if it is installed*
+  | *If not specified, will fallback to urlview if it is installed.*
 
 ------------------------
 Copying to the Clipboard
