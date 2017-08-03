@@ -1,4 +1,9 @@
 .*
+!.travis.yml
+!.pylintrc
+!.gitignore
+!.gitattributes
+!.coveragerc
 *~
 *.pyc
 build
