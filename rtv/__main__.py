@@ -106,13 +106,16 @@ def main():
         _logger.info('%s, %s', sys.executable, sys.version)
         env = [
             ('$DISPLAY', os.getenv('DISPLAY')),
+            ('$TERM', os.getenv('TERM')),
             ('$XDG_CONFIG_HOME', os.getenv('XDG_CONFIG_HOME')),
+            ('$RTV_EDITOR', os.getenv('RTV_EDITOR')),
+            ('$RTV_URLVIEWER', os.getenv('RTV_URLVIEWER')),
+            ('$RTV_BROWSER', os.getenv('RTV_BROWSER')),
             ('$BROWSER', os.getenv('BROWSER')),
             ('$PAGER', os.getenv('PAGER')),
-            ('$RTV_EDITOR', os.getenv('RTV_EDITOR')),
-            ('$RTV_URLVIEWER', os.getenv('RTV_URLVIEWER'))]
+            ('$VISUAL', os.getenv('VISUAL')),
+            ('$EDITOR', os.getenv('EDITOR'))]
         _logger.info('Environment: %s', env)
-
     else:
         # Add an empty handler so the logger doesn't complain
         logging.root.addHandler(logging.NullHandler())
