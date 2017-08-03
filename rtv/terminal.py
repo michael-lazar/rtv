@@ -569,7 +569,10 @@ class Terminal(object):
             fp.write(data)
         _logger.info('File created: %s', filepath)
 
-        editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
+        editor = (os.getenv('RTV_EDITOR') or
+                  os.getenv('VISUAL') or
+                  os.getenv('EDITOR') or
+                  'nano')
         command = shlex.split(editor) + [filepath]
         try:
             with self.suspend():
