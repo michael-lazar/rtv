@@ -100,9 +100,9 @@ See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ 
 Settings
 ========
 
--------------
-Configuration
--------------
+------------------
+Configuration File
+------------------
 
 Configuration files are stored in the ``{HOME}/.config/rtv/`` directory
 
@@ -112,9 +112,9 @@ See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv
 
     $ rtv --copy-config
     
------
-Media
------
+-------------------
+Viewing Media Links
+-------------------
 
 You can use `mailcap <https://en.wikipedia.org/wiki/Media_type#Mailcap>`_ to configure
 how RTV will open different types of links
@@ -134,26 +134,33 @@ This template contains examples for common MIME types that work with popular red
 
 Once you've setup your mailcap file, enable it by launching rtv with the ``rtv --enable-media`` flag (or set it in your **rtv.cfg**)
 
------------
-Environment
------------
+---------------------
+Environment Variables
+---------------------
 
-RTV will respect the following environment variables when accessing external programs
+The default programs that RTV interacts with can be configured through environment variables
 
-``$BROWSER``
-  Submission links will be opened inside of your web browser. On most systems, the default web browser will pop up in a new window. If you prefer the complete terminal experience, try using a console-based web browser (`w3m <http://w3m.sourceforge.net/>`_, `lynx <http://lynx.isc.org/>`_, and `elinks <http://elinks.or.cz/>`_ are all good choices).
-``$PAGER``
-  Extra long comments and submissions can be opened using the system's pager.
 ``$RTV_EDITOR``
-  Composing posts and replying to comments is done using your preferred text editor. If not specified, the default system ``$EDITOR`` (or *nano*) will be used.
-``$RTV_URLVIEWER``
- A url viewer is a tool that can be used to extract hyperlinks from inside of blocks of text. `urlview <https://github.com/sigpipe/urlview>`_ and `urlscan <https://github.com/firecat53/urlscan>`_ are known to be compatible with rtv. These applications don't come pre-installed, but are available through most systems' package managers.
+  | A program used to compose text submissions and comments.
+  | If not specified, will fallback to ``$VISUAL`` and ``$EDITOR`` in that order.
+  | *Examples: vim, emacs, gedit*
 
-----
-Copy
-----
-RTV supports copying submission links to the OS clipboard. For macOS it is supported out of the box,
-in Linux systems RTV will need `xsel <http://www.vergenet.net/~conrad/software/xsel/>`_ or `xclip <https://sourceforge.net/projects/xclip/>`_ commands to be installed in the system.
+``$RTV_BROWSER``
+  | A program used to open links to external websites.
+  | If not specified, will fallback to ``$BROWSER``, or attempt to intelligently choose a browser supported by your system.
+  | *Examples: firefox, google-chrome, w3m, lynx, elinks*
+
+``$RTV_URLVIEWER``
+  | A tool used to extract hyperlinks from from text.
+  | If not specified, will fallback to **urlview** if it is installed.
+  | *Examples: `urlview <https://github.com/sigpipe/urlview>`_, `urlscan <https://github.com/firecat53/urlscan>`_*
+
+------------------------
+Copying to the Clipboard
+------------------------
+RTV supports copying submission links to the OS clipboard.
+On macOS this is supported out of the box.
+On Linux systems you will need to install either `xsel <http://www.vergenet.net/~conrad/software/xsel/>`_ or `xclip <https://sourceforge.net/projects/xclip/>`_.
 
 ===
 FAQ
