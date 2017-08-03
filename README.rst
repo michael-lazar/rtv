@@ -149,7 +149,7 @@ The default programs that RTV interacts with can be configured through environme
   | *If not specified, will fallback to ``$BROWSER``, or try to intelligently choose a browser supported by your system*
 
 ``$RTV_URLVIEWER``
-  | A tool used to extract hyperlinks from from text, e.g.  `urlview <https://github.com/sigpipe/urlview>`_, `urlscan <https://github.com/firecat53/urlscan>`_
+  | A tool used to extract hyperlinks from blocks of text, e.g.  `urlview <https://github.com/sigpipe/urlview>`_, `urlscan <https://github.com/firecat53/urlscan>`_
   | *If not specified, will fallback to urlview if it is installed*
 
 ------------------------
