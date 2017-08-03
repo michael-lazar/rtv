@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.17.0: http://github.com/michael-lazar/rtv/releases/tag/v1.17.0
 .. _1.16.0: http://github.com/michael-lazar/rtv/releases/tag/v1.16.0
 .. _1.15.1: http://github.com/michael-lazar/rtv/releases/tag/v1.15.1
 .. _1.15.0: http://github.com/michael-lazar/rtv/releases/tag/v1.15.0
@@ -26,6 +27,34 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.17.0_ (2017-08-03)
+--------------------
+
+Features
+
+* Added the ``J`` command to jump to the next sibling comment.
+* Added the ``K`` command to jump to the parent comment.
+* Search results can now be sorted, and the title bar has been updated
+  to display the current search query.
+* Imgur URLs are now resolved via the Imgur API.
+  This enables the loading of large albums with over 10 images.
+  An ``imgur_client_id`` option has been added to the RTV configuration.
+* A MIME parser has been added for www.liveleak.com.
+* RTV now respects the ``$VISUAL`` environment variable.
+
+Bugfixes
+
+* Fixed a screen refresh bug on urxvt terminals.
+* New key bindings will now attempt to fallback to their default key if not
+  defined in the user's configuration file.
+
+Documentation
+
+* Added additional mailcap examples for framebuffer videos and iTerm2.
+* Python version information is now captured in the log at startup.
+
 
 --------------------
 1.16.0_ (2017-06-08)

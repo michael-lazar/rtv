@@ -18,7 +18,6 @@ Thanks to the following people for their contributions to this project.
 * `Toby Hughes <https://github.com/tobywhughes>`_
 * `Noah Morrison <https://github.com/noahmorrison>`_
 * `mardiqwop <https://github.com/mardiqwop>`_
-* `5225225 <https://github.com/5225225>`_
 * `Shawn Hind <https://github.com/shawnhind>`_
 * `JuanPablo <https://github.com/juanpabloaj>`_
 * `Robert Greener <https://github.com/ragreener1>`_
@@ -26,11 +25,12 @@ Thanks to the following people for their contributions to this project.
 * `Gustavo Zambonin <https://github.com/zambonin>`_
 * `Lorenz Leitner <https://github.com/LoLei>`_
 * `Reshef Elisha <https://github.com/ReshefElisha>`_
+* `Ryan Reno <https://github.com/rreno>`_
 * `afloofloo <https://github.com/afloofloo>`_
 * `Charles Saracco <https://github.com/crsaracco>`_
 * `Fabio Alessandro Locati <https://github.com/Fale>`_
 * `Hans Roman <https://github.com/snahor>`_
 * `Marc Abramowitz <https://github.com/msabramo>`_
 * `Matthew Smith <https://github.com/msmith491>`_
+* `mskwon <https://github.com/mskwon>`_
 * `Ram-Z <https://github.com/Ram-Z>`_
-* `Wieland Hoffmann <https://github.com/mineo>`_
