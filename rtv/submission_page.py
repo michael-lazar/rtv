@@ -181,7 +181,7 @@ class SubmissionPage(Page):
         else:
             self.term.flash()
 
-    @PageController.register(Command('SUBMISSION_GOTO_PARENT'))
+    @SubmissionController.register(Command('SUBMISSION_GOTO_PARENT'))
     def move_parent_up(self):
         """
         Move the cursor up to the comment's parent. If the comment is
@@ -200,7 +200,7 @@ class SubmissionPage(Page):
 
         self.clear_input_queue()
 
-    @PageController.register(Command('SUBMISSION_GOTO_SIBLING'))
+    @SubmissionController.register(Command('SUBMISSION_GOTO_SIBLING'))
     def move_sibling_next(self):
         """
         Jump to the next comment that's at the same level as the selected
