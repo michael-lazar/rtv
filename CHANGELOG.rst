@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.17.1: http://github.com/michael-lazar/rtv/releases/tag/v1.17.1
 .. _1.17.0: http://github.com/michael-lazar/rtv/releases/tag/v1.17.0
 .. _1.16.0: http://github.com/michael-lazar/rtv/releases/tag/v1.16.0
 .. _1.15.1: http://github.com/michael-lazar/rtv/releases/tag/v1.15.1
@@ -27,6 +28,14 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.17.1_ (2017-08-06)
+--------------------
+
+Bugfixes
+
+* ``J``/``K`` commands are now restricted to the subreddit page.
 
 --------------------
 1.17.0_ (2017-08-03)
