@@ -35,7 +35,7 @@ RTV Changelog
 
 Bugfixes
 
-* ``J``/``K`` commands are now restricted to the subreddit page.
+* ``J``/``K`` commands are now restricted to the submission page.
 
 --------------------
 1.17.0_ (2017-08-03)
