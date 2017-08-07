@@ -37,7 +37,8 @@ def test_terminal_properties(terminal, config):
 
     terminal._display = None
     with mock.patch('rtv.terminal.sys') as sys, \
-            mock.patch.dict('os.environ', {'DISPLAY': ''}):
+            mock.patch('os.environ', {'DISPLAY': ''}), \
+            mock.patch('webbrowser._tryorder', new=[]):
         sys.platform = 'darwin'
         assert terminal.display is True
 
