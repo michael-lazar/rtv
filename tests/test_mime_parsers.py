@@ -73,6 +73,14 @@ URLS = OrderedDict([
         'https://www.liveleak.com/view?i=08b_1499296574',
         re.compile('https://cdn.liveleak.com/80281E/ll_a_s/2017/Jul/5/LiveLeak-dot-com-08b_1499296574-NMHH8690_1499296571.mov.h264_720p.mp4(.*)'),
         'video/mp4')),
+    ('reddit_gif', (
+        'https://v.redd.it/wkm9zol8c6fz',
+        'https://v.redd.it/wkm9zol8c6fz/DASH_600_K',
+        'video/mp4')),
+    ('reddit_video', (
+        'https://v.redd.it/zv89llsvexdz',
+        'https://v.redd.it/zv89llsvexdz/DASHPlaylist.mpd',
+        'video/x-youtube')),
 ])
 
 

@@ -128,6 +128,28 @@ class RedditUploadsMIMEParser(BaseMIMEParser):
         return url, content_type
 
 
+class RedditVideoMIMEParser(BaseMIMEParser):
+    """
+    Reddit hosted videos/gifs.
+    Media uses MPEG-DASH format (.mpd)
+    """
+    pattern = re.compile(r'https://v\.redd\.it/.+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        request_url = url + '/DASHPlaylist.mpd'
+        page = requests.get(request_url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        if not soup.find('representation', attrs={'mimetype': 'audio/mp4'}):
+            reps = soup.find_all('representation',
+                                 attrs={'mimetype': 'video/mp4'})
+            rep = sorted(reps, reverse=True,
+                         key=lambda t: int(t.get('bandwidth')))[0]
+            return url + '/' + rep.find('baseurl').text, 'video/mp4'
+        else:
+            return request_url, 'video/x-youtube'
+
+
 class ImgurApiMIMEParser(BaseMIMEParser):
     """   
     Imgur now provides a json API exposing its entire infrastructure. Each Imgur
@@ -335,6 +357,7 @@ parsers = [
     GfycatMIMEParser,
     ImgurApiMIMEParser,
     RedditUploadsMIMEParser,
+    RedditVideoMIMEParser,
     YoutubeMIMEParser,
     LiveleakMIMEParser,
     GifvMIMEParser,
