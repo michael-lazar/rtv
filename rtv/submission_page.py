@@ -262,7 +262,10 @@ class SubmissionPage(Page):
 
             attr = curses.A_BOLD
             attr |= (Color.BLUE if not data['is_author'] else Color.GREEN)
-            self.term.add_line(win, '{author} '.format(**data), row, 1, attr)
+            text = '{author} '.format(**data)
+            if data['is_author']:
+                text += '[S] '
+            self.term.add_line(win, text, row, 1, attr)
 
             if data['flair']:
                 attr = curses.A_BOLD | Color.YELLOW
