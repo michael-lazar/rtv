@@ -302,6 +302,25 @@ class StreamableMIMEParser(OpenGraphMIMEParser):
     pattern = re.compile(r'https?://(www\.)?streamable\.com/[^.]+$')
 
 
+class TwitchMIMEParser(BaseMIMEParser):
+    """
+    Non-streaming videos hosted by twitch.tv
+    """
+    pattern = re.compile(r'https?://clips\.?twitch\.tv/[^.]+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        tag = soup.find('meta', attrs={'name': 'twitter:image'})
+        thumbnail = tag.get('content')
+        suffix = '-preview.jpg'
+        if thumbnail.endswith(suffix):
+            return thumbnail.replace(suffix, '.mp4'), 'video/mp4'
+        else:
+            return url, None
+
+
 class VidmeMIMEParser(BaseMIMEParser):
     """
     Vidme provides a json api.
@@ -360,5 +379,6 @@ parsers = [
     RedditVideoMIMEParser,
     YoutubeMIMEParser,
     LiveleakMIMEParser,
+    TwitchMIMEParser,
     GifvMIMEParser,
     BaseMIMEParser]
