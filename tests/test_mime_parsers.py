@@ -81,6 +81,10 @@ URLS = OrderedDict([
         'https://v.redd.it/zv89llsvexdz',
         'https://v.redd.it/zv89llsvexdz/DASHPlaylist.mpd',
         'video/x-youtube')),
+    ('oddshot', (
+        'https://oddshot.tv/s/5wN6Sy',
+        'https://oddshot.akamaized.net/m/render-captures/source/Unknown-YjBkNTcwZWFlZGJhMGYyNQ.mp4',
+        'video/mp4')),
 ])
 
 
