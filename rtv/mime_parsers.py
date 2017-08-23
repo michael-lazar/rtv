@@ -32,6 +32,7 @@ class BaseMIMEParser(object):
                 browser.
         """
         filename = url.split('?')[0]
+        filename = filename.split('#')[0]
         content_type, _ = mimetypes.guess_type(filename)
         return url, content_type
 
@@ -54,12 +55,11 @@ class OpenGraphMIMEParser(BaseMIMEParser):
     def get_mimetype(url):
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
-        tag = soup.find('meta', attrs={'property': 'og:video:secure_url'})
-        tag = tag or soup.find('meta', attrs={'property':  'og:image'})
-        if tag:
-            return BaseMIMEParser.get_mimetype(tag.get('content'))
-        else:
-            return url, None
+        for og_type in ['og:video:secure_url', 'og:video', 'og:image']:
+            tag = soup.find('meta', attrs={'property': og_type})
+            if tag:
+                return BaseMIMEParser.get_mimetype(tag.get('content'))
+        return url, None
 
 
 class GfycatMIMEParser(BaseMIMEParser):
@@ -321,6 +321,13 @@ class TwitchMIMEParser(BaseMIMEParser):
             return url, None
 
 
+class OddshotIMEParser(OpenGraphMIMEParser):
+    """
+    Oddshot uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://oddshot\.tv/s(hot)?/[^.]+$')
+
+
 class VidmeMIMEParser(BaseMIMEParser):
     """
     Vidme provides a json api.
@@ -370,6 +377,7 @@ class LiveleakMIMEParser(BaseMIMEParser):
 
 # Parsers should be listed in the order they will be checked
 parsers = [
+    OddshotIMEParser,
     StreamableMIMEParser,
     VidmeMIMEParser,
     InstagramMIMEParser,
