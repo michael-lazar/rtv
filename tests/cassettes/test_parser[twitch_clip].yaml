@@ -1,0 +1,360 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.3]
+    method: GET
+    uri: https://clips.twitch.tv/avaail/ExpensiveFishBCouch
+  response:
+    body: {string: '<a href="https://clips.twitch.tv/RelentlessDifficultYogurtArsonNoSexy">Moved
+        Permanently</a>.
+
+
+'}
+    headers:
+      Cache-Control: ['public, max-age=300, s-maxage=300']
+      Connection: [keep-alive]
+      Content-Length: ['95']
+      Content-Type: [text/html; charset=utf-8]
+      Date: ['Sun, 20 Aug 2017 13:25:05 GMT']
+      Location: ['https://clips.twitch.tv/RelentlessDifficultYogurtArsonNoSexy']
+      Server: [nginx/1.8.1]
+      Via: [1.1 cbefa4574158a548775db8beda8075d2.cloudfront.net (CloudFront)]
+      X-Amz-Cf-Id: [KdIDFnr7QRO0YsFiDVc1bekNw6m2yIAWP_V0AwYNk3M_ppJqFxRiRQ==]
+      X-Cache: [Miss from cloudfront]
+    status: {code: 301, message: Moved Permanently}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.3]
+    method: GET
+    uri: https://clips.twitch.tv/RelentlessDifficultYogurtArsonNoSexy
+  response:
+    body: {string: "<!DOCTYPE html>\n<html lang=\"en\" class=\"js-html-root\">\n    <head
+        prefix=\"og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#\">\n        \n        <title>TAKING
+        EVERY GYM BY STORM. IRL IDIOT POKEMON GO. Level 25. @Snowboardjacket</title>\n
+        \       \n        <link rel=\"icon\" href=\"https://www.twitch.tv/favicon.ico\">\n
+        \       <link href=\"https://clips.twitch.tv/assets/16d48e72d557c1c629f7a332e3e65ed8a3f6d0ba/view.css\"
+        rel=\"stylesheet\" type=\"text/css\">\n        <script> window.Benchmark =
+        new Date().getTime(); </script>\n        <script type=\"text/javascript\">window.i18n
+        = {\"(required)\":\"(required)\",\"1s back\":\"1s back\",\"1s forward\":\"1s
+        forward\",\"ALT\":\"ALT\",\"Add a description...\":\"Add a description...\",\"Add
+        a title\":\"Add a title\",\"Add {{hashtag}} to your clip title to let everyone
+        know what you think about this clip. Try to find all the effects!\":\"Add
+        {{hashtag}} to your clip title to let everyone know what you think about this
+        clip. Try to find all the effects!\",\"Attempts or Threats to Harm\":\"Attempts
+        or Threats to Harm\",\"Back\":\"Back\",\"Back/Forward 1 frame\":\"Back/Forward
+        1 frame\",\"Back/Forward {{count}} second\":\"Back/Forward {{count}} second\",\"Back/Forward
+        {{count}} second_plural\":\"Back/Forward {{count}} seconds\",\"Ban User\":\"Ban
+        User\",\"Ban this Clip Creator from Your Channel\":\"Ban this Clip Creator
+        from Your Channel\",\"Cancel\":\"Cancel\",\"Channel\":\"Channel\",\"Chat Ban
+        Evasion\":\"Chat Ban Evasion\",\"Cheating in Online Game\":\"Cheating in Online
+        Game\",\"Check out this clip from {{displayName}}'s broadcast\":\"Check out
+        this clip from {{displayName}}'s broadcast\",\"Clip\":\"Clip\",\"Clip Link\":\"Clip
+        Link\",\"Clip Shared\":\"Clip Shared\",\"Clipped By\":\"Clipped By\",\"Clipped
+        by {{curatorName}}\":\"Clipped by {{curatorName}}\",\"Clipped by {{displayName}}\":\"Clipped
+        by {{displayName}}\",\"Clipper\":\"Clipper\",\"Clips Manager\":\"Clips Manager\",\"Clips
+        of my Channel\":\"Clips of my Channel\",\"Clips you create are public and
+        may be shared with the Twitch community. To delete your clip, click on the
+        gear icon in the player.\":\"Clips you create are public and may be shared
+        with the Twitch community. To delete your clip, click on the gear icon in
+        the player.\",\"Close\":\"Close\",\"Copied\":\"Copied\",\"Copy\":\"Copy\",\"Could
+        not post your update\":\"Could not post your update\",\"Create Clips to fill
+        this space with the most memorable moments from your favorite Twitch streams.
+        Just hit the Clip button on the video player to create a 30-second video of
+        the action.\":\"Create Clips to fill this space with the most memorable moments
+        from your favorite Twitch streams. Just hit the Clip button on the video player
+        to create a 30-second video of the action.\",\"Created\":\"Created\",\"Creative
+        Conduct Violation\":\"Creative Conduct Violation\",\"Curator\":\"Curator\",\"Delete\":\"Delete\",\"Delete
+        All\":\"Delete All\",\"Delete All Clips\":\"Delete All Clips\",\"Delete All
+        Clips from Related Video\":\"Delete All Clips from Related Video\",\"Delete
+        Clip\":\"Delete Clip\",\"Delete This Clip\":\"Delete This Clip\",\"Description\":\"Description\",\"Disable
+        Dark Mode\":\"Disable Dark Mode\",\"Dismiss Keyboard Shortcuts\":\"Dismiss
+        Keyboard Shortcuts\",\"Drag the filmstrip to make edits\":\"Drag the filmstrip
+        to make edits\",\"Edit Clip\":\"Edit Clip\",\"Editing has expired\":\"Editing
+        has expired\",\"Embed Code\":\"Embed Code\",\"Enable Dark Mode\":\"Enable
+        Dark Mode\",\"Enable your Pulse to share this clip!\":\"Enable your Pulse
+        to share this clip!\",\"End Time\":\"End Time\",\"Entire Window\":\"Entire
+        Window\",\"Esc\":\"Esc\",\"Exit Fullscreen\":\"Exit Fullscreen\",\"Explore
+        Clips\":\"Explore Clips\",\"Follow\":\"Follow\",\"Follow {{broadcaster}}\":\"Follow
+        {{broadcaster}}\",\"Following {{broadcaster}}\":\"Following {{broadcaster}}\",\"Full
+        Video\":\"Full Video\",\"Full Video Unavailable\":\"Full Video Unavailable\",\"Fullscreen\":\"Fullscreen\",\"Fullscreen
+        unavailable on this page\":\"Fullscreen unavailable on this page\",\"Game\":\"Game\",\"Generating
+        Clipperino\":\"Generating Clipperino\",\"Give it a try.\":\"Give it a try.\",\"Gore
+        or Other Obscene Content\":\"Gore or Other Obscene Content\",\"Happy 1st birthday
+        to Clips! Celebrate with us this week. Learn more\":\"Happy 1st birthday to
+        Clips! Celebrate with us this week. Learn more\",\"Harassment\":\"Harassment\",\"Hate
+        Speech\":\"Hate Speech\",\"Hurry Up! You have \\u003c1m left to edit this
+        clip\":\"Hurry Up! You have \\u003c1m left to edit this clip\",\"Hurry Up!
+        You have {{count}}m left to edit this clip\":\"Hurry Up! You have {{count}}m
+        left to edit this clip\",\"Hurry Up! You have {{count}}m left to edit this
+        clip_plural\":\"Hurry Up! You have {{count}}m left to edit this clip\",\"Impersonation\":\"Impersonation\",\"Just
+        now\":\"Just now\",\"Keyboard Shortcuts\":\"Keyboard Shortcuts\",\"LIVE\":\"LIVE\",\"Learn
+        More\":\"Learn More\",\"Learn more about Pulse\":\"Learn more about Pulse\",\"Link\":\"Link\",\"Loading...\":\"Loading...\",\"Log
+        In\":\"Log In\",\"Login\":\"Login\",\"Logout\":\"Logout\",\"MORE CHAT \u2193\":\"MORE
+        CHAT \u2193\",\"Manage all your clips from here.\":\"Manage all your clips
+        from here.\",\"Moderation\":\"Moderation\",\"More\":\"More\",\"Music Conduct
+        Violation\":\"Music Conduct Violation\",\"Mute\":\"Mute\",\"My Clips\":\"My
+        Clips\",\"My Twitch Channel\":\"My Twitch Channel\",\"N/A\":\"N/A\",\"New
+        on Clips: Playback Speeds!\":\"New on Clips: Playback Speeds!\",\"Next time
+        you stream, ask your viewers to make and share Clips of your best moments.\":\"Next
+        time you stream, ask your viewers to make and share Clips of your best moments.\",\"No
+        Clips Found\":\"No Clips Found\",\"No title\":\"No title\",\"Non-Gaming Content\":\"Non-Gaming
+        Content\",\"Offensive Username\":\"Offensive Username\",\"Options\":\"Options\",\"Other
+        Terms of Service Violation\":\"Other Terms of Service Violation\",\"Pause\":\"Pause\",\"Pause/Play\":\"Pause/Play\",\"Play\":\"Play\",\"Plays
+        are updated every 15 minutes\":\"Plays are updated every 15 minutes\",\"Popular
+        Clips\":\"Popular Clips\",\"Popular Clips Clipped by {{curator}}\":\"Popular
+        Clips Clipped by {{curator}}\",\"Popular Clips from {{channel}}\":\"Popular
+        Clips from {{channel}}\",\"Popular Clips from {{game}}\":\"Popular Clips from
+        {{game}}\",\"Porn or Other Sexually Explicit Content\":\"Porn or Other Sexually
+        Explicit Content\",\"Post\":\"Post\",\"Press \u2318+C to Copy\":\"Press \u2318+C
+        to Copy\",\"Prohibited Game\":\"Prohibited Game\",\"Publish\":\"Publish\",\"Publishing...\":\"Publishing...\",\"Pulse\":\"Pulse\",\"Quality\":\"Quality\",\"Reactions\":\"Reactions\",\"Reactions
+        are here. Show the community how you feel about the clip!\":\"Reactions are
+        here. Show the community how you feel about the clip!\",\"Remove All Clips\":\"Remove
+        All Clips\",\"Remove Clips\":\"Remove Clips\",\"Replay\":\"Replay\",\"Report\":\"Report\",\"Report
+        Clip\":\"Report Clip\",\"Report this Clip\":\"Report this Clip\",\"Reset\":\"Reset\",\"SHIFT\":\"SHIFT\",\"Save\":\"Save\",\"Search
+        for Emotes\":\"Search for Emotes\",\"See what happens when you add {{hashtag}}
+        to your clip title!\":\"See what happens when you add {{hashtag}} to your
+        clip title!\",\"Select Reason\":\"Select Reason\",\"Select one...\":\"Select
+        one...\",\"Self-Harm\":\"Self-Harm\",\"Share\":\"Share\",\"Share Clip\":\"Share
+        Clip\",\"Share this Clip\":\"Share this Clip\",\"Share to Pulse\":\"Share
+        to Pulse\",\"Share to Twitch Pulse!\":\"Share to Twitch Pulse!\",\"Share your
+        clip to your Pulse!\":\"Share your clip to your Pulse!\",\"Sharing is Caring\":\"Sharing
+        is Caring\",\"Shift\":\"Shift\",\"Show this menu\":\"Show this menu\",\"Sign
+        up\":\"Sign up\",\"Similar Clips\":\"Similar Clips\",\"Site Suspension Evasion\":\"Site
+        Suspension Evasion\",\"Slow down/Speed up\":\"Slow down/Speed up\",\"Source\":\"Source\",\"Space\":\"Space\",\"Spam,
+        Scams, or Other Malicious Content\":\"Spam, Scams, or Other Malicious Content\",\"Speed\":\"Speed\",\"Start
+        Time\":\"Start Time\",\"Submit\":\"Submit\",\"Suspend User\":\"Suspend User\",\"Suspend
+        User (24 hr)\":\"Suspend User (24 hr)\",\"Suspend this Clip Creator for 24
+        hours from Your Channel\":\"Suspend this Clip Creator for 24 hours from Your
+        Channel\",\"Tell us your concern about this content so that we can review
+        it to determine whether there has been a violation of the {{termsOfService}}
+        (Abuse of this feature is violation of the terms of service.)\":\"Tell us
+        your concern about this content so that we can review it to determine whether
+        there has been a violation of the {{termsOfService}} (Abuse of this feature
+        is violation of the terms of service.)\",\"This clip and all other clips created
+        from the same video will be permanently deleted.\":\"This clip and all other
+        clips created from the same video will be permanently deleted.\",\"This clip
+        will be permanently deleted.\":\"This clip will be permanently deleted.\",\"Timeout
+        User\":\"Timeout User\",\"Timeout User (24 hr)\":\"Timeout User (24 hr)\",\"Timeout
+        this Clip Creator for 24 hours from Your Channel\":\"Timeout this Clip Creator
+        for 24 hours from Your Channel\",\"Title\":\"Title\",\"Toggle Fullscreen\":\"Toggle
+        Fullscreen\",\"Underaged\":\"Underaged\",\"Unmute\":\"Unmute\",\"VOD Link\":\"VOD
+        Link\",\"Video Deleted\":\"Video Deleted\",\"View Keyboard Shortcuts\":\"View
+        Keyboard Shortcuts\",\"View clip page\":\"View clip page\",\"View it now\":\"View
+        it now\",\"View on Clip Page {{rightArrow}}\":\"View on Clip Page {{rightArrow}}\",\"Views\":\"Views\",\"Watch
+        Full Video\":\"Watch Full Video\",\"Watch Live\":\"Watch Live\",\"Watch clips
+        at different speeds and even go frame by frame! Pro tip: enter \\\"?\\\" to
+        view keyboard shortcuts.\":\"Watch clips at different speeds and even go frame
+        by frame! Pro tip: enter \\\"?\\\" to view keyboard shortcuts.\",\"Watch full
+        video\":\"Watch full video\",\"Watch live stream\":\"Watch live stream\",\"Watch
+        the full video\":\"Watch the full video\",\"Watch the live stream\":\"Watch
+        the live stream\",\"Watch {{broadcaster}} Live\":\"Watch {{broadcaster}} Live\",\"You
+        can no longer edit this clip :(\":\"You can no longer edit this clip :(\",\"You
+        have {{count}}h left to edit this clip.\":\"You have {{count}}h left to edit
+        this clip.\",\"You have {{count}}h left to edit this clip._plural\":\"You
+        have {{count}}h left to edit this clip.\",\"You have {{count}}m left to edit
+        this clip\":\"You have {{count}}m left to edit this clip\",\"You have {{count}}m
+        left to edit this clip_plural\":\"You have {{count}}m left to edit this clip\",\"Your
+        Clips\":\"Your Clips\",\"Your clip was successfully shared to your Pulse.\":\"Your
+        clip was successfully shared to your Pulse.\",\"Your report has successfully
+        been submitted.\":\"Your report has successfully been submitted.\",\"playing
+        {{game}}\":\"playing {{game}}\",\"streaming {{directory}}\":\"streaming {{directory}}\",\"terms
+        of service\":\"terms of service\",\"tsk tsk bad word\":\"tsk tsk bad word\",\"{{clipCreatorName}}
+        will be permanently banned from creating clips and chatting in your channel.\":\"{{clipCreatorName}}
+        will be permanently banned from creating clips and chatting in your channel.\",\"{{clipCreatorName}}
+        will temporarily be timed out from creating clips and chatting in your channel
+        for 24 hours.\":\"{{clipCreatorName}} will temporarily be timed out from creating
+        clips and chatting in your channel for 24 hours.\",\"{{count}} day ago\":\"{{count}}
+        day ago\",\"{{count}} day ago_plural\":\"{{count}} days ago\",\"{{count}}
+        hour ago\":\"{{count}} hour ago\",\"{{count}} hour ago_plural\":\"{{count}}
+        hours ago\",\"{{count}} minute ago\":\"{{count}} minute ago\",\"{{count}}
+        minute ago_plural\":\"{{count}} minutes ago\",\"{{count}} month ago\":\"{{count}}
+        month ago\",\"{{count}} month ago_plural\":\"{{count}} months ago\",\"{{count}}
+        second ago\":\"{{count}} second ago\",\"{{count}} second ago_plural\":\"{{count}}
+        seconds ago\",\"{{count}} week ago\":\"{{count}} week ago\",\"{{count}} week
+        ago_plural\":\"{{count}} weeks ago\",\"{{count}} year ago\":\"{{count}} year
+        ago\",\"{{count}} year ago_plural\":\"{{count}} years ago\",\"{{ctrlKey}}
+        + {{shiftKey}} + {{shortcutDirection}} {{description}}\":\"{{ctrlKey}} + {{shiftKey}}
+        + {{shortcutDirection}} {{description}}\",\"{{displayName}} playing {{game}}\":\"{{displayName}}
+        playing {{game}}\",\"{{displayName}} streaming {{directory}}\":\"{{displayName}}
+        streaming {{directory}}\",\"{{login}} to share this clip to your Pulse!\":\"{{login}}
+        to share this clip to your Pulse!\",\"{{numberOfViews}} view\":\"{{numberOfViews}}
+        view\",\"{{numberOfViews}} view_plural\":\"{{numberOfViews}} views\",\"{{num}}
+        character over\":\"{{num}} character over\",\"{{num}} character over_plural\":\"{{num}}
+        characters over\",\"{{num}} character remaining\":\"{{num}} character remaining\",\"{{num}}
+        character remaining_plural\":\"{{num}} characters remaining\",\"{{playbackRate}}x\":\"{{playbackRate}}x\",\"{{playbackRate}}x
+        (Normal)\":\"{{playbackRate}}x (Normal)\",\"{{seconds}}s\":\"{{seconds}}s\",\"{{seconds}}s_plural\":\"{{seconds}}s\",\"{{shiftKey}}
+        + {{altKey}} + {{shortcutDirection}} {{description}}\":\"{{shiftKey}} + {{altKey}}
+        + {{shortcutDirection}} {{description}}\",\"{{shortcutDirection}} {{description}}\":\"{{shortcutDirection}}
+        {{description}}\"};</script>\n\n        \n        <meta property=\"fb:app_id\"
+        content=\"161273083968709\"/>\n        <meta property=\"og:url\" content=\"https://clips.twitch.tv/RelentlessDifficultYogurtArsonNoSexy\"/>\n
+        \       <meta property=\"og:site_name\" content=\"Twitch\"/>\n        <meta
+        property=\"og:type\" content=\"video.other\"/>\n        <meta property=\"og:image\"
+        content=\"https://clips-media-assets.twitch.tv/22467338656-index-0000000111-preview.jpg\"/>\n
+        \       \n        <meta property=\"og:title\" content='Avaail Playing Pok\xE9mon
+        Go - Twitch Clips'>\n        \n        \n        <meta property=\"og:description\"
+        content='TAKING EVERY GYM BY STORM. IRL IDIOT POKEMON GO. Level 25. @Snowboardjacket
+        - Clipped by Zer0v7'>\n        \n\n        \n        <meta name=\"twitter:card\"
+        content=\"player\">\n        <meta name=\"twitter:site\" content=\"@twitch\">\n
+        \       <meta name=\"twitter:image\" content=\"https://clips-media-assets.twitch.tv/22467338656-index-0000000111-preview.jpg\">\n
+        \       <meta name=\"twitter:player\" content=\"https://clips.twitch.tv/embed?clip=RelentlessDifficultYogurtArsonNoSexy\">\n
+        \       <meta name=\"twitter:player:width\" content=\"640\">\n        <meta
+        name=\"twitter:player:height\" content=\"360\">\n        \n        <meta property=\"twitter:title\"
+        content='Avaail Playing Pok\xE9mon Go - Twitch Clips'>\n        \n        \n
+        \       <meta property=\"twitter:description\" content='TAKING EVERY GYM BY
+        STORM. IRL IDIOT POKEMON GO. Level 25. @Snowboardjacket - Clipped by Zer0v7'>\n
+        \       \n\n        <meta name=\"viewport\" content=\"width=device-width,
+        initial-scale=1.0\">\n        <script>\n            window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new
+        Date;\n            ga('create', 'UA-23719667-11', { 'sampleRate': 0.1 });\n
+        \           ga('send', 'pageview');\n        </script>\n        <script async
+        src='https://www.google-analytics.com/analytics.js'></script>\n    </head>\n
+        \   <body>\n        <svg viewBox=\"0 0 32 32\" xmlns=\"http://www.w3.org/2000/svg\"
+        style=\"width:0;height:0;visibility:hidden;display:block;\">\n          <symbol
+        viewBox=\"0 0 32 32\" id=\"icon_fb\"><path clip-rule=\"evenodd\" d=\"M16.842
+        24v-6.842h2.653l.398-2.667h-3.051V12.79c0-.772.247-1.298 1.526-1.298L20 11.49V9.105A25.285
+        25.285 0 0 0 17.623 9c-2.353 0-3.963 1.243-3.963 3.525v1.967H11v2.666h2.66V24h3.182\"
+        fill-rule=\"evenodd\"></path></symbol>\n          <symbol viewBox=\"0 0 32
+        32\" id=\"icon_reddit\"><path d=\"M21.998 8.692c.545 0 .988.447.988.994a.992.992
+        0 0 1-.987.995.991.991 0 0 1-.987-.995c0-.547.442-.994.987-.994h-.001zm-.5
+        5.159c-1.38-.895-3.162-1.418-5.07-1.494l1.047-3.335 2.85.675c.003.923.75 1.671
+        1.674 1.676a1.683 1.683 0 0 0 1.674-1.687A1.683 1.683 0 0 0 22 8c-.688 0-1.28.42-1.538
+        1.018l-3.139-.744a.342.342 0 0 0-.406.233l-1.208 3.842c-2.005.038-3.887.567-5.328
+        1.502a2.014 2.014 0 0 0-1.347-.518A2.042 2.042 0 0 0 7 15.38c0 .72.376 1.386.992
+        1.757-.03.191-.045.386-.045.58 0 1.465.85 2.83 2.396 3.845a8.483 8.483 0 0
+        0 1.62.822c2.509.964 6.692.602 7.952 0 1.26-.601 1.128-.498 1.62-.822 1.545-1.015
+        2.396-2.38 2.396-3.844 0-.195-.015-.39-.045-.581a2.049 2.049 0 0 0-1.04-3.805c-.499
+        0-.979.185-1.348.519zm-5.56 7.327c1.333 0 2.284-.294 2.887-.901a.348.348 0
+        0 0 0-.49.342.342 0 0 0-.486 0c-.468.47-1.26.699-2.4.699-1.141 0-1.932-.229-2.4-.698a.342.342
+        0 0 0-.486 0 .347.347 0 0 0 0 .489c.603.607 1.553.901 2.886.901zm2.695-5.688a1.245
+        1.245 0 0 0-1.238 1.248c0 .686.555 1.246 1.238 1.246a1.245 1.245 0 0 0 1.239-1.247c0-.687-.556-1.246-1.239-1.246zm-5.39.001c-.682
+        0-1.237.559-1.237 1.247 0 .686.555 1.245 1.238 1.245.682 0 1.237-.559 1.237-1.245
+        0-.688-.555-1.247-1.237-1.247z\" fill-rule=\"evenodd\"/></symbol>\n          <symbol
+        viewBox=\"0 0 32 32\" id=\"icon_twitter\"><path clip-rule=\"evenodd\" d=\"M23.966
+        11.533c-.55.26-1.142.436-1.763.515a3.252 3.252 0 0 0 1.35-1.81c-.6.38-1.26.649-1.95.794A2.983
+        2.983 0 0 0 19.362 10c-1.696 0-3.07 1.464-3.07 3.27 0 .256.026.505.079.745-2.552-.136-4.815-1.438-6.33-3.417a3.417
+        3.417 0 0 0-.415 1.644c0 1.134.543 2.135 1.366 2.722a2.918 2.918 0 0 1-1.39-.41v.042c0
+        1.584 1.057 2.906 2.463 3.206-.452.131-.928.15-1.388.056.392 1.3 1.526 2.245
+        2.869 2.271A5.917 5.917 0 0 1 9 21.482a8.311 8.311 0 0 0 4.707 1.47c5.648
+        0 8.736-4.982 8.736-9.304 0-.141-.003-.283-.008-.422a6.481 6.481 0 0 0 1.531-1.693\"
+        fill-rule=\"evenodd\"></path></symbol>\n          <symbol viewBox=\"0 0 32
+        32\" id=\"icon_glitch_sm\"><path d=\"M8 10v12h4v2h3l2-2h2.087L23 18V8H9.023L8
+        10zm11 9h-3l-1 1-1 1 .007-2H11V9.995l10-.01V17l-2 2zm0-7h-1.25v4H19v-4zm-4.25
+        0v4H16v-4h-1.25z\" fill-rule=\"evenodd\"></path></symbol>\n          <symbol
+        viewbox=\"0 0 32 32\" id=\"icon_copy\"><g fill-rule=\"evenodd\"><path d=\"M9
+        19.607l4.755-4.755 3.535 3.535-4.754 4.755L9 19.607zm1.439-.025l4.023-4.023
+        2.121 2.121-4.023 4.024-2.121-2.122zM14.852 13.755L19.607 9l3.535 3.536-4.755
+        4.754-3.535-3.535zm.707.707l4.023-4.023 2.122 2.12-4.024 4.024-2.121-2.121z\"/><path
+        d=\"M12.987 17.741l4.754-4.754 1.414 1.414-4.754 4.754z\"/></g></symbol>\n
+        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_close_md\"><path clip-rule=\"evenodd\"
+        d=\"M20.657 10.757L16.414 15l4.243 4.242-1.415 1.415L15 16.414l-4.243 4.243-1.414-1.415L13.586
+        15l-4.243-4.243 1.414-1.414L15 13.586l4.242-4.243 1.415 1.414z\" fill-rule=\"evenodd\"></path></symbol>\n
+        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_play\"><path clip-rule=\"evenodd\"
+        d=\"M10,7l12,8l-12,8V7z\" fill-rule=\"evenodd\"></path></symbol>\n          <symbol
+        viewBox=\"0 0 30 30\" id=\"icon_pause\"><path clip-rule=\"evenodd\" d=\"M9,22h4V8H9V22z
+        M17,8v14h4V8H17z\" fill-rule=\"evenodd\"></path></symbol>\n          <symbol
+        viewBox=\"0 0 30 30\" id=\"icon_volumefull\"><path clip-rule=\"evenodd\" d=\"M22,21.5v-13L23,8v14L22,21.5z
+        M18,10.5l1-0.5v10l-1-0.5V10.5z M7,18v-6l3,0l5-4v14l-5-4L7,18z\" fill-rule=\"evenodd\"></path></symbol>\n
+        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_volumemute\"><path clip-rule=\"evenodd\"
+        d=\"M23,18L23,18h-0.7L20,15.7L17.7,18H17l0,0v-0.7l2.3-2.3L17,12.7V12l0,0h0.7l2.3,2.3l2.3-2.3H23l0,0v0.7L20.7,15l2.3,2.3V18z
+        M7,18v-6l3,0l5-4v14l-5-4L7,18z\" fill-rule=\"evenodd\"></path></symbol>\n
+        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_fullscreen\"><path clip-rule=\"evenodd\"
+        d=\"M7,7 L15.2,7 L12.8,9.4 L15.8,12.4 L12.4,15.8 L9.4,12.8 L7,15.2 L7,7 Z
+        M23,23 L14.8,23 L17.2,20.6 L14.2,17.6 L17.6,14.2 L20.6,17.2 L23,14.8 L23,23
+        Z\" fill-rule=\"evenodd\"></path></symbol>\n          <symbol viewBox=\"0
+        0 30 30\" id=\"icon_unfullscreen\"><path clip-rule=\"evenodd\" d=\"M15,15
+        L23.2,15 L20.8,17.4 L23.8,20.4 L20.4,23.8 L17.4,20.8 L15,23.2 L15,15 L15,15
+        Z M15,15 L6.8,15 L9.2,12.6 L6.2,9.6 L9.6,6.2 L12.6,9.2 L15,6.8 L15,15 L15,15
+        Z\" fill-rule=\"evenodd\"></path></symbol>\n          <symbol viewBox=\"0
+        0 94 32\" id=\"logo_twitch\"><path clip-rule=\"evenodd\" d=\"M88,5h-6V0h-9l-6,5h-5.5L59,7.5V5h-5V0H36v5H16l-5-5H0v22l5,5.25L14,32h6v-1.5l3,1.5h12l2-3l1,3h7v-3l3,3h8l0.5-3l2.5,3h10l3-3v3h4l3-3v3h7l7-6V10L88,5z
+        M13,13H8v6h5v6H6l-4-4V2h6v5h5V13z M36,21.5L32.5,25H15V7h6v12h2V7h6v12h2V7h5V21.5z
+        M44,25h-6V7h6V25z M44,5h-6V2h6V5z M57,13h-5v6h5v6h-7l-4-4V2h6v5h5V13z M72,13h-7v6h7v6h-9l-4-4V11l4-4h9V13z
+        M91,25h-6V13h-5v12h-6V2h6v5h7l4,4V25z\" fill-rule=\"evenodd\"></path></symbol>\n
+        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_close\"><path clip-rule=\"evenodd\"
+        d=\"M15.1035534,15.4571068 L11.5303301,19.0303301 L11.3535534,19.2071068 L11,18.8535534
+        L11.1767767,18.6767767 L14.75,15.1035534 L11.1767767,11.5303301 L11,11.3535534
+        L11.3535534,11 L11.5303301,11.1767767 L15.1035534,14.75 L18.6767767,11.1767767
+        L18.8535534,11 L19.2071068,11.3535534 L19.0303301,11.5303301 L15.4571068,15.1035534
+        L19.0303301,18.6767767 L19.2071068,18.8535534 L18.8535534,19.2071068 L18.6767767,19.0303301
+        L15.1035534,15.4571068 Z\" fill-rule=\"evenodd\"></path></symbol>\n          <symbol
+        viewBox=\"0 0 46 46\" id=\"icon_close_modal\"><path clip-rule=\"evenodd\"
+        d=\"M21.38 23.077l-4.531-4.531-.849-.849L17.697 16l.849.849 4.531 4.531 4.532-4.531.849-.849
+        1.697 1.697-.849.849-4.532 4.531 4.599 4.599.848.848-1.697 1.697-.848-.848-4.599-4.599-4.531
+        4.532-.849.849L16 28.458l.849-.849 4.531-4.532z\" fill-rule=\"evenodd\"/></symbol>\n
+        \         <symbol viewBox=\"0 0 14 14\" id=\"icon_arrow\"><path d=\"M6.46765898,5.00010938
+        L6.46755335,5 L3.08055618,8.27078515 C2.97320936,8.37444877 2.97610632,8.52662201
+        3.07163118,8.6255409 L3.47144895,9.03956433 C3.56460436,9.13602957 3.72584608,9.14003286
+        3.82630008,9.04302556 L6.46765898,6.49229492 L9.10901788,9.04302556 C9.20947188,9.14003286
+        9.3707136,9.13602957 9.46386901,9.03956433 L9.86368678,8.6255409 C9.95921164,8.52662201
+        9.9621086,8.37444877 9.85476178,8.27078515 L6.46776461,5 L6.46765898,5.00010938
+        Z\" transform=\"translate(6.467659, 7.056937) scale(-1, 1) rotate(-270.000000)
+        translate(-6.467659, -7.056937) \"></path></symbol>\n          <symbol viewBox=\"0
+        0 30 30\" id=\"icon_settings\"><path clip-rule=\"evenodd\" d=\"M13.3589744,7
+        L16.6410256,7 L18.0769231,9.8 L21.3589744,9.8 L23,12.2 L21.3589744,15 L23,17.8
+        L21.3589744,20.2 L18.0769231,20.2 L16.6410256,23 L13.3589744,23 L11.9230769,20.2
+        L8.64102564,20.2 L7,17.8 L8.64102564,15 L7,12.2 L8.64102564,9.8 L11.9230769,9.8
+        L13.3589744,7 Z M15,17.8 C16.5860485,17.8 17.8717949,16.5463973 17.8717949,15
+        C17.8717949,13.4536027 16.5860485,12.2 15,12.2 C13.4139515,12.2 12.1282051,13.4536027
+        12.1282051,15 C12.1282051,16.5463973 13.4139515,17.8 15,17.8 Z\" fill-rule=\"evenodd\"></path></symbol>\n
+        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_video\"><path clip-rule=\"evenodd\"
+        d=\"M9 11h22v18H9V11zm2 2h2v2h-2v-2zm16 0h2v2h-2v-2zm-16 4h2v2h-2v-2zm16 0h2v2h-2v-2zm-16
+        4h2v2h-2v-2zm16 0h2v2h-2v-2zm-16 4h2v2h-2v-2zm16 0h2v2h-2v-2z\" fill-rule=\"evenodd\"></path></symbol>\n
+        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_share\"><g clip-rule=\"evenodd\"><path
+        d=\"M22 18h5v11H13V18h5v2h-3v7h10v-7h-3\"/><path d=\"M18.994 14.297L17 16l-1-1.2
+        3.987-3.8L24 14.8 23 16l-2.022-1.703V23h-1.984z\"/></g></symbol>\n        </svg>\n
+        \       <div class=\"nav-header js-nav-header\"></div>\n        <div class=\"clip-page-wrapper
+        js-whole-wrapper invisible\">\n            <div class=\" header js-header\"></div>\n
+        \           <div id=\"clip-meta\">\n                <div class=\"clip-card\">\n
+        \                   <div class=\" curator-info js-curator-info\">\n                        <div
+        class='js-curator-info-container'></div>\n                        <div class=\"top-share-container
+        js-top-share-container balloon-wrapper\"></div>\n                    </div>\n
+        \                   <div class=\"js-player-ui-root nv-clip\"></div>\n                </div>\n
+        \           </div>\n            <div class=\"js-acknowledgement\"></div>\n
+        \       </div>\n        <div class=\"js-modal-root\"></div>\n        <script
+        type=\"text/javascript\" src=\"https://clips.twitch.tv/assets/16d48e72d557c1c629f7a332e3e65ed8a3f6d0ba/view.js\"></script>\n
+        \       <script>\n            var clipCard = document.getElementsByClassName(\"clip-card\")[0];\n
+        \           var buttonsElem = document.getElementsByClassName(\"js-broadcaster-info\")[0];\n
+        \           var curatorLink = document.getElementsByClassName(\"js-curator-link\")[0];\n
+        \           var wholeWrapper = document.getElementsByClassName(\"js-whole-wrapper\")[0];\n
+        \           var broadcasterInfo = document.getElementsByClassName(\"js-broadcaster-info\")[0];\n
+        \           var playerElement = document.getElementsByClassName('js-clip')[0];\n
+        \           var DOMElements = {\n                clipCard: clipCard,\n                buttonsElem:
+        buttonsElem,\n                curatorLink: curatorLink,\n                wholeWrapper:
+        wholeWrapper,\n                broadcasterInfo: broadcasterInfo,\n                playerElement:
+        playerElement\n            };\n            var clipInfo = {\n                id:
+        \"38370183\",\n                \n                broadcast_id: \"22467338656\",\n
+        \               \n                \n                preview_image_url: \"https:\\/\\/clips-media-assets.twitch.tv\\/22467338656-index-0000000111-preview.jpg\",\n
+        \               \n                game: \"Pok\xE9mon Go\",\n                \n
+        \               \n                channel_title: \"TAKING EVERY GYM BY STORM.
+        IRL IDIOT POKEMON GO. Level 25. @Snowboardjacket\",\n                \n                \n
+        \               broadcaster_logo: \"https:\\/\\/static-cdn.jtvnw.net\\/jtv_user_pictures\\/avaail-profile_image-9cc2acc65a155bfe-150x150.png\",\n
+        \               \n                broadcaster_id: \"36386081\",\n                broadcaster_login:
+        \"avaail\",\n                broadcaster_display_name: \"Avaail\",\n                broadcaster_is_partner:
+        \ true ,\n                broadcaster_twitter_login: \"\",\n                curator_id:
+        \"38341734\",\n                curator_login: \"zer0v7\",\n                curator_display_name:
+        \"Zer0v7\",\n                embed_url: \"https:\\/\\/clips.twitch.tv\\/embed?clip=RelentlessDifficultYogurtArsonNoSexy\",\n
+        \               slug: \"RelentlessDifficultYogurtArsonNoSexy\",\n                clip_exists:
+        \ true ,\n                clip_origin: \"live\",\n                duration:
+        \ 32 ,\n                quality_options: [{\"quality\":\"720\",\"source\":\"https://clips-media-assets.twitch.tv/22467338656-index-0000000111.mp4\",\"frame_rate\":30},{\"quality\":\"480\",\"source\":\"https://clips-media-assets.twitch.tv/22467338656-index-0000000111-852x480.mp4\",\"frame_rate\":30},{\"quality\":\"360\",\"source\":\"https://clips-media-assets.twitch.tv/22467338656-index-0000000111-640x360.mp4\",\"frame_rate\":30}],\n
+        \               view_count:  982095 ,\n                language: \"en\",\n
+        \               has_editable_media:  false ,\n                created_at:
+        \"2016-07-23T02:44:02Z\",\n                url: \"https:\\/\\/clips.twitch.tv\\/RelentlessDifficultYogurtArsonNoSexy\"\n
+        \           };\n            Twitch.Clips.viewClip(DOMElements, clipInfo);\n
+        \       </script>\n    </body>\n</html>\n"}
+    headers:
+      Cache-Control: ['public, max-age=300, s-maxage=300']
+      Connection: [keep-alive]
+      Content-Type: [text/html; charset=utf-8]
+      Date: ['Sun, 20 Aug 2017 13:25:06 GMT']
+      Server: [nginx/1.8.1]
+      Via: [1.1 cbefa4574158a548775db8beda8075d2.cloudfront.net (CloudFront)]
+      X-Amz-Cf-Id: [2xcFsZt-awZHRQ3ML7EDWx4ediZDRAQ8R84SfBXB25J92uBiSuDBcw==]
+      X-Cache: [Miss from cloudfront]
+    status: {code: 200, message: OK}
+version: 1
