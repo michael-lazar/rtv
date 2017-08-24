@@ -83,7 +83,7 @@ URLS = OrderedDict([
         'video/x-youtube')),
     ('twitch_clip', (
         'https://clips.twitch.tv/avaail/ExpensiveFishBCouch',
-        'https://clips-media-assets.twitch.tv/22467338656-index-0000000111.mp4',
+        'https://clips-media-assets.twitch.tv/22467338656-index-0000000111.mp4')),
     ('oddshot', (
         'https://oddshot.tv/s/5wN6Sy',
         'https://oddshot.akamaized.net/m/render-captures/source/Unknown-YjBkNTcwZWFlZGJhMGYyNQ.mp4',
