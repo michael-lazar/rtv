@@ -89,6 +89,10 @@ URLS = OrderedDict([
         'https://oddshot.tv/s/5wN6Sy',
         'https://oddshot.akamaized.net/m/render-captures/source/Unknown-YjBkNTcwZWFlZGJhMGYyNQ.mp4',
         'video/mp4')),
+    ('clippituser', (
+        'https://www.clippituser.tv/c/edqqld',
+        'https://clips.clippit.tv/edqqld/720.mp4',
+        'video/mp4')),
 ])
 
 
