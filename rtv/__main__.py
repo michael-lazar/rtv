@@ -23,6 +23,13 @@ except ImportError:
         sys.exit('Fatal Error: Your python distribution appears to be missing '
                  '_curses.so.\nWas it compiled without support for curses?')
 
+# If we want to override the $BROWSER variable that the python webbrowser
+# references, it needs to be done before the webbrowser module is imported
+# for the first time.
+RTV_BROWSER, BROWSER = os.environ.get('RTV_BROWSER'), os.environ.get('BROWSER')
+if RTV_BROWSER:
+    os.environ['BROWSER'] = RTV_BROWSER
+
 from . import docs
 from . import packages
 from .packages import praw
@@ -110,8 +117,8 @@ def main():
             ('$XDG_CONFIG_HOME', os.getenv('XDG_CONFIG_HOME')),
             ('$RTV_EDITOR', os.getenv('RTV_EDITOR')),
             ('$RTV_URLVIEWER', os.getenv('RTV_URLVIEWER')),
-            ('$RTV_BROWSER', os.getenv('RTV_BROWSER')),
-            ('$BROWSER', os.getenv('BROWSER')),
+            ('$RTV_BROWSER', RTV_BROWSER),
+            ('$BROWSER', BROWSER),
             ('$PAGER', os.getenv('PAGER')),
             ('$VISUAL', os.getenv('VISUAL')),
             ('$EDITOR', os.getenv('EDITOR'))]
@@ -138,6 +145,8 @@ def main():
                 ', falling back to ascii only mode' % encoding)
         warnings.warn(text)
         config['ascii'] = True
+
+    _logger.info('RTV module path: %s', os.path.abspath(__file__))
 
     # Check the praw version
     if packages.__praw_bundled__:
