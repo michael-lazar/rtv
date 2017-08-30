@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
 import time
 import curses
 
@@ -38,7 +39,9 @@ class SubmissionPage(Page):
 
     @SubmissionController.register(Command('SUBMISSION_TOGGLE_COMMENT'))
     def toggle_comment(self):
-        "Toggle the selected comment tree between visible and hidden"
+        """
+        Toggle the selected comment tree between visible and hidden
+        """
 
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
@@ -58,16 +61,25 @@ class SubmissionPage(Page):
 
     @SubmissionController.register(Command('SUBMISSION_EXIT'))
     def exit_submission(self):
-        "Close the submission and return to the subreddit page"
+        """
+        Close the submission and return to the subreddit page
+        """
 
         self.active = False
 
     @SubmissionController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
-        "Re-download comments and reset the page index"
+        """
+        Re-download comments and reset the page index
+        """
 
         order = order or self.content.order
         url = name or self.content.name
+
+        # Hack to allow an order specified in the name by prompt_subreddit() to
+        # override the current default
+        if order == 'ignore':
+            order = None
 
         with self.term.loader('Refreshing page'):
             self.content = SubmissionContent.from_url(
@@ -78,20 +90,37 @@ class SubmissionPage(Page):
 
     @SubmissionController.register(Command('PROMPT'))
     def prompt_subreddit(self):
-        "Open a prompt to navigate to a different subreddit"
+        """
+        Open a prompt to navigate to a different subreddit
+        """
 
         name = self.term.prompt_input('Enter page: /')
         if name is not None:
-            with self.term.loader('Loading page'):
-                content = SubredditContent.from_name(
-                    self.reddit, name, self.term.loader)
-            if not self.term.loader.exception:
-                self.selected_subreddit = content
-                self.active = False
+            # Check if opening a submission url or a subreddit url
+            # Example patterns for submissions:
+            #     comments/571dw3
+            #     /comments/571dw3
+            #     /r/pics/comments/571dw3/
+            #     https://www.reddit.com/r/pics/comments/571dw3/at_disneyland
+            submission_pattern = re.compile(r'(^|/)comments/(?P<id>.+?)($|/)')
+            match = submission_pattern.search(name)
+            if match:
+                url = 'https://www.reddit.com/comments/{0}'
+                self.refresh_content('ignore', url.format(match.group('id')))
+
+            else:
+                with self.term.loader('Loading page'):
+                    content = SubredditContent.from_name(
+                        self.reddit, name, self.term.loader)
+                if not self.term.loader.exception:
+                    self.selected_subreddit = content
+                    self.active = False
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):
-        "Open the selected item with the webbrowser"
+        """
+        Open the selected item with the webbrowser
+        """
 
         data = self.get_selected_item()
         if data['type'] == 'Submission':
@@ -104,7 +133,9 @@ class SubmissionPage(Page):
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
     def open_pager(self):
-        "Open the selected item with the system's pager"
+        """
+        Open the selected item with the system's pager
+        """
 
         data = self.get_selected_item()
         if data['type'] == 'Submission':
@@ -165,7 +196,9 @@ class SubmissionPage(Page):
     @SubmissionController.register(Command('DELETE'))
     @logged_in
     def delete_comment(self):
-        "Delete the selected comment"
+        """
+        Delete the selected comment
+        """
 
         if self.get_selected_item()['type'] == 'Comment':
             self.delete_item()

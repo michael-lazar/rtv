@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import sys
 import curses
 import subprocess
+from collections import OrderedDict
 
 import pytest
 
@@ -13,6 +14,15 @@ try:
     from unittest import mock
 except ImportError:
     import mock
+
+
+PROMPTS = OrderedDict([
+    ('prompt_1', 'comments/571dw3'),
+    ('prompt_2', '///comments/571dw3'),
+    ('prompt_3', '/comments/571dw3'),
+    ('prompt_4', '/r/pics/comments/571dw3/'),
+    ('prompt_5', 'https://www.reddit.com/r/pics/comments/571dw3/at_disneyland'),
+])
 
 
 def test_submission_page_construct(reddit, terminal, config, oauth):
@@ -146,6 +156,20 @@ def test_submission_prompt(submission_page, terminal):
         submission_page.controller.trigger('/')
         assert submission_page.active
         assert not submission_page.selected_subreddit
+
+
+@pytest.mark.parametrize('prompt', PROMPTS.values(), ids=list(PROMPTS))
+def test_submission_prompt_submission(submission_page, terminal, prompt):
+
+    # Navigate to a different submission from inside a submission
+    with mock.patch.object(terminal, 'prompt_input'):
+        terminal.prompt_input.return_value = prompt
+        submission_page.content.order = 'top'
+        submission_page.controller.trigger('/')
+        assert not terminal.loader.exception
+        data = submission_page.content.get(-1)
+        assert data['object'].id == '571dw3'
+        assert submission_page.content.order is None
 
 
 def test_submission_order_top(submission_page, terminal):
