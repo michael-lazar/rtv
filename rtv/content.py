@@ -437,12 +437,13 @@ class SubredditContent(Content):
     """
 
     def __init__(self, name, submissions, loader, order=None,
-                 max_title_rows=4, query=None):
+                 max_title_rows=4, query=None, filter_nsfw=False):
 
         self.name = name
         self.order = order
         self.query = query
         self.max_title_rows = max_title_rows
+        self.filter_nsfw = filter_nsfw
         self._loader = loader
         self._submissions = submissions
         self._submission_data = []
@@ -605,9 +606,11 @@ class SubredditContent(Content):
             # display name with the one returned by the request.
             display_name = '/r/{0}'.format(subreddit.display_name)
 
+        filter_nsfw = (reddit.user and reddit.user.over_18 is False)
+
         # We made it!
         return cls(display_name, submissions, loader, order=display_order,
-                   query=query)
+                   query=query, filter_nsfw=filter_nsfw)
 
     @property
     def range(self):
@@ -625,6 +628,7 @@ class SubredditContent(Content):
         if index < 0:
             raise IndexError
 
+        nsfw_count = 0
         while index >= len(self._submission_data):
             try:
                 with self._loader('Loading more submissions'):
@@ -634,6 +638,21 @@ class SubredditContent(Content):
             except StopIteration:
                 raise IndexError
             else:
+
+                # Skip NSFW posts based on the reddit user's profile settings.
+                # If we only see 20+ NSFW posts, stop looping and bail out.
+                # This allows us to skip making an additional API call to check
+                # if a subreddit is over18 (which doesn't work for things like
+                # multireddits anyway)
+                if self.filter_nsfw and submission.over_18:
+                    nsfw_count += 1
+                    if not self._submission_data and nsfw_count >= 20:
+                        raise exceptions.SubredditError(
+                            'You must be over 18+ to view this subreddit')
+                    continue
+                else:
+                    nsfw_count = 0
+
                 if hasattr(submission, 'title'):
                     data = self.strip_praw_submission(submission)
                 else:

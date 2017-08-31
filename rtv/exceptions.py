@@ -22,6 +22,10 @@ class SubmissionError(RTVError):
     "Submission could not be loaded"
 
 
+class SubredditError(RTVError):
+    "Subreddit could not be loaded"
+
+
 class NoSubmissionsError(RTVError):
     "No submissions for the given page"
 
