@@ -46,7 +46,7 @@ SUBREDDIT_PROMPTS = OrderedDict([
     ('user-1', ('/u/spez', '/u/spez', None)),
     ('user-new', ('/u/spez/new', '/u/spez', 'new')),
     ('user-top-all', ('/u/spez/top-all', '/u/spez', 'top-all')),
-    ('multi-0', ('/user/multi-mod/m/art', '/user/multi-mod/m/art', None)),
+    ('multi-0', ('/user/multi-mod/m/art', '/u/multi-mod/m/art', None)),
     ('multi-1', ('/u/multi-mod/m/art', '/u/multi-mod/m/art', None)),
     ('multi-top', ('/u/multi-mod/m/art/top', '/u/multi-mod/m/art', 'top')),
     ('multi-top-all', ('/u/multi-mod/m/art/top-all', '/u/multi-mod/m/art', 'top-all')),
@@ -62,6 +62,7 @@ SUBREDDIT_AUTH_PROMPTS = OrderedDict([
     ('me-top', ('/u/me/top', '/u/me', 'top')),
     ('me-top-all', ('/u/me/top-all', '/u/me', 'top-all')),
     ('user-saved', ('/u/saved', '/u/saved', None)),
+    ('me-multi', ('/u/me/m/redditpets/top-all', '/u/{username}/m/redditpets', 'top-all')),
 ])
 
 # All of these should raise an error when entered
@@ -396,6 +397,9 @@ def test_content_subreddit_from_name_authenticated(
     oauth.config.refresh_token = refresh_token
     oauth.authorize()
 
+    if '{username}' in name:
+        name = name.format(username=reddit.user.name)
+
     content = SubredditContent.from_name(reddit, prompt, terminal.loader)
     assert content.name == name
     assert content.order == order
@@ -410,6 +414,7 @@ def test_content_subreddit_from_name_invalid(prompt, reddit, terminal):
     assert isinstance(terminal.loader.exception, praw.errors.InvalidSubreddit)
     # Must always have an argument because it gets displayed
     assert terminal.loader.exception.args[0]
+
 
 args, ids = SUBREDDIT_SEARCH_QUERIES.values(), list(SUBREDDIT_SEARCH_QUERIES)
 @pytest.mark.parametrize('prompt,query', args, ids=ids)
