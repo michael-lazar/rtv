@@ -97,7 +97,10 @@ class Page(object):
 
     @PageController.register(Command('SORT_HOT'))
     def sort_content_hot(self):
-        self.refresh_content(order='hot')
+        if self.content.query:
+            self.refresh_content(order='relevance')
+        else:
+            self.refresh_content(order='hot')
 
     @PageController.register(Command('SORT_TOP'))
     def sort_content_top(self):
@@ -122,7 +125,27 @@ class Page(object):
 
     @PageController.register(Command('SORT_RISING'))
     def sort_content_rising(self):
-        self.refresh_content(order='rising')
+
+        if self.content.query:
+            choices = {
+                '\n': 'comments',
+                '1': 'comments-hour',
+                '2': 'comments-day',
+                '3': 'comments-week',
+                '4': 'comments-month',
+                '5': 'comments-year',
+                '6': 'comments-all'}
+
+            message = docs.TIME_ORDER_MENU.strip().splitlines()
+            ch = self.term.show_notification(message)
+            ch = six.unichr(ch)
+            if ch not in choices:
+                self.term.show_notification('Invalid option')
+                return
+
+            self.refresh_content(order=choices[ch])
+        else:
+            self.refresh_content(order='rising')
 
     @PageController.register(Command('SORT_NEW'))
     def sort_content_new(self):
@@ -130,6 +153,10 @@ class Page(object):
 
     @PageController.register(Command('SORT_CONTROVERSIAL'))
     def sort_content_controversial(self):
+
+        if self.content.query:
+            self.term.flash()
+            return
 
         choices = {
             '\n': 'controversial',
@@ -458,7 +485,9 @@ class Page(object):
         ch, attr = str(' '), curses.A_BOLD | Color.YELLOW
         window.bkgd(ch, attr)
 
-        items = docs.BANNER.strip().split(' ')
+        banner = docs.BANNER_SEARCH if self.content.query else docs.BANNER
+        items = banner.strip().split(' ')
+
         distance = (n_cols - sum(len(t) for t in items) - 1) / (len(items) - 1)
         spacing = max(1, int(distance)) * ' '
         text = spacing.join(items)
