@@ -75,11 +75,19 @@ def test_page_unauthenticated(reddit, terminal, config, oauth):
             page.controller.trigger('?')
         assert Popen.called
 
-        # Sort content
+        # Sort content - normal page
+        page.content.query = ''
         page.controller.trigger('1')
         page.refresh_content.assert_called_with(order='hot')
         page.controller.trigger('3')
         page.refresh_content.assert_called_with(order='rising')
+        page.controller.trigger('4')
+        page.refresh_content.assert_called_with(order='new')
+
+        # Sort content - search results
+        page.content.query = 'search text'
+        page.controller.trigger('1')
+        page.refresh_content.assert_called_with(order='relevance')
         page.controller.trigger('4')
         page.refresh_content.assert_called_with(order='new')
 
