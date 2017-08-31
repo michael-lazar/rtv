@@ -522,25 +522,20 @@ class SubredditContent(Content):
             period = None
 
         if query:
-            # The allowed order for sorting search results
-            if order not in ['relevance', 'top', 'comments', 'new', None]:
-                raise InvalidSubreddit('Invalid order `%s`' % order)
+            # The allowed orders for sorting search results are different
+            orders = ['relevance', 'top', 'comments', 'new', None]
+            period_allowed = ['top', 'comments']
         else:
-            if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
-                raise InvalidSubreddit('Invalid order `%s`' % order)
+            orders = ['hot', 'top', 'rising', 'new', 'controversial', None]
+            period_allowed = ['top', 'controversial']
 
+        if order not in orders:
+            raise InvalidSubreddit('Invalid order `%s`' % order)
         if period not in ['all', 'day', 'hour', 'month', 'week', 'year', None]:
             raise InvalidSubreddit('Invalid period `%s`' % period)
-
-        if query:
-            # The allowed order for sorting search results
-            if period and order not in ['top', 'comments']:
-                raise InvalidSubreddit('`%s` order does not allow sorting by'
-                                       ' period' % order)
-        else:
-            if period and order not in ['top', 'controversial']:
-                raise InvalidSubreddit('`%s` order does not allow sorting by'
-                                       ' period' % order)
+        if period and order not in period_allowed:
+            raise InvalidSubreddit(
+                '`%s` order does not allow sorting by period' % order)
 
         # On some objects, praw doesn't allow you to pass arguments for the
         # order and period. Instead you need to call special helper functions
