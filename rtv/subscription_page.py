@@ -29,7 +29,9 @@ class SubscriptionPage(Page):
 
     @SubscriptionController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
-        "Re-download all subscriptions and reset the page index"
+        """
+        Re-download all subscriptions and reset the page index
+        """
 
         # reddit.get_my_subreddits() does not support sorting by order
         if order:
@@ -44,7 +46,9 @@ class SubscriptionPage(Page):
 
     @SubscriptionController.register(Command('PROMPT'))
     def prompt_subreddit(self):
-        "Open a prompt to navigate to a different subreddit"
+        """
+        Open a prompt to navigate to a different subreddit
+        """
 
         name = self.term.prompt_input('Enter page: /')
         if name is not None:
@@ -57,7 +61,9 @@ class SubscriptionPage(Page):
 
     @SubscriptionController.register(Command('SUBSCRIPTION_SELECT'))
     def select_subreddit(self):
-        "Store the selected subreddit and return to the subreddit page"
+        """
+        Store the selected subreddit and return to the subreddit page
+        """
 
         name = self.get_selected_item()['name']
         with self.term.loader('Loading page'):
@@ -69,7 +75,9 @@ class SubscriptionPage(Page):
 
     @SubscriptionController.register(Command('SUBSCRIPTION_EXIT'))
     def close_subscriptions(self):
-        "Close subscriptions and return to the subreddit page"
+        """
+        Close subscriptions and return to the subreddit page
+        """
 
         self.active = False
 
