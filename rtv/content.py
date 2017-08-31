@@ -485,15 +485,26 @@ class SubredditContent(Content):
 
         # Check for the resource type, assume /r/ as the default
         if len(parts) >= 3 and parts[2] == 'm':
-            # E.g. /u/multi-mod/m/android
+            # E.g. /u/civilization_phaze_3/m/multireddit ->
+            #    resource_root = "u/civilization_phaze_3/m"
+            #    parts = ["multireddit"]
             resource_root, parts = '/'.join(parts[:3]), parts[3:]
         elif len(parts) > 1 and parts[0] in ['r', 'u', 'user', 'domain']:
+            # E.g. /u/civilization_phaze_3 ->
+            #    resource_root = "u"
+            #    parts = ["civilization_phaze_3"]
+            #
+            # E.g. /r/python/top-week ->
+            #    resource_root = "r"
+            #    parts = ["python", "top-week"]
             resource_root = parts.pop(0)
         else:
             resource_root = 'r'
 
         if resource_root == 'user':
             resource_root = 'u'
+        elif resource_root.startswith('user/'):
+            resource_root = 'u' + resource_root[4:]
 
         # There should at most two parts left, the resource and the order
         if len(parts) == 1:
@@ -570,6 +581,15 @@ class SubredditContent(Content):
 
         elif resource_root.endswith('/m'):
             redditor = resource_root.split('/')[1]
+
+            if redditor == 'me':
+                if not reddit.is_oauth_session():
+                    raise exceptions.AccountError('Not logged in')
+                else:
+                    redditor = reddit.user.name
+                    display_name = display_name.replace(
+                        '/me/', '/{0}/'.format(redditor))
+
             multireddit = reddit.get_multireddit(redditor, resource)
             submissions = getattr(multireddit, method_alias)(limit=None)
 
@@ -648,10 +668,10 @@ class SubredditContent(Content):
             else:
 
                 # Skip NSFW posts based on the reddit user's profile settings.
-                # If we only see 20+ NSFW posts, stop looping and bail out.
-                # This allows us to skip making an additional API call to check
-                # if a subreddit is over18 (which doesn't work for things like
-                # multireddits anyway)
+                # If we see 20+ NSFW posts at the beginning, assume the subreddit
+                # only has NSFW content and abort. This allows us to avoid making
+                # an additional API call to check if a subreddit is over18 (which
+                # doesn't work for things like multireddits anyway)
                 if self.filter_nsfw and submission.over_18:
                     nsfw_count += 1
                     if not self._submission_data and nsfw_count >= 20:
@@ -664,7 +684,7 @@ class SubredditContent(Content):
                 if hasattr(submission, 'title'):
                     data = self.strip_praw_submission(submission)
                 else:
-                    # when submission is a saved commment
+                    # when submission is a saved comment
                     data = self.strip_praw_comment(submission)
 
                 data['index'] = len(self._submission_data) + 1
@@ -701,7 +721,7 @@ class SubscriptionContent(Content):
             raise exceptions.SubscriptionError('No content')
 
         # Load 1024 subscriptions up front (one http request's worth)
-        # For most people this should be all of their subscriptions. Doing thi
+        # For most people this should be all of their subscriptions. This
         # allows the user to jump to the end of the page with `G`.
         if name != 'Popular Subreddits':
             try:
