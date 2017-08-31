@@ -469,6 +469,41 @@ def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):
         assert terminal.loader.exception.name == '/u/me'
 
 
+def test_content_subreddit_nsfw_filter(reddit, oauth, refresh_token, terminal):
+
+    # NSFW subreddits should load if not logged in
+    name = '/r/ImGoingToHellForThis'
+    SubredditContent.from_name(reddit, name, terminal.loader)
+
+    # Log in
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
+
+    # Make sure the API parameter hasn't changed
+    assert reddit.user.over_18 is not None
+
+    # Turn on safe search
+    reddit.user.over_18 = False
+
+    # Should refuse to load this subreddit
+    with pytest.raises(exceptions.SubredditError):
+        name = '/r/ImGoingToHellForThis'
+        SubredditContent.from_name(reddit, name, terminal.loader)
+
+    # Should filter out all of the nsfw posts
+    name = '/r/ImGoingToHellForThis+python'
+    content = SubredditContent.from_name(reddit, name, terminal.loader)
+    for data in islice(content.iterate(0, 1), 50):
+        assert data['object'].over_18 is False
+
+    # Turn off safe search
+    reddit.user.over_18 = True
+
+    # The NSFW subreddit should load now
+    name = '/r/ImGoingToHellForThis'
+    SubredditContent.from_name(reddit, name, terminal.loader)
+
+
 def test_content_subscription(reddit, terminal):
 
     # Not logged in
