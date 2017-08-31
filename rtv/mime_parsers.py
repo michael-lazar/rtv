@@ -151,15 +151,15 @@ class RedditVideoMIMEParser(BaseMIMEParser):
 
 
 class ImgurApiMIMEParser(BaseMIMEParser):
-    """   
+    """
     Imgur now provides a json API exposing its entire infrastructure. Each Imgur
     page has an associated hash and can either contain an album, a gallery,
     or single image.
-    
+
     The default client token for RTV is shared among users and allows a maximum
     global number of requests per day of 12,500. If we find that this limit is
     not sufficient for all of rtv's traffic, this method will be revisited.
-    
+
     Reference:
         https://apidocs.imgur.com
     """
@@ -321,7 +321,7 @@ class TwitchMIMEParser(BaseMIMEParser):
             return url, None
 
 
-class OddshotIMEParser(OpenGraphMIMEParser):
+class OddshotMIMEParser(OpenGraphMIMEParser):
     """
     Oddshot uses the Open Graph protocol
     """
@@ -375,9 +375,24 @@ class LiveleakMIMEParser(BaseMIMEParser):
         else:
             return url, None
 
+class ClippitUserMIMEParser(BaseMIMEParser):
+    """
+    """
+    pattern = re.compile(r'https?://(www\.)?clippituser\.tv/c/.+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        tag = soup.find(id='jwplayer-container')
+        quality = ['data-{}-file'.format(_) for _ in ['hd', 'sd']]
+        return tag.get(quality[0]), 'video/mp4'
+
+
 # Parsers should be listed in the order they will be checked
 parsers = [
-    OddshotIMEParser,
+    ClippitUserMIMEParser,
+    OddshotMIMEParser,
     StreamableMIMEParser,
     VidmeMIMEParser,
     InstagramMIMEParser,
