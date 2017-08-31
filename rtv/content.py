@@ -478,7 +478,7 @@ class SubredditContent(Content):
             query (text): Content to search for on the given subreddit or
                 user's page.
         """
-        # TODO: refactor this into smaller methods
+        # TODO: This desperately needs to be refactored
 
         # Strip leading, trailing, and redundant backslashes
         parts = [seg for seg in name.strip(' /').split('/') if seg]
@@ -521,13 +521,21 @@ class SubredditContent(Content):
         else:
             period = None
 
-        if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
+        if query:
+            # The allowed orders for sorting search results are different
+            orders = ['relevance', 'top', 'comments', 'new', None]
+            period_allowed = ['top', 'comments']
+        else:
+            orders = ['hot', 'top', 'rising', 'new', 'controversial', None]
+            period_allowed = ['top', 'controversial']
+
+        if order not in orders:
             raise InvalidSubreddit('Invalid order `%s`' % order)
         if period not in ['all', 'day', 'hour', 'month', 'week', 'year', None]:
             raise InvalidSubreddit('Invalid period `%s`' % period)
-        if period and order not in ['top', 'controversial']:
-            raise InvalidSubreddit('`%s` order does not allow sorting by'
-                                   ' period' % order)
+        if period and order not in period_allowed:
+            raise InvalidSubreddit(
+                '`%s` order does not allow sorting by period' % order)
 
         # On some objects, praw doesn't allow you to pass arguments for the
         # order and period. Instead you need to call special helper functions

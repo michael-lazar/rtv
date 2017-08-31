@@ -83,6 +83,11 @@ BANNER = """
 [1]hot [2]top [3]rising [4]new [5]controversial
 """
 
+BANNER_SEARCH = """
+[1]relevance [2]top [3]comments [4]new
+"""
+
+
 FOOTER_SUBREDDIT = """
 [?]Help [q]Quit [l]Comments [/]Prompt [u]Login [o]Open [c]Post [a/z]Vote
 """

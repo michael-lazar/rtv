@@ -97,32 +97,29 @@ class Page(object):
 
     @PageController.register(Command('SORT_HOT'))
     def sort_content_hot(self):
-        self.refresh_content(order='hot')
+        if self.content.query:
+            self.refresh_content(order='relevance')
+        else:
+            self.refresh_content(order='hot')
 
     @PageController.register(Command('SORT_TOP'))
     def sort_content_top(self):
-
-        choices = {
-            '\n': 'top',
-            '1': 'top-hour',
-            '2': 'top-day',
-            '3': 'top-week',
-            '4': 'top-month',
-            '5': 'top-year',
-            '6': 'top-all'}
-
-        message = docs.TIME_ORDER_MENU.strip().splitlines()
-        ch = self.term.show_notification(message)
-        ch = six.unichr(ch)
-        if ch not in choices:
+        order = self._prompt_period('top')
+        if order is None:
             self.term.show_notification('Invalid option')
-            return
-
-        self.refresh_content(order=choices[ch])
+        else:
+            self.refresh_content(order=order)
 
     @PageController.register(Command('SORT_RISING'))
     def sort_content_rising(self):
-        self.refresh_content(order='rising')
+        if self.content.query:
+            order = self._prompt_period('comments')
+            if order is None:
+                self.term.show_notification('Invalid option')
+            else:
+                self.refresh_content(order=order)
+        else:
+            self.refresh_content(order='rising')
 
     @PageController.register(Command('SORT_NEW'))
     def sort_content_new(self):
@@ -130,24 +127,14 @@ class Page(object):
 
     @PageController.register(Command('SORT_CONTROVERSIAL'))
     def sort_content_controversial(self):
-
-        choices = {
-            '\n': 'controversial',
-            '1': 'controversial-hour',
-            '2': 'controversial-day',
-            '3': 'controversial-week',
-            '4': 'controversial-month',
-            '5': 'controversial-year',
-            '6': 'controversial-all'}
-
-        message = docs.TIME_ORDER_MENU.strip().splitlines()
-        ch = self.term.show_notification(message)
-        ch = six.unichr(ch)
-        if ch not in choices:
-            self.term.show_notification('Invalid option')
-            return
-
-        self.refresh_content(order=choices[ch])
+        if self.content.query:
+            self.term.flash()
+        else:
+            order = self._prompt_period('controversial')
+            if order is None:
+                self.term.show_notification('Invalid option')
+            else:
+                self.refresh_content(order=order)
 
     @PageController.register(Command('MOVE_UP'))
     def move_cursor_up(self):
@@ -458,7 +445,9 @@ class Page(object):
         ch, attr = str(' '), curses.A_BOLD | Color.YELLOW
         window.bkgd(ch, attr)
 
-        items = docs.BANNER.strip().split(' ')
+        banner = docs.BANNER_SEARCH if self.content.query else docs.BANNER
+        items = banner.strip().split(' ')
+
         distance = (n_cols - sum(len(t) for t in items) - 1) / (len(items) - 1)
         spacing = max(1, int(distance)) * ' '
         text = spacing.join(items)
@@ -584,3 +573,20 @@ class Page(object):
         n_rows, _ = window.getmaxyx()
         for row in range(n_rows):
             window.chgat(row, 0, 1, attribute)
+
+    def _prompt_period(self, order):
+
+        choices = {
+            '\n': order,
+            '1': '{0}-hour'.format(order),
+            '2': '{0}-day'.format(order),
+            '3': '{0}-week'.format(order),
+            '4': '{0}-month'.format(order),
+            '5': '{0}-year'.format(order),
+            '6': '{0}-all'.format(order)}
+
+        message = docs.TIME_ORDER_MENU.strip().splitlines()
+        ch = self.term.show_notification(message)
+        ch = six.unichr(ch)
+        return choices.get(ch)
+

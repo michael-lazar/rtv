@@ -196,6 +196,39 @@ def test_subreddit_order_controversial(subreddit_page, terminal):
         assert subreddit_page.content.order == 'controversial'
 
 
+def test_subreddit_order_search(subreddit_page, terminal):
+
+    # Search the current subreddit
+    with mock.patch.object(terminal, 'prompt_input'):
+        terminal.prompt_input.return_value = 'search term'
+        subreddit_page.controller.trigger('f')
+        assert subreddit_page.content.name == '/r/python'
+        assert terminal.prompt_input.called
+        assert not terminal.loader.exception
+
+    # Sort by relevance
+    subreddit_page.controller.trigger('1')
+    assert subreddit_page.content.order == 'relevance'
+
+    # Sort by top
+    with mock.patch.object(terminal, 'show_notification'):
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('6')
+        subreddit_page.controller.trigger('2')
+        assert subreddit_page.content.order == 'top-all'
+
+    # Sort by comments
+    with mock.patch.object(terminal, 'show_notification'):
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('6')
+        subreddit_page.controller.trigger('3')
+        assert subreddit_page.content.order == 'comments-all'
+
+    # Sort by new
+    subreddit_page.controller.trigger('4')
+    assert subreddit_page.content.order == 'new'
+
+
 def test_subreddit_open(subreddit_page, terminal, config):
 
     # Open the selected submission
