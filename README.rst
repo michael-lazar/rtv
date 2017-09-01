@@ -54,6 +54,12 @@ Native packages
 
     $ brew install rtv
 
+**Debian 9+ (stretch)**
+
+.. code-block:: bash
+
+    $ apt install rtv
+
 **Arch Linux**
 
 .. code:: bash
