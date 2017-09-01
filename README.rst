@@ -48,7 +48,7 @@ RTV is available on `PyPI <https://pypi.python.org/pypi/rtv/>`_ and can be insta
 Native packages
 ---------------
 
-Check `Repology <https://repology.org/metapackage/rtv/information>`_ for an up-to-date list of supported packages
+Check `Repology <https://repology.org/metapackage/rtv/information>`_ for an up-to-date list of supported packages:
 
 **macOS**
 
