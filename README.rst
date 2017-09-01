@@ -48,26 +48,7 @@ RTV is available on `PyPI <https://pypi.python.org/pypi/rtv/>`_ and can be insta
 Native packages
 ---------------
 
-**macOS**
-
-.. code-block:: bash
-
-    $ brew install rtv
-
-**Debian 9+, Ubuntu 17.04+**
-
-.. code-block:: bash
-
-    $ apt install rtv
-
-**Arch Linux**
-
-.. code:: bash
-
-    $ # Install the latest official release
-    $ yaourt -S rtv
-    $ # Or to keep up to date with the master branch
-    $ yaourt -S rtv-git
+RTV is available through several package managers, check `here <https://repology.org/metapackage/rtv/packages>`_ to see if your distribution is supported
 
 =====
 Usage
