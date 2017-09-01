@@ -54,7 +54,7 @@ Native packages
 
     $ brew install rtv
 
-**Debian 9+ (stretch)**
+**Debian 9+, Ubuntu 17.04+**
 
 .. code-block:: bash
 
