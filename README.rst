@@ -16,19 +16,13 @@ RTV (Reddit Terminal Viewer)
 
 ---------------
 
-* `Demo`_
 * `Installation`_
+* `Demo`_
 * `Usage`_
 * `Settings`_
 * `FAQ`_
 * `Contributing`_
 * `License`_
-
-====
-Demo
-====
-
-.. image:: http://i.imgur.com/aNZWxnW.gif
 
 ============
 Installation
@@ -68,6 +62,12 @@ Native packages
     $ yaourt -S rtv
     $ # Or to keep up to date with the master branch
     $ yaourt -S rtv-git
+
+====
+Demo
+====
+
+.. image:: http://i.imgur.com/aNZWxnW.gif
 
 =====
 Usage
