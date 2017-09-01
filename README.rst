@@ -16,14 +16,19 @@ RTV (Reddit Terminal Viewer)
 
 ---------------
 
-.. image:: http://i.imgur.com/aNZWxnW.gif
-
+* `Demo`_
 * `Installation`_
 * `Usage`_
 * `Settings`_
 * `FAQ`_
 * `Contributing`_
 * `License`_
+
+====
+Demo
+====
+
+.. image:: http://i.imgur.com/aNZWxnW.gif
 
 ============
 Installation
