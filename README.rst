@@ -148,11 +148,11 @@ The default programs that RTV interacts with can be configured through environme
 
 ``$RTV_EDITOR``
   | A program used to compose text submissions and comments, e.g. **vim**, **emacs**, **gedit**
-  | *If not specified, will fallback to ``$VISUAL`` and ``$EDITOR`` in that order.*
+  | *If not specified, will fallback to* ``$VISUAL`` *and* ``$EDITOR`` *in that order.*
 
 ``$RTV_BROWSER``
   | A program used to open links to external websites, e.g. **firefox**, **google-chrome**, **w3m**, **lynx**, **elinks**
-  | *If not specified, will fallback to ``$BROWSER``, or try to intelligently choose a browser supported by your system.*
+  | *If not specified, will fallback to* ``$BROWSER`` *, or try to intelligently choose a browser supported by your system.*
 
 ``$RTV_URLVIEWER``
   | A tool used to extract hyperlinks from blocks of text, e.g.  `urlview <https://github.com/sigpipe/urlview>`_, `urlscan <https://github.com/firecat53/urlscan>`_
@@ -196,11 +196,9 @@ Why do I see garbled text like ``M-b~@M-"`` or ``^@``?
        `here <https://bugs.python.org/issue4787>`_ for more information
   
 How do I run the code directly from the repository?
-  This project is structured to be run as a python *module*. This means that in
-  order to resolve imports you need to launch using python's ``-m`` flag.
-  This method works for all versions of python. See the example below, which
-  assumes that you have cloned the repository into the directory
-  **~/rtv_project**.
+  This project is structured to be run as a python *module*. This means that
+  you need to launch it using python's ``-m`` flag. See the example below, which
+  assumes that you have cloned the repository into the directory **~/rtv_project**.
 
   .. code-block:: bash
 
