@@ -77,7 +77,7 @@ class GfycatMIMEParser(BaseMIMEParser):
 
     @staticmethod
     def get_mimetype(url):
-        parts = url.split('/')
+        parts = url.replace('gifs/detail/', '').split('/')
         api_url = '/'.join(parts[:-1] + ['cajax', 'get'] + parts[-1:])
         resp = requests.get(api_url)
         image_url = resp.json()['gfyItem']['webmUrl']
