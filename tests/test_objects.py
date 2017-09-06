@@ -30,7 +30,7 @@ else:
 @mock.patch.dict(os.environ, {'BROWSER': 'safari'})
 @mock.patch('sys.platform', 'darwin')
 @mock_isfile
-def test_patch_webbrowser(which, isfile):
+def test_patch_webbrowser(*_):
 
     # Make sure that webbrowser re-generates the browser list using the
     # mocked environment
