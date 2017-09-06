@@ -18,8 +18,6 @@ from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
 
 import six
-#pylint: disable=import-error
-from six.moves.urllib.parse import quote
 from kitchen.text.display import textual_width_chop
 
 from . import exceptions
@@ -509,9 +507,10 @@ class Terminal(object):
                         raise exceptions.BrowserError(
                             'Timeout waiting for browser to open')
                 finally:
-                    # Can't check the loader exception because the oauth module
-                    # supersedes this loader and we need to always kill the
-                    # process if escape is pressed
+                    # This will be hit on the browser timeout, but also if the
+                    # user presses the ESC key. We always want to kill the
+                    # webbrowser process if it hasn't opened the tab and
+                    # terminated by now.
                     try:
                         p.terminate()
                     except OSError:
