@@ -15,7 +15,7 @@ RTV_BROWSER, BROWSER = os.environ.get('RTV_BROWSER'), os.environ.get('BROWSER')
 if RTV_BROWSER:
     os.environ['BROWSER'] = RTV_BROWSER
 
-print('RTV_BROWSER=%s' % BROWSER)
+print('RTV_BROWSER=%s' % RTV_BROWSER)
 print('BROWSER=%s' % BROWSER)
 
 import webbrowser
