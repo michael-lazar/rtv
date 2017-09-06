@@ -42,7 +42,11 @@ def patch_webbrowser():
             for cmdline in reversed(_userchoices):
                 if cmdline in ('safari', 'firefox', 'chrome', 'default'):
                     browser = webbrowser.MacOSXOSAScript(cmdline)
-                    webbrowser.register(cmdline, None, browser, -1)
+                    try:
+                        webbrowser.register(cmdline, None, browser, update_tryorder=-1)
+                    except AttributeError:
+                        # 3.7 nightly build changed the method signature
+                        webbrowser.register(cmdline, None, browser, preferred=True)
 
 
 @contextmanager

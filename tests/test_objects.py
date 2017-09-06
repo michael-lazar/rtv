@@ -20,11 +20,16 @@ try:
 except ImportError:
     import mock
 
+# webbrowser's command to check if a file exists is different for py2/py3
+if six.PY3:
+    mock_isfile = mock.patch('shutil.which', return_value=None)
+else:
+    mock_isfile = mock.patch('os.path.isfile', return_value=None)
+
 
 @mock.patch.dict(os.environ, {'BROWSER': 'safari'})
 @mock.patch('sys.platform', 'darwin')
-@mock.patch('shutil.which', return_value=None)    # py3 method
-@mock.patch('os.path.isfile', return_value=None)  # py2 method
+@mock_isfile
 def test_patch_webbrowser(which, isfile):
 
     # Make sure that webbrowser re-generates the browser list using the
