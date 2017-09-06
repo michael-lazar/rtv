@@ -151,20 +151,22 @@ class RedditVideoMIMEParser(BaseMIMEParser):
 
 
 class ImgurApiMIMEParser(BaseMIMEParser):
-    """   
+    """
     Imgur now provides a json API exposing its entire infrastructure. Each Imgur
     page has an associated hash and can either contain an album, a gallery,
     or single image.
-    
+
     The default client token for RTV is shared among users and allows a maximum
     global number of requests per day of 12,500. If we find that this limit is
     not sufficient for all of rtv's traffic, this method will be revisited.
-    
+
     Reference:
         https://apidocs.imgur.com
     """
     CLIENT_ID = None
-    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/((?P<domain>a|album|gallery)/)?(?P<hash>[a-zA-Z0-9]+)$')
+    pattern = re.compile(
+        r'https?://(w+\.)?(m\.)?imgur\.com/'
+        r'((?P<domain>a|album|gallery)/)?(?P<hash>[a-zA-Z0-9]+)$')
 
     @classmethod
     def get_mimetype(cls, url):

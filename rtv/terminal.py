@@ -775,7 +775,7 @@ class Terminal(object):
 
         out = '\n'.join(stack)
         return out
-    
+
     def clear_screen(self):
         """
         In the beginning this always called touchwin(). However, a bug
@@ -785,14 +785,14 @@ class Terminal(object):
         this in their tmux.conf or .bashrc file which can cause issues.
         Using clearok() instead seems to fix the problem, with the trade off
         of slightly more expensive screen refreshes.
-               
+
         Update: It was discovered that using clearok() introduced a
         separate bug for urxvt users in which their screen flashed when
         scrolling. Heuristics were added to make it work with as many
         configurations as possible. It's still not perfect
         (e.g. urxvt + xterm-256color) will screen flash, but it should
         work in all cases if the user sets their TERM correctly.
-        
+
         Reference:
             https://github.com/michael-lazar/rtv/issues/343
             https://github.com/michael-lazar/rtv/issues/323

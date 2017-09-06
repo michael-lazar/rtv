@@ -29,7 +29,7 @@ def patch_webbrowser():
     """
     Patch webbrowser on macOS to support setting BROWSER=firefox,
     BROWSER=chrome, etc..
-    
+
     https://bugs.python.org/issue31348
     """
 
@@ -44,7 +44,7 @@ def patch_webbrowser():
             browser = webbrowser.MacOSXOSAScript(cmdline)
             try:
                 webbrowser.register(cmdline, None, browser, update_tryorder=-1)
-            except AttributeError:
+            except TypeError:
                 # 3.7 nightly build changed the method signature
                 # pylint: disable=unexpected-keyword-arg
                 webbrowser.register(cmdline, None, browser, preferred=True)
