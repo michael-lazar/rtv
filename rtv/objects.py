@@ -33,20 +33,21 @@ def patch_webbrowser():
     https://bugs.python.org/issue31348
     """
 
-    if sys.platform == 'darwin':
+    if sys.platform != 'darwin' or 'BROWSER' not in os.environ:
+        return
 
-        # This is a copy of what's at the end of webbrowser.py, except that
-        # it adds MacOSXOSAScript entries instead of GenericBrowser entries.
-        if "BROWSER" in os.environ:
-            _userchoices = os.environ["BROWSER"].split(os.pathsep)
-            for cmdline in reversed(_userchoices):
-                if cmdline in ('safari', 'firefox', 'chrome', 'default'):
-                    browser = webbrowser.MacOSXOSAScript(cmdline)
-                    try:
-                        webbrowser.register(cmdline, None, browser, update_tryorder=-1)
-                    except AttributeError:
-                        # 3.7 nightly build changed the method signature
-                        webbrowser.register(cmdline, None, browser, preferred=True)
+    # This is a copy of what's at the end of webbrowser.py, except that
+    # it adds MacOSXOSAScript entries instead of GenericBrowser entries.
+    _userchoices = os.environ["BROWSER"].split(os.pathsep)
+    for cmdline in reversed(_userchoices):
+        if cmdline in ('safari', 'firefox', 'chrome', 'default'):
+            browser = webbrowser.MacOSXOSAScript(cmdline)
+            try:
+                webbrowser.register(cmdline, None, browser, update_tryorder=-1)
+            except AttributeError:
+                # 3.7 nightly build changed the method signature
+                # pylint: disable=unexpected-keyword-arg
+                webbrowser.register(cmdline, None, browser, preferred=True)
 
 
 @contextmanager
