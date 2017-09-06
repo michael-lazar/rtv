@@ -1,27 +1,22 @@
-.TH "RTV" "1" "August 06, 2017" "Version 1.17.0" "Usage and Commands"
+.TH "RTV" "1" "September 06, 2017" "Version 1.18.0" "Usage and Commands"
 .SH NAME
 RTV - Reddit Terminal Viewer
 .SH SYNOPSIS
-rtv [\-h] [\-V] [\-s SUBREDDIT] [\-l LINK] [\-\-log FILE] [\-\-config FILE] [\-\-ascii] [\-\-monochrome] [\-\-non\-persistent] [\-\-clear\-auth] [\-\-copy\-config] [\-\-copy\-mailcap] [\-\-enable\-media]
+rtv [\-h] [\-s SUBREDDIT] [\-\-log FILE] [\-\-config FILE] [\-\-ascii] [\-\-monochrome] [\-\-non\-persistent] [\-\-clear\-auth] [\-\-copy\-config] [\-\-copy\-mailcap] [\-\-enable\-media] [\-V] [URL]
 .SH DESCRIPTION
-Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
-terminal window.
+Reddit Terminal Viewer is a lightweight browser for https://www.reddit.com
 .SH OPTIONS
+.TP
+\fBURL\fR
+[optional] Full URL of a submission to open
+
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 show this help message and exit
 
 .TP
-\fB\-V\fR, \fB\-\-version\fR
-show program's version number and exit
-
-.TP
 \fB\-s SUBREDDIT\fR
-Name of the subreddit that will be opened on start
-
-.TP
-\fB\-l LINK\fR
-Full URL of a submission that will be opened on start
+Name of the subreddit that will be loaded on start
 
 .TP
 \fB\-\-log FILE\fR
@@ -59,12 +54,16 @@ Copy an example mailcap configuration to {HOME}/.mailcap
 \fB\-\-enable\-media\fR
 Open external links using programs defined in the mailcap config
 
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+show program's version number and exit
+
 
 .SH CONTROLS
-Move the cursor using either the arrow keys or Vim-style movement.
-- Press \fBup\fR and \fBdown\fR to scroll through submissions.
-- Press \fBright\fR to view the selected submission and \fBleft\fR to return.
-- Press \fB?\fR to open the help screen.
+Move the cursor using the arrow keys or vim style movement.
+Press \fBup\fR and \fBdown\fR to scroll through submissions.
+Press \fBright\fR to view the selected submission and \fBleft\fR to return.
+Press \fB?\fR to open the help screen.
 .SH FILES
 .TP
 .BR $XDG_CONFIG_HOME/rtv/rtv.cfg
@@ -82,16 +81,13 @@ Text editor to use when editing comments and submissions. Will fallback to
 \fI$EDITOR\fR. 
 .TP
 .BR RTV_URLVIEWER
-Url Viewer to use to extract links from comments.  Requires a compatible 
-Url Viewer to be installed
+Url viewer to use to extract links from comments.  Requires a compatible
+program to be installed.
 .TP
-.BR BROWSER
-Web browser to use when opening links.
-.TP
-.BR PAGER
-Pager to use when expanding individual comments and submissions. 
+.BR RTV_BROWSER
+Web browser to use when opening links. Will fallback to \fI$BROWSER\fR.
 .SH AUTHOR
-Michael Lazar <lazar.michael22@gmail.com> (2016).
+Michael Lazar <lazar.michael22@gmail.com> (2017).
 .SH BUGS
 Report bugs to \fIhttps://github.com/michael-lazar/rtv/issues\fR
 .SH LICENSE

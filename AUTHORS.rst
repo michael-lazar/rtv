@@ -28,9 +28,9 @@ Thanks to the following people for their contributions to this project.
 * `Ryan Reno <https://github.com/rreno>`_
 * `afloofloo <https://github.com/afloofloo>`_
 * `Charles Saracco <https://github.com/crsaracco>`_
+* `cmccandless <https://github.com/cmccandless>`_
 * `Fabio Alessandro Locati <https://github.com/Fale>`_
 * `Hans Roman <https://github.com/snahor>`_
 * `Marc Abramowitz <https://github.com/msabramo>`_
 * `Matthew Smith <https://github.com/msmith491>`_
 * `mskwon <https://github.com/mskwon>`_
-* `Ram-Z <https://github.com/Ram-Z>`_

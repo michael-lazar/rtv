@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.18.0: http://github.com/michael-lazar/rtv/releases/tag/v1.18.0
 .. _1.17.1: http://github.com/michael-lazar/rtv/releases/tag/v1.17.1
 .. _1.17.0: http://github.com/michael-lazar/rtv/releases/tag/v1.17.0
 .. _1.16.0: http://github.com/michael-lazar/rtv/releases/tag/v1.16.0
@@ -28,6 +29,37 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.18.0_ (2017-09-06)
+--------------------
+
+Features
+
+* The ``rtv -l`` flag has been deprecated and replaced with a positional
+  argument, in order to match the syntax of other command line web browsers.
+* NSFW content is now filtered according to the user's reddit profile
+  settings.
+* ``$RTV_BROWSER`` has been added as a way to set the preferred web browser.
+* Sorting options for **relevance** and **comments** are now displayed on
+  the search results page.
+* An **[S]** badge is now displayed next to the submission author.
+* The gfycat MIME parser has been expanded to support more URLs.
+* New MIME parsers have been added for oddshot.tv, clips.twitch.tv,
+  clippituser.tv, and Reddit's beta hosted videos.
+
+Bugfixes
+
+* Users can now use the prompt to navigate to "/comments/..." pages from
+  inside of a submission.
+* Users can now navigate to multireddits using the "/u/me/" prefix.
+* Fixed the ``$BROWSER`` behavior on macOS to support the **chrome**,
+  **firefox**, **safari**, and **default** keywords.
+
+Codebase
+
+* Travis CI tests have been moved to the trusty environment.
+* Added more detailed logging of the environment and settings at startup.
 
 --------------------
 1.17.1_ (2017-08-06)
