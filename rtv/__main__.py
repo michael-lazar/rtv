@@ -23,13 +23,21 @@ except ImportError:
         sys.exit('Fatal Error: Your python distribution appears to be missing '
                  '_curses.so.\nWas it compiled without support for curses?')
 
+# If we want to override the $BROWSER variable that the python webbrowser
+# references, it needs to be done before the webbrowser module is imported
+# for the first time.
+webbrowser_import_warning = ('webbrowser' in sys.modules)
+RTV_BROWSER, BROWSER = os.environ.get('RTV_BROWSER'), os.environ.get('BROWSER')
+if RTV_BROWSER:
+    os.environ['BROWSER'] = RTV_BROWSER
+
 from . import docs
 from . import packages
 from .packages import praw
 from .config import Config, copy_default_config, copy_default_mailcap
 from .oauth import OAuthHelper
 from .terminal import Terminal
-from .objects import curses_session, Color
+from .objects import curses_session, Color, patch_webbrowser
 from .subreddit_page import SubredditPage
 from .exceptions import ConfigError
 from .__version__ import __version__
@@ -110,8 +118,8 @@ def main():
             ('$XDG_CONFIG_HOME', os.getenv('XDG_CONFIG_HOME')),
             ('$RTV_EDITOR', os.getenv('RTV_EDITOR')),
             ('$RTV_URLVIEWER', os.getenv('RTV_URLVIEWER')),
-            ('$RTV_BROWSER', os.getenv('RTV_BROWSER')),
-            ('$BROWSER', os.getenv('BROWSER')),
+            ('$RTV_BROWSER', RTV_BROWSER),
+            ('$BROWSER', BROWSER),
             ('$PAGER', os.getenv('PAGER')),
             ('$VISUAL', os.getenv('VISUAL')),
             ('$EDITOR', os.getenv('EDITOR'))]
@@ -139,6 +147,8 @@ def main():
         warnings.warn(text)
         config['ascii'] = True
 
+    _logger.info('RTV module path: %s', os.path.abspath(__file__))
+
     # Check the praw version
     if packages.__praw_bundled__:
         _logger.info('Using packaged PRAW distribution, '
@@ -146,6 +156,12 @@ def main():
     else:
         _logger.info('Packaged PRAW not found, falling back to system '
                      'installed version %s', praw.__version__)
+
+    # Update the webbrowser module's default behavior
+    patch_webbrowser()
+    if webbrowser_import_warning:
+        _logger.warning('webbrowser module was unexpectedly imported before'
+                        '$BROWSER could be overwritten')
 
     # Construct the reddit user agent
     user_agent = docs.AGENT.format(version=__version__)

@@ -164,7 +164,9 @@ class ImgurApiMIMEParser(BaseMIMEParser):
         https://apidocs.imgur.com
     """
     CLIENT_ID = None
-    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/((?P<domain>a|album|gallery)/)?(?P<hash>[a-zA-Z0-9]+)$')
+    pattern = re.compile(
+        r'https?://(w+\.)?(m\.)?imgur\.com/'
+        r'((?P<domain>a|album|gallery)/)?(?P<hash>[a-zA-Z0-9]+)$')
 
     @classmethod
     def get_mimetype(cls, url):
