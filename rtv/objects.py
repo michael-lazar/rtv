@@ -3,12 +3,14 @@ from __future__ import unicode_literals
 
 import re
 import os
+import sys
 import time
 import signal
 import inspect
 import weakref
 import logging
 import threading
+import webbrowser
 import curses
 import curses.ascii
 from contextlib import contextmanager
@@ -21,6 +23,26 @@ from .packages import praw
 
 
 _logger = logging.getLogger(__name__)
+
+
+def patch_webbrowser():
+    """
+    Patch webbrowser on macOS to support setting BROWSER=firefox,
+    BROWSER=chrome, etc..
+    
+    https://bugs.python.org/issue31348
+    """
+
+    if sys.platform == 'darwin':
+
+        # This is a copy of what's at the end of webbrowser.py, except that
+        # it adds MacOSXOSAScript entries instead of GenericBrowser entries.
+        if "BROWSER" in os.environ:
+            _userchoices = os.environ["BROWSER"].split(os.pathsep)
+            for cmdline in reversed(_userchoices):
+                if cmdline in ('safari', 'firefox', 'chrome', 'default'):
+                    browser = webbrowser.MacOSXOSAScript(cmdline)
+                    webbrowser.register(cmdline, None, browser, -1)
 
 
 @contextmanager

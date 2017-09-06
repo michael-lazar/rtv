@@ -26,6 +26,7 @@ except ImportError:
 # If we want to override the $BROWSER variable that the python webbrowser
 # references, it needs to be done before the webbrowser module is imported
 # for the first time.
+webbrowser_import_warning = ('webbrowser' in sys.modules)
 RTV_BROWSER, BROWSER = os.environ.get('RTV_BROWSER'), os.environ.get('BROWSER')
 if RTV_BROWSER:
     os.environ['BROWSER'] = RTV_BROWSER
@@ -36,7 +37,7 @@ from .packages import praw
 from .config import Config, copy_default_config, copy_default_mailcap
 from .oauth import OAuthHelper
 from .terminal import Terminal
-from .objects import curses_session, Color
+from .objects import curses_session, Color, patch_webbrowser
 from .subreddit_page import SubredditPage
 from .exceptions import ConfigError
 from .__version__ import __version__
@@ -155,6 +156,12 @@ def main():
     else:
         _logger.info('Packaged PRAW not found, falling back to system '
                      'installed version %s', praw.__version__)
+
+    # Update the webbrowser module's default behavior
+    patch_webbrowser()
+    if webbrowser_import_warning:
+        _logger.warning('webbrowser module was unexpectedly imported before'
+                        '$BROWSER could be overwritten')
 
     # Construct the reddit user agent
     user_agent = docs.AGENT.format(version=__version__)
