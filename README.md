@@ -126,9 +126,7 @@ You can use [mailcap](https://en.wikipedia.org/wiki/Media_type#Mailcap) to confi
 <img alt="title image" src="resources/mailcap.gif"/>
 </p>
 
-A mailcap file allows you to associate different MIME media types, like ``image/jpeg`` or ``video/mp4``, with shell commands.
-
-This feature is disabled by default because it takes a a few extra steps to configure. To get started, copy the default mailcap template to your home directory.
+A mailcap file allows you to associate different MIME media types, like ``image/jpeg`` or ``video/mp4``, with shell commands. This feature is disabled by default because it takes a a few extra steps to configure. To get started, copy the default mailcap template to your home directory.
 
 ```bash
 $ rtv --copy-mailcap
@@ -166,51 +164,50 @@ FAQ
 ===
 
 Why am I getting an error during installation/when launching rtv?
-  If your distro ships with an older version of python 2.7 or python-requests,
-  you may experience SSL errors or other package incompatibilities. The
-  easiest way to fix this is to install rtv using python 3. If you
-  don't already have pip3, see http://stackoverflow.com/a/6587528 for setup
-  instructions. Then do
 
-  .. code-block:: bash
-
-    $ sudo pip uninstall rtv
-    $ sudo pip3 install -U rtv
+> If your distro ships with an older version of python 2.7 or python-requests,
+> you may experience SSL errors or other package incompatibilities. The
+> easiest way to fix this is to install rtv using python 3. If you
+> don't already have pip3, see http://stackoverflow.com/a/6587528 for setup
+> instructions. Then do
+>
+> ```bash
+> $ sudo pip uninstall rtv
+> $ sudo pip3 install -U rtv
+> ```
 
 Why do I see garbled text like ``M-b~@M-"`` or ``^@``?
-    This type of text usually shows up when python is unable to render
-    unicode properly.
-    
-    1. Try starting RTV in ascii-only mode with ``rtv --ascii``
-    2. Make sure that the terminal/font that you're using supports unicode
-    3. Try `setting the LOCALE to utf-8 <https://perlgeek.de/en/article/set-up-a-clean-utf8-environment>`_
-    4. Your python may have been built against the wrong curses library,
-       see `here <stackoverflow.com/questions/19373027>`_ and
-       `here <https://bugs.python.org/issue4787>`_ for more information
+
+> This type of text usually shows up when python is unable to render
+> unicode properly.
+>    
+> 1. Try starting RTV in ascii-only mode with ``rtv --ascii``
+> 2. Make sure that the terminal/font that you're using supports unicode
+> 3. Try [setting the LOCALE to utf-8](https://perlgeek.de/en/article/set-up-a-clean-utf8-environment)
+> 4. Your python may have been built against the wrong curses library,
+>    see [here](stackoverflow.com/questions/19373027) and
+>    [here](https://bugs.python.org/issue4787) for more information
   
 How do I run the code directly from the repository?
-  This project is structured to be run as a python *module*. This means that
-  you need to launch it using python's ``-m`` flag. See the example below, which
-  assumes that you have cloned the repository into the directory **~/rtv_project**.
 
-  .. code-block:: bash
+> This project is structured to be run as a python *module*. This means that
+> you need to launch it using python's ``-m`` flag. See the example below, which
+> assumes that you have cloned the repository into the directory **~/rtv_project**.
+>
+> ```bash
+> $ cd ~/rtv_project
+> $ python3 -m rtv
+> ```
 
-    $ cd ~/rtv_project
-    $ python3 -m rtv
-  
-============
-Contributing
-============
+## Contributing
 All feedback and suggestions are welcome, just post an issue!
 
-Before writing any code, please read the `Contributor Guidelines <https://github.com/michael-lazar/rtv/blob/master/CONTRIBUTING.rst>`_.
+Before writing any code, please read the [Contributor Guidelines](https://github.com/michael-lazar/rtv/blob/master/CONTRIBUTING.rst).
 
-=======
-License
-=======
-This project is distributed under the `MIT <https://github.com/michael-lazar/rtv/blob/master/LICENSE>`_ license.
+## License
+This project is distributed under the [MIT](https://github.com/michael-lazar/rtv/blob/master/LICENSE) license.
 
-
-.. figure:: http://i.imgur.com/quDzox3.png
-   :target: https://github.com/Swordfish90/cool-retro-term
+<p align="center">
+<img alt="title image" src="resources/retro_term.png"/>
+</p>
    
