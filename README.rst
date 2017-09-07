@@ -190,16 +190,13 @@ Why am I getting an error during installation/when launching rtv?
     $ sudo pip3 install -U rtv
 
 Why do I see garbled text like ``M-b~@M-"`` or ``^@``?
-  Quick fix
-    Try starting RTV in ascii-only mode with ``rtv --ascii``
-  
-  Explanation
     This type of text usually shows up when python is unable to render
     unicode properly.
     
-    1. Make sure that the terminal/font that you're using supports unicode
-    2. Try `setting the LOCALE to utf-8 <https://perlgeek.de/en/article/set-up-a-clean-utf8-environment>`_
-    3. Your python may have been built against the wrong curses library,
+    1. Try starting RTV in ascii-only mode with ``rtv --ascii``
+    2. Make sure that the terminal/font that you're using supports unicode
+    3. Try `setting the LOCALE to utf-8 <https://perlgeek.de/en/article/set-up-a-clean-utf8-environment>`_
+    4. Your python may have been built against the wrong curses library,
        see `here <stackoverflow.com/questions/19373027>`_ and
        `here <https://bugs.python.org/issue4787>`_ for more information
   
