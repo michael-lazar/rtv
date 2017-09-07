@@ -1,6 +1,7 @@
 # RTV (Reddit Terminal Viewer)
 
 RTV provides an interface to view and interact with reddit from your terminal.<br/>
+It's compatible with *most* terminal emulators on Linux and OS X.
 
 <p align="center">
 <img alt="title image" src="resources/title_image.png"/>
@@ -18,66 +19,62 @@ RTV is built in **python** using the **curses** library.
 
 ---
 
-* `Demo`_
-* `Installation`_
-* `Usage`_
-* `Settings`_
-* `FAQ`_
-* `Contributing`_
-* `License`_
+##### Table of Contents
 
-====
-Demo
-====
+* [Demo](#demo)  
+* [Installation](#installation)  
+* [Usage](#usage)  
+* [Settings](#settings)  
+* [FAQ](#faq)  
+* [Contributing](#contributing)  
+* [License](#license)  
 
-.. image:: http://i.imgur.com/aNZWxnW.gif
+## Demo
 
-============
-Installation
-============
+<p align="center">
+<img alt="title image" src="resources/demo.gif"/>
+</p>
 
---------------
-Python package
---------------
+## Installation
 
-RTV is available on `PyPI <https://pypi.python.org/pypi/rtv/>`_ and can be installed with pip:
+### Python package
 
-.. code-block:: bash
+RTV is available on [PyPI](https://pypi.python.org/pypi/rtv/) and can be installed with pip:
 
-    $ pip install rtv
+```bash
+$ pip install rtv
+```
 
----------------
-Native packages
----------------
+### Native packages
 
-Check `Repology <https://repology.org/metapackage/rtv/information>`_ for an up-to-date list of supported packages:
+Check [Repology](https://repology.org/metapackage/rtv/information) for an up-to-date list of supported packages:
 
 **macOS**
 
-.. code-block:: bash
-
-    $ brew install rtv
+```bash
+$ brew install rtv
+```
 
 **Debian 9+, Ubuntu 17.04+**
 
-.. code-block:: bash
-
-    $ apt install rtv
+```bash
+$ apt install rtv
+```
 
 **Fedora 24+**
 
-.. code-block:: bash
-
-    $ yum install rtv
+```bash
+$ yum install rtv
+```
 
 **Arch Linux**
 
-.. code:: bash
-
-    $ # Install the latest official release
-    $ yaourt -S rtv
-    $ # Or to keep up to date with the master branch
-    $ yaourt -S rtv-git
+```bash
+$ # Install the latest official release
+$ yaourt -S rtv
+$ # Or to keep up to date with the master branch
+$ yaourt -S rtv-git
+```
 
 =====
 Usage
