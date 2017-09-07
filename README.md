@@ -19,7 +19,7 @@ RTV is built in **python** using the **curses** library.
 
 ---
 
-##### Table of Contents
+## Table of Contents
 
 * [Demo](#demo)  
 * [Installation](#installation)  
@@ -76,19 +76,15 @@ $ # Or to keep up to date with the master branch
 $ yaourt -S rtv-git
 ```
 
-=====
-Usage
-=====
+## Usage
 
 To run the program, type 
 
-.. code-block:: bash
+```bash
+$ rtv --help
+```
 
-    $ rtv --help
-
---------
-Controls
---------
+### Controls
 
 Move the cursor using either the arrow keys or *Vim* style movement
 
@@ -107,70 +103,63 @@ Press ``/`` to open the navigation prompt, where you can type things like
 - ``/u/multi-mod/m/art``
 - ``/domain/github.com``
 
-See `CONTROLS <https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst>`_ for the full list of commands
+See [CONTROLS](https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst) for the full list of commands
 
-========
-Settings
-========
+## Settings
 
-------------------
-Configuration File
-------------------
+### Configuration File
 
 Configuration files are stored in the ``{HOME}/.config/rtv/`` directory
 
-See `rtv.cfg <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg>`_ for the full list of configurable options. You can clone this file into your home directory by running
+See [rtv.cfg](https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg) for the full list of configurable options. You can clone this file into your home directory by running
 
-.. code-block:: bash
+```bash
+$ rtv --copy-config
+```
 
-    $ rtv --copy-config
-    
+### Viewing Media Links
 -------------------
-Viewing Media Links
--------------------
 
-You can use `mailcap <https://en.wikipedia.org/wiki/Media_type#Mailcap>`_ to configure
-how RTV will open different types of links
+You can use [mailcap](https://en.wikipedia.org/wiki/Media_type#Mailcap) to configure how RTV will open different types of links
 
-.. image:: http://i.imgur.com/ueQ3w0P.gif
+<p align="center">
+<img alt="title image" src="resources/mailcap.gif"/>
+</p>
 
-|
-| A mailcap file allows you to associate different MIME media types, like ``image/jpeg`` or ``video/mp4``, with shell commands.
+A mailcap file allows you to associate different MIME media types, like ``image/jpeg`` or ``video/mp4``, with shell commands.
 
 This feature is disabled by default because it takes a a few extra steps to configure. To get started, copy the default mailcap template to your home directory.
 
-.. code-block:: bash
+```bash
+$ rtv --copy-mailcap
+```
 
-    $ rtv --copy-mailcap
-
-This template contains examples for common MIME types that work with popular reddit websites like *imgur*, *youtube*, and *gfycat*. Open the mailcap template and follow the `instructions <https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap>`_ listed inside. 
+This template contains examples for common MIME types that work with popular reddit websites like *imgur*, *youtube*, and *gfycat*. Open the mailcap template and follow the [instructions](https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap) listed inside. 
 
 Once you've setup your mailcap file, enable it by launching rtv with the ``rtv --enable-media`` flag (or set it in your **rtv.cfg**)
 
----------------------
-Environment Variables
----------------------
+### Environment Variables
 
 The default programs that RTV interacts with can be configured through environment variables
 
-``$RTV_EDITOR``
-  | A program used to compose text submissions and comments, e.g. **vim**, **emacs**, **gedit**
-  | *If not specified, will fallback to* ``$VISUAL`` *and* ``$EDITOR`` *in that order.*
+<dl>
+  <dt>$RTV_EDITOR</dt>
+  <dd>A program used to compose text submissions and comments, e.g. <strong>vim</strong>, <strong>emacs</strong>, <strong>gedit</strong>
+  <br/> <em>If not specified, will fallback to $VISUAL and $EDITOR in that order.</em></dd>
+  
+  <dt>$RTV_BROWSER</dt>
+  <dd>A program used to open links to external websites, e.g. <strong>firefox</strong>, <strong>google-chrome</strong>, <strong>w3m</strong>, <strong>lynx</strong>, <strong>elinks</strong>
+  <br/> <em>If not specified, will fallback to $BROWSER, or try to intelligently choose a browser supported by your system.</em></dd>
+  
+  <dt>$RTV_URLVIEWER</dt>
+  <dd>A tool used to extract hyperlinks from blocks of text, e.g.<a href=https://github.com/sigpipe/urlview>urlview</a>, <a href=https://github.com/firecat53/urlscan>urlscan</a>
+  <br/> <em>If not specified, will fallback to urlview if it is installed.</em></dd>
+</dl>
 
-``$RTV_BROWSER``
-  | A program used to open links to external websites, e.g. **firefox**, **google-chrome**, **w3m**, **lynx**, **elinks**
-  | *If not specified, will fallback to* ``$BROWSER`` *, or try to intelligently choose a browser supported by your system.*
-
-``$RTV_URLVIEWER``
-  | A tool used to extract hyperlinks from blocks of text, e.g.  `urlview <https://github.com/sigpipe/urlview>`_, `urlscan <https://github.com/firecat53/urlscan>`_
-  | *If not specified, will fallback to urlview if it is installed.*
-
-------------------------
-Copying to the Clipboard
-------------------------
+### Copying to the Clipboard
 RTV supports copying submission links to the OS clipboard.
 On macOS this is supported out of the box.
-On Linux systems you will need to install either `xsel <http://www.vergenet.net/~conrad/software/xsel/>`_ or `xclip <https://sourceforge.net/projects/xclip/>`_.
+On Linux systems you will need to install either [xsel](http://www.vergenet.net/~conrad/software/xsel/) or [xclip](https://sourceforge.net/projects/xclip/).
 
 ===
 FAQ
