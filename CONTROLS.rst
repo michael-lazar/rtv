@@ -2,8 +2,6 @@
 Controls
 ========
 
-.. image:: http://i.imgur.com/xDUQ03C.png
-
 --------------
 Basic Commands
 --------------
