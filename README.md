@@ -19,8 +19,6 @@ RTV is built in **python** using the **curses** library.
 
 ---
 
-## Table of Contents
-
 * [Demo](#demo)  
 * [Installation](#installation)  
 * [Usage](#usage)  
