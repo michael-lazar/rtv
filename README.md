@@ -118,7 +118,6 @@ $ rtv --copy-config
 ```
 
 ### Viewing Media Links
--------------------
 
 You can use [mailcap](https://en.wikipedia.org/wiki/Media_type#Mailcap) to configure how RTV will open different types of links
 
@@ -159,11 +158,9 @@ RTV supports copying submission links to the OS clipboard.
 On macOS this is supported out of the box.
 On Linux systems you will need to install either [xsel](http://www.vergenet.net/~conrad/software/xsel/) or [xclip](https://sourceforge.net/projects/xclip/).
 
-===
-FAQ
-===
+## FAQ
 
-Why am I getting an error during installation/when launching rtv?
+**Why am I getting an error during installation/when launching rtv?**
 
 > If your distro ships with an older version of python 2.7 or python-requests,
 > you may experience SSL errors or other package incompatibilities. The
@@ -176,7 +173,7 @@ Why am I getting an error during installation/when launching rtv?
 > $ sudo pip3 install -U rtv
 > ```
 
-Why do I see garbled text like ``M-b~@M-"`` or ``^@``?
+**Why do I see garbled text like** ``M-b~@M-"`` **or** ``^@`` **?**
 
 > This type of text usually shows up when python is unable to render
 > unicode properly.
@@ -188,7 +185,7 @@ Why do I see garbled text like ``M-b~@M-"`` or ``^@``?
 >    see [here](stackoverflow.com/questions/19373027) and
 >    [here](https://bugs.python.org/issue4787) for more information
   
-How do I run the code directly from the repository?
+**How do I run the code directly from the repository?**
 
 > This project is structured to be run as a python *module*. This means that
 > you need to launch it using python's ``-m`` flag. See the example below, which
