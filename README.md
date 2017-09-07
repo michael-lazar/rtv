@@ -11,15 +11,25 @@ RTV is built in **python** using the **curses** library.
 
 ---
 
-[![pypi](https://img.shields.io/pypi/v/rtv.svg?label=version)](https://pypi.python.org/pypi/rtv/)
-[![python](https://img.shields.io/badge/python-2.7%2C%203.6-blue.svg)](https://pypi.python.org/pypi/rtv/)
-[![travis-ci](https://travis-ci.org/michael-lazar/rtv.svg?branch=master)](https://travis-ci.org/michael-lazar/rtv)
-[![coveralls](https://coveralls.io/repos/michael-lazar/rtv/badge.svg?branch=master&service=github)](https://coveralls.io/github/michael-lazar/rtv?branch=master)
-[![gitter](https://img.shields.io/gitter/room/michael-lazar/rtv.js.svg)](https://gitter.im/michael-lazar/rtv)
+<p align="center">
+  <a href="https://pypi.python.org/pypi/rtv/">
+    <img alt="pypi" src="https://img.shields.io/pypi/v/rtv.svg?label=version"/>
+  </a>
+  <a href="https://pypi.python.org/pypi/rtv/">
+    <img alt="python" src="https://img.shields.io/badge/python-2.7%2C%203.6-blue.svg"/>
+  </a>
+  <a href="https://travis-ci.org/michael-lazar/rtv">
+    <img alt="travis-ci" src="https://travis-ci.org/michael-lazar/rtv.svg?branch=master"/>
+  </a>
+  <a href="https://coveralls.io/github/michael-lazar/rtv?branch=master">
+    <img alt="coveralls" src="https://coveralls.io/repos/michael-lazar/rtv/badge.svg?branch=master&service=github"/>
+  </a>
+  <a href="https://gitter.im/michael-lazar/rtv">
+    <img alt="gitter" src="https://img.shields.io/gitter/room/michael-lazar/rtv.js.svg"/>
+  </a>
+</p>
 
 ---
-
-## Table of Contents
 
 * [Demo](#demo)  
 * [Installation](#installation)  
