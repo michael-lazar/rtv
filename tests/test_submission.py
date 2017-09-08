@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import sys
 import curses
 import subprocess
+from collections import OrderedDict
 
 import pytest
 
@@ -13,6 +14,15 @@ try:
     from unittest import mock
 except ImportError:
     import mock
+
+
+PROMPTS = OrderedDict([
+    ('prompt_1', 'comments/571dw3'),
+    ('prompt_2', '///comments/571dw3'),
+    ('prompt_3', '/comments/571dw3'),
+    ('prompt_4', '/r/pics/comments/571dw3/'),
+    ('prompt_5', 'https://www.reddit.com/r/pics/comments/571dw3/at_disneyland'),
+])
 
 
 def test_submission_page_construct(reddit, terminal, config, oauth):
@@ -148,6 +158,20 @@ def test_submission_prompt(submission_page, terminal):
         assert not submission_page.selected_subreddit
 
 
+@pytest.mark.parametrize('prompt', PROMPTS.values(), ids=list(PROMPTS))
+def test_submission_prompt_submission(submission_page, terminal, prompt):
+
+    # Navigate to a different submission from inside a submission
+    with mock.patch.object(terminal, 'prompt_input'):
+        terminal.prompt_input.return_value = prompt
+        submission_page.content.order = 'top'
+        submission_page.controller.trigger('/')
+        assert not terminal.loader.exception
+        data = submission_page.content.get(-1)
+        assert data['object'].id == '571dw3'
+        assert submission_page.content.order is None
+
+
 def test_submission_order_top(submission_page, terminal):
 
     # Open the menu
@@ -190,6 +214,22 @@ def test_submission_move_top_bottom(submission_page):
     submission_page.controller.trigger('g')
     submission_page.controller.trigger('g')
     assert submission_page.nav.absolute_index == -1
+
+
+def test_submission_move_sibling_parent(submission_page):
+
+    # Jump to sibling
+    with mock.patch.object(submission_page, 'clear_input_queue'):
+        submission_page.controller.trigger('j')
+        submission_page.controller.trigger('J')
+    assert submission_page.nav.absolute_index == 7
+
+    # Jump to parent
+    with mock.patch.object(submission_page, 'clear_input_queue'):
+        submission_page.controller.trigger('k')
+        submission_page.controller.trigger('k')
+        submission_page.controller.trigger('K')
+    assert submission_page.nav.absolute_index == 0
 
 
 def test_submission_pager(submission_page, terminal):
@@ -314,7 +354,7 @@ def test_submission_comment_save(submission_page, terminal, refresh_token):
     with mock.patch.object(submission_page, 'clear_input_queue'):
         submission_page.controller.trigger('j')
 
-    # Test save on the coment submission
+    # Test save on the comment submission
     with mock.patch('rtv.packages.praw.objects.Comment.save') as save,        \
             mock.patch('rtv.packages.praw.objects.Comment.unsave') as unsave:
 
@@ -520,7 +560,7 @@ def test_copy_to_clipboard_linux(submission_page, terminal, refresh_token):
         assert data.get('permalink') == content
         window.addstr.assert_called_with(1, 1, b'Copied permalink to clipboard')
     else:
-        # Nither xclip or xsel installed, this is what happens on Travis CI
+        # Neither xclip or xsel installed, this is what happens on Travis CI
         text = b'Failed to copy permalink: External copy application not found'
         window.addstr.assert_called_with(1, 1, text)
 
@@ -531,6 +571,6 @@ def test_copy_to_clipboard_linux(submission_page, terminal, refresh_token):
         assert data.get('url_full') == content
         window.addstr.assert_called_with(1, 1, b'Copied url to clipboard')
     else:
-        # Nither xclip or xsel installed, this is what happens on Travis CI
+        # Neither xclip or xsel installed, this is what happens on Travis CI
         text = b'Failed to copy url: External copy application not found'
         window.addstr.assert_called_with(1, 1, text)

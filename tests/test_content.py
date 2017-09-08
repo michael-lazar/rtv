@@ -46,7 +46,7 @@ SUBREDDIT_PROMPTS = OrderedDict([
     ('user-1', ('/u/spez', '/u/spez', None)),
     ('user-new', ('/u/spez/new', '/u/spez', 'new')),
     ('user-top-all', ('/u/spez/top-all', '/u/spez', 'top-all')),
-    ('multi-0', ('/user/multi-mod/m/art', '/user/multi-mod/m/art', None)),
+    ('multi-0', ('/user/multi-mod/m/art', '/u/multi-mod/m/art', None)),
     ('multi-1', ('/u/multi-mod/m/art', '/u/multi-mod/m/art', None)),
     ('multi-top', ('/u/multi-mod/m/art/top', '/u/multi-mod/m/art', 'top')),
     ('multi-top-all', ('/u/multi-mod/m/art/top-all', '/u/multi-mod/m/art', 'top-all')),
@@ -62,6 +62,7 @@ SUBREDDIT_AUTH_PROMPTS = OrderedDict([
     ('me-top', ('/u/me/top', '/u/me', 'top')),
     ('me-top-all', ('/u/me/top-all', '/u/me', 'top-all')),
     ('user-saved', ('/u/saved', '/u/saved', None)),
+    ('me-multi', ('/u/me/m/redditpets/top-all', '/u/{username}/m/redditpets', 'top-all')),
 ])
 
 # All of these should raise an error when entered
@@ -396,6 +397,9 @@ def test_content_subreddit_from_name_authenticated(
     oauth.config.refresh_token = refresh_token
     oauth.authorize()
 
+    if '{username}' in name:
+        name = name.format(username=reddit.user.name)
+
     content = SubredditContent.from_name(reddit, prompt, terminal.loader)
     assert content.name == name
     assert content.order == order
@@ -410,6 +414,7 @@ def test_content_subreddit_from_name_invalid(prompt, reddit, terminal):
     assert isinstance(terminal.loader.exception, praw.errors.InvalidSubreddit)
     # Must always have an argument because it gets displayed
     assert terminal.loader.exception.args[0]
+
 
 args, ids = SUBREDDIT_SEARCH_QUERIES.values(), list(SUBREDDIT_SEARCH_QUERIES)
 @pytest.mark.parametrize('prompt,query', args, ids=ids)
@@ -467,6 +472,41 @@ def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):
         assert isinstance(terminal.loader.exception,
                           exceptions.NoSubmissionsError)
         assert terminal.loader.exception.name == '/u/me'
+
+
+def test_content_subreddit_nsfw_filter(reddit, oauth, refresh_token, terminal):
+
+    # NSFW subreddits should load if not logged in
+    name = '/r/ImGoingToHellForThis'
+    SubredditContent.from_name(reddit, name, terminal.loader)
+
+    # Log in
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
+
+    # Make sure the API parameter hasn't changed
+    assert reddit.user.over_18 is not None
+
+    # Turn on safe search
+    reddit.user.over_18 = False
+
+    # Should refuse to load this subreddit
+    with pytest.raises(exceptions.SubredditError):
+        name = '/r/ImGoingToHellForThis'
+        SubredditContent.from_name(reddit, name, terminal.loader)
+
+    # Should filter out all of the nsfw posts
+    name = '/r/ImGoingToHellForThis+python'
+    content = SubredditContent.from_name(reddit, name, terminal.loader)
+    for data in islice(content.iterate(0, 1), 50):
+        assert data['object'].over_18 is False
+
+    # Turn off safe search
+    reddit.user.over_18 = True
+
+    # The NSFW subreddit should load now
+    name = '/r/ImGoingToHellForThis'
+    SubredditContent.from_name(reddit, name, terminal.loader)
 
 
 def test_content_subscription(reddit, terminal):

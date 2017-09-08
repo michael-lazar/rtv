@@ -32,6 +32,7 @@ class BaseMIMEParser(object):
                 browser.
         """
         filename = url.split('?')[0]
+        filename = filename.split('#')[0]
         content_type, _ = mimetypes.guess_type(filename)
         return url, content_type
 
@@ -54,12 +55,11 @@ class OpenGraphMIMEParser(BaseMIMEParser):
     def get_mimetype(url):
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
-        tag = soup.find('meta', attrs={'property': 'og:video:secure_url'})
-        tag = tag or soup.find('meta', attrs={'property':  'og:image'})
-        if tag:
-            return BaseMIMEParser.get_mimetype(tag.get('content'))
-        else:
-            return url, None
+        for og_type in ['og:video:secure_url', 'og:video', 'og:image']:
+            tag = soup.find('meta', attrs={'property': og_type})
+            if tag:
+                return BaseMIMEParser.get_mimetype(tag.get('content'))
+        return url, None
 
 
 class GfycatMIMEParser(BaseMIMEParser):
@@ -77,7 +77,7 @@ class GfycatMIMEParser(BaseMIMEParser):
 
     @staticmethod
     def get_mimetype(url):
-        parts = url.split('/')
+        parts = url.replace('gifs/detail/', '').split('/')
         api_url = '/'.join(parts[:-1] + ['cajax', 'get'] + parts[-1:])
         resp = requests.get(api_url)
         image_url = resp.json()['gfyItem']['webmUrl']
@@ -128,7 +128,107 @@ class RedditUploadsMIMEParser(BaseMIMEParser):
         return url, content_type
 
 
-class ImgurMIMEParser(BaseMIMEParser):
+class RedditVideoMIMEParser(BaseMIMEParser):
+    """
+    Reddit hosted videos/gifs.
+    Media uses MPEG-DASH format (.mpd)
+    """
+    pattern = re.compile(r'https://v\.redd\.it/.+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        request_url = url + '/DASHPlaylist.mpd'
+        page = requests.get(request_url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        if not soup.find('representation', attrs={'mimetype': 'audio/mp4'}):
+            reps = soup.find_all('representation',
+                                 attrs={'mimetype': 'video/mp4'})
+            rep = sorted(reps, reverse=True,
+                         key=lambda t: int(t.get('bandwidth')))[0]
+            return url + '/' + rep.find('baseurl').text, 'video/mp4'
+        else:
+            return request_url, 'video/x-youtube'
+
+
+class ImgurApiMIMEParser(BaseMIMEParser):
+    """
+    Imgur now provides a json API exposing its entire infrastructure. Each Imgur
+    page has an associated hash and can either contain an album, a gallery,
+    or single image.
+
+    The default client token for RTV is shared among users and allows a maximum
+    global number of requests per day of 12,500. If we find that this limit is
+    not sufficient for all of rtv's traffic, this method will be revisited.
+
+    Reference:
+        https://apidocs.imgur.com
+    """
+    CLIENT_ID = None
+    pattern = re.compile(
+        r'https?://(w+\.)?(m\.)?imgur\.com/'
+        r'((?P<domain>a|album|gallery)/)?(?P<hash>[a-zA-Z0-9]+)$')
+
+    @classmethod
+    def get_mimetype(cls, url):
+
+        endpoint = 'https://api.imgur.com/3/{domain}/{page_hash}'
+        headers = {'authorization': 'Client-ID {0}'.format(cls.CLIENT_ID)}
+
+        m = cls.pattern.match(url)
+        page_hash = m.group('hash')
+
+        if m.group('domain') in ('a', 'album'):
+            domain = 'album'
+        else:
+            # This could be a gallery or a single image, but there doesn't
+            # seem to be a way to reliably distinguish between the two.
+            # Assume a gallery, which appears to be more common, and fallback
+            # to an image request upon failure.
+            domain = 'gallery'
+
+        if not cls.CLIENT_ID:
+            return cls.fallback(url, domain)
+
+        api_url = endpoint.format(domain=domain, page_hash=page_hash)
+        r = requests.get(api_url, headers=headers)
+
+        if domain == 'gallery' and r.status_code != 200:
+            # Not a gallery, try to download using the image endpoint
+            api_url = endpoint.format(domain='image', page_hash=page_hash)
+            r = requests.get(api_url, headers=headers)
+
+        if r.status_code != 200:
+            _logger.warning('Imgur API failure, status %s', r.status_code)
+            return cls.fallback(url, domain)
+
+        data = r.json().get('data')
+        if not data:
+            _logger.warning('Imgur API failure, resp %s', r.json())
+            return cls.fallback(url, domain)
+
+        if 'images' in data:
+            # TODO: handle imgur albums with mixed content, i.e. jpeg and gifv
+            link = ' '.join([d['link'] for d in data['images'] if not d['animated']])
+            mime = 'image/x-imgur-album'
+        else:
+            link = data['mp4'] if data['animated'] else data['link']
+            mime = 'video/mp4' if data['animated'] else data['type']
+
+        link = link.replace('http://', 'https://')
+        return link, mime
+
+    @classmethod
+    def fallback(cls, url, domain):
+        """
+        Attempt to use one of the scrapers if the API doesn't work
+        """
+        if domain == 'album':
+            return ImgurScrapeAlbumMIMEParser.get_mimetype(url)
+        else:
+            return ImgurScrapeMIMEParser.get_mimetype(url)
+
+
+class ImgurScrapeMIMEParser(BaseMIMEParser):
     """
     The majority of imgur links don't point directly to the image, so we need
     to open the provided url and scrape the page for the link.
@@ -156,7 +256,7 @@ class ImgurMIMEParser(BaseMIMEParser):
         return BaseMIMEParser.get_mimetype(url)
 
 
-class ImgurAlbumMIMEParser(BaseMIMEParser):
+class ImgurScrapeAlbumMIMEParser(BaseMIMEParser):
     """
     Imgur albums can contain several images, which need to be scraped from the
     landing page. Assumes the following html structure:
@@ -204,6 +304,32 @@ class StreamableMIMEParser(OpenGraphMIMEParser):
     pattern = re.compile(r'https?://(www\.)?streamable\.com/[^.]+$')
 
 
+class TwitchMIMEParser(BaseMIMEParser):
+    """
+    Non-streaming videos hosted by twitch.tv
+    """
+    pattern = re.compile(r'https?://clips\.?twitch\.tv/[^.]+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        tag = soup.find('meta', attrs={'name': 'twitter:image'})
+        thumbnail = tag.get('content')
+        suffix = '-preview.jpg'
+        if thumbnail.endswith(suffix):
+            return thumbnail.replace(suffix, '.mp4'), 'video/mp4'
+        else:
+            return url, None
+
+
+class OddshotMIMEParser(OpenGraphMIMEParser):
+    """
+    Oddshot uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://oddshot\.tv/s(hot)?/[^.]+$')
+
+
 class VidmeMIMEParser(BaseMIMEParser):
     """
     Vidme provides a json api.
@@ -221,15 +347,63 @@ class VidmeMIMEParser(BaseMIMEParser):
             return url, None
 
 
+class LiveleakMIMEParser(BaseMIMEParser):
+    """
+    https://www.liveleak.com/view?i=12c_3456789
+    <video>
+        <source src="https://cdn.liveleak.com/..mp4" res="HD" type="video/mp4">
+        <source src="https://cdn.liveleak.com/..mp4" res="SD" type="video/mp4">
+    </video>
+    Sometimes only one video source is available
+    """
+    pattern = re.compile(r'https?://((www|m)\.)?liveleak\.com/view\?i=\w+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        urls = []
+        videos = soup.find_all('video')
+        for vid in videos:
+            source = vid.find('source', attr={'res': 'HD'}) \
+                        or vid.find('source')
+            if source:
+                urls.append((source.get('src'), source.get('type')))
+        # TODO: Handle pages with multiple videos
+        # TODO: Handle pages with youtube embeds
+        if urls:
+            return urls[0]
+        else:
+            return url, None
+
+class ClippitUserMIMEParser(BaseMIMEParser):
+    """
+    """
+    pattern = re.compile(r'https?://(www\.)?clippituser\.tv/c/.+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        tag = soup.find(id='jwplayer-container')
+        quality = ['data-{}-file'.format(_) for _ in ['hd', 'sd']]
+        return tag.get(quality[0]), 'video/mp4'
+
+
 # Parsers should be listed in the order they will be checked
 parsers = [
+    ClippitUserMIMEParser,
+    OddshotMIMEParser,
     StreamableMIMEParser,
     VidmeMIMEParser,
     InstagramMIMEParser,
     GfycatMIMEParser,
-    ImgurAlbumMIMEParser,
-    ImgurMIMEParser,
+    ImgurApiMIMEParser,
     RedditUploadsMIMEParser,
+    RedditVideoMIMEParser,
     YoutubeMIMEParser,
+    LiveleakMIMEParser,
+    TwitchMIMEParser,
     GifvMIMEParser,
     BaseMIMEParser]

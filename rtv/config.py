@@ -35,13 +35,14 @@ def build_parser():
         epilog=docs.CONTROLS,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(
-        '-V', '--version', action='version', version='rtv '+__version__)
+        'link', metavar='URL', nargs='?',
+        help='[optional] Full URL of a submission to open')
     parser.add_argument(
         '-s', dest='subreddit',
-        help='Name of the subreddit that will be opened on start')
+        help='Name of the subreddit that will be loaded on start')
     parser.add_argument(
-        '-l', dest='link',
-        help='Full URL of a submission that will be opened on start')
+        '-l', dest='link_deprecated',
+        help=argparse.SUPPRESS)  # Deprecated, use the positional arg instead
     parser.add_argument(
         '--log', metavar='FILE', action='store',
         help='Log HTTP requests to the given file')
@@ -61,8 +62,7 @@ def build_parser():
         '--list-themes', metavar='FILE', action='store_const', const=True,
         help='List all of the available color themes')
     parser.add_argument(
-        '--non-persistent', dest='persistent', action='store_const',
-        const=False,
+        '--non-persistent', dest='persistent', action='store_const', const=False,
         help='Forget the authenticated user when the program exits')
     parser.add_argument(
         '--clear-auth', dest='clear_auth', action='store_const', const=True,
@@ -76,6 +76,8 @@ def build_parser():
     parser.add_argument(
         '--enable-media', dest='enable_media', action='store_const', const=True,
         help='Open external links using programs defined in the mailcap config')
+    parser.add_argument(
+        '-V', '--version', action='version', version='rtv '+__version__)
     return parser
 
 
@@ -218,6 +220,12 @@ class Config(object):
 
         parser = build_parser()
         args = vars(parser.parse_args())
+
+        # Overwrite the deprecated "-l" option into the link variable
+        if args['link_deprecated'] and args['link'] is None:
+            args['link'] = args['link_deprecated']
+        args.pop('link_deprecated', None)
+
         # Filter out argument values that weren't supplied
         return {key: val for key, val in args.items() if val is not None}
 

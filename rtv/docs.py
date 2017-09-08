@@ -7,12 +7,11 @@ desktop:https://github.com/michael-lazar/rtv:{version}\
 """
 
 SUMMARY = """
-Reddit Terminal Viewer is a lightweight browser for www.reddit.com built into a
-terminal window.
+Reddit Terminal Viewer is a lightweight browser for https://www.reddit.com
 """
 
 CONTROLS = """
-Move the cursor using either the arrow keys or *Vim* style movement.
+Move the cursor using the arrow keys or vim style movement.
 Press `?` to open the help screen.
 """
 
@@ -30,6 +29,8 @@ https://github.com/michael-lazar/rtv
   m     : Move up one page
   gg    : Jump to the first post
   G     : Jump to the last post
+  J     : Jump to the next sibling comment
+  K     : Jump to the parent comment
   1     : Sort by hot
   2     : Sort by top
   3     : Sort by rising
@@ -81,6 +82,11 @@ https://github.com/michael-lazar/rtv
 BANNER = """
 [1]hot [2]top [3]rising [4]new [5]controversial
 """
+
+BANNER_SEARCH = """
+[1]relevance [2]top [3]comments [4]new
+"""
+
 
 FOOTER_SUBREDDIT = """
 [?]Help [q]Quit [l]Comments [/]Prompt [u]Login [o]Open [c]Post [a/z]Vote

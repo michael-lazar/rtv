@@ -1,6 +1,6 @@
------------------------
-Contributor Guidlines
------------------------
+----------------------
+Contributor Guidelines
+----------------------
 
 Before you start
 ================

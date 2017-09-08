@@ -10,7 +10,7 @@ import six
 import pytest
 
 from rtv.docs import HELP, COMMENT_EDIT_FILE
-from rtv.exceptions import TemporaryFileError
+from rtv.exceptions import TemporaryFileError, BrowserError
 
 try:
     from unittest import mock
@@ -37,7 +37,8 @@ def test_terminal_properties(terminal, config):
 
     terminal._display = None
     with mock.patch('rtv.terminal.sys') as sys, \
-            mock.patch.dict('os.environ', {'DISPLAY': ''}):
+            mock.patch('os.environ', {'DISPLAY': ''}), \
+            mock.patch('webbrowser._tryorder', new=[]):
         sys.platform = 'darwin'
         assert terminal.display is True
 
@@ -463,22 +464,38 @@ def test_open_link_subprocess(terminal):
         assert get_error()
 
 
-def test_open_browser(terminal):
-
-    url = 'http://www.test.com'
+def test_open_browser_display(terminal):
 
     terminal._display = True
-    with mock.patch('subprocess.Popen', autospec=True) as Popen:
-        Popen.return_value.poll.return_value = 0
-        terminal.open_browser(url)
-    assert Popen.called
+    with mock.patch('webbrowser.open_new_tab', autospec=True) as open_new_tab:
+        terminal.open_browser('http://www.test.com')
+
+    # open_new_tab() will be executed in the child process so we can't
+    # directly check if the was called from here or not.
+    # open_new_tab.assert_called_with('http://www.test.com')
+
+    # Shouldn't suspend curses
     assert not curses.endwin.called
     assert not curses.doupdate.called
 
+
+def test_open_browser_display_no_response(terminal):
+
+    terminal._display = True
+    with mock.patch('rtv.terminal.Process', autospec=True) as Process:
+        Process.return_value.is_alive.return_value = 1
+        terminal.open_browser('http://www.test.com')
+    assert isinstance(terminal.loader.exception, BrowserError)
+
+
+def test_open_browser_no_display(terminal):
+
     terminal._display = False
     with mock.patch('webbrowser.open_new_tab', autospec=True) as open_new_tab:
-        terminal.open_browser(url)
-    open_new_tab.assert_called_with(url)
+        terminal.open_browser('http://www.test.com')
+    open_new_tab.assert_called_with('http://www.test.com')
+
+    # Should suspend curses to give control of the terminal to the browser
     assert curses.endwin.called
     assert curses.doupdate.called
 

@@ -8,15 +8,15 @@ RTV - Reddit Terminal Viewer
 .SH OPTIONS
 {options}
 .SH CONTROLS
-Move the cursor using either the arrow keys or Vim-style movement.
-- Press \fBup\fR and \fBdown\fR to scroll through submissions.
-- Press \fBright\fR to view the selected submission and \fBleft\fR to return.
-- Press \fB?\fR to open the help screen.
+Move the cursor using the arrow keys or vim style movement.
+Press \fBup\fR and \fBdown\fR to scroll through submissions.
+Press \fBright\fR to view the selected submission and \fBleft\fR to return.
+Press \fB?\fR to open the help screen.
 .SH FILES
 .TP
 .BR $XDG_CONFIG_HOME/rtv/rtv.cfg
 The configuration file can be used to customize default program settings, see
-README.rst for more information.
+README.md for more information.
 .TP
 .BR $XDG_CONFIG_HOME/rtv/refresh-token
 After you login to reddit, your most recent OAuth refresh token will be stored
@@ -29,16 +29,13 @@ Text editor to use when editing comments and submissions. Will fallback to
 \fI$EDITOR\fR. 
 .TP
 .BR RTV_URLVIEWER
-Url Viewer to use to extract links from comments.  Requires a compatible 
-Url Viewer to be installed
+Url viewer to use to extract links from comments.  Requires a compatible
+program to be installed.
 .TP
-.BR BROWSER
-Web browser to use when opening links.
-.TP
-.BR PAGER
-Pager to use when expanding individual comments and submissions. 
+.BR RTV_BROWSER
+Web browser to use when opening links. Will fallback to \fI$BROWSER\fR.
 .SH AUTHOR
-Michael Lazar <lazar.michael22@gmail.com> (2016).
+Michael Lazar <lazar.michael22@gmail.com> (2017).
 .SH BUGS
 Report bugs to \fIhttps://github.com/michael-lazar/rtv/issues\fR
 .SH LICENSE

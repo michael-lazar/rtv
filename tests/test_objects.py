@@ -5,18 +5,47 @@ import time
 import curses
 from collections import OrderedDict
 
+import os
 import six
 import pytest
 import requests
+from six.moves import reload_module
 
 from rtv import exceptions
 from rtv.objects import Color, Controller, Navigator, Command, KeyMap, \
-    curses_session
+    curses_session, patch_webbrowser
 
 try:
     from unittest import mock
 except ImportError:
     import mock
+
+# webbrowser's command to check if a file exists is different for py2/py3
+if six.PY3:
+    mock_isfile = mock.patch('shutil.which', return_value=None)
+else:
+    mock_isfile = mock.patch('os.path.isfile', return_value=None)
+
+
+@mock.patch.dict(os.environ, {'BROWSER': 'safari'})
+@mock.patch('sys.platform', 'darwin')
+@mock_isfile
+def test_patch_webbrowser(*_):
+
+    # Make sure that webbrowser re-generates the browser list using the
+    # mocked environment
+    import webbrowser
+    webbrowser = reload_module(webbrowser)
+
+    # By default, we expect that BROWSER will be loaded as a generic browser
+    # This is because "safari" is not a valid script in the system PATH
+    assert isinstance(webbrowser.get(), webbrowser.GenericBrowser)
+
+    # After patching, the default webbrowser should now be interpreted as an
+    # OSAScript browser
+    patch_webbrowser()
+    assert isinstance(webbrowser.get(), webbrowser.MacOSXOSAScript)
+    assert webbrowser._tryorder[0] == 'safari'
 
 
 @pytest.mark.parametrize('use_ascii', [True, False])
@@ -370,13 +399,17 @@ def test_objects_keymap():
         keymap.get('downvote')
     assert 'DOWNVOTE' in six.text_type(e)
 
-    # Updating the bindings wipes out the old ones
     bindings = {'refresh': ['a', 0x12, '<LF>', '<KEY_UP>']}
+    bindings2 = {'upvote': ['b', 0x13, '<KEY_DOWN>']}
+    keymap._keymap = {}
     keymap.set_bindings(bindings)
     assert keymap.get('refresh')
     with pytest.raises(exceptions.ConfigError) as e:
         keymap.get('upvote')
     assert 'UPVOTE' in six.text_type(e)
+    keymap.set_bindings(bindings2)
+    assert keymap.get('refresh')
+    assert keymap.get('upvote')
 
     # Strings should be parsed correctly into keys
     assert KeyMap.parse('a') == 97

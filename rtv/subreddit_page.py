@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import re
 import time
-import curses
 
 from . import docs
 from .content import SubredditContent
@@ -37,9 +36,18 @@ class SubredditPage(Page):
 
     @SubredditController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
-        "Re-download all submissions and reset the page index"
+        """
+        Re-download all submissions and reset the page index
+        """
 
         order = order or self.content.order
+
+        # Preserve the query if staying on the current page
+        if name is None:
+            query = self.content.query
+        else:
+            query = None
+
         name = name or self.content.name
 
         # Hack to allow an order specified in the name by prompt_subreddit() to
@@ -49,13 +57,15 @@ class SubredditPage(Page):
 
         with self.term.loader('Refreshing page'):
             self.content = SubredditContent.from_name(
-                self.reddit, name, self.term.loader, order=order)
+                self.reddit, name, self.term.loader, order=order, query=query)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
     @SubredditController.register(Command('SUBREDDIT_SEARCH'))
     def search_subreddit(self, name=None):
-        "Open a prompt to search the given subreddit"
+        """
+        Open a prompt to search the given subreddit
+        """
 
         name = name or self.content.name
 
@@ -71,7 +81,9 @@ class SubredditPage(Page):
 
     @SubredditController.register(Command('PROMPT'))
     def prompt_subreddit(self):
-        "Open a prompt to navigate to a different subreddit"
+        """
+        Open a prompt to navigate to a different subreddit"
+        """
 
         name = self.term.prompt_input('Enter page: /')
         if name is not None:
@@ -135,7 +147,9 @@ class SubredditPage(Page):
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_IN_BROWSER'))
     def open_link(self):
-        "Open a link with the webbrowser"
+        """
+        Open a link with the webbrowser
+        """
 
         data = self.get_selected_item()
         if data['url_type'] == 'selfpost':
@@ -152,7 +166,9 @@ class SubredditPage(Page):
     @SubredditController.register(Command('SUBREDDIT_POST'))
     @logged_in
     def post_submission(self):
-        "Post a new submission to the given subreddit"
+        """
+        Post a new submission to the given subreddit
+        """
 
         # Check that the subreddit can be submitted to
         name = self.content.name
@@ -198,7 +214,9 @@ class SubredditPage(Page):
     @SubredditController.register(Command('SUBREDDIT_OPEN_SUBSCRIPTIONS'))
     @logged_in
     def open_subscriptions(self):
-        "Open user subscriptions page"
+        """
+        Open user subscriptions page
+        """
 
         with self.term.loader('Loading subscriptions'):
             page = SubscriptionPage(self.reddit, self.term, self.config,
@@ -217,7 +235,9 @@ class SubredditPage(Page):
     @SubredditController.register(Command('SUBREDDIT_OPEN_MULTIREDDITS'))
     @logged_in
     def open_multireddit_subscriptions(self):
-        "Open user multireddit subscriptions page"
+        """
+        Open user multireddit subscriptions page
+        """
 
         with self.term.loader('Loading multireddits'):
             page = SubscriptionPage(self.reddit, self.term, self.config,

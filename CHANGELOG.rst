@@ -2,6 +2,9 @@
 RTV Changelog
 =============
 
+.. _1.18.0: http://github.com/michael-lazar/rtv/releases/tag/v1.18.0
+.. _1.17.1: http://github.com/michael-lazar/rtv/releases/tag/v1.17.1
+.. _1.17.0: http://github.com/michael-lazar/rtv/releases/tag/v1.17.0
 .. _1.16.0: http://github.com/michael-lazar/rtv/releases/tag/v1.16.0
 .. _1.15.1: http://github.com/michael-lazar/rtv/releases/tag/v1.15.1
 .. _1.15.0: http://github.com/michael-lazar/rtv/releases/tag/v1.15.0
@@ -26,6 +29,73 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.18.0_ (2017-09-06)
+--------------------
+
+Features
+
+* The ``rtv -l`` flag has been deprecated and replaced with a positional
+  argument, in order to match the syntax of other command line web browsers.
+* NSFW content is now filtered according to the user's reddit profile
+  settings.
+* ``$RTV_BROWSER`` has been added as a way to set the preferred web browser.
+* Sorting options for **relevance** and **comments** are now displayed on
+  the search results page.
+* An **[S]** badge is now displayed next to the submission author.
+* The gfycat MIME parser has been expanded to support more URLs.
+* New MIME parsers have been added for oddshot.tv, clips.twitch.tv,
+  clippituser.tv, and Reddit's beta hosted videos.
+
+Bugfixes
+
+* Users can now use the prompt to navigate to "/comments/..." pages from
+  inside of a submission.
+* Users can now navigate to multireddits using the "/u/me/" prefix.
+* Fixed the ``$BROWSER`` behavior on macOS to support the **chrome**,
+  **firefox**, **safari**, and **default** keywords.
+
+Codebase
+
+* Travis CI tests have been moved to the trusty environment.
+* Added more detailed logging of the environment and settings at startup.
+
+--------------------
+1.17.1_ (2017-08-06)
+--------------------
+
+Bugfixes
+
+* ``J``/``K`` commands are now restricted to the submission page.
+
+--------------------
+1.17.0_ (2017-08-03)
+--------------------
+
+Features
+
+* Added the ``J`` command to jump to the next sibling comment.
+* Added the ``K`` command to jump to the parent comment.
+* Search results can now be sorted, and the title bar has been updated
+  to display the current search query.
+* Imgur URLs are now resolved via the Imgur API.
+  This enables the loading of large albums with over 10 images.
+  An ``imgur_client_id`` option has been added to the RTV configuration.
+* A MIME parser has been added for www.liveleak.com.
+* RTV now respects the ``$VISUAL`` environment variable.
+
+Bugfixes
+
+* Fixed a screen refresh bug on urxvt terminals.
+* New key bindings will now attempt to fallback to their default key if not
+  defined in the user's configuration file.
+
+Documentation
+
+* Added additional mailcap examples for framebuffer videos and iTerm2.
+* Python version information is now captured in the log at startup.
+
 
 --------------------
 1.16.0_ (2017-06-08)

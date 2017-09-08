@@ -80,8 +80,8 @@ def test_config_get_args():
     "Ensure that command line arguments are parsed properly"
 
     args = ['rtv',
+            'https://reddit.com/permalink •',
             '-s', 'cfb',
-            '-l', 'https://reddit.com/permalink •',
             '--log', 'logfile.log',
             '--config', 'configfile.cfg',
             '--ascii',
@@ -113,6 +113,23 @@ def test_config_get_args():
         assert config['enable_media'] is True
 
 
+def test_config_link_deprecated():
+
+    # Should still be able to specify the link using the old "-l"
+    args = ['rtv', '-l', 'https://reddit.com/option']
+    with mock.patch('sys.argv', args):
+        config_dict = Config.get_args()
+        config = Config(**config_dict)
+        assert config['link'] == 'https://reddit.com/option'
+
+    # But the positional argument should take preference
+    args = ['rtv', 'https://reddit.com/arg', '-l', 'https://reddit.com/option']
+    with mock.patch('sys.argv', args):
+        config_dict = Config.get_args()
+        config = Config(**config_dict)
+        assert config['link'] == 'https://reddit.com/arg'
+
+
 def test_config_from_file():
     "Ensure that config file arguments are parsed properly"
 
@@ -136,9 +153,10 @@ def test_config_from_file():
 
         fargs, fbindings = Config.get_file(filename=fp.name)
         config = Config(**fargs)
+        default_keymap = config.keymap._keymap.copy()
         config.keymap.set_bindings(fbindings)
         assert config.config == {}
-        assert config.keymap._keymap == {}
+        assert config.keymap._keymap == default_keymap
 
         # [rtv]
         rows = ['{0}={1}'.format(key, val) for key, val in args.items()]

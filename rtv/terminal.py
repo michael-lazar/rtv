@@ -13,12 +13,11 @@ import webbrowser
 import subprocess
 import curses.ascii
 from curses import textpad
+from multiprocessing import Process
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
 
 import six
-#pylint: disable=import-error
-from six.moves.urllib.parse import quote
 from kitchen.text.display import textual_width_chop
 
 from . import exceptions, mime_parsers
@@ -63,7 +62,11 @@ class Terminal(object):
 
         self._display = None
         self._mailcap_dict = mailcap.getcaps()
-        self._term = os.environ['TERM']
+        self._term = os.environ.get('TERM')
+
+        # This is a hack, the MIME parsers should be stateless
+        # but we need to load the imgur credentials from the config
+        mime_parsers.ImgurApiMIMEParser.CLIENT_ID = config['imgur_client_id']
 
     @property
     def up_arrow(self):
@@ -474,11 +477,12 @@ class Terminal(object):
         python webbrowser will try to determine the default to use based on
         your system.
 
-        For browsers requiring an X display, we call
-        webbrowser.open_new_tab(url) and redirect stdout/stderr to devnull.
-        This is a workaround to stop firefox from spewing warning messages to
-        the console. See http://bugs.python.org/issue22277 for a better
-        description of the problem.
+        For browsers requiring an X display, we open a new subprocess and
+        redirect stdout/stderr to devnull. This is a workaround to stop
+        BackgroundBrowsers (e.g. xdg-open, any BROWSER command ending in "&"),
+        from spewing warning messages to the console. See
+        http://bugs.python.org/issue22277 for a better description of the
+        problem.
 
         For console browsers (e.g. w3m), RTV will suspend and display the
         browser window within the same terminal. This mode is triggered either
@@ -489,40 +493,38 @@ class Terminal(object):
            headless
 
         There may be other cases where console browsers are opened (xdg-open?)
-        but are not detected here.
+        but are not detected here. These cases are still unhandled and will
+        probably be broken if we incorrectly assume that self.display=True.
         """
 
         if self.display:
-            # Note that we need to sanitize the url before inserting it into
-            # the python code to prevent injection attacks.
-            command = (
-                "import webbrowser\n"
-                "from six.moves.urllib.parse import unquote\n"
-                "webbrowser.open_new_tab(unquote('%s'))" % quote(url))
-            args = [sys.executable, '-c', command]
-            with self.loader('Opening page in a new window'), \
-                    open(os.devnull, 'ab+', 0) as null:
-                p = subprocess.Popen(args, stdout=null, stderr=null)
-                # Give the browser 5 seconds to open a new tab. Because the
+            with self.loader('Opening page in a new window'):
+
+                def open_url_silent(url):
+                    # This used to be done using subprocess.Popen().
+                    # It was switched to multiprocessing.Process so that we
+                    # can re-use the webbrowser instance that has been patched
+                    # by RTV. It's also safer because it doesn't inject
+                    # python code through the command line.
+                    null = open(os.devnull, 'ab+', 0)
+                    sys.stdout, sys.stderr = null, null
+                    webbrowser.open_new_tab(url)
+
+                p = Process(target=open_url_silent, args=(url,))
+                p.start()
+                # Give the browser 7 seconds to open a new tab. Because the
                 # display is set, calling webbrowser should be non-blocking.
                 # If it blocks or returns an error, something went wrong.
                 try:
-                    start = time.time()
-                    while time.time() - start < 10:
-                        code = p.poll()
-                        if code == 0:
-                            break  # Success
-                        elif code is not None:
-                            raise exceptions.BrowserError(
-                                'Program exited with status=%s' % code)
-                        time.sleep(0.01)
-                    else:
+                    p.join(7)
+                    if p.is_alive():
                         raise exceptions.BrowserError(
-                            'Timeout opening browser')
+                            'Timeout waiting for browser to open')
                 finally:
-                    # Can't check the loader exception because the oauth module
-                    # supersedes this loader and we need to always kill the
-                    # process if escape is pressed
+                    # This will be hit on the browser timeout, but also if the
+                    # user presses the ESC key. We always want to kill the
+                    # webbrowser process if it hasn't opened the tab and
+                    # terminated by now.
                     try:
                         p.terminate()
                     except OSError:
@@ -579,7 +581,10 @@ class Terminal(object):
             fp.write(data)
         _logger.info('File created: %s', filepath)
 
-        editor = os.getenv('RTV_EDITOR') or os.getenv('EDITOR') or 'nano'
+        editor = (os.getenv('RTV_EDITOR') or
+                  os.getenv('VISUAL') or
+                  os.getenv('EDITOR') or
+                  'nano')
         command = shlex.split(editor) + [filepath]
         try:
             with self.suspend():
@@ -788,7 +793,7 @@ class Terminal(object):
 
         out = '\n'.join(stack)
         return out
-    
+
     def clear_screen(self):
         """
         In the beginning this always called touchwin(). However, a bug
@@ -798,14 +803,14 @@ class Terminal(object):
         this in their tmux.conf or .bashrc file which can cause issues.
         Using clearok() instead seems to fix the problem, with the trade off
         of slightly more expensive screen refreshes.
-               
+
         Update: It was discovered that using clearok() introduced a
         separate bug for urxvt users in which their screen flashed when
         scrolling. Heuristics were added to make it work with as many
         configurations as possible. It's still not perfect
         (e.g. urxvt + xterm-256color) will screen flash, but it should
         work in all cases if the user sets their TERM correctly.
-        
+
         Reference:
             https://github.com/michael-lazar/rtv/issues/343
             https://github.com/michael-lazar/rtv/issues/323

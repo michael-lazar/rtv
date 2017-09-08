@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
 import time
 import curses
 
@@ -75,6 +76,11 @@ class SubmissionPage(Page):
         order = order or self.content.order
         url = name or self.content.name
 
+        # Hack to allow an order specified in the name by prompt_subreddit() to
+        # override the current default
+        if order == 'ignore':
+            order = None
+
         with self.term.loader('Refreshing page'):
             self.content = SubmissionContent.from_url(
                 self.reddit, url, self.term.loader, order=order,
@@ -90,12 +96,25 @@ class SubmissionPage(Page):
 
         name = self.term.prompt_input('Enter page: /')
         if name is not None:
-            with self.term.loader('Loading page'):
-                content = SubredditContent.from_name(
-                    self.reddit, name, self.term.loader)
-            if not self.term.loader.exception:
-                self.selected_subreddit = content
-                self.active = False
+            # Check if opening a submission url or a subreddit url
+            # Example patterns for submissions:
+            #     comments/571dw3
+            #     /comments/571dw3
+            #     /r/pics/comments/571dw3/
+            #     https://www.reddit.com/r/pics/comments/571dw3/at_disneyland
+            submission_pattern = re.compile(r'(^|/)comments/(?P<id>.+?)($|/)')
+            match = submission_pattern.search(name)
+            if match:
+                url = 'https://www.reddit.com/comments/{0}'
+                self.refresh_content('ignore', url.format(match.group('id')))
+
+            else:
+                with self.term.loader('Loading page'):
+                    content = SubredditContent.from_name(
+                        self.reddit, name, self.term.loader)
+                if not self.term.loader.exception:
+                    self.selected_subreddit = content
+                    self.active = False
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):
@@ -199,6 +218,52 @@ class SubmissionPage(Page):
         else:
             self.term.flash()
 
+    @SubmissionController.register(Command('SUBMISSION_GOTO_PARENT'))
+    def move_parent_up(self):
+        """
+        Move the cursor up to the comment's parent. If the comment is
+        top-level, jump to the previous top-level comment.
+        """
+
+        cursor = self.nav.absolute_index
+        if cursor > 0:
+            level = max(self.content.get(cursor)['level'], 1)
+            while self.content.get(cursor - 1)['level'] >= level:
+                self._move_cursor(-1)
+                cursor -= 1
+            self._move_cursor(-1)
+        else:
+            self.term.flash()
+
+        self.clear_input_queue()
+
+    @SubmissionController.register(Command('SUBMISSION_GOTO_SIBLING'))
+    def move_sibling_next(self):
+        """
+        Jump to the next comment that's at the same level as the selected
+        comment and shares the same parent.
+        """
+
+        cursor = self.nav.absolute_index
+        if cursor >= 0:
+            level = self.content.get(cursor)['level']
+            try:
+                move = 1
+                while self.content.get(cursor + move)['level'] > level:
+                    move += 1
+            except IndexError:
+                self.term.flash()
+            else:
+                if self.content.get(cursor + move)['level'] == level:
+                    for _ in range(move):
+                        self._move_cursor(1)
+                else:
+                    self.term.flash()
+        else:
+            self.term.flash()
+
+        self.clear_input_queue()
+
     def _draw_item(self, win, data, inverted, highlight):
 
         if data['type'] in ('MoreComments', 'HiddenComment'):
@@ -231,9 +296,11 @@ class SubmissionPage(Page):
         if row in valid_rows:
             if data['is_author']:
                 attr = self.term.attr('comment_author_self', highlight)
+                text = '{author} [S]'.format(**data)
             else:
                 attr = self.term.attr('comment_author', highlight)
-            self.term.add_line(win, '{author}'.format(**data), row, 1, attr)
+                text = '{author}'.format(**data)
+            self.term.add_line(win, text, row, 1, attr)
 
             if data['flair']:
                 attr = self.term.attr('user_flair', highlight)

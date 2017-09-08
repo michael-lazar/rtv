@@ -1,7 +1,14 @@
 .*
+!.travis.yml
+!.pylintrc
+!.gitignore
+!.gitattributes
+!.coveragerc
 *~
 *.pyc
+*.log
 build
 dist
 rtv.egg-info
 tests/refresh-token
+venv/

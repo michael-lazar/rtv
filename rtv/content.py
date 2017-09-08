@@ -326,6 +326,7 @@ class SubmissionContent(Content):
         self.max_indent_level = max_indent_level
         self.name = submission_data['permalink']
         self.order = order
+        self.query = None
         self._loader = loader
         self._submission = submission
         self._submission_data = submission_data
@@ -435,11 +436,14 @@ class SubredditContent(Content):
     list for repeat access.
     """
 
-    def __init__(self, name, submissions, loader, order=None, max_title_rows=4):
+    def __init__(self, name, submissions, loader, order=None,
+                 max_title_rows=4, query=None, filter_nsfw=False):
 
         self.name = name
         self.order = order
+        self.query = query
         self.max_title_rows = max_title_rows
+        self.filter_nsfw = filter_nsfw
         self._loader = loader
         self._submissions = submissions
         self._submission_data = []
@@ -474,22 +478,33 @@ class SubredditContent(Content):
             query (text): Content to search for on the given subreddit or
                 user's page.
         """
-        # TODO: refactor this into smaller methods
+        # TODO: This desperately needs to be refactored
 
         # Strip leading, trailing, and redundant backslashes
         parts = [seg for seg in name.strip(' /').split('/') if seg]
 
         # Check for the resource type, assume /r/ as the default
         if len(parts) >= 3 and parts[2] == 'm':
-            # E.g. /u/multi-mod/m/android
+            # E.g. /u/civilization_phaze_3/m/multireddit ->
+            #    resource_root = "u/civilization_phaze_3/m"
+            #    parts = ["multireddit"]
             resource_root, parts = '/'.join(parts[:3]), parts[3:]
         elif len(parts) > 1 and parts[0] in ['r', 'u', 'user', 'domain']:
+            # E.g. /u/civilization_phaze_3 ->
+            #    resource_root = "u"
+            #    parts = ["civilization_phaze_3"]
+            #
+            # E.g. /r/python/top-week ->
+            #    resource_root = "r"
+            #    parts = ["python", "top-week"]
             resource_root = parts.pop(0)
         else:
             resource_root = 'r'
 
         if resource_root == 'user':
             resource_root = 'u'
+        elif resource_root.startswith('user/'):
+            resource_root = 'u' + resource_root[4:]
 
         # There should at most two parts left, the resource and the order
         if len(parts) == 1:
@@ -517,13 +532,21 @@ class SubredditContent(Content):
         else:
             period = None
 
-        if order not in ['hot', 'top', 'rising', 'new', 'controversial', None]:
+        if query:
+            # The allowed orders for sorting search results are different
+            orders = ['relevance', 'top', 'comments', 'new', None]
+            period_allowed = ['top', 'comments']
+        else:
+            orders = ['hot', 'top', 'rising', 'new', 'controversial', None]
+            period_allowed = ['top', 'controversial']
+
+        if order not in orders:
             raise InvalidSubreddit('Invalid order `%s`' % order)
         if period not in ['all', 'day', 'hour', 'month', 'week', 'year', None]:
             raise InvalidSubreddit('Invalid period `%s`' % period)
-        if period and order not in ['top', 'controversial']:
-            raise InvalidSubreddit('`%s` order does not allow sorting by'
-                                   ' period' % order)
+        if period and order not in period_allowed:
+            raise InvalidSubreddit(
+                '`%s` order does not allow sorting by period' % order)
 
         # On some objects, praw doesn't allow you to pass arguments for the
         # order and period. Instead you need to call special helper functions
@@ -558,6 +581,15 @@ class SubredditContent(Content):
 
         elif resource_root.endswith('/m'):
             redditor = resource_root.split('/')[1]
+
+            if redditor == 'me':
+                if not reddit.is_oauth_session():
+                    raise exceptions.AccountError('Not logged in')
+                else:
+                    redditor = reddit.user.name
+                    display_name = display_name.replace(
+                        '/me/', '/{0}/'.format(redditor))
+
             multireddit = reddit.get_multireddit(redditor, resource)
             submissions = getattr(multireddit, method_alias)(limit=None)
 
@@ -602,8 +634,11 @@ class SubredditContent(Content):
             # display name with the one returned by the request.
             display_name = '/r/{0}'.format(subreddit.display_name)
 
+        filter_nsfw = (reddit.user and reddit.user.over_18 is False)
+
         # We made it!
-        return cls(display_name, submissions, loader, order=display_order)
+        return cls(display_name, submissions, loader, order=display_order,
+                   query=query, filter_nsfw=filter_nsfw)
 
     @property
     def range(self):
@@ -621,6 +656,7 @@ class SubredditContent(Content):
         if index < 0:
             raise IndexError
 
+        nsfw_count = 0
         while index >= len(self._submission_data):
             try:
                 with self._loader('Loading more submissions'):
@@ -630,10 +666,25 @@ class SubredditContent(Content):
             except StopIteration:
                 raise IndexError
             else:
+
+                # Skip NSFW posts based on the reddit user's profile settings.
+                # If we see 20+ NSFW posts at the beginning, assume the subreddit
+                # only has NSFW content and abort. This allows us to avoid making
+                # an additional API call to check if a subreddit is over18 (which
+                # doesn't work for things like multireddits anyway)
+                if self.filter_nsfw and submission.over_18:
+                    nsfw_count += 1
+                    if not self._submission_data and nsfw_count >= 20:
+                        raise exceptions.SubredditError(
+                            'You must be over 18+ to view this subreddit')
+                    continue
+                else:
+                    nsfw_count = 0
+
                 if hasattr(submission, 'title'):
                     data = self.strip_praw_submission(submission)
                 else:
-                    # when submission is a saved commment
+                    # when submission is a saved comment
                     data = self.strip_praw_comment(submission)
 
                 data['index'] = len(self._submission_data) + 1
@@ -659,6 +710,7 @@ class SubscriptionContent(Content):
 
         self.name = name
         self.order = None
+        self.query = None
         self._loader = loader
         self._subscriptions = subscriptions
         self._subscription_data = []
@@ -669,7 +721,7 @@ class SubscriptionContent(Content):
             raise exceptions.SubscriptionError('No content')
 
         # Load 1024 subscriptions up front (one http request's worth)
-        # For most people this should be all of their subscriptions. Doing thi
+        # For most people this should be all of their subscriptions. This
         # allows the user to jump to the end of the page with `G`.
         if name != 'Popular Subreddits':
             try:

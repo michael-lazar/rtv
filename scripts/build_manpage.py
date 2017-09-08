@@ -46,11 +46,15 @@ def main():
     #         \fB-h\fR, \fB--help\fR
     #         show this help message and exit
     options = ''
-    lines = help_sections[2].split('\n')[1:]
+    lines = help_sections[2].split('\n')[1:]  # positional arguments
+    lines.extend(help_sections[3].split('\n')[1:])  # optional arguments
     lines = [line.strip() for line in lines]
     arguments = []
     for line in lines:
         if line.startswith('-'):
+            arguments.append(line)
+        elif line.startswith('URL'):
+            # Special case for URL which is a positional argument
             arguments.append(line)
         else:
             arguments[-1] = arguments[-1] + ' ' + line
