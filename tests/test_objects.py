@@ -12,7 +12,7 @@ import requests
 from six.moves import reload_module
 
 from rtv import exceptions
-from rtv.objects import Color, Controller, Navigator, Command, KeyMap, \
+from rtv.objects import Controller, Navigator, Command, KeyMap, \
     curses_session, patch_webbrowser
 
 try:
@@ -187,21 +187,6 @@ def test_objects_load_screen_nested_complex(terminal, stdscr, use_ascii):
     assert not terminal.loader._animator.is_alive()
     error_message = 'ConnectionError'.encode('ascii' if use_ascii else 'utf-8')
     stdscr.subwin.addstr.assert_called_once_with(1, 1, error_message)
-
-
-def test_objects_color(stdscr):
-
-    colors = ['RED', 'GREEN', 'YELLOW', 'BLUE', 'MAGENTA', 'CYAN', 'WHITE']
-
-    # Check that all colors start with the default value
-    for color in colors:
-        assert getattr(Color, color) == curses.A_NORMAL
-
-    Color.init()
-
-    # Check that all colors are populated
-    for color in colors:
-        assert getattr(Color, color) == 23
 
 
 def test_objects_curses_session(stdscr):

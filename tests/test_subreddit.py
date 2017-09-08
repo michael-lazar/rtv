@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import curses
+
 import six
 
 from rtv import __version__
@@ -38,7 +40,7 @@ def test_subreddit_page_construct(reddit, terminal, config, oauth):
     window.subwin.addstr.assert_any_call(0, 1, text, 2097152)
 
     # Cursor should have been drawn
-    assert window.subwin.chgat.called
+    window.subwin.addch.assert_any_call(0, 0, ' ', curses.A_REVERSE)
 
     # Reload with a smaller terminal window
     terminal.stdscr.ncols = 20

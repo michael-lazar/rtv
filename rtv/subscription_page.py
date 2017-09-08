@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import curses
-
 from . import docs
 from .page import Page, PageController
 from .content import SubscriptionContent, SubredditContent
-from .objects import Color, Navigator, Command
+from .objects import Navigator, Command
 
 
 class SubscriptionController(PageController):
@@ -95,10 +93,21 @@ class SubscriptionPage(Page):
 
         row = offset
         if row in valid_rows:
-            attr = curses.A_BOLD | Color.YELLOW
+            if data['type'] == 'Multireddit':
+                attr = self.term.attr('multireddit_name')
+            else:
+                attr = self.term.attr('subscription_name')
             self.term.add_line(win, '{name}'.format(**data), row, 1, attr)
 
         row = offset + 1
         for row, text in enumerate(data['split_title'], start=row):
             if row in valid_rows:
-                self.term.add_line(win, text, row, 1)
+                if data['type'] == 'Multireddit':
+                    attr = self.term.attr('multireddit_text')
+                else:
+                    attr = self.term.attr('subscription_text')
+                self.term.add_line(win, text, row, 1, attr)
+
+        attr = self.term.attr('cursor')
+        for y in range(n_rows):
+            self.term.addch(win, y, 0, str(' '), attr)

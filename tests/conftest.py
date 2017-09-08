@@ -52,6 +52,9 @@ class MockStdscr(mock.MagicMock):
     def getyx(self):
         return self.y, self.x
 
+    def getbegyx(self):
+        return 0, 0
+
     def getmaxyx(self):
         return self.nlines, self.ncols
 
@@ -154,12 +157,14 @@ def stdscr():
             patch('curses.curs_set'),           \
             patch('curses.init_pair'),          \
             patch('curses.color_pair'),         \
+            patch('curses.has_colors'),         \
             patch('curses.start_color'),        \
             patch('curses.use_default_colors'):
         out = MockStdscr(nlines=40, ncols=80, x=0, y=0)
         curses.initscr.return_value = out
         curses.newwin.side_effect = lambda *args: out.derwin(*args)
         curses.color_pair.return_value = 23
+        curses.has_colors.return_value = True
         curses.ACS_VLINE = 0
         yield out
 

@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 import os
 import sys
 import time
-import curses
 import logging
 from functools import wraps
 
@@ -12,7 +11,7 @@ import six
 from kitchen.text.display import textual_width
 
 from . import docs
-from .objects import Controller, Color, Command
+from .objects import Controller, Command
 from .clipboard import copy
 from .exceptions import TemporaryFileError, ProgramError
 from .__version__ import __version__
@@ -158,19 +157,15 @@ class Page(object):
 
     @PageController.register(Command('PAGE_TOP'))
     def move_page_top(self):
-        self._remove_cursor()
         self.nav.page_index = self.content.range[0]
         self.nav.cursor_index = 0
         self.nav.inverted = False
-        self._add_cursor()
 
     @PageController.register(Command('PAGE_BOTTOM'))
     def move_page_bottom(self):
-        self._remove_cursor()
         self.nav.page_index = self.content.range[1]
         self.nav.cursor_index = 0
         self.nav.inverted = True
-        self._add_cursor()
 
     @PageController.register(Command('UPVOTE'))
     @logged_in
@@ -376,7 +371,6 @@ class Page(object):
         self._draw_banner()
         self._draw_content()
         self._draw_footer()
-        self._add_cursor()
         self.term.clear_screen()
         self.term.stdscr.refresh()
 
@@ -388,8 +382,7 @@ class Page(object):
         window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
         window.erase()
         # curses.bkgd expects bytes in py2 and unicode in py3
-        ch, attr = str(' '), curses.A_REVERSE | curses.A_BOLD | Color.CYAN
-        window.bkgd(ch, attr)
+        window.bkgd(str(' '), self.term.attr('title_bar'))
 
         sub_name = self.content.name
         sub_name = sub_name.replace('/r/front', 'Front Page')
@@ -421,7 +414,7 @@ class Page(object):
             sys.stdout.write(title)
             sys.stdout.flush()
 
-        if self.reddit.user is not None:
+        if self.reddit and self.reddit.user is not None:
             # The starting position of the name depends on if we're converting
             # to ascii or not
             width = len if self.config['ascii'] else textual_width
@@ -442,8 +435,7 @@ class Page(object):
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
         window.erase()
-        ch, attr = str(' '), curses.A_BOLD | Color.YELLOW
-        window.bkgd(ch, attr)
+        window.bkgd(str(' '), self.term.attr('order_bar'))
 
         banner = docs.BANNER_SEARCH if self.content.query else docs.BANNER
         items = banner.strip().split(' ')
@@ -455,7 +447,8 @@ class Page(object):
         if self.content.order is not None:
             order = self.content.order.split('-')[0]
             col = text.find(order) - 3
-            window.chgat(0, col, 3, attr | curses.A_REVERSE)
+            attr = self.term.theme.get('order_bar', modifier='selected')
+            window.chgat(0, col, 3, attr)
 
         self._row += 1
 
@@ -465,8 +458,7 @@ class Page(object):
         """
 
         n_rows, n_cols = self.term.stdscr.getmaxyx()
-        window = self.term.stdscr.derwin(
-            n_rows - self._row - 1, n_cols, self._row, 0)
+        window = self.term.stdscr.derwin(n_rows - self._row - 1, n_cols, self._row, 0)
         window.erase()
         win_n_rows, win_n_cols = window.getmaxyx()
 
@@ -493,10 +485,8 @@ class Page(object):
                 top_item_height = None
             subwin_n_cols = win_n_cols - data['h_offset']
             start = current_row - subwin_n_rows + 1 if inverted else current_row
-            subwindow = window.derwin(
-                subwin_n_rows, subwin_n_cols, start, data['h_offset'])
-            attr = self._draw_item(subwindow, data, subwin_inverted)
-            self._subwindows.append((subwindow, attr))
+            subwindow = window.derwin(subwin_n_rows, subwin_n_cols, start, data['h_offset'])
+            self._subwindows.append((subwindow, data, subwin_inverted))
             available_rows -= (subwin_n_rows + 1)  # Add one for the blank line
             current_row += step * (subwin_n_rows + 1)
             if available_rows <= 0:
@@ -518,6 +508,25 @@ class Page(object):
             self.nav.flip((len(self._subwindows) - 1))
             return self._draw_content()
 
+        if self.nav.cursor_index >= len(self._subwindows):
+            # Don't allow the cursor to go over the number of subwindows
+            # This could happen if the window is resized and the cursor index is
+            # pushed out of bounds
+            self.nav.cursor_index = len(self._subwindows) - 1
+
+        # Now that the windows are setup, we can take a second pass through
+        # to draw the content
+        for index, (win, data, inverted) in enumerate(self._subwindows):
+            if index == self.nav.cursor_index:
+                # This lets the theme know to invert the cursor
+                modifier = 'selected'
+            else:
+                modifier = None
+
+            win.bkgd(str(' '), self.term.attr('normal'))
+            with self.term.theme.set_modifier(modifier):
+                self._draw_item(win, data, inverted)
+
         self._row += win_n_rows
 
     def _draw_footer(self):
@@ -525,54 +534,23 @@ class Page(object):
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
         window.erase()
-        ch, attr = str(' '), curses.A_REVERSE | curses.A_BOLD | Color.CYAN
-        window.bkgd(ch, attr)
+        window.bkgd(str(' '), self.term.attr('help_bar'))
 
         text = self.FOOTER.strip()
         self.term.add_line(window, text, 0, 0)
         self._row += 1
 
-    def _add_cursor(self):
-        self._edit_cursor(curses.A_REVERSE)
-
-    def _remove_cursor(self):
-        self._edit_cursor(curses.A_NORMAL)
-
     def _move_cursor(self, direction):
-        self._remove_cursor()
         # Note: ACS_VLINE doesn't like changing the attribute, so disregard the
         # redraw flag and opt to always redraw
         valid, redraw = self.nav.move(direction, len(self._subwindows))
         if not valid:
             self.term.flash()
-        self._add_cursor()
 
     def _move_page(self, direction):
-        self._remove_cursor()
         valid, redraw = self.nav.move_page(direction, len(self._subwindows)-1)
         if not valid:
             self.term.flash()
-        self._add_cursor()
-
-    def _edit_cursor(self, attribute):
-
-        # Don't allow the cursor to go below page index 0
-        if self.nav.absolute_index < 0:
-            return
-
-        # Don't allow the cursor to go over the number of subwindows
-        # This could happen if the window is resized and the cursor index is
-        # pushed out of bounds
-        if self.nav.cursor_index >= len(self._subwindows):
-            self.nav.cursor_index = len(self._subwindows) - 1
-
-        window, attr = self._subwindows[self.nav.cursor_index]
-        if attr is not None:
-            attribute |= attr
-
-        n_rows, _ = window.getmaxyx()
-        for row in range(n_rows):
-            window.chgat(row, 0, 1, attribute)
 
     def _prompt_period(self, order):
 

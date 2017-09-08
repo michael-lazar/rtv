@@ -135,6 +135,9 @@ class OrderedSet(object):
 
 
 class Config(object):
+    """
+    This class manages the loading and saving of configs and other files.
+    """
 
     def __init__(self, history_file=HISTORY, token_file=TOKEN, **kwargs):
 

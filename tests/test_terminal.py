@@ -20,14 +20,10 @@ except ImportError:
 
 def test_terminal_properties(terminal, config):
 
-    assert len(terminal.up_arrow) == 2
-    assert isinstance(terminal.up_arrow[0], six.text_type)
-    assert len(terminal.down_arrow) == 2
-    assert isinstance(terminal.down_arrow[0], six.text_type)
-    assert len(terminal.neutral_arrow) == 2
-    assert isinstance(terminal.neutral_arrow[0], six.text_type)
-    assert len(terminal.guilded) == 2
-    assert isinstance(terminal.guilded[0], six.text_type)
+    assert isinstance(terminal.up_arrow, six.text_type)
+    assert isinstance(terminal.down_arrow, six.text_type)
+    assert isinstance(terminal.neutral_arrow, six.text_type)
+    assert isinstance(terminal.guilded, six.text_type)
 
     terminal._display = None
     with mock.patch('rtv.terminal.sys') as sys, \

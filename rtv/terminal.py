@@ -20,9 +20,9 @@ from tempfile import NamedTemporaryFile
 import six
 from kitchen.text.display import textual_width_chop
 
-from . import exceptions
-from . import mime_parsers
-from .objects import LoadScreen, Color
+from . import exceptions, mime_parsers
+from .theme import Theme
+from .objects import LoadScreen
 
 try:
     # Fix only needed for versions prior to python 3.6
@@ -46,16 +46,20 @@ class Terminal(object):
     MIN_HEIGHT = 10
     MIN_WIDTH = 20
 
-    # ASCII code
+    # ASCII codes
     ESCAPE = 27
     RETURN = 10
     SPACE = 32
 
-    def __init__(self, stdscr, config):
+    def __init__(self, stdscr, config, theme=None):
 
         self.stdscr = stdscr
         self.config = config
         self.loader = LoadScreen(self)
+
+        self.theme = None
+        self.set_theme(theme)
+
         self._display = None
         self._mailcap_dict = mailcap.getcaps()
         self._term = os.environ.get('TERM')
@@ -66,27 +70,19 @@ class Terminal(object):
 
     @property
     def up_arrow(self):
-        symbol = '^' if self.config['ascii'] else '▲'
-        attr = curses.A_BOLD | Color.GREEN
-        return symbol, attr
+        return '^' if self.config['ascii'] else '▲'
 
     @property
     def down_arrow(self):
-        symbol = 'v' if self.config['ascii'] else '▼'
-        attr = curses.A_BOLD | Color.RED
-        return symbol, attr
+        return 'v' if self.config['ascii'] else '▼'
 
     @property
     def neutral_arrow(self):
-        symbol = 'o' if self.config['ascii'] else '•'
-        attr = curses.A_BOLD
-        return symbol, attr
+        return 'o' if self.config['ascii'] else '•'
 
     @property
     def guilded(self):
-        symbol = '*' if self.config['ascii'] else '✪'
-        attr = curses.A_BOLD | Color.YELLOW
-        return symbol, attr
+        return '*' if self.config['ascii'] else '✪'
 
     @property
     def vline(self):
@@ -197,11 +193,11 @@ class Terminal(object):
         """
 
         if likes is None:
-            return self.neutral_arrow
+            return self.neutral_arrow, self.attr('neutral_vote')
         elif likes:
-            return self.up_arrow
+            return self.up_arrow, self.attr('upvote')
         else:
-            return self.down_arrow
+            return self.down_arrow, self.attr('downvote')
 
     def clean(self, string, n_cols=None):
         """
@@ -278,7 +274,21 @@ class Terminal(object):
         params = [] if attr is None else [attr]
         window.addstr(row, col, text, *params)
 
-    def show_notification(self, message, timeout=None):
+    @staticmethod
+    def add_space(window):
+        """
+        Shortcut for adding a single space to a window at the current position
+        """
+
+        row, col = window.getyx()
+        _, max_cols = window.getmaxyx()
+        if max_cols - col - 1 <= 0:
+            # Trying to draw outside of the screen bounds
+            return
+
+        window.addstr(row, col, ' ')
+
+    def show_notification(self, message, timeout=None, style='info'):
         """
         Overlay a message box on the center of the screen and wait for input.
 
@@ -286,12 +296,17 @@ class Terminal(object):
             message (list or string): List of strings, one per line.
             timeout (float): Optional, maximum length of time that the message
                 will be shown before disappearing.
+            style (str): The theme element that will be applied to the
+                notification window
         """
+
+        assert style in ('info', 'warning', 'error', 'success')
 
         if isinstance(message, six.string_types):
             message = message.splitlines()
 
         n_rows, n_cols = self.stdscr.getmaxyx()
+        v_offset, h_offset = self.stdscr.getbegyx()
 
         box_width = max(len(m) for m in message) + 2
         box_height = len(message) + 2
@@ -301,10 +316,11 @@ class Terminal(object):
         box_height = min(box_height, n_rows)
         message = message[:box_height-2]
 
-        s_row = (n_rows - box_height) // 2
-        s_col = (n_cols - box_width) // 2
+        s_row = (n_rows - box_height) // 2 + v_offset
+        s_col = (n_cols - box_width) // 2 + h_offset
 
         window = curses.newwin(box_height, box_width, s_row, s_col)
+        window.bkgd(str(' '), self.attr('notice_{0}'.format(style)))
         window.erase()
         window.border()
 
@@ -382,7 +398,7 @@ class Terminal(object):
                 _logger.warning(stderr)
                 self.show_notification(
                     'Program exited with status={0}\n{1}'.format(
-                        code, stderr.strip()))
+                        code, stderr.strip()), style='error')
 
         else:
             # Non-blocking, open a background process
@@ -692,18 +708,22 @@ class Terminal(object):
         """
 
         n_rows, n_cols = self.stdscr.getmaxyx()
-        ch, attr = str(' '), curses.A_BOLD | curses.A_REVERSE | Color.CYAN
+        v_offset, h_offset = self.stdscr.getbegyx()
+        ch, attr = str(' '), self.attr('prompt')
         prompt = self.clean(prompt, n_cols-1)
 
         # Create a new window to draw the text at the bottom of the screen,
         # so we can erase it when we're done.
-        prompt_win = curses.newwin(1, len(prompt)+1, n_rows-1, 0)
+        s_row = v_offset + n_rows - 1
+        s_col = h_offset
+        prompt_win = curses.newwin(1, len(prompt) + 1, s_row, s_col)
         prompt_win.bkgd(ch, attr)
         self.add_line(prompt_win, prompt)
         prompt_win.refresh()
 
         # Create a separate window for text input
-        input_win = curses.newwin(1, n_cols-len(prompt), n_rows-1, len(prompt))
+        s_col = h_offset + len(prompt)
+        input_win = curses.newwin(1, n_cols - len(prompt), s_row, s_col)
         input_win.bkgd(ch, attr)
         input_win.refresh()
 
@@ -802,3 +822,34 @@ class Terminal(object):
             self.stdscr.touchwin()
         else:
             self.stdscr.clearok(True)
+
+    def attr(self, element):
+        """
+        Shortcut for fetching the color + attribute code for an element.
+        """
+
+        return self.theme.get(element)
+
+    def set_theme(self, theme=None):
+        """
+        Set the terminal theme. This is a stub for what will eventually
+        support managing custom themes.
+        
+        Check that the terminal supports the provided theme, and applies
+        the theme to the terminal if possible.
+
+        If the terminal doesn't support the theme, this falls back to the 
+        default theme. The default theme only requires 8 colors so it
+        should be compatible with any terminal that supports basic colors.
+        """
+        monochrome = (not curses.has_colors())
+
+        if theme is None:
+            theme = Theme(monochrome=monochrome)
+
+        theme.bind_curses()
+
+        # Apply the default color to the whole screen
+        self.stdscr.bkgd(str(' '), theme.get('normal'))
+
+        self.theme = theme
