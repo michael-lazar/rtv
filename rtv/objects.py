@@ -230,7 +230,8 @@ class LoadScreen(object):
         for e_type, message in self.EXCEPTION_MESSAGES:
             # Some exceptions we want to swallow and display a notification
             if isinstance(e, e_type):
-                self._terminal.show_notification(message.format(e))
+                msg = message.format(e)
+                self._terminal.show_notification(msg, style='error')
                 return True
 
     def animate(self, delay, interval, message, trail):
@@ -250,12 +251,16 @@ class LoadScreen(object):
                     return
                 time.sleep(0.01)
 
-        # Build the notification window
+        # Build the notification window. Note that we need to use
+        # curses.newwin() instead of stdscr.derwin() so the text below the
+        # notification window does not got erased when we cover it up.
         message_len = len(message) + len(trail)
         n_rows, n_cols = self._terminal.stdscr.getmaxyx()
-        s_row = (n_rows - 3) // 2
-        s_col = (n_cols - message_len - 1) // 2
+        v_offset, h_offset = self._terminal.stdscr.getbegyx()
+        s_row = (n_rows - 3) // 2 + v_offset
+        s_col = (n_cols - message_len - 1) // 2 + h_offset
         window = curses.newwin(3, message_len + 2, s_row, s_col)
+        window.bkgd(str(' '), self._terminal.attr('notice_loading'))
 
         # Animate the loading prompt until the stopping condition is triggered
         # when the context manager exits.
@@ -283,49 +288,6 @@ class LoadScreen(object):
                             self._is_running = False
                             break
                         time.sleep(0.01)
-
-
-class Color(object):
-    """
-    Color attributes for curses.
-    """
-
-    RED = curses.A_NORMAL
-    GREEN = curses.A_NORMAL
-    YELLOW = curses.A_NORMAL
-    BLUE = curses.A_NORMAL
-    MAGENTA = curses.A_NORMAL
-    CYAN = curses.A_NORMAL
-    WHITE = curses.A_NORMAL
-
-    _colors = {
-        'RED': (curses.COLOR_RED, -1),
-        'GREEN': (curses.COLOR_GREEN, -1),
-        'YELLOW': (curses.COLOR_YELLOW, -1),
-        'BLUE': (curses.COLOR_BLUE, -1),
-        'MAGENTA': (curses.COLOR_MAGENTA, -1),
-        'CYAN': (curses.COLOR_CYAN, -1),
-        'WHITE': (curses.COLOR_WHITE, -1),
-    }
-
-    @classmethod
-    def init(cls):
-        """
-        Initialize color pairs inside of curses using the default background.
-
-        This should be called once during the curses initial setup. Afterwards,
-        curses color pairs can be accessed directly through class attributes.
-        """
-
-        for index, (attr, code) in enumerate(cls._colors.items(), start=1):
-            curses.init_pair(index, code[0], code[1])
-            setattr(cls, attr, curses.color_pair(index))
-
-    @classmethod
-    def get_level(cls, level):
-
-        levels = [cls.MAGENTA, cls.CYAN, cls.GREEN, cls.YELLOW]
-        return levels[level % len(levels)]
 
 
 class Navigator(object):

@@ -45,8 +45,8 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
         window.addstr.assert_any_call(0, 0, menu)
 
     # Cursor - 2 lines
-    window.subwin.chgat.assert_any_call(0, 0, 1, 262144)
-    window.subwin.chgat.assert_any_call(1, 0, 1, 262144)
+    window.subwin.addch.assert_any_call(0, 0, ' ', 262144)
+    window.subwin.addch.assert_any_call(1, 0, ' ', 262144)
 
     # Reload with a smaller terminal window
     terminal.stdscr.ncols = 20

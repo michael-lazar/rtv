@@ -193,23 +193,23 @@ class OAuthHelper(object):
                 # If an exception is raised it will be seen by the thread
                 # so we don't need to explicitly shutdown() the server
                 _logger.exception(e)
-                self.term.show_notification('Browser Error')
+                self.term.show_notification('Browser Error', style='error')
             else:
                 self.server.shutdown()
             finally:
                 thread.join()
 
         if self.params['error'] == 'access_denied':
-            self.term.show_notification('Denied access')
+            self.term.show_notification('Denied access', style='error')
             return
         elif self.params['error']:
-            self.term.show_notification('Authentication error')
+            self.term.show_notification('Authentication error', style='error')
             return
         elif self.params['state'] is None:
             # Something went wrong but it's not clear what happened
             return
         elif self.params['state'] != state:
-            self.term.show_notification('UUID mismatch')
+            self.term.show_notification('UUID mismatch', style='error')
             return
 
         with self.term.loader('Logging in'):
