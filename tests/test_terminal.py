@@ -9,6 +9,7 @@ import codecs
 import six
 import pytest
 
+from rtv.theme import Theme
 from rtv.docs import HELP, COMMENT_EDIT_FILE
 from rtv.exceptions import TemporaryFileError, BrowserError
 
@@ -55,6 +56,8 @@ def test_terminal_properties(terminal, config):
 
     assert terminal.MIN_HEIGHT is not None
     assert terminal.MIN_WIDTH is not None
+
+    assert terminal.theme is not None
 
 
 def test_terminal_functions(terminal):
@@ -554,3 +557,42 @@ def test_strip_textpad(terminal):
     text = 'alpha bravo\ncharlie \ndelta  \n  echo   \n\nfoxtrot\n\n\n'
     assert terminal.strip_textpad(text) == (
         'alpha bravocharlie delta\n  echo\n\nfoxtrot')
+
+
+def test_add_space(terminal, stdscr):
+
+    stdscr.x, stdscr.y = 10, 20
+    terminal.add_space(stdscr)
+    stdscr.addstr.assert_called_with(20, 10, ' ')
+
+    # Not enough room to add a space
+    stdscr.reset_mock()
+    stdscr.x = 10
+    stdscr.ncols = 11
+    terminal.add_space(stdscr)
+    assert not stdscr.addstr.called
+
+
+def test_attr(terminal):
+
+    assert terminal.attr('cursor') == 0
+    assert terminal.attr('cursor.selected') == curses.A_REVERSE
+    assert terminal.attr('neutral_vote') == curses.A_BOLD
+
+    with terminal.theme.set_modifier('selected'):
+        assert terminal.attr('cursor') == curses.A_REVERSE
+        assert terminal.attr('neutral_vote') == curses.A_BOLD
+
+
+def test_set_theme(terminal, stdscr):
+
+    stdscr.reset_mock()
+    terminal.set_theme()
+    assert not terminal.theme.monochrome
+    stdscr.bkgd.assert_called_once_with(' ', 0)
+
+    stdscr.reset_mock()
+    theme = Theme(monochrome=True)
+    terminal.set_theme(theme=theme)
+    assert terminal.theme.monochrome
+    stdscr.bkgd.assert_called_once_with(' ', 0)

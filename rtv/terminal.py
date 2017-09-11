@@ -282,7 +282,8 @@ class Terminal(object):
 
         row, col = window.getyx()
         _, max_cols = window.getmaxyx()
-        if max_cols - col - 1 <= 0:
+        n_cols = max_cols - col - 1
+        if n_cols <= 0:
             # Trying to draw outside of the screen bounds
             return
 

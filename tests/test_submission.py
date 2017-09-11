@@ -87,8 +87,8 @@ def test_submission_page_construct(reddit, terminal, config, oauth):
     window.subwin.addstr.assert_any_call(0, 1, text, curses.A_NORMAL)
 
     # Cursor should not be drawn when the page is first opened
-    # TODO: Add a new test for this
-    # assert not window.subwin.chgat.called
+    assert not any(args[0][3] == curses.A_REVERSE
+                   for args in window.subwin.addch.call_args_list)
 
     # Reload with a smaller terminal window
     terminal.stdscr.ncols = 20
