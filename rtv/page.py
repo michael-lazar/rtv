@@ -11,6 +11,7 @@ import six
 from kitchen.text.display import textual_width
 
 from . import docs
+from .theme import Theme
 from .objects import Controller, Command
 from .clipboard import copy
 from .exceptions import TemporaryFileError, ProgramError
@@ -54,7 +55,6 @@ class Page(object):
         self.active = True
         self._row = 0
         self._subwindows = None
-        self._theme_list = None
 
     def refresh_content(self, order=None, name=None):
         raise NotImplementedError
@@ -91,23 +91,19 @@ class Page(object):
     def force_exit(self):
         sys.exit()
 
+    @PageController.register(Command('PREVIOUS_THEME'))
+    def previous_theme(self):
+        theme = Theme()
+        self.term.set_theme(theme)
+        self.draw()
+        self.term.show_notification(theme.name, timeout=1)
+
     @PageController.register(Command('NEXT_THEME'))
     def next_theme(self):
-        if self._theme_list is None:
-            self._theme_list = self.term.theme.list_themes()['default']
-
-        names = sorted(self._theme_list.keys())
-        if self.term.theme.name in self._theme_list:
-            index = names.index(self.term.theme.name) + 1
-            if index >= len(names):
-                index = 0
-        else:
-            index = 0
-
-        new_theme = self._theme_list[names[index]]
-        self.term.set_theme(new_theme)
+        theme = Theme()
+        self.term.set_theme(theme)
         self.draw()
-        self.term.show_notification(new_theme.name, timeout=1)
+        self.term.show_notification(theme.name, timeout=1)
 
     @PageController.register(Command('HELP'))
     def show_help(self):
@@ -466,7 +462,7 @@ class Page(object):
         if self.content.order is not None:
             order = self.content.order.split('-')[0]
             col = text.find(order) - 3
-            attr = self.term.theme.get('order_bar', modifier='selected')
+            attr = self.term.theme.get('order_bar', modifier='highlight')
             window.chgat(0, col, 3, attr)
 
         self._row += 1
@@ -537,13 +533,13 @@ class Page(object):
         # to draw the content
         for index, (win, data, inverted) in enumerate(self._subwindows):
             if index == self.nav.cursor_index:
-                # This lets the theme know to invert the cursor
-                modifier = 'selected'
+                win.bkgd(str(' '), self.term.attr('@highlight'))
+                # This lets the theme know to invert the cursor color and
+                # apply any other special highlighting effects to the window
+                with self.term.theme.set_modifier('highlight'):
+                    self._draw_item(win, data, inverted)
             else:
-                modifier = None
-
-            with self.term.theme.set_modifier(modifier):
-                win.bkgd(str(' '), self.term.attr('normal'))
+                win.bkgd(str(' '), self.term.attr('@normal'))
                 self._draw_item(win, data, inverted)
 
         self._row += win_n_rows

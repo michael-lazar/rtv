@@ -17,6 +17,8 @@ Basic Commands
 :``q``/``Q``: Quit/Force quit
 :``y``: Copy submission permalink to clipboard
 :``Y``: Copy submission link to clipboard
+:``F2``: Cycle to the previous color theme
+:``F3``: Cycle to the next color theme
 
 ----------------------
 Authenticated Commands

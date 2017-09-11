@@ -174,12 +174,15 @@ def main():
     try:
         with curses_session() as stdscr:
 
-            if config['theme']:
-                theme = Theme.from_name(config['theme'], config['monochrome'])
-            else:
-                theme = Theme(monochrome=config['monochrome'])
+            term = Terminal(stdscr, config)
 
-            term = Terminal(stdscr, config, theme)
+            if config['theme']:
+                theme = Theme.from_name(config['theme'])
+            else:
+                theme = None
+
+            term.set_theme(theme, monochrome=config['monochrome'])
+
 
             with term.loader('Initializing', catch_exception=False):
                 reddit = praw.Reddit(user_agent=user_agent,

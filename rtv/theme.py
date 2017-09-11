@@ -15,7 +15,8 @@ class Theme(object):
 
     ATTRIBUTE_CODES = {
         '-': None,
-        '': curses.A_NORMAL,
+        '': None,
+        'normal': curses.A_NORMAL,
         'bold': curses.A_BOLD,
         'reverse': curses.A_REVERSE,
         'underline': curses.A_UNDERLINE,
@@ -48,10 +49,11 @@ class Theme(object):
         COLOR_CODES['ansi_{0}'.format(i)] = i
 
     # For compatibility with as many terminals as possible, the default theme
-    # can only use the 8 basic colors with the default background.
+    # can only use the 8 basic colors with the default color as the background
     DEFAULT_THEME = {
         '@normal':               (-1,                   -1,   curses.A_NORMAL),
         '@highlight':            (-1,                   -1,   curses.A_NORMAL),
+
         'bar_level_1':           (curses.COLOR_MAGENTA, None, curses.A_NORMAL),
         'bar_level_1.highlight': (curses.COLOR_MAGENTA, None, curses.A_REVERSE),
         'bar_level_2':           (curses.COLOR_CYAN,    None, curses.A_NORMAL),
@@ -103,18 +105,15 @@ class Theme(object):
 
     BAR_LEVELS = ['bar_level_1', 'bar_level_2', 'bar_level_3', 'bar_level_4']
 
-    def __init__(self, name='default', elements=None, monochrome=False):
+    def __init__(self, name='default', elements=None):
         """
         Params:
             name (str): A unique string that describes the theme                    
             elements (dict): The theme's element map, should be in the same
                 format as Theme.DEFAULT_THEME.                    
-            monochrome (bool): If true, force all color pairs to use the
-                terminal's default foreground/background color.
         """
 
         self.name = name
-        self.monochrome = monochrome
         self._color_pair_map = None
         self._attribute_map = None
         self._modifier = None
@@ -125,19 +124,24 @@ class Theme(object):
         if elements is None:
             elements = self.DEFAULT_THEME.copy()
 
-        # Fill in missing elements
+        # Fill in any keywords that are defined in the default theme but were
+        # not passed into the elements dictionary.
         for key in self.DEFAULT_THEME.keys():
 
-            # Set undefined modifiers to the system default
+            # The "@normal"/"@highlight" are special elements that act as
+            # fallbacks for all of the other elements. They must always be
+            # defined and can't have the colors/attribute empty by setting
+            # them to "-" or None.
             if key.startswith('@'):
                 if key not in elements:
                     elements[key] = self.DEFAULT_THEME[key]
                 continue
 
+            # Modifiers are handled below
             if key.endswith('.highlight'):
                 continue
 
-            # Set undefined elements to bubble up to the modifier
+            # Set undefined elements to fallback to the default color
             if key not in elements:
                 elements[key] = (None, None, None)
 
@@ -146,7 +150,9 @@ class Theme(object):
             if modifier_key not in elements:
                 elements[modifier_key] = elements[key]
 
-        # Replace ``None`` attributes with their default modifiers
+        # At this point all of the possible keys should exist in the element map.
+        # Now we can "bubble up" the undefined attributes to copy the default
+        # of the @normal and @highlight modifiers.
         for key, val in elements.items():
             if key.endswith('.highlight'):
                 default = elements['@highlight']
@@ -160,33 +166,35 @@ class Theme(object):
 
         self.elements = elements
 
-        if not self.monochrome:
-            colors, color_pairs = set(), set()
-            for fg, bg, _ in self.elements.values():
-                colors.add(fg)
-                colors.add(bg)
-                color_pairs.add((fg, bg))
+        # Pre-calculate how many colors / color pairs the theme will need
+        colors, color_pairs = set(), set()
+        for fg, bg, _ in self.elements.values():
+            colors.add(fg)
+            colors.add(bg)
+            color_pairs.add((fg, bg))
 
-            # Don't count the default fg/bg as a color pair
-            color_pairs.discard((-1, -1))
-            self.required_color_pairs = len(color_pairs)
+        # Don't count the default (-1, -1) as a color pair because it doesn't
+        # need to be initialized by curses.init_pair().
+        color_pairs.discard((-1, -1))
+        self.required_color_pairs = len(color_pairs)
 
-            # Determine which color set the terminal needs to
-            # support in order to be able to use the theme
-            self.required_colors = None
-            for marker in [0, 8, 16, 256]:
-                if max(colors) < marker:
-                    self.required_colors = marker
-                    break
+        # Determine how many colors the terminal needs to support in order to
+        # be able to use the theme. This uses the common breakpoints that 99%
+        # of terminals follow and doesn't take into account 88 color themes.
+        self.required_colors = None
+        for marker in [0, 8, 16, 256]:
+            if max(colors) < marker:
+                self.required_colors = marker
+                break
 
-    def bind_curses(self):
+    def bind_curses(self, use_color=True):
         """
         Bind the theme's colors to curses's internal color pair map.
 
         This method must be called once (after curses has been initialized)        
         before any element attributes can be accessed. Color codes and other
         special attributes will be mixed bitwise into a single value that
-        can be understood by curses.
+        can be passed into curses draw functions.
         """
         self._color_pair_map = {}
         self._attribute_map = {}
@@ -195,7 +203,7 @@ class Theme(object):
             fg, bg, attrs = item
 
             color_pair = (fg, bg)
-            if not self.monochrome and color_pair != (-1, -1):
+            if use_color and color_pair != (-1, -1):
                 # Curses limits the number of available color pairs, so we
                 # need to reuse them if there are multiple elements with the
                 # same foreground and background.
@@ -211,16 +219,17 @@ class Theme(object):
     def get(self, element, modifier=None):
         """
         Returns the curses attribute code for the given element.
+        
+        If element is None, return the background code (e.g. @normal).
         """
         if self._attribute_map is None:
             raise RuntimeError('Attempted to access theme attribute before '
                                'calling initialize_curses_theme()')
 
         modifier = modifier or self._modifier
-        if modifier:
-            modified_element = '{0}.{1}'.format(element, modifier)
-            if modified_element in self._elements:
-                return self._elements[modified_element]
+
+        if modifier and not element.startswith('@'):
+            element = element + '.' + modifier
 
         return self._attribute_map[element]
 
@@ -298,7 +307,7 @@ class Theme(object):
         print('')
 
     @classmethod
-    def from_name(cls, name, monochrome=False, path=THEMES):
+    def from_name(cls, name, path=THEMES):
         """
         Search for the given theme on the filesystem and attempt to load it.
 
@@ -313,12 +322,12 @@ class Theme(object):
 
         for filename in filenames:
             if os.path.isfile(filename):
-                return cls.from_file(filename, monochrome)
+                return cls.from_file(filename)
 
         raise ConfigError('Could not find theme named "{0}"'.format(name))
 
     @classmethod
-    def from_file(cls, filename, monochrome=False):
+    def from_file(cls, filename):
         """
         Load a theme from the specified configuration file.
         """
@@ -347,7 +356,7 @@ class Theme(object):
                     continue
                 elements[element] = cls._parse_line(element, line, filename)
 
-        return cls(theme_name, elements, monochrome)
+        return cls(theme_name, elements)
 
     @classmethod
     def _parse_line(cls, element, line, filename=None):
