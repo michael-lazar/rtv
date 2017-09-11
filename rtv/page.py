@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 import os
 import sys
 import time
-import curses
 import logging
 from functools import wraps
 
@@ -60,7 +59,7 @@ class Page(object):
     def refresh_content(self, order=None, name=None):
         raise NotImplementedError
 
-    def _draw_item(self, window, data, inverted, highlight):
+    def _draw_item(self, window, data, inverted):
         raise NotImplementedError
 
     def get_selected_item(self):
@@ -467,7 +466,8 @@ class Page(object):
         if self.content.order is not None:
             order = self.content.order.split('-')[0]
             col = text.find(order) - 3
-            window.chgat(0, col, 3, self.term.attr('order_bar', True))
+            attr = self.term.theme.get('order_bar', modifier='selected')
+            window.chgat(0, col, 3, attr)
 
         self._row += 1
 
@@ -536,12 +536,15 @@ class Page(object):
         # Now that the windows are setup, we can take a second pass through
         # to draw the content
         for index, (win, data, inverted) in enumerate(self._subwindows):
-            highlight = (index == self.nav.cursor_index)
-            if highlight:
-                win.bkgd(str(' '), self.term.attr('@highlight'))
+            if index == self.nav.cursor_index:
+                # This lets the theme know to invert the cursor
+                modifier = 'selected'
             else:
-                win.bkgd(str(' '), self.term.attr('@normal'))
-            self._draw_item(win, data, inverted, highlight)
+                modifier = None
+
+            with self.term.theme.set_modifier(modifier):
+                win.bkgd(str(' '), self.term.attr('normal'))
+                self._draw_item(win, data, inverted)
 
         self._row += win_n_rows
 

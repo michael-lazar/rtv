@@ -1,8 +1,9 @@
+import os
 import codecs
-import configparser
 import curses
 import logging
-import os
+import configparser
+from contextlib import contextmanager
 
 from .config import THEMES, DEFAULT_THEMES
 from .exceptions import ConfigError
@@ -116,6 +117,7 @@ class Theme(object):
         self.monochrome = monochrome
         self._color_pair_map = None
         self._attribute_map = None
+        self._modifier = None
 
         self.required_color_pairs = 0
         self.required_colors = 0
@@ -206,7 +208,7 @@ class Theme(object):
 
             self._attribute_map[element] = attrs
 
-    def get(self, val, highlight=False):
+    def get(self, element, modifier=None):
         """
         Returns the curses attribute code for the given element.
         """
@@ -214,10 +216,25 @@ class Theme(object):
             raise RuntimeError('Attempted to access theme attribute before '
                                'calling initialize_curses_theme()')
 
-        if highlight:
-            val = val + '.highlight'
+        modifier = modifier or self._modifier
+        if modifier:
+            modified_element = '{0}.{1}'.format(element, modifier)
+            if modified_element in self._elements:
+                return self._elements[modified_element]
 
-        return self._attribute_map[val]
+        return self._attribute_map[element]
+
+    @contextmanager
+    def set_modifier(self, modifier=None):
+
+        # This case is undefined if the context manager is nested
+        assert self._modifier is None
+
+        self._modifier = modifier
+        try:
+            yield
+        finally:
+            self._modifier = None
 
     @classmethod
     def list_themes(cls, path=THEMES):

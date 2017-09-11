@@ -253,7 +253,7 @@ class SubredditPage(Page):
             self.content = page.selected_subreddit
             self.nav = Navigator(self.content.get)
 
-    def _draw_item(self, win, data, inverted, highlight):
+    def _draw_item(self, win, data, inverted):
 
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1  # Leave space for the cursor in the first column
@@ -264,75 +264,75 @@ class SubredditPage(Page):
 
         n_title = len(data['split_title'])
         for row, text in enumerate(data['split_title'], start=offset):
-            attr = self.term.attr('submission_title', highlight)
+            attr = self.term.attr('submission_title')
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1, attr)
 
         row = n_title + offset
         if row in valid_rows:
             if data['url_full'] in self.config.history:
-                attr = self.term.attr('url_seen', highlight)
+                attr = self.term.attr('url_seen')
             else:
-                attr = self.term.attr('url', highlight)
+                attr = self.term.attr('url')
             self.term.add_line(win, '{url}'.format(**data), row, 1, attr)
 
         row = n_title + offset + 1
         if row in valid_rows:
 
-            attr = self.term.attr('score', highlight)
+            attr = self.term.attr('score')
             self.term.add_line(win, '{score}'.format(**data), row, 1, attr)
             self.term.add_space(win)
 
-            arrow, attr = self.term.get_arrow(data['likes'], highlight)
+            arrow, attr = self.term.get_arrow(data['likes'])
             self.term.add_line(win, arrow, attr=attr)
             self.term.add_space(win)
 
-            attr = self.term.attr('created', highlight)
+            attr = self.term.attr('created')
             self.term.add_line(win, '{created}'.format(**data), attr=attr)
 
             if data['comments'] is not None:
-                attr = self.term.attr('separator', highlight)
+                attr = self.term.attr('separator')
                 self.term.add_space(win)
                 self.term.add_line(win, '-', attr=attr)
 
-                attr = self.term.attr('comment_count', highlight)
+                attr = self.term.attr('comment_count')
                 self.term.add_space(win)
                 self.term.add_line(win, '{comments}'.format(**data), attr=attr)
 
             if data['saved']:
-                attr = self.term.attr('saved', highlight)
+                attr = self.term.attr('saved')
                 self.term.add_space(win)
                 self.term.add_line(win, '[saved]', attr=attr)
 
             if data['stickied']:
-                attr = self.term.attr('stickied', highlight)
+                attr = self.term.attr('stickied')
                 self.term.add_space(win)
                 self.term.add_line(win, '[stickied]', attr=attr)
 
             if data['gold']:
-                attr = self.term.attr('gold', highlight)
+                attr = self.term.attr('gold')
                 self.term.add_space(win)
                 self.term.add_line(win, self.term.guilded, attr=attr)
 
             if data['nsfw']:
-                attr = self.term.attr('nsfw', highlight)
+                attr = self.term.attr('nsfw')
                 self.term.add_space(win)
                 self.term.add_line(win, 'NSFW', attr=attr)
 
         row = n_title + offset + 2
         if row in valid_rows:
-            attr = self.term.attr('submission_author', highlight)
+            attr = self.term.attr('submission_author')
             self.term.add_line(win, '{author}'.format(**data), row, 1, attr)
             self.term.add_space(win)
 
-            attr = self.term.attr('submission_subreddit', highlight)
+            attr = self.term.attr('submission_subreddit')
             self.term.add_line(win, '/r/{subreddit}'.format(**data), attr=attr)
 
             if data['flair']:
-                attr = self.term.attr('submission_flair', highlight)
+                attr = self.term.attr('submission_flair')
                 self.term.add_space(win)
                 self.term.add_line(win, '{flair}'.format(**data), attr=attr)
 
-        attr = self.term.attr('cursor', highlight)
+        attr = self.term.attr('cursor')
         for y in range(n_rows):
             self.term.addch(win, y, 0, str(' '), attr)

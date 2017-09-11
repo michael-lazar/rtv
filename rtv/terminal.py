@@ -183,7 +183,7 @@ class Terminal(object):
         finally:
             self.stdscr.nodelay(0)
 
-    def get_arrow(self, likes, highlight=False):
+    def get_arrow(self, likes):
         """
         Curses does define constants for symbols (e.g. curses.ACS_BULLET).
         However, they rely on using the curses.addch() function, which has been
@@ -193,11 +193,11 @@ class Terminal(object):
         """
 
         if likes is None:
-            return self.neutral_arrow, self.attr('neutral_vote', highlight)
+            return self.neutral_arrow, self.attr('neutral_vote')
         elif likes:
-            return self.up_arrow, self.attr('upvote', highlight)
+            return self.up_arrow, self.attr('upvote')
         else:
-            return self.down_arrow, self.attr('downvote', highlight)
+            return self.down_arrow, self.attr('downvote')
 
     def clean(self, string, n_cols=None):
         """
@@ -282,7 +282,8 @@ class Terminal(object):
 
         row, col = window.getyx()
         _, max_cols = window.getmaxyx()
-        if max_cols - col - 1 <= 0:
+        n_cols = max_cols - col - 1
+        if n_cols <= 0:
             # Trying to draw outside of the screen bounds
             return
 
@@ -299,6 +300,8 @@ class Terminal(object):
             style (str): The theme element that will be applied to the
                 notification window
         """
+
+        assert style in ('info', 'warning', 'error', 'success')
 
         if isinstance(message, six.string_types):
             message = message.splitlines()
@@ -396,7 +399,7 @@ class Terminal(object):
                 _logger.warning(stderr)
                 self.show_notification(
                     'Program exited with status={0}\n{1}'.format(
-                        code, stderr.strip()))
+                        code, stderr.strip()), style='error')
 
         else:
             # Non-blocking, open a background process
@@ -821,17 +824,18 @@ class Terminal(object):
         else:
             self.stdscr.clearok(True)
 
-    def attr(self, element, highlight=False):
+    def attr(self, element):
         """
         Shortcut for fetching the color + attribute code for an element.
         """
-        return self.theme.get(element, highlight=highlight)
+
+        return self.theme.get(element)
 
     def set_theme(self, theme=None):
         """
         Check that the terminal supports the provided theme, and applies
         the theme to the terminal if possible.
-        
+
         If the terminal doesn't support the theme, this falls back to the 
         default theme. The default theme only requires 8 colors so it
         should be compatible with any terminal that supports basic colors.
