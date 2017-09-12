@@ -3,7 +3,10 @@ import codecs
 import curses
 import logging
 import configparser
+from collections import OrderedDict
 from contextlib import contextmanager
+
+import six
 
 from .config import THEMES, DEFAULT_THEMES
 from .exceptions import ConfigError
@@ -105,15 +108,29 @@ class Theme(object):
 
     BAR_LEVELS = ['bar_level_1', 'bar_level_2', 'bar_level_3', 'bar_level_4']
 
-    def __init__(self, name='default', elements=None):
+    def __init__(self, name=None, source=None, elements=None, use_color=True):
         """
         Params:
-            name (str): A unique string that describes the theme                    
+            name (str): A unique string that describes the theme
+            source (str): A string that describes the source of the theme:
+                built-in - Should only be used when Theme() is called directly
+                preset - Themes packaged with rtv
+                installed - Themes in ~/.config/rtv/themes/
+                custom - When a filepath is explicitly provided, e.g.
+                    ``rtv --theme=/path/to/theme_file.cfg``
             elements (dict): The theme's element map, should be in the same
-                format as Theme.DEFAULT_THEME.                    
+                format as Theme.DEFAULT_THEME.
         """
 
+        if name is None and source is None:
+            name = 'default' if use_color else 'monochrome'
+            source = 'built-in'
+        elif name is None or source is None:
+            raise ValueError('Must specify both `name` and `source`, or neither one')
+
         self.name = name
+        self.source = source
+        self.use_color = use_color
         self._color_pair_map = None
         self._attribute_map = None
         self._modifier = None
@@ -166,28 +183,33 @@ class Theme(object):
 
         self.elements = elements
 
-        # Pre-calculate how many colors / color pairs the theme will need
-        colors, color_pairs = set(), set()
-        for fg, bg, _ in self.elements.values():
-            colors.add(fg)
-            colors.add(bg)
-            color_pairs.add((fg, bg))
+        if self.use_color:
+            # Pre-calculate how many colors / color pairs the theme will need
+            colors, color_pairs = set(), set()
+            for fg, bg, _ in self.elements.values():
+                colors.add(fg)
+                colors.add(bg)
+                color_pairs.add((fg, bg))
 
-        # Don't count the default (-1, -1) as a color pair because it doesn't
-        # need to be initialized by curses.init_pair().
-        color_pairs.discard((-1, -1))
-        self.required_color_pairs = len(color_pairs)
+            # Don't count the default (-1, -1) as a color pair because it doesn't
+            # need to be initialized by curses.init_pair().
+            color_pairs.discard((-1, -1))
+            self.required_color_pairs = len(color_pairs)
 
-        # Determine how many colors the terminal needs to support in order to
-        # be able to use the theme. This uses the common breakpoints that 99%
-        # of terminals follow and doesn't take into account 88 color themes.
-        self.required_colors = None
-        for marker in [0, 8, 16, 256]:
-            if max(colors) < marker:
-                self.required_colors = marker
-                break
+            # Determine how many colors the terminal needs to support in order to
+            # be able to use the theme. This uses the common breakpoints that 99%
+            # of terminals follow and doesn't take into account 88 color themes.
+            self.required_colors = None
+            for marker in [0, 8, 16, 256]:
+                if max(colors) < marker:
+                    self.required_colors = marker
+                    break
 
-    def bind_curses(self, use_color=True):
+    @property
+    def display_string(self):
+        return '{0} ({1})'.format(self.name, self.source)
+
+    def bind_curses(self):
         """
         Bind the theme's colors to curses's internal color pair map.
 
@@ -203,7 +225,7 @@ class Theme(object):
             fg, bg, attrs = item
 
             color_pair = (fg, bg)
-            if use_color and color_pair != (-1, -1):
+            if self.use_color and color_pair != (-1, -1):
                 # Curses limits the number of available color pairs, so we
                 # need to reuse them if there are multiple elements with the
                 # same foreground and background.
@@ -235,7 +257,20 @@ class Theme(object):
 
     @contextmanager
     def set_modifier(self, modifier=None):
+        """
+        Sets the active modifier inside of context block.
 
+        For example:
+            >>> with theme.set_modifier('highlight'):
+            >>>     attr = theme.get('cursor')
+
+        Is the same as:
+            >>> attr = theme.get('cursor', modifier='highlight')
+
+        Is also the same as:
+            >>> attr = theme.get('cursor.highlight')
+
+        """
         # This case is undefined if the context manager is nested
         assert self._modifier is None
 
@@ -250,28 +285,32 @@ class Theme(object):
         """
         Compile all of the themes configuration files in the search path.
         """
+        themes, errors = [], OrderedDict()
 
-        themes = {'invalid': {}, 'custom': {}, 'default': {}}
-        for container, theme_path in [
-                (themes['custom'], path),
-                (themes['default'], DEFAULT_THEMES)]:
-
-            if os.path.isdir(theme_path):
-                for filename in os.listdir(theme_path):
+        def load_themes(path, source):
+            """
+            Load all themes in the given path.
+            """
+            if os.path.isdir(path):
+                for filename in sorted(os.listdir(path)):
                     if not filename.endswith('.cfg'):
                         continue
 
-                    filepath = os.path.join(theme_path, filename)
+                    filepath = os.path.join(path, filename)
                     name = filename[:-4]
                     try:
                         # Make sure the theme is valid
-                        theme = cls.from_file(filepath)
+                        theme = cls.from_file(filepath, source)
                     except Exception as e:
-                        themes['invalid'][name] = e
+                        errors[(source, name)] = e
                     else:
-                        container[name] = theme
+                        themes.append(theme)
 
-        return themes
+        themes.extend([Theme(use_color=True), Theme(use_color=False)])
+        load_themes(DEFAULT_THEMES, 'preset')
+        load_themes(path, 'installed')
+
+        return themes, errors
 
     @classmethod
     def print_themes(cls, path=THEMES):
@@ -281,28 +320,30 @@ class Theme(object):
         This is intended to be used as a command-line utility, outside of the
         main curses display loop.
         """
-        themes = cls.list_themes(path=path)
+        themes, errors = cls.list_themes(path=path)
 
         print('\nInstalled ({0}):'.format(path))
-        custom_themes = sorted(themes['custom'].items())
-        if custom_themes:
-            for name, theme in custom_themes:
-                print('    {0:<20}[requires {1} colors]'.format(
-                    name, theme.required_colors))
+        installed = [t for t in themes if t.source == 'installed']
+        if installed:
+            for theme in installed:
+                line = '    {0:<20}[requires {1} colors]'
+                print(line.format(theme.name, theme.required_colors))
         else:
             print('    (empty)')
 
-        print('\nBuilt-in:')
-        default_themes = sorted(themes['default'].items())
-        for name, theme in default_themes:
-            print('    {0:<20}[requires {1} colors]'.format(
-                name, theme.required_colors))
+        print('\nPresets:')
+        preset = [t for t in themes if t.source == 'preset']
+        for theme in preset:
+            line = '    {0:<20}[requires {1} colors]'
+            print(line.format(theme.name, theme.required_colors))
 
-        invalid_themes = sorted(themes['invalid'].items())
-        if invalid_themes:
-            print('\nWARNING: Some themes had problems loading:')
-            for name, error in invalid_themes:
-                print('    {0:<20}{1!r}'.format(name, error))
+        if errors:
+            print('\nWARNING: Some files encountered errors:')
+            for (source, name), error in errors.items():
+                theme_info = '({0}) {1}'.format(source, name)
+                # Align multi-line error messages with the right column
+                err_message = six.text_type(error).replace('\n', '\n' + ' ' * 20)
+                print('    {0:<20}{1}'.format(theme_info, err_message))
 
         print('')
 
@@ -315,21 +356,27 @@ class Theme(object):
         provided as an absolute file path, it will be loaded directly.
         """
 
-        filenames = [
-            name,
-            os.path.join(path, '{0}.cfg'.format(name)),
-            os.path.join(DEFAULT_THEMES, '{0}.cfg'.format(name))]
+        if os.path.isfile(name):
+            return cls.from_file(name, 'custom')
 
-        for filename in filenames:
-            if os.path.isfile(filename):
-                return cls.from_file(filename)
+        filename = os.path.join(path, '{0}.cfg'.format(name))
+        if os.path.isfile(filename):
+            return cls.from_file(name, 'installed')
+
+        filename = os.path.join(DEFAULT_THEMES, '{0}.cfg'.format(name))
+        if os.path.isfile(filename):
+            return cls.from_file(name, 'preset')
 
         raise ConfigError('Could not find theme named "{0}"'.format(name))
 
     @classmethod
-    def from_file(cls, filename):
+    def from_file(cls, filename, source):
         """
         Load a theme from the specified configuration file.
+        
+        Parameters:
+            filename: The name of the filename to load.
+            source: A description of where the theme was loaded from.
         """
 
         try:
@@ -348,15 +395,14 @@ class Theme(object):
         theme_name, _ = os.path.splitext(theme_name)
 
         elements = {}
-        if config.has_section('theme'):
-            for element, line in config.items('theme'):
-                if element not in cls.DEFAULT_THEME:
-                    # Could happen if using a new config with an older version
-                    # of the software
-                    continue
-                elements[element] = cls._parse_line(element, line, filename)
+        for element, line in config.items('theme'):
+            if element not in cls.DEFAULT_THEME:
+                # Could happen if using a new config with an older version
+                # of the software
+                continue
+            elements[element] = cls._parse_line(element, line, filename)
 
-        return cls(theme_name, elements)
+        return cls(name=theme_name, source=source, elements=elements)
 
     @classmethod
     def _parse_line(cls, element, line, filename=None):
@@ -407,6 +453,11 @@ class Theme(object):
             else:
                 attrs_code |= attr_code
 
+        if element.startswith('@') and None in (fg_code, bg_code, attrs_code):
+            raise ConfigError(
+                'Error loading {0}, {1} cannot have unspecified attributes:\n'
+                '    {1} = {2}'.format(filename, element, line))
+
         return fg_code, bg_code, attrs_code
 
     @staticmethod
@@ -437,3 +488,56 @@ class Theme(object):
 
         except ValueError:
             return None
+
+
+class ThemeList(object):
+    """
+    This is a small container around Theme.list_themes() that can be used
+    to cycle through all of the available themes.
+    """
+
+    def __init__(self, current_theme=None):
+
+        self.index = 0
+        self.current_theme = current_theme
+        self.themes = None
+        self.errors = None
+
+    def load(self):
+        """
+        This acts as a lazy load, it won't read all of the theme files from
+        disk until the first time somebody tries to access the theme list.
+        """
+        self.themes, self.errors = Theme.list_themes()
+
+        if self.current_theme is not None:
+            # Try to find the starting index
+            key = (self.current_theme.source, self.current_theme.name)
+            for i, theme in enumerate(self.themes):
+                if (theme.source, theme.name) == key:
+                    self.index = i
+                    break
+
+        self.current_theme = self.themes[self.index]
+
+    def next(self):
+        """
+        Retrieve the next theme in the list
+        """
+        if not self.themes:
+            self.load()
+
+        self.index = (self.index + 1) % len(self.themes)
+        self.current_theme = self.themes[self.index]
+        return self.current_theme
+
+    def previous(self):
+        """
+        Retrieve the previous theme in the list
+        """
+        if not self.themes:
+            self.load()
+
+        self.index = (self.index - 1) % len(self.themes)
+        self.current_theme = self.themes[self.index]
+        return self.current_theme

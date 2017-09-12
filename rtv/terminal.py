@@ -829,7 +829,7 @@ class Terminal(object):
 
         return self.theme.get(element)
 
-    def set_theme(self, theme=None, monochrome=False):
+    def set_theme(self, theme=None):
         """
         Check that the terminal supports the provided theme, and applies
         the theme to the terminal if possible.
@@ -837,25 +837,15 @@ class Terminal(object):
         If the terminal doesn't support the theme, this falls back to the 
         default theme. The default theme only requires 8 colors so it
         should be compatible with any terminal that supports basic colors.
-        
-        Using ``monochrome=True`` will force loading the current theme
-        without any color support. The intention is that this be used as
-        a fallback for the default theme to support the old --monochrome
-        command line flag.
         """
 
-        if not monochrome and curses.has_colors():
+        if curses.has_colors():
             terminal_colors = curses.COLORS
         else:
             terminal_colors = 0
 
         if theme is None:
-            theme = Theme()
-
-        elif monochrome:
-            # No need to display a warning message if the user has
-            # explicitly turned off support for colors
-            pass
+            theme = Theme(use_color=bool(terminal_colors))
 
         elif theme.required_color_pairs > curses.COLOR_PAIRS:
             _logger.warning(
@@ -873,7 +863,7 @@ class Terminal(object):
                 curses.COLORS)
             theme = Theme()
 
-        theme.bind_curses(use_color=bool(terminal_colors))
+        theme.bind_curses()
 
         # Apply the default color to the whole screen
         self.stdscr.bkgd(str(' '), theme.get('@normal'))

@@ -14,7 +14,7 @@ from collections import Counter
 from vcr import VCR
 from six.moves.urllib.parse import urlparse, parse_qs
 
-from rtv.theme import Theme
+from rtv.theme import ThemeList
 from rtv.config import Config
 from rtv.packages import praw
 from rtv.oauth import OAuthHelper
@@ -91,7 +91,8 @@ def draw_screen(stdscr, reddit, config, theme, oauth):
     # Submission Page
     # ===================================================================
     win1 = stdscr.derwin(tall_y - 1, mid_x - 1, 0, 0)
-    term = Terminal(win1, config, theme)
+    term = Terminal(win1, config)
+    term.set_theme(theme)
     oauth.term = term
 
     url = 'https://www.reddit.com/r/Python/comments/4dy7xr'
@@ -129,7 +130,8 @@ def draw_screen(stdscr, reddit, config, theme, oauth):
     # Subreddit Page
     # ===================================================================
     win2 = stdscr.derwin(tall_y - 1, mid_x - 1, 0, mid_x + 1)
-    term = Terminal(win2, config, theme)
+    term = Terminal(win2, config)
+    term.set_theme(theme)
     oauth.term = term
 
     with term.loader('Loading'):
@@ -157,7 +159,8 @@ def draw_screen(stdscr, reddit, config, theme, oauth):
     # Subscription Page
     # ===================================================================
     win3 = stdscr.derwin(short_y, mid_x - 1, tall_y, 0)
-    term = Terminal(win3, config, theme)
+    term = Terminal(win3, config)
+    term.set_theme(theme)
     oauth.term = term
 
     with term.loader('Loading'):
@@ -177,7 +180,8 @@ def draw_screen(stdscr, reddit, config, theme, oauth):
     # Multireddit Page
     # ===================================================================
     win4 = stdscr.derwin(short_y, mid_x - 1, tall_y, mid_x + 1)
-    term = Terminal(win4, config, theme)
+    term = Terminal(win4, config)
+    term.set_theme(theme)
     oauth.term = term
 
     with term.loader('Loading'):
@@ -193,7 +197,8 @@ def draw_screen(stdscr, reddit, config, theme, oauth):
     thread.start()
     threads.append((thread, term))
 
-    term = Terminal(win4, config, theme)
+    term = Terminal(win4, config)
+    term.set_theme(theme)
     term.pause_getch = True
     term.getch = MethodType(prompt_getch, term)
     thread = threading.Thread(target=term.prompt_y_or_n, args=('Prompt: ',))
@@ -208,12 +213,13 @@ def draw_screen(stdscr, reddit, config, theme, oauth):
 def main():
 
     if len(sys.argv) > 1:
-        theme_name = sys.argv[1]
+        current_theme = sys.argv[1]
     else:
-        theme_name = 'default'
+        current_theme = None
 
-    themes = Theme.list_themes()
-    default_themes = sorted(themes['default'].keys())
+    theme_list = ThemeList(current_theme)
+    theme_list.load()
+    theme = theme_list.current_theme
 
     vcr = initialize_vcr()
     with vcr.use_cassette('demo_theme.yaml') as cassette, \
@@ -234,17 +240,18 @@ def main():
         config.history.add('https://www.reddit.com/r/Python/comments/6302cj/rpython_official_job_board/')
 
         term = Terminal(stdscr, config)
+        term.set_theme()
         oauth = OAuthHelper(reddit, term, config)
         oauth.authorize()
 
         while True:
 
-            theme = Theme.from_name(theme_name)
-            term = Terminal(stdscr, config, theme=theme)
+            term = Terminal(stdscr, config)
+            term.set_theme(theme)
             threads = draw_screen(stdscr, reddit, config, theme, oauth)
 
             try:
-                ch = term.show_notification(theme_name)
+                ch = term.show_notification(theme.display_string)
             except KeyboardInterrupt:
                 ch = Terminal.ESCAPE
 
@@ -258,11 +265,9 @@ def main():
                 cassette.play_counts = Counter()
 
             if ch == curses.KEY_RIGHT:
-                i = (default_themes.index(theme_name) + 1)
-                theme_name = default_themes[i % len(default_themes)]
+                theme = theme_list.next()
             elif ch == curses.KEY_LEFT:
-                i = (default_themes.index(theme_name) - 1)
-                theme_name = default_themes[i % len(default_themes)]
+                theme = theme_list.previous()
             elif ch == Terminal.ESCAPE:
                 break
 

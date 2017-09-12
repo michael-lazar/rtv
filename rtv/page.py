@@ -11,7 +11,7 @@ import six
 from kitchen.text.display import textual_width
 
 from . import docs
-from .theme import Theme
+from .theme import ThemeList
 from .objects import Controller, Command
 from .clipboard import copy
 from .exceptions import TemporaryFileError, ProgramError
@@ -51,6 +51,7 @@ class Page(object):
         self.nav = None
         self.controller = None
         self.copy_to_clipboard = copy
+        self.theme_list = ThemeList()
 
         self.active = True
         self._row = 0
@@ -93,17 +94,19 @@ class Page(object):
 
     @PageController.register(Command('PREVIOUS_THEME'))
     def previous_theme(self):
-        theme = Theme()
+        theme = self.theme_list.previous()
         self.term.set_theme(theme)
         self.draw()
-        self.term.show_notification(theme.name, timeout=1)
+        message = self.term.theme.display_string
+        self.term.show_notification(message, timeout=1)
 
     @PageController.register(Command('NEXT_THEME'))
     def next_theme(self):
-        theme = Theme()
+        theme = self.theme_list.next()
         self.term.set_theme(theme)
         self.draw()
-        self.term.show_notification(theme.name, timeout=1)
+        message = self.term.theme.display_string
+        self.term.show_notification(message, timeout=1)
 
     @PageController.register(Command('HELP'))
     def show_help(self):
@@ -582,4 +585,3 @@ class Page(object):
         ch = self.term.show_notification(message)
         ch = six.unichr(ch)
         return choices.get(ch)
-

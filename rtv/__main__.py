@@ -176,13 +176,15 @@ def main():
 
             term = Terminal(stdscr, config)
 
-            if config['theme']:
+            if config['monochrome']:
+                theme = Theme(use_color=False)
+            elif config['theme']:
                 theme = Theme.from_name(config['theme'])
             else:
+                # Set to None to let the terminal figure out which default
+                # theme to use depending on if colors are supported or not
                 theme = None
-
-            term.set_theme(theme, monochrome=config['monochrome'])
-
+            term.set_theme(theme)
 
             with term.loader('Initializing', catch_exception=False):
                 reddit = praw.Reddit(user_agent=user_agent,
