@@ -10,6 +10,7 @@ import logging
 import threading
 
 #pylint: disable=import-error
+import requests
 from six.moves.urllib.parse import urlparse, parse_qs
 from six.moves.BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
@@ -217,6 +218,8 @@ class OAuthHelper(object):
         if self.term.loader.exception:
             return
 
+        self.reddit.handler.reset()
+
         message = 'Welcome {}!'.format(self.reddit.user.name)
         self.term.show_notification(message)
 
@@ -226,4 +229,101 @@ class OAuthHelper(object):
 
     def clear_oauth_data(self):
         self.reddit.clear_authentication()
+        self.reddit.handler.reset()
         self.config.delete_refresh_token()
+
+
+class OAuthRateLimitHandler(object):
+    """Custom PRAW request handler for rate-limiting requests.
+    
+    This is structured as a drop-in replacement for the
+    praw.handlers.DefaultHandler. It uses Reddit's modern API guidelines
+    to rate-limit based on the X-Ratelimit-* headers returned from http
+    requests. It does not use a 30 second cache or arbitrary sleeps before
+    each request. Unlike the other PRAW 3 handlers, it does not attempt to
+    be thread-safe or multiprocess safe.
+
+    References:
+        https://github.com/reddit/reddit/wiki/API
+        https://github.com/praw-dev/prawcore/blob/master/prawcore/rate_limit.py
+    """
+
+    def __init__(self):
+        self.http = requests.Session()
+        self.next_request_timestamp = None
+
+    def reset(self):
+        self.next_request_timestamp = None
+
+    @classmethod
+    def evict(cls, urls):
+        return 0
+
+    def delay(self):
+        if self.next_request_timestamp is None:
+            return
+
+        sleep_seconds = self.next_request_timestamp - time.time()
+        if sleep_seconds <= 0:
+            return
+        time.sleep(sleep_seconds)
+
+    def update(self, response_headers):
+        """Update the state of the rate limiter based on the response headers.
+
+            X-Ratelimit-Used: Approximate number of requests used this period
+            X-Ratelimit-Remaining: Approximate number of requests left to use
+            X-Ratelimit-Reset: Approximate number of seconds to end of period
+
+        PRAW 5's rate limiting logic is structured for making hundreds of
+        evenly-spaced API requests, which makes sense for running something
+        like a bot or crawler.
+
+        This handler's logic, on the other hand, is geared more towards
+        interactive usage. It allows for short, sporadic bursts of requests.
+        The assumption is that actual users browsing reddit shouldn't ever be
+        in danger of hitting the rate limit. If they do hit the limit, they
+        will be cutoff until the period resets.
+        """
+
+        if 'x-ratelimit-remaining' not in response_headers:
+            # This could be because the API returned an error response, or it
+            # could be because we're using something like read-only credentials
+            # which Reddit doesn't appear to care about rate limiting.
+            return
+
+        remaining = float(response_headers['x-ratelimit-remaining'])
+        seconds_to_reset = int(response_headers['x-ratelimit-reset'])
+
+        if remaining <= 0:
+            self.next_request_timestamp = time.time() + seconds_to_reset
+        else:
+            self.next_request_timestamp = None
+
+    def request(self, request, proxies, timeout, verify, **_):
+        """Responsible for dispatching the request and returning the result.
+
+        Network level exceptions should be raised and only
+        ``requests.Response`` should be returned.
+
+        :param request: A ``requests.PreparedRequest`` object containing all
+            the data necessary to perform the request.
+        :param proxies: A dictionary of proxy settings to be utilized for the
+            request.
+        :param timeout: Specifies the maximum time that the actual HTTP request
+            can take.
+        :param verify: Specifies if SSL certificates should be validated.
+
+        ``**_`` should be added to the method call to ignore the extra
+        arguments intended for the cache handler.
+
+        """
+        settings = self.http.merge_environment_settings(
+            request.url, proxies, False, verify, None
+        )
+
+        self.delay()
+        response = self.http.send(
+            request, timeout=timeout, allow_redirects=False, **settings)
+        self.update(response.headers)
+        return response

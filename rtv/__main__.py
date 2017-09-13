@@ -36,7 +36,7 @@ from . import packages
 from .packages import praw
 from .config import Config, copy_default_config, copy_default_mailcap
 from .theme import Theme
-from .oauth import OAuthHelper
+from .oauth import OAuthHelper, OAuthRateLimitHandler
 from .terminal import Terminal
 from .objects import curses_session, patch_webbrowser
 from .subreddit_page import SubredditPage
@@ -174,9 +174,11 @@ def main():
             term = Terminal(stdscr, config, theme)
 
             with term.loader('Initializing', catch_exception=False):
+                handler = OAuthRateLimitHandler()
                 reddit = praw.Reddit(user_agent=user_agent,
                                      decode_html_entities=False,
-                                     disable_update_check=True)
+                                     disable_update_check=True,
+                                     handler=handler)
 
             # Authorize on launch if the refresh token is present
             oauth = OAuthHelper(reddit, term, config)
