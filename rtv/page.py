@@ -226,7 +226,8 @@ class Page(object):
         """
 
         if self.reddit.is_oauth_session():
-            if self.term.prompt_y_or_n('Log out? (y/n): '):
+            ch = self.term.show_notification('Log out? (y/n)')
+            if ch in (ord('y'), ord('Y')):
                 self.oauth.clear_oauth_data()
                 self.term.show_notification('Logged out')
         else:
