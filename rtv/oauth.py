@@ -231,6 +231,12 @@ class OAuthHelper(object):
 
 
 def fix_cache(func):
+    """
+    This is a shim around PRAW's 30 second page cache that attempts
+    to address broken behavior that hasn't been fixed because PRAW 3
+    is deprecated.
+    """
+
     def wraps(self, _cache_key, _cache_ignore, *args, **kwargs):
         if _cache_key:
             # Pop the request's session cookies from the cache key.
@@ -249,7 +255,7 @@ def fix_cache(func):
     return wraps
 
 
-class OAuthRateLimitHandler(DefaultHandler):
+class OAuthRateLimiter(DefaultHandler):
     """Custom PRAW request handler for rate-limiting requests.
     
     This is an alternative to PRAW 3's DefaultHandler that uses
