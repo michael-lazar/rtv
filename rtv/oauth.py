@@ -233,16 +233,16 @@ class OAuthHelper(object):
 def fix_cache(func):
     def wraps(self, _cache_key, _cache_ignore, *args, **kwargs):
         if _cache_key:
-            # Remove the request's session cookies from the cache key.
+            # Pop the request's session cookies from the cache key.
             # These appear to be unreliable and change with every
             # request. Also, with the introduction of OAuth I don't think
             # that cookies are being used to store anything that
-            # differentiates requests anymore
+            # differentiates API requests anyways
             url, items = _cache_key
             _cache_key = (url, (items[0], items[1], items[3], items[4]))
 
         if kwargs['request'].method != 'GET':
-            # Why were POST/PUT/DELETE requests ever cached???
+            # Why were POST/PUT/DELETE requests ever being cached???
             _cache_ignore = True
 
         return func(self, _cache_key, _cache_ignore, *args, **kwargs)
@@ -311,8 +311,7 @@ class OAuthRateLimitHandler(DefaultHandler):
         else:
             self.next_request_timestamp = None
 
-    @fix_cache
-    @DefaultHandler.with_cache
+    @fix_cache(DefaultHandler.with_cache)
     def request(self, request, proxies, timeout, verify, **_):
 
         settings = self.http.merge_environment_settings(
