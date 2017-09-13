@@ -361,11 +361,11 @@ class Theme(object):
 
         filename = os.path.join(path, '{0}.cfg'.format(name))
         if os.path.isfile(filename):
-            return cls.from_file(name, 'installed')
+            return cls.from_file(filename, 'installed')
 
         filename = os.path.join(DEFAULT_THEMES, '{0}.cfg'.format(name))
         if os.path.isfile(filename):
-            return cls.from_file(name, 'preset')
+            return cls.from_file(filename, 'preset')
 
         raise ConfigError('Could not find theme named "{0}"'.format(name))
 
@@ -517,6 +517,10 @@ class ThemeList(object):
                 if (theme.source, theme.name) == key:
                     self.index = i
                     break
+            else:
+                # If the current_theme was set from a custom source it might
+                # not be a part of the list returned by list_themes().
+                self.themes.insert(0, self.current_theme)
 
         self.current_theme = self.themes[self.index]
 

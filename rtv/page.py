@@ -51,7 +51,9 @@ class Page(object):
         self.nav = None
         self.controller = None
         self.copy_to_clipboard = copy
-        self.theme_list = ThemeList()
+
+        # TODO: does this need to be a global?
+        self.theme_list = ThemeList(term.theme)
 
         self.active = True
         self._row = 0
