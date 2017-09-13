@@ -10,7 +10,6 @@ import logging
 import threading
 
 #pylint: disable=import-error
-import requests
 from six.moves.urllib.parse import urlparse, parse_qs
 from six.moves.BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
@@ -18,6 +17,7 @@ from . import docs
 from .config import TEMPLATES
 from .exceptions import InvalidRefreshToken
 from .packages.praw.errors import HTTPException, OAuthException
+from .packages.praw.handlers import DefaultHandler
 
 
 _logger = logging.getLogger(__name__)
@@ -218,8 +218,6 @@ class OAuthHelper(object):
         if self.term.loader.exception:
             return
 
-        self.reddit.handler.reset()
-
         message = 'Welcome {}!'.format(self.reddit.user.name)
         self.term.show_notification(message)
 
@@ -229,37 +227,46 @@ class OAuthHelper(object):
 
     def clear_oauth_data(self):
         self.reddit.clear_authentication()
-        self.reddit.handler.reset()
         self.config.delete_refresh_token()
 
 
-class OAuthRateLimitHandler(object):
+def fix_cache(func):
+    def wraps(self, _cache_key, _cache_ignore, *args, **kwargs):
+        if _cache_key:
+            # Remove the request's session cookies from the cache key.
+            # These appear to be unreliable and change with every
+            # request. Also, with the introduction of OAuth I don't think
+            # that cookies are being used to store anything that
+            # differentiates requests anymore
+            url, items = _cache_key
+            _cache_key = (url, (items[0], items[1], items[3], items[4]))
+
+        if kwargs['request'].method != 'GET':
+            # Why were POST/PUT/DELETE requests ever cached???
+            _cache_ignore = True
+
+        return func(self, _cache_key, _cache_ignore, *args, **kwargs)
+    return wraps
+
+
+class OAuthRateLimitHandler(DefaultHandler):
     """Custom PRAW request handler for rate-limiting requests.
     
-    This is structured as a drop-in replacement for the
-    praw.handlers.DefaultHandler. It uses Reddit's modern API guidelines
-    to rate-limit based on the X-Ratelimit-* headers returned from http
-    requests. It does not use a 30 second cache or arbitrary sleeps before
-    each request. Unlike the other PRAW 3 handlers, it does not attempt to
-    be thread-safe or multiprocess safe.
+    This is an alternative to PRAW 3's DefaultHandler that uses
+    Reddit's modern API guidelines to rate-limit requests based
+    on the X-Ratelimit-* headers returned from Reddit.
 
     References:
         https://github.com/reddit/reddit/wiki/API
         https://github.com/praw-dev/prawcore/blob/master/prawcore/rate_limit.py
     """
 
-    def __init__(self):
-        self.http = requests.Session()
-        self.next_request_timestamp = None
-
-    def reset(self):
-        self.next_request_timestamp = None
-
-    @classmethod
-    def evict(cls, urls):
-        return 0
+    next_request_timestamp = None
 
     def delay(self):
+        """
+        Pause before making the next HTTP request.
+        """
         if self.next_request_timestamp is None:
             return
 
@@ -269,7 +276,8 @@ class OAuthRateLimitHandler(object):
         time.sleep(sleep_seconds)
 
     def update(self, response_headers):
-        """Update the state of the rate limiter based on the response headers.
+        """
+        Update the state of the rate limiter based on the response headers:
 
             X-Ratelimit-Used: Approximate number of requests used this period
             X-Ratelimit-Remaining: Approximate number of requests left to use
@@ -292,35 +300,23 @@ class OAuthRateLimitHandler(object):
             # which Reddit doesn't appear to care about rate limiting.
             return
 
+        used = float(response_headers['x-ratelimit-used'])
         remaining = float(response_headers['x-ratelimit-remaining'])
         seconds_to_reset = int(response_headers['x-ratelimit-reset'])
+        _logger.debug('Rate limit: %s used, %s remaining, %s reset',
+                      used, remaining, seconds_to_reset)
 
         if remaining <= 0:
             self.next_request_timestamp = time.time() + seconds_to_reset
         else:
             self.next_request_timestamp = None
 
+    @fix_cache
+    @DefaultHandler.with_cache
     def request(self, request, proxies, timeout, verify, **_):
-        """Responsible for dispatching the request and returning the result.
 
-        Network level exceptions should be raised and only
-        ``requests.Response`` should be returned.
-
-        :param request: A ``requests.PreparedRequest`` object containing all
-            the data necessary to perform the request.
-        :param proxies: A dictionary of proxy settings to be utilized for the
-            request.
-        :param timeout: Specifies the maximum time that the actual HTTP request
-            can take.
-        :param verify: Specifies if SSL certificates should be validated.
-
-        ``**_`` should be added to the method call to ignore the extra
-        arguments intended for the cache handler.
-
-        """
         settings = self.http.merge_environment_settings(
-            request.url, proxies, False, verify, None
-        )
+            request.url, proxies, False, verify, None)
 
         self.delay()
         response = self.http.send(
