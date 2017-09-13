@@ -311,7 +311,8 @@ class OAuthRateLimitHandler(DefaultHandler):
         else:
             self.next_request_timestamp = None
 
-    @fix_cache(DefaultHandler.with_cache)
+    @fix_cache
+    @DefaultHandler.with_cache
     def request(self, request, proxies, timeout, verify, **_):
 
         settings = self.http.merge_environment_settings(
