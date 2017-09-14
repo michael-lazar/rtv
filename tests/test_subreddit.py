@@ -185,6 +185,23 @@ def test_subreddit_prompt_submission_invalid(subreddit_page, terminal):
         assert isinstance(terminal.loader.exception, NotFound)
 
 
+def test_subreddit_order(subreddit_page):
+
+    subreddit_page.content.query = ''
+    subreddit_page.controller.trigger('1')
+    assert subreddit_page.content.order == 'hot'
+    subreddit_page.controller.trigger('3')
+    assert subreddit_page.content.order == 'rising'
+    subreddit_page.controller.trigger('4')
+    assert subreddit_page.content.order == 'new'
+
+    subreddit_page.content.query = 'search text'
+    subreddit_page.controller.trigger('1')
+    assert subreddit_page.content.order == 'relevance'
+    subreddit_page.controller.trigger('4')
+    assert subreddit_page.content.order == 'new'
+
+
 def test_subreddit_order_top(subreddit_page, terminal):
 
     # Sort by top
