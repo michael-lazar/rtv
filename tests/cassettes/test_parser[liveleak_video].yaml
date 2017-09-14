@@ -5,7 +5,7 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.17.3]
+      User-Agent: [python-requests/2.15.1]
     method: GET
     uri: https://www.liveleak.com/view?i=08b_1499296574
   response:
@@ -17,22 +17,20 @@ interactions:
         property=\"og:description\" content=\"I met some German tourists passing through
         (father and son) and I took them out shooting the next day. They had a good
         time. This was his first shot with the silenced .22. It ended up being their
-        favo\"/>\r\n    <meta property=\"og:image\" content=\"https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2017/Jul/5/c03a0ddd1e3b_sf_3.jpg\"/>\r\n
-        \   \r\n    <meta http-equiv=\"X-Frame-Options\" content=\"deny\">    <meta
-        property=\"og:url\" content=\"https://www.liveleak.com/view?i=08b_1499296574\"/>
-        \   <base href=\"https://www.liveleak.com/\" />\r\n<link rel=\"stylesheet\"
-        type=\"text/css\" href=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2_css/reset.css\"
+        favo\"/>\r\n    <meta property=\"og:image\" content=\"https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2017/Jul/5/c03a0ddd1e3b_sf_3.jpg\"/>\r\n\r\n
+        \   <meta http-equiv=\"X-Frame-Options\" content=\"deny\">    <meta property=\"og:url\"
+        content=\"https://www.liveleak.com/view?i=08b_1499296574\"/>    <base href=\"https://www.liveleak.com/\"
+        />\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2_css/reset.css\"
         />\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"css/default.css\"
         />\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2_css/jquery_ui/jquery-ui-1.8.6.custom.css\"/>\r\n<script
-        language=\"javascript\" src=\"//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\"></script>
-        \r\n<script src=\"//ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js\"
-        type=\"text/javascript\" charset=\"utf-8\"></script>\r\n<link rel=\"stylesheet\"
-        href=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2_css/prettyLoader.css\"
+        language=\"javascript\" src=\"//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\"></script>\r\n<script
+        src=\"//ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js\" type=\"text/javascript\"
+        charset=\"utf-8\"></script>\r\n<link rel=\"stylesheet\" href=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2_css/prettyLoader.css\"
         type=\"text/css\" media=\"screen\" charset=\"utf-8\" />\r\n<link rel=\"stylesheet\"
         href=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2_css/prettyPhoto.css\"
         type=\"text/css\" media=\"screen\" title=\"prettyPhoto main stylesheet\" charset=\"utf-8\"
         />\r\n<script src=\"j/always_include.js\" type=\"text/javascript\" charset=\"utf-8\"></script>\r\n<script
-        type='text/javascript' src='//partner.googleadservices.com/gampad/google_service.js'>\r\n</script>\r\n<script
+        type='text/javascript' src='//partner.googleadservices.com/gampad/google_service.js'></script>\r\n<script
         type='text/javascript'>\r\nGS_googleAddAdSenseService(\"ca-pub-4761214798132470\");\r\nGS_googleEnableAllServices();\r\n</script>\r\n<script
         type='text/javascript'>\r\nGA_googleAddSlot(\"ca-pub-4761214798132470\", \"video_ad_unit\");\r\nGA_googleAddSlot(\"ca-pub-4761214798132470\",
         \"video_ad_unit_general_audiences\");\r\nGA_googleAddSlot(\"ca-pub-4761214798132470\",
@@ -71,8 +69,7 @@ interactions:
         href=\"c/must_see\">Must See</a>&nbsp;|</li>\r\n\t\t\t\t\t\t<li><a href=\"c/ukraine\">Ukraine</a>&nbsp;|</li>\r\n
         \                       <li><a href=\"c/syria\">Syria</a>&nbsp;|</li>\r\n\t\t\t\t\t\t<li><a
         href=\"c/entertainment\">Entertainment</a>&nbsp;|</li>\r\n                                                                        <li><a
-        href=\"channel?a=browse\">Browse Channels</a></li>\r\n                        \t\t\t\t\t\t\r\n
-        \                       \r\n\t\t\t\t\t</ul>\r\n\t</div><!--CONTAINER-->\r\n</div><!--header-->\r\n<div
+        href=\"channel?a=browse\">Browse Channels</a></li>\r\n                        \r\n\r\n\t\t\t\t\t</ul>\r\n\t</div><!--CONTAINER-->\r\n</div><!--header-->\r\n<div
         class=\"clear\"><!----></div><!--clear-->\r\n<div id=\"content\" class=\"content_no_background\">\r\n\t<div
         class=\"container\">\r\n\t\t<div id=\"content_box\" class=\"transparent\">
         \    <div class=\"clear\">\r\n        <!---->\r\n      </div>\r\n      <!--clear-->\r\n
@@ -100,7 +97,7 @@ interactions:
         bill that would make gun silencers easier to buy'}; related_videos.push(obj);obj
         = {thumb: 'https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2/nopreview.jpg',url:
         'https://www.liveleak.com/view?i=3bf_1227139778',title: 'Grease Gun Silencer-Iraq'};
-        related_videos.push(obj);obj = {thumb: 'https://cdn.liveleak.com/80281E/s/s/17/media17/2013/Dec/31/a28de2d2dca6_embed_thumbnail_1388513443.jpg?Ay8wreksZRDM_FoxYZKg35N7JO4jZ0FTweQFmJWciuBf1cAjcUcr6lJUXJHdvxSp&ec_rate=499',url:
+        related_videos.push(obj);obj = {thumb: 'https://cdn.liveleak.com/80281E/s/s/17/media17/2013/Dec/31/a28de2d2dca6_embed_thumbnail_1388513443.jpg?5lQeZ4ob9StX1zUzjN8rJ94QxSVOvHM6FqSAPm77Vj_ukyGHVoYYseJkPFQneVkO&ec_rate=499',url:
         'https://www.liveleak.com/view?i=0df_1388513409',title: 'Gun Silencers Suppressed'};
         related_videos.push(obj);obj = {thumb: 'https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2014/Aug/2/007310759685_thumb_1.jpg',url:
         'https://www.liveleak.com/view?i=953_1406987224',title: 'Video: A company
@@ -108,21 +105,21 @@ interactions:
         your moment is now'}; related_videos.push(obj);obj = {thumb: 'https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2016/Sep/30/9b9efa67dd50_thumb_5.jpg',url:
         'https://www.liveleak.com/view?i=93e_1475213400',title: 'Germany: Zschaepe
         breaks silence in neo-Nazi murder trial'}; related_videos.push(obj);</script><video
-        id=\"player_file_c03a0ddd1e3b28\" class=\"video-js vjs-default-skin\" controls
+        id=\"player_file_c03a0ddd1e3b70\" class=\"video-js vjs-default-skin\" controls
         autoplay preload=\"none\" poster=\"https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2017/Jul/5/c03a0ddd1e3b_sf_9.jpg\"
-        width=\"625\" height=\"427\">\r\n <source src=\"https://cdn.liveleak.com/80281E/ll_a_s/2017/Jul/5/LiveLeak-dot-com-08b_1499296574-NMHH8690_1499296571.mov.h264_720p.mp4?XBYKx-BveKdP2tSRqll5ohsJgYE6GOTRbWqLA1NWU011KSIUewuhuyfcp3jjqGXV&ec_rate=499\"
-        default res=\"HD\" label=\"HD\" type=\"video/mp4\"><source src=\"https://cdn.liveleak.com/80281E/ll_a_s/2017/Jul/5/LiveLeak-dot-com-08b_1499296574-NMHH8690_1499296571.mov.h264_270p.mp4?H8jmDaybcvFqDdlJrsn9fdRjpAyvQOZvCWlwrxS774miyWxETmvPqrUAdewX53Wx&ec_rate=499\"
+        width=\"625\" height=\"427\">\r\n <source src=\"https://cdn.liveleak.com/80281E/ll_a_s/2017/Jul/5/LiveLeak-dot-com-08b_1499296574-NMHH8690_1499296571.mov.h264_720p.mp4?kSTiR7sxd287bSYrOcd1BlF2B1T8lHjIiKF3EkTj_rMzUuM9SOycphzR18Mng7bM&ec_rate=499\"
+        default res=\"HD\" label=\"HD\" type=\"video/mp4\"><source src=\"https://cdn.liveleak.com/80281E/ll_a_s/2017/Jul/5/LiveLeak-dot-com-08b_1499296574-NMHH8690_1499296571.mov.h264_270p.mp4?UV2UH9rbRI5y5NHiUPUc-G1K0BHud3sKHJ-4nV-_AhWsx6TVdsP6q6yTkLsyMTKq&ec_rate=499\"
         res=\"SD\" label=\"SD\" type=\"video/mp4\"></video><script language=\"javascript\">\r\n\tvar
         player_options = {\r\n\tcontrolBar: {\r\n\t\tvolumeMenuButton: { inline: false,
         vertical: true },\r\n        children: [ 'playToggle','currentTimeDisplay','progressControl','durationDisplay','volumeMenuButton','fullscreenToggle'],\r\n
-        \   },\r\n\t\"techOrder\": [\"html5\",\"flash\"]\r\n};\r\n\t\r\nvideojs('player_file_c03a0ddd1e3b28',player_options,function(){
+        \   },\r\n\t\"techOrder\": [\"html5\",\"flash\"]\r\n};\r\n\t\r\nvideojs('player_file_c03a0ddd1e3b70',player_options,function(){
         \r\n\tthis.nuevoPlugin({\r\n\t\tthemeColor: 'ff0000',\r\n\t\tzoomcontrol :
         true,\r\n\t\tshareTitle: 'German Tourists shoot a silenced .22',\r\n\t\tshareUrl:'https://www.liveleak.com/view?i=08b_1499296574',
         \r\n\t\tshareEmbed: '<iframe width=\"640\" height=\"360\" src=\"https://www.liveleak.com/ll_embed?f=c03a0ddd1e3b\"
         frameborder=\"0\" allowfullscreen></iframe>', //optional\r\n\t\tendAction:
         'related',\r\n\t\trelated: related_videos,\r\n\t\tlogourl:'https://www.liveleak.com/view?i=08b_1499296574'
         // URL to go when logo clicked\r\n\t});\r\n\tthis.volume(0.7);\r\n\tthis.persistvolume({\r\n
-        \       namespace: \"persistvolume_video_js\"\r\n      });\r\n});\r\n\r\n$('#player_file_c03a0ddd1e3b28').on('contextmenu',
+        \       namespace: \"persistvolume_video_js\"\r\n      });\r\n});\r\n\r\n$('#player_file_c03a0ddd1e3b70').on('contextmenu',
         function(e) {\r\n    //e.preventDefault();\r\n\t$('.vjs-share-button').click();\r\n});\r\n</script><br>
         \        <div class=\"clear\" style=\"padding-bottom:10px;\">\r\n          <!---->\r\n
         \       </div>\r\n        <!--clear-->\r\n         <center>            <div
@@ -139,7 +136,7 @@ interactions:
         $(this).addClass('current'); $('#item_info_08b_1499296574').hide(); $('#item_embed_links_08b_1499296574').show();\">Links</a></li>\r\n\t\t\t\t\t\t</ul>\r\n\t\t\t
         \           <div class=\"clear\"><!----></div><!--clear-->\r\n                        <div
         class=\"tab_nav_contents\">\r\n\t\t\t\t\t\t<span id=\"item_info_08b_1499296574\">\r\n\t\t\t\t\t\t<span><strong>Added:</strong></span>
-        4 days ago<span>&nbsp;<span><strong>Occurred On:</strong></span> Jun-7-2017
+        Jul-5-2017<span>&nbsp;<span><strong>Occurred On:</strong></span> Jun-7-2017
         \                        <br /><strong>By:</strong> <a href=\"c/The_gambler\">The
         gambler</a>                        <br /><strong>In:</strong></span> <a href=\"/c/Entertainment\">Weapons</a>,
         <a href=\"/c/Liveleakers\">Other Items from Liveleakers</a>                        <br
@@ -149,9 +146,9 @@ interactions:
         /><strong>Location:</strong> <a href=\"browse?q=browse&q=Colorado\">Colorado</a>,
         <a href=\"browse?q=United States\">United States</a> <span>(<a href=\"map?latitude=39.55005&longitude=-105.78207&mode=large\">load
         item map</a>)</span><br /><strong>Marked as:</strong> featured                        <br
-        /><strong>Views:</strong> 81322 | <strong>Comments:</strong> 333 | <strong>Votes:</strong>
-        <span><a id=\"number_of_votes_08b_1499296574\" href=\"javascript://\" onclick=\"$(this).parent().load('item?a=show_voters&item_token=08b_1499296574&ajax=1');\">28</a></span>\r\n
-        | <strong>Favorites:</strong> <span id=\"number_of_favorites_08b_1499296574\">3</span>
+        /><strong>Views:</strong> 87354 | <strong>Comments:</strong> 339 | <strong>Votes:</strong>
+        <span><a id=\"number_of_votes_08b_1499296574\" href=\"javascript://\" onclick=\"$(this).parent().load('item?a=show_voters&item_token=08b_1499296574&ajax=1');\">29</a></span>\r\n
+        | <strong>Favorites:</strong> <span id=\"number_of_favorites_08b_1499296574\">2</span>
         | <strong>Shared:</strong> 43 | <strong>Updates:</strong> 0 | <span id=\"used_in_channels_08b_1499296574\"><strong>Times
         used in channels:</strong> <a href=\"javascript://\" onclick=\"$('#used_in_channels_08b_1499296574').load('item?a=show_item_channels&item_token=08b_1499296574&ajax=1');\">3</a></span>
         \                       <br />\r\n                            <script language=\"javascript\">\r\n\tfunction
@@ -188,7 +185,7 @@ interactions:
         = fragment;\r\n          });\r\n\r\n\t\t  </script>\r\n\r\n          <div
         id=\"comments_item_08b_1499296574\">\r\n                      <a href=\"javascript://\"
         class=\"form_button\" onclick=\"$(this).parent().load('comment?a=browse&item_token=08b_1499296574&ajax=1&container_id=comments_item_08b_1499296574');\"><span>View
-        comments (333)</span></a>\r\n                     </div>\r\n      </div>\r\n
+        comments (339)</span></a>\r\n                     </div>\r\n      </div>\r\n
         \     <!--leftcol-->\r\n      <div id=\"rightcol\" style=\"padding:0px\">\r\n
         \                     <div class=\"pw-widget pw-counter-vertical\" pw:url=\"https://www.liveleak.com/view?i=08b_1499296574\">\r\n\t<a
         class=\"pw-button-facebook pw-look-native\"></a>\r\n    <a class=\"pw-button-twitter
@@ -220,8 +217,38 @@ interactions:
         class=\"tab_nav_contents\">\r\n\t\t\t              <div class=\"clear\"><!----></div><!--clear-->\r\n\t\t\t\t\t\t\t<div
         class=\"scroll_list\" style=\"height:260px;\">\r\n\t\t\t\t\t\t\t\t<ul id=\"more_item_list_08b_1499296574\">\r\n
         \                                         \t<li>\r\n            \t\t\t  <div
-        class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=b37_1392657696\"
-        title=\"USA Gun Violence Statistics Speak For Themselves\"><img class=\"thumbnail_image\"
+        class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=3bf_1227139778\"
+        title=\"Grease Gun Silencer-Iraq\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2/nopreview.jpg\"
+        alt=\"Grease Gun Silencer-Iraq\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t
+        \ </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a href=\"https://www.liveleak.com/view?i=3bf_1227139778\"
+        title=\"Grease Gun Silencer-Iraq\">Grease Gun Silencer-Iraq</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
+        \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
+        \   <a href=\"https://www.liveleak.com/view?i=03c_1257111197\" title=\"Gun
+        Silencer on a cal.22 Rifle in Action.\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/u/u/thumbs/2009/Nov/1/bb13110cbe58_thumb_1.jpg\"
+        alt=\"Gun Silencer on a cal.22 Rifle in Action.\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t
+        \ </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a href=\"https://www.liveleak.com/view?i=03c_1257111197\"
+        title=\"Gun Silencer on a cal.22 Rifle in Action.\">Gun Silencer on a cal.22
+        Rifle in Action.</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n            \t\t\t
+        \ <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=740_1497477131\"
+        title=\"House canceled a bill that would make gun silencers easier to buy\"><img
+        class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2017/Jun/14/784d8d0c85c6_thumb_1.jpg\"
+        alt=\"House canceled a bill that would make gun silencers easier to buy\"
+        width=\"90\" height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t
+        \ <h4><a href=\"https://www.liveleak.com/view?i=740_1497477131\" title=\"House
+        canceled a bill that would make gun silencers easier to buy\">House canceled
+        a bill that would make gun silencers easier to buy</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
+        \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
+        \   <a href=\"https://www.liveleak.com/view?i=732_1365545301\" title=\"4 Year
+        Old boy shoots victim of USA gun laws: Josephine Fanning\"><img class=\"thumbnail_image\"
+        src=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2/nopreview.jpg\" alt=\"4
+        Year Old boy shoots victim of USA gun laws: Josephine Fanning\" width=\"90\"
+        height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a
+        href=\"https://www.liveleak.com/view?i=732_1365545301\" title=\"4 Year Old
+        boy shoots victim of USA gun laws: Josephine Fanning\">4 Year Old boy shoots
+        victim of USA gun laws: Josephine Fanning</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
+        \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
+        \   <a href=\"https://www.liveleak.com/view?i=b37_1392657696\" title=\"USA
+        Gun Violence Statistics Speak For Themselves\"><img class=\"thumbnail_image\"
         src=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2/nopreview.jpg\" alt=\"USA
         Gun Violence Statistics Speak For Themselves\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t
         \ </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a href=\"https://www.liveleak.com/view?i=b37_1392657696\"
@@ -238,14 +265,19 @@ interactions:
         of the sky! Johnny Dronehunter: your moment is now\">Video: A company is marketing
         gun silencers by blowing drones out of the sky! Johnny Dronehunter: your moment
         is now</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n            \t\t\t
-        \ <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=732_1365545301\"
-        title=\"4 Year Old boy shoots victim of USA gun laws: Josephine Fanning\"><img
-        class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2/nopreview.jpg\"
-        alt=\"4 Year Old boy shoots victim of USA gun laws: Josephine Fanning\" width=\"90\"
+        \ <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=543_1454693918\"
+        title=\"Germany: Carnival in Cologne: 22 sexual assaults first night\"><img
+        class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2016/Feb/5/d7755e17e23d_thumb_1.jpg\"
+        alt=\"Germany: Carnival in Cologne: 22 sexual assaults first night\" width=\"90\"
         height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a
-        href=\"https://www.liveleak.com/view?i=732_1365545301\" title=\"4 Year Old
-        boy shoots victim of USA gun laws: Josephine Fanning\">4 Year Old boy shoots
-        victim of USA gun laws: Josephine Fanning</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
+        href=\"https://www.liveleak.com/view?i=543_1454693918\" title=\"Germany: Carnival
+        in Cologne: 22 sexual assaults first night\">Germany: Carnival in Cologne:
+        22 sexual assaults first night</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n
+        \           \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=0df_1388513409\"
+        title=\"Gun Silencers Suppressed\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/s/s/17/media17/2013/Dec/31/a28de2d2dca6_embed_thumbnail_1388513443.jpg?0aN8CO885Ucmg8-Y190zwjYB4KhQnI7Zm0yPlf_NZ_v3l3kLtysi0eFZQT0RP8FJ&ec_rate=499\"
+        alt=\"Gun Silencers Suppressed\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t
+        \ </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a href=\"https://www.liveleak.com/view?i=0df_1388513409\"
+        title=\"Gun Silencers Suppressed\">Gun Silencers Suppressed</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
         \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
         \   <a href=\"https://www.liveleak.com/view?i=949_1365545636\" title=\"4 Year
         Old boy shoots victim of USA gun laws: Josephine Fanning\"><img class=\"thumbnail_image\"
@@ -256,19 +288,13 @@ interactions:
         boy shoots victim of USA gun laws: Josephine Fanning\">4 Year Old boy shoots
         victim of USA gun laws: Josephine Fanning</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
         \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
-        \   <a href=\"https://www.liveleak.com/view?i=0df_1388513409\" title=\"Gun
-        Silencers Suppressed\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/s/s/17/media17/2013/Dec/31/a28de2d2dca6_embed_thumbnail_1388513443.jpg?rDnofU8f-iCRKCCNdQRms3anqw-WblQJ83xHC1-z5Or6b_VpbJ4PlOQb7Up9QMM9&ec_rate=499\"
-        alt=\"Gun Silencers Suppressed\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t
-        \ </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a href=\"https://www.liveleak.com/view?i=0df_1388513409\"
-        title=\"Gun Silencers Suppressed\">Gun Silencers Suppressed</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
-        \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
-        \   <a href=\"https://www.liveleak.com/view?i=03c_1257111197\" title=\"Gun
-        Silencer on a cal.22 Rifle in Action.\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/u/u/thumbs/2009/Nov/1/bb13110cbe58_thumb_1.jpg\"
-        alt=\"Gun Silencer on a cal.22 Rifle in Action.\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t
-        \ </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a href=\"https://www.liveleak.com/view?i=03c_1257111197\"
-        title=\"Gun Silencer on a cal.22 Rifle in Action.\">Gun Silencer on a cal.22
-        Rifle in Action.</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n            \t\t\t
-        \ <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=93e_1475213400\"
+        \   <a href=\"https://www.liveleak.com/view?i=dc7_1364762680\" title=\"4 Year
+        Old Rahquel Carr victim of USA gun laws\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/u/u/thumbs/2013/Mar/31/687b33060675_thumb_1.jpg\"
+        alt=\"4 Year Old Rahquel Carr victim of USA gun laws\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t
+        \ </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a href=\"https://www.liveleak.com/view?i=dc7_1364762680\"
+        title=\"4 Year Old Rahquel Carr victim of USA gun laws\">4 Year Old Rahquel
+        Carr victim of USA gun laws</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n
+        \           \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=93e_1475213400\"
         title=\"Germany: Zschaepe breaks silence in neo-Nazi murder trial\"><img class=\"thumbnail_image\"
         src=\"https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2016/Sep/30/9b9efa67dd50_thumb_5.jpg\"
         alt=\"Germany: Zschaepe breaks silence in neo-Nazi murder trial\" width=\"90\"
@@ -287,37 +313,7 @@ interactions:
         and Guns - Tacticool and Fun couple Take their AK-74's/AKM's Out to Test their
         skills and/or waste ammo having fun while running around shooti\">Girls and
         Guns - Tacticool and Fun couple Take their AK-74's/AKM's Out to Test their
-        skills and/or waste ammo having fun while running around shooti</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
-        \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
-        \   <a href=\"https://www.liveleak.com/view?i=3bf_1227139778\" title=\"Grease
-        Gun Silencer-Iraq\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2/nopreview.jpg\"
-        alt=\"Grease Gun Silencer-Iraq\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t
-        \ </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a href=\"https://www.liveleak.com/view?i=3bf_1227139778\"
-        title=\"Grease Gun Silencer-Iraq\">Grease Gun Silencer-Iraq</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
-        \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
-        \   <a href=\"https://www.liveleak.com/view?i=543_1454693918\" title=\"Germany:
-        Carnival in Cologne: 22 sexual assaults first night\"><img class=\"thumbnail_image\"
-        src=\"https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2016/Feb/5/d7755e17e23d_thumb_1.jpg\"
-        alt=\"Germany: Carnival in Cologne: 22 sexual assaults first night\" width=\"90\"
-        height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a
-        href=\"https://www.liveleak.com/view?i=543_1454693918\" title=\"Germany: Carnival
-        in Cologne: 22 sexual assaults first night\">Germany: Carnival in Cologne:
-        22 sexual assaults first night</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n
-        \           \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=740_1497477131\"
-        title=\"House canceled a bill that would make gun silencers easier to buy\"><img
-        class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2017/Jun/14/784d8d0c85c6_thumb_1.jpg\"
-        alt=\"House canceled a bill that would make gun silencers easier to buy\"
-        width=\"90\" height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t
-        \ <h4><a href=\"https://www.liveleak.com/view?i=740_1497477131\" title=\"House
-        canceled a bill that would make gun silencers easier to buy\">House canceled
-        a bill that would make gun silencers easier to buy</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
-        \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
-        \   <a href=\"https://www.liveleak.com/view?i=dc7_1364762680\" title=\"4 Year
-        Old Rahquel Carr victim of USA gun laws\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/u/u/thumbs/2013/Mar/31/687b33060675_thumb_1.jpg\"
-        alt=\"4 Year Old Rahquel Carr victim of USA gun laws\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t
-        \ </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a href=\"https://www.liveleak.com/view?i=dc7_1364762680\"
-        title=\"4 Year Old Rahquel Carr victim of USA gun laws\">4 Year Old Rahquel
-        Carr victim of USA gun laws</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</ul>
+        skills and/or waste ammo having fun while running around shooti</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</ul>
         <!--more_item_list_08b_1499296574-->\r\n\t\t\t\t\t\t\t</div><!--scroll_list-->\r\n\t\t\t\t\t\t</div><!--tab_nav_contents-->\r\n\t\t\t\t\t<div
         class=\"tab_nav_bottom\"></div>\r\n\t\t\t\t</div> <!--tab_nav-->\r\n  \t\t<br
         />\r\n        <div class=\"section_title\">Advertisers</div>\r\n<div class=\"sidebox\">\r\n\t\t\t<div
@@ -367,14 +363,14 @@ interactions:
       Cache-Control: ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0']
       Connection: [keep-alive]
       Content-Type: [text/html; charset=UTF-8]
-      Date: ['Mon, 10 Jul 2017 22:04:43 GMT']
+      Date: ['Thu, 14 Sep 2017 04:40:17 GMT']
       Expires: ['Thu, 19 Nov 1981 08:52:00 GMT']
       Pragma: [no-cache]
-      Server: [nginx/1.10.2]
-      Set-Cookie: [PHPSESSID=7c66aca605ccae0c962f89812dd332bc; path=/; domain=.liveleak.com,
-        'liveleak_safe_mode=1; expires=Tue, 10-Jul-2018 22:04:42 GMT; Max-Age=31536000;
-          path=/; domain=.liveleak.com; httponly', 'liveleak_use_old_player=1; expires=Tue,
-          10-Jul-2018 22:04:42 GMT; Max-Age=31536000; path=/; domain=.liveleak.com;
+      Server: [nginx/1.6.1]
+      Set-Cookie: [PHPSESSID=cb7612c6f57db4b4c2b9d763d8a2ec94; path=/; domain=.liveleak.com,
+        'liveleak_safe_mode=1; expires=Fri, 14-Sep-2018 04:40:17 GMT; Max-Age=31536000;
+          path=/; domain=.liveleak.com; httponly', 'liveleak_use_old_player=1; expires=Fri,
+          14-Sep-2018 04:40:17 GMT; Max-Age=31536000; path=/; domain=.liveleak.com;
           httponly']
       X-Powered-By: [PHP/5.6.30]
     status: {code: 200, message: OK}

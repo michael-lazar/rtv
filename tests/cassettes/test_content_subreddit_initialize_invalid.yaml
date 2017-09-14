@@ -17,17 +17,17 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['313']
       Content-Type: [text/html; charset=UTF-8]
-      Date: ['Thu, 08 Jun 2017 15:16:05 GMT']
+      Date: ['Thu, 14 Sep 2017 04:37:53 GMT']
       Server: [snooserv]
-      Set-Cookie: [edgebucket=XRb2CiqDQ2yhkHRXbS; Domain=reddit.com; Max-Age=63071999;
+      Set-Cookie: [edgebucket=nnoHBBUmKPnOy7O0pY; Domain=reddit.com; Max-Age=63071999;
           Path=/;  secure]
       Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
       Via: [1.1 varnish]
       X-Cache: [MISS]
       X-Cache-Hits: ['0']
       X-Moose: [majestic]
-      X-Served-By: [cache-ord1725-ORD]
-      X-Timer: ['S1496934966.510468,VS0,VE32']
+      X-Served-By: [cache-ord1739-ORD]
+      X-Timer: ['S1505363873.124468,VS0,VE28']
       cache-control: ['max-age=0, must-revalidate']
       location: ['https://api.reddit.com/subreddits/search.json?q=invalidsubreddit7']
     status: {code: 302, message: Found}

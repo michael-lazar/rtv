@@ -15,7 +15,7 @@ install_requires = [
 
 tests_require = [
     'coveralls',
-    'pytest',
+    'pytest>=3.1.0',  # Pinned for the ``pytest.param`` method
     'coverage',
     'mock',
     'pylint',

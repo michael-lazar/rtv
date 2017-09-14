@@ -65,13 +65,14 @@ URLS = OrderedDict([
         'https://streamable.com/vkc0y',
         re.compile('https://(.*)\.streamablevideo\.com/video/mp4/(.*)\.mp4(.*)'),
         'video/mp4')),
-    ('vidme_video', (
+    ('vidme_video', pytest.param(
         'https://vid.me/rHlb',
         re.compile('https://(.*)\.cloudfront\.net/videos/15694926/52450725.mp4(.*)'),
-        'video/mp4')),
+        'video/mp4',
+        marks=pytest.mark.xfail(reason="vidme API appears to have changed format"))),
     ('liveleak_video', (
         'https://www.liveleak.com/view?i=08b_1499296574',
-        re.compile('https://cdn.liveleak.com/80281E/ll_a_s/2017/Jul/5/LiveLeak-dot-com-08b_1499296574-NMHH8690_1499296571.mov.h264_720p.mp4(.*)'),
+        re.compile('https://cdn\.liveleak\.com/(.*)\.mp4(.*)'),
         'video/mp4')),
     ('reddit_gif', (
         'https://v.redd.it/wkm9zol8c6fz',
