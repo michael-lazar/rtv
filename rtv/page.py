@@ -81,6 +81,11 @@ class Page(object):
             ch = self.term.stdscr.getch()
             self.controller.trigger(ch)
 
+    @PageController.register(Command('REFRESH'))
+    def reload_page(self):
+        self.reddit.handler.clear_cache()
+        self.refresh_content()
+
     @PageController.register(Command('EXIT'))
     def exit(self):
         if self.term.prompt_y_or_n('Do you really want to quit? (y/n): '):
@@ -255,7 +260,7 @@ class Page(object):
             # Give reddit time to process the request
             time.sleep(2.0)
         if self.term.loader.exception is None:
-            self.refresh_content()
+            self.reload_page()
 
     @PageController.register(Command('EDIT'))
     @logged_in
@@ -291,7 +296,7 @@ class Page(object):
                 time.sleep(2.0)
 
             if self.term.loader.exception is None:
-                self.refresh_content()
+                self.reload_page()
             else:
                 raise TemporaryFileError()
 

@@ -7,7 +7,7 @@ import six
 
 from rtv import __version__
 from rtv.subreddit_page import SubredditPage
-from rtv.packages.praw.errors import NotFound
+from rtv.packages.praw.errors import NotFound, HTTPException
 
 try:
     from unittest import mock
@@ -63,6 +63,27 @@ def test_subreddit_refresh(subreddit_page, terminal):
     subreddit_page.refresh_content(order='ignore', name='/r/front/hot')
     assert subreddit_page.content.order == 'hot'
     assert subreddit_page.content.name == '/r/front'
+    assert terminal.loader.exception is None
+
+
+def test_subreddit_reload_page(subreddit_page, terminal, reddit):
+
+    cache = reddit.handler.cache
+    assert len(cache) == 1
+
+    # A plain refresh_content() will use whatever is in the praw cache
+    # instead of making a new request to reddit
+    list(cache.values())[0].status_code = 503
+    subreddit_page.refresh_content()
+    assert isinstance(terminal.loader.exception, HTTPException)
+
+    cache = reddit.handler.cache
+    assert len(cache) == 1
+
+    # But if we manually trigger a page refresh, it should clear the cache
+    # and reload the page instead of returning the cached 503 response
+    list(cache.values())[0].status_code = 503
+    subreddit_page.controller.trigger('r')
     assert terminal.loader.exception is None
 
 

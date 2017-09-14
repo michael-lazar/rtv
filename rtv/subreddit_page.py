@@ -34,7 +34,6 @@ class SubredditPage(Page):
         self.nav = Navigator(self.content.get)
         self.toggled_subreddit = None
 
-    @SubredditController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
         """
         Re-download all submissions and reset the page index
@@ -209,7 +208,7 @@ class SubredditPage(Page):
                 self.content = page.selected_subreddit
                 self.nav = Navigator(self.content.get)
             else:
-                self.refresh_content()
+                self.reload_page()
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_SUBSCRIPTIONS'))
     @logged_in

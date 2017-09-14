@@ -66,7 +66,6 @@ class SubmissionPage(Page):
 
         self.active = False
 
-    @SubmissionController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
         """
         Re-download comments and reset the page index
@@ -188,7 +187,7 @@ class SubmissionPage(Page):
                 time.sleep(2.0)
 
             if self.term.loader.exception is None:
-                self.refresh_content()
+                self.reload_page()
             else:
                 raise TemporaryFileError()
 
