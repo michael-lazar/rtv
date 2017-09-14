@@ -2,8 +2,10 @@
 from __future__ import unicode_literals
 
 import re
+import time
 import logging
 from datetime import datetime
+from timeit import default_timer as timer
 
 import six
 from kitchen.text.display import wrap
@@ -11,6 +13,8 @@ from kitchen.text.display import wrap
 from . import exceptions
 from .packages import praw
 from .packages.praw.errors import InvalidSubreddit
+from .packages.praw.helpers import normalize_url
+from .packages.praw.handlers import DefaultHandler
 
 _logger = logging.getLogger(__name__)
 
@@ -777,3 +781,172 @@ class SubscriptionContent(Content):
         data['h_offset'] = 0
 
         return data
+
+
+class RequestHeaderRateLimiter(DefaultHandler):
+    """Custom PRAW request handler for rate-limiting requests.
+
+    This is an alternative to PRAW 3's DefaultHandler that uses
+    Reddit's modern API guidelines to rate-limit requests based
+    on the X-Ratelimit-* headers returned from Reddit. Most of
+    these methods are copied from or derived from the DefaultHandler.
+
+    References:
+        https://github.com/reddit/reddit/wiki/API
+        https://github.com/praw-dev/prawcore/blob/master/prawcore/rate_limit.py
+    """
+
+    def __init__(self):
+
+        # In PRAW's convention, these variables were bound to the
+        # class so the cache could be shared among all of the ``reddit``
+        # instances. In RTV's use-case there is only ever a single reddit
+        # instance so it made sense to clean up the globals and transfer them
+        # to method variables
+        self.cache = {}
+        self.cache_hit_callback = None
+        self.timeouts = {}
+
+        # These are used for the header rate-limiting
+        self.used = None
+        self.remaining = None
+        self.seconds_to_reset = None
+        self.next_request_timestamp = None
+
+        super(RequestHeaderRateLimiter, self).__init__()
+
+    def _delay(self):
+        """
+        Pause before making the next HTTP request.
+        """
+        if self.next_request_timestamp is None:
+            return
+
+        sleep_seconds = self.next_request_timestamp - time.time()
+        if sleep_seconds <= 0:
+            return
+        time.sleep(sleep_seconds)
+
+    def _update(self, response_headers):
+        """
+        Update the state of the rate limiter based on the response headers:
+
+            X-Ratelimit-Used: Approximate number of requests used this period
+            X-Ratelimit-Remaining: Approximate number of requests left to use
+            X-Ratelimit-Reset: Approximate number of seconds to end of period
+
+        PRAW 5's rate limiting logic is structured for making hundreds of
+        evenly-spaced API requests, which makes sense for running something
+        like a bot or crawler.
+
+        This handler's logic, on the other hand, is geared more towards
+        interactive usage. It allows for short, sporadic bursts of requests.
+        The assumption is that actual users browsing reddit shouldn't ever be
+        in danger of hitting the rate limit. If they do hit the limit, they
+        will be cutoff until the period resets.
+        """
+
+        if 'x-ratelimit-remaining' not in response_headers:
+            # This could be because the API returned an error response, or it
+            # could be because we're using something like read-only credentials
+            # which Reddit doesn't appear to care about rate limiting.
+            return
+
+        self.used = float(response_headers['x-ratelimit-used'])
+        self.remaining = float(response_headers['x-ratelimit-remaining'])
+        self.seconds_to_reset = int(response_headers['x-ratelimit-reset'])
+        _logger.debug('Rate limit: %s used, %s remaining, %s reset',
+                      self.used, self.remaining, self.seconds_to_reset)
+
+        if self.remaining <= 0:
+            self.next_request_timestamp = time.time() + self.seconds_to_reset
+        else:
+            self.next_request_timestamp = None
+
+    def _clear_timeouts(self, cache_timeout):
+        """
+        Clear the cache of timed out results.
+        """
+
+        for key in list(self.timeouts):
+            if timer() - self.timeouts[key] > cache_timeout:
+                del self.timeouts[key]
+                del self.cache[key]
+
+    def clear_cache(self):
+        """Remove all items from the cache."""
+        self.cache = {}
+        self.timeouts = {}
+
+    def evict(self, urls):
+        """Remove items from cache matching URLs.
+
+        Return the number of items removed.
+
+        """
+        if isinstance(urls, six.text_type):
+            urls = [urls]
+        urls = set(normalize_url(url) for url in urls)
+        retval = 0
+        for key in list(self.cache):
+            if key[0] in urls:
+                retval += 1
+                del self.cache[key]
+                del self.timeouts[key]
+        return retval
+
+    def request(self, _cache_key, _cache_ignore, _cache_timeout, **kwargs):
+        """
+        This is a wrapper function that handles the caching of the request.
+        
+        See DefaultHandler.with_cache for reference.
+        """
+        if _cache_key:
+            # Pop the request's session cookies from the cache key.
+            # These appear to be unreliable and change with every
+            # request. Also, with the introduction of OAuth I don't think
+            # that cookies are being used to store anything that
+            # differentiates API requests anyways
+            url, items = _cache_key
+            _cache_key = (url, (items[0], items[1], items[3], items[4]))
+
+        if kwargs['request'].method != 'GET':
+            # I added this check for RTV, I have no idea why PRAW would ever
+            # want to cache POST/PUT/DELETE requests
+            _cache_ignore = True
+
+        if _cache_ignore:
+            return self._request(**kwargs)
+
+        self._clear_timeouts(_cache_timeout)
+        if _cache_key in self.cache:
+            if self.cache_hit_callback:
+                self.cache_hit_callback(_cache_key)
+            return self.cache[_cache_key]
+
+        result = self._request(**kwargs)
+
+        # The handlers don't call `raise_for_status` so we need to ignore
+        # status codes that will result in an exception that should not be
+        # cached.
+        if result.status_code not in (200, 302):
+            return result
+
+        self.timeouts[_cache_key] = timer()
+        self.cache[_cache_key] = result
+        return result
+
+    def _request(self, request, proxies, timeout, verify, **_):
+        """
+        This is where we apply rate limiting and make the HTTP request.
+        """
+
+        settings = self.http.merge_environment_settings(
+            request.url, proxies, False, verify, None)
+
+        self._delay()
+        response = self.http.send(
+            request, timeout=timeout, allow_redirects=False, **settings)
+        self._update(response.headers)
+
+        return response

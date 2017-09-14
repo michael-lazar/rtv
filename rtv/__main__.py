@@ -36,8 +36,9 @@ from . import packages
 from .packages import praw
 from .config import Config, copy_default_config, copy_default_mailcap
 from .theme import Theme
-from .oauth import OAuthHelper, OAuthRateLimiter
+from .oauth import OAuthHelper
 from .terminal import Terminal
+from .content import RequestHeaderRateLimiter
 from .objects import curses_session, patch_webbrowser
 from .subreddit_page import SubredditPage
 from .exceptions import ConfigError
@@ -177,7 +178,12 @@ def main():
                 reddit = praw.Reddit(user_agent=user_agent,
                                      decode_html_entities=False,
                                      disable_update_check=True,
-                                     handler=OAuthRateLimiter())
+                                     handler=RequestHeaderRateLimiter())
+
+            # Dial the request cache up from 30 seconds to 5 minutes
+            # I'm trying this out to make navigation back and forth
+            # between pages quicker, it may still need to be fine tuned.
+            reddit.config.api_request_delay = 300
 
             # Authorize on launch if the refresh token is present
             oauth = OAuthHelper(reddit, term, config)

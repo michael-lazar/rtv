@@ -12,7 +12,8 @@ from vcr import VCR
 from six.moves.urllib.parse import urlparse, parse_qs
 from six.moves.BaseHTTPServer import HTTPServer
 
-from rtv.oauth import OAuthHelper, OAuthHandler, OAuthRateLimiter
+from rtv.oauth import OAuthHelper, OAuthHandler
+from rtv.content import RequestHeaderRateLimiter
 from rtv.config import Config
 from rtv.packages import praw
 from rtv.terminal import Terminal
@@ -180,8 +181,7 @@ def reddit(vcr, request):
 
     with vcr.use_cassette(cassette_name):
         with patch('rtv.packages.praw.Reddit.get_access_information'):
-            handler = OAuthRateLimiter()
-
+            handler = RequestHeaderRateLimiter()
             reddit = praw.Reddit(user_agent='rtv test suite',
                                  decode_html_entities=False,
                                  disable_update_check=True,
