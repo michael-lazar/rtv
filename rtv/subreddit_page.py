@@ -34,7 +34,6 @@ class SubredditPage(Page):
         self.nav = Navigator(self.content.get)
         self.toggled_subreddit = None
 
-    @SubredditController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
         """
         Re-download all submissions and reset the page index
@@ -60,6 +59,47 @@ class SubredditPage(Page):
                 self.reddit, name, self.term.loader, order=order, query=query)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
+
+    @SubredditController.register(Command('SORT_HOT'))
+    def sort_content_hot(self):
+        if self.content.query:
+            self.refresh_content(order='relevance')
+        else:
+            self.refresh_content(order='hot')
+
+    @SubredditController.register(Command('SORT_TOP'))
+    def sort_content_top(self):
+        order = self._prompt_period('top')
+        if order is None:
+            self.term.show_notification('Invalid option')
+        else:
+            self.refresh_content(order=order)
+
+    @SubredditController.register(Command('SORT_RISING'))
+    def sort_content_rising(self):
+        if self.content.query:
+            order = self._prompt_period('comments')
+            if order is None:
+                self.term.show_notification('Invalid option')
+            else:
+                self.refresh_content(order=order)
+        else:
+            self.refresh_content(order='rising')
+
+    @SubredditController.register(Command('SORT_NEW'))
+    def sort_content_new(self):
+        self.refresh_content(order='new')
+
+    @SubredditController.register(Command('SORT_CONTROVERSIAL'))
+    def sort_content_controversial(self):
+        if self.content.query:
+            self.term.flash()
+        else:
+            order = self._prompt_period('controversial')
+            if order is None:
+                self.term.show_notification('Invalid option')
+            else:
+                self.refresh_content(order=order)
 
     @SubredditController.register(Command('SUBREDDIT_SEARCH'))
     def search_subreddit(self, name=None):
@@ -209,7 +249,7 @@ class SubredditPage(Page):
                 self.content = page.selected_subreddit
                 self.nav = Navigator(self.content.get)
             else:
-                self.refresh_content()
+                self.reload_page()
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_SUBSCRIPTIONS'))
     @logged_in

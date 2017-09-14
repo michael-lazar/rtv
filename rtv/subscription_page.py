@@ -25,7 +25,6 @@ class SubscriptionPage(Page):
         self.content_type = content_type
         self.selected_subreddit = None
 
-    @SubscriptionController.register(Command('REFRESH'))
     def refresh_content(self, order=None, name=None):
         """
         Re-download all subscriptions and reset the page index

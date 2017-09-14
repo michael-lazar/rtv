@@ -11,7 +11,8 @@ import pytest
 from rtv import exceptions
 from rtv.packages import praw
 from rtv.content import (
-    Content, SubmissionContent, SubredditContent, SubscriptionContent)
+    Content, SubmissionContent, SubredditContent, SubscriptionContent,
+    RequestHeaderRateLimiter)
 
 try:
     from unittest import mock
@@ -51,7 +52,7 @@ SUBREDDIT_PROMPTS = OrderedDict([
     ('multi-top', ('/u/multi-mod/m/art/top', '/u/multi-mod/m/art', 'top')),
     ('multi-top-all', ('/u/multi-mod/m/art/top-all', '/u/multi-mod/m/art', 'top-all')),
     ('domain', ('/domain/python.org', '/domain/python.org', None)),
-    ('domain-top', ('/domain/python.org/top', '/domain/python.org', 'top')),
+    ('domain-new', ('/domain/python.org/new', '/domain/python.org', 'new')),
     ('domain-top-all', ('/domain/python.org/top-all', '/domain/python.org', 'top-all')),
 ])
 
@@ -560,3 +561,49 @@ def test_content_subscription_empty(reddit, terminal):
         with terminal.loader():
             SubscriptionContent.from_user(reddit, terminal.loader)
     assert isinstance(terminal.loader.exception, exceptions.SubscriptionError)
+
+
+def test_content_cache(reddit):
+
+    # Make sure the test suite is configured to use the custom handler
+    assert isinstance(reddit.handler, RequestHeaderRateLimiter)
+    assert not reddit.handler.cache
+
+    # A standard 200 response should be added to the cache
+    next(reddit.get_subreddit('python').get_hot())
+    request = list(reddit.handler.cache.values())[0]
+    assert request.url == 'https://api.reddit.com/r/python/.json'
+
+    # Clearing the cache should remove the request
+    reddit.handler.cache.clear()
+    assert not reddit.handler.cache
+
+    next(reddit.get_subreddit('python').get_hot())
+    assert reddit.handler.cache
+
+    # Evicting the cache should also remove the entry
+    reddit.handler.evict('https://api.reddit.com/r/python')
+    assert not reddit.handler.cache
+
+
+def test_content_rate_limit(reddit, oauth, refresh_token):
+
+    # Make sure the test suite is configured to use the custom handler
+    assert isinstance(reddit.handler, RequestHeaderRateLimiter)
+    assert not reddit.handler.cache
+
+    # unauthenticated requests don't return the x-ratelimit headers
+    # so they currently aren't limited
+    next(reddit.get_subreddit('python').get_hot())
+    assert reddit.handler.seconds_to_reset is None
+
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize()
+
+    # But now that we're logged in the headers should be returned
+    next(reddit.get_subreddit('python').get_hot())
+    assert reddit.handler.seconds_to_reset
+
+    # Even though the headers were returned, the rate limiting should
+    # still not be triggering a delay for the next request
+    assert reddit.handler.next_request_timestamp is None

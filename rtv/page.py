@@ -85,6 +85,11 @@ class Page(object):
             ch = self.term.stdscr.getch()
             self.controller.trigger(ch)
 
+    @PageController.register(Command('REFRESH'))
+    def reload_page(self):
+        self.reddit.handler.clear_cache()
+        self.refresh_content()
+
     @PageController.register(Command('EXIT'))
     def exit(self):
         if self.term.prompt_y_or_n('Do you really want to quit? (y/n): '):
@@ -113,47 +118,6 @@ class Page(object):
     @PageController.register(Command('HELP'))
     def show_help(self):
         self.term.open_pager(docs.HELP.strip())
-
-    @PageController.register(Command('SORT_HOT'))
-    def sort_content_hot(self):
-        if self.content.query:
-            self.refresh_content(order='relevance')
-        else:
-            self.refresh_content(order='hot')
-
-    @PageController.register(Command('SORT_TOP'))
-    def sort_content_top(self):
-        order = self._prompt_period('top')
-        if order is None:
-            self.term.show_notification('Invalid option')
-        else:
-            self.refresh_content(order=order)
-
-    @PageController.register(Command('SORT_RISING'))
-    def sort_content_rising(self):
-        if self.content.query:
-            order = self._prompt_period('comments')
-            if order is None:
-                self.term.show_notification('Invalid option')
-            else:
-                self.refresh_content(order=order)
-        else:
-            self.refresh_content(order='rising')
-
-    @PageController.register(Command('SORT_NEW'))
-    def sort_content_new(self):
-        self.refresh_content(order='new')
-
-    @PageController.register(Command('SORT_CONTROVERSIAL'))
-    def sort_content_controversial(self):
-        if self.content.query:
-            self.term.flash()
-        else:
-            order = self._prompt_period('controversial')
-            if order is None:
-                self.term.show_notification('Invalid option')
-            else:
-                self.refresh_content(order=order)
 
     @PageController.register(Command('MOVE_UP'))
     def move_cursor_up(self):
@@ -246,7 +210,8 @@ class Page(object):
         """
 
         if self.reddit.is_oauth_session():
-            if self.term.prompt_y_or_n('Log out? (y/n): '):
+            ch = self.term.show_notification('Log out? (y/n)')
+            if ch in (ord('y'), ord('Y')):
                 self.oauth.clear_oauth_data()
                 self.term.show_notification('Logged out')
         else:
@@ -274,7 +239,7 @@ class Page(object):
             # Give reddit time to process the request
             time.sleep(2.0)
         if self.term.loader.exception is None:
-            self.refresh_content()
+            self.reload_page()
 
     @PageController.register(Command('EDIT'))
     @logged_in
@@ -310,7 +275,7 @@ class Page(object):
                 time.sleep(2.0)
 
             if self.term.loader.exception is None:
-                self.refresh_content()
+                self.reload_page()
             else:
                 raise TemporaryFileError()
 

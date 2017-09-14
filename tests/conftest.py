@@ -13,6 +13,7 @@ from six.moves.urllib.parse import urlparse, parse_qs
 from six.moves.BaseHTTPServer import HTTPServer
 
 from rtv.oauth import OAuthHelper, OAuthHandler
+from rtv.content import RequestHeaderRateLimiter
 from rtv.config import Config
 from rtv.packages import praw
 from rtv.terminal import Terminal
@@ -39,7 +40,7 @@ for name in ['vcr.matchers', 'vcr.stubs']:
 def pytest_addoption(parser):
     parser.addoption('--record-mode', dest='record_mode', default='none')
     parser.addoption('--refresh-token', dest='refresh_token',
-                     default='tests/refresh-token')
+                     default='~/.config/rtv/refresh-token')
 
 
 class MockStdscr(mock.MagicMock):
@@ -180,9 +181,11 @@ def reddit(vcr, request):
 
     with vcr.use_cassette(cassette_name):
         with patch('rtv.packages.praw.Reddit.get_access_information'):
+            handler = RequestHeaderRateLimiter()
             reddit = praw.Reddit(user_agent='rtv test suite',
                                  decode_html_entities=False,
-                                 disable_update_check=True)
+                                 disable_update_check=True,
+                                 handler=handler)
             # praw uses a global cache for requests, so we need to clear it
             # before each unit test. Otherwise we may fail to generate new
             # cassettes.
