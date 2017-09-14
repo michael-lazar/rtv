@@ -804,7 +804,6 @@ class RequestHeaderRateLimiter(DefaultHandler):
         # instance so it made sense to clean up the globals and transfer them
         # to method variables
         self.cache = {}
-        self.cache_hit_callback = None
         self.timeouts = {}
 
         # These are used for the header rate-limiting
@@ -920,8 +919,6 @@ class RequestHeaderRateLimiter(DefaultHandler):
 
         self._clear_timeouts(_cache_timeout)
         if _cache_key in self.cache:
-            if self.cache_hit_callback:
-                self.cache_hit_callback(_cache_key)
             return self.cache[_cache_key]
 
         result = self._request(**kwargs)
