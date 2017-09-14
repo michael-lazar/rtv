@@ -52,7 +52,7 @@ SUBREDDIT_PROMPTS = OrderedDict([
     ('multi-top', ('/u/multi-mod/m/art/top', '/u/multi-mod/m/art', 'top')),
     ('multi-top-all', ('/u/multi-mod/m/art/top-all', '/u/multi-mod/m/art', 'top-all')),
     ('domain', ('/domain/python.org', '/domain/python.org', None)),
-    ('domain-top', ('/domain/python.org/top', '/domain/python.org', 'top')),
+    ('domain-new', ('/domain/python.org/new', '/domain/python.org', 'new')),
     ('domain-top-all', ('/domain/python.org/top-all', '/domain/python.org', 'top-all')),
 ])
 
