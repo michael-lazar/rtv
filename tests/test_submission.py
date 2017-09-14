@@ -173,38 +173,18 @@ def test_submission_prompt_submission(submission_page, terminal, prompt):
         assert submission_page.content.order is None
 
 
-def test_submission_order_top(submission_page, terminal):
+def test_submission_order(submission_page):
 
-    # Open the menu
-    with mock.patch.object(terminal, 'show_notification'):
-        # Invalid selection
-        terminal.show_notification.return_value = ord('x')
-        submission_page.controller.trigger('2')
-        terminal.show_notification.assert_called_with('Invalid option')
-        assert submission_page.content.order is None
-
-        # Valid selection - sort by week
-        terminal.show_notification.reset_mock()
-        terminal.show_notification.return_value = ord('3')
-        submission_page.controller.trigger('2')
-        assert submission_page.content.order == 'top-week'
-
-
-def test_submission_order_controversial(submission_page, terminal):
-
-    # Open the menu
-    with mock.patch.object(terminal, 'show_notification'):
-        # Invalid selection
-        terminal.show_notification.return_value = ord('x')
-        submission_page.controller.trigger('5')
-        terminal.show_notification.assert_called_with('Invalid option')
-        assert submission_page.content.order is None
-
-        # Valid selection - sort by default
-        terminal.show_notification.reset_mock()
-        terminal.show_notification.return_value = ord('\n')
-        submission_page.controller.trigger('5')
-        assert submission_page.content.order == 'controversial'
+    submission_page.controller.trigger('1')
+    assert submission_page.content.order == 'hot'
+    submission_page.controller.trigger('2')
+    assert submission_page.content.order == 'top'
+    submission_page.controller.trigger('3')
+    assert submission_page.content.order == 'rising'
+    submission_page.controller.trigger('4')
+    assert submission_page.content.order == 'new'
+    submission_page.controller.trigger('5')
+    assert submission_page.content.order == 'controversial'
 
 
 def test_submission_move_top_bottom(submission_page):
