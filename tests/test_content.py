@@ -578,6 +578,13 @@ def test_content_cache(reddit):
     reddit.handler.cache.clear()
     assert not reddit.handler.cache
 
+    next(reddit.get_subreddit('python').get_hot())
+    assert reddit.handler.cache
+
+    # Evicting the cache should also remove the entry
+    reddit.handler.evict('https://api.reddit.com/r/python')
+    assert not reddit.handler.cache
+
 
 def test_content_rate_limit(reddit, oauth, refresh_token):
 
