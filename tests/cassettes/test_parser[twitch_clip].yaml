@@ -5,7 +5,7 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.18.3]
+      User-Agent: [python-requests/2.15.1]
     method: GET
     uri: https://clips.twitch.tv/avaail/ExpensiveFishBCouch
   response:
@@ -19,11 +19,11 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['95']
       Content-Type: [text/html; charset=utf-8]
-      Date: ['Sun, 20 Aug 2017 13:25:05 GMT']
+      Date: ['Thu, 14 Sep 2017 04:40:18 GMT']
       Location: ['https://clips.twitch.tv/RelentlessDifficultYogurtArsonNoSexy']
       Server: [nginx/1.8.1]
-      Via: [1.1 cbefa4574158a548775db8beda8075d2.cloudfront.net (CloudFront)]
-      X-Amz-Cf-Id: [KdIDFnr7QRO0YsFiDVc1bekNw6m2yIAWP_V0AwYNk3M_ppJqFxRiRQ==]
+      Via: [1.1 a29dc34c10e540224a5f3e235c41d4f5.cloudfront.net (CloudFront)]
+      X-Amz-Cf-Id: [4JIiwnndlBSgoKxgKyVbY1TULlb_tusg44XOWMjBZNpz559JYB0biA==]
       X-Cache: [Miss from cloudfront]
     status: {code: 301, message: Moved Permanently}
 - request:
@@ -32,329 +32,156 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.18.3]
+      User-Agent: [python-requests/2.15.1]
     method: GET
     uri: https://clips.twitch.tv/RelentlessDifficultYogurtArsonNoSexy
   response:
-    body: {string: "<!DOCTYPE html>\n<html lang=\"en\" class=\"js-html-root\">\n    <head
-        prefix=\"og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#\">\n        \n        <title>TAKING
-        EVERY GYM BY STORM. IRL IDIOT POKEMON GO. Level 25. @Snowboardjacket</title>\n
-        \       \n        <link rel=\"icon\" href=\"https://www.twitch.tv/favicon.ico\">\n
-        \       <link href=\"https://clips.twitch.tv/assets/16d48e72d557c1c629f7a332e3e65ed8a3f6d0ba/view.css\"
-        rel=\"stylesheet\" type=\"text/css\">\n        <script> window.Benchmark =
-        new Date().getTime(); </script>\n        <script type=\"text/javascript\">window.i18n
-        = {\"(required)\":\"(required)\",\"1s back\":\"1s back\",\"1s forward\":\"1s
-        forward\",\"ALT\":\"ALT\",\"Add a description...\":\"Add a description...\",\"Add
-        a title\":\"Add a title\",\"Add {{hashtag}} to your clip title to let everyone
-        know what you think about this clip. Try to find all the effects!\":\"Add
-        {{hashtag}} to your clip title to let everyone know what you think about this
-        clip. Try to find all the effects!\",\"Attempts or Threats to Harm\":\"Attempts
-        or Threats to Harm\",\"Back\":\"Back\",\"Back/Forward 1 frame\":\"Back/Forward
-        1 frame\",\"Back/Forward {{count}} second\":\"Back/Forward {{count}} second\",\"Back/Forward
-        {{count}} second_plural\":\"Back/Forward {{count}} seconds\",\"Ban User\":\"Ban
-        User\",\"Ban this Clip Creator from Your Channel\":\"Ban this Clip Creator
-        from Your Channel\",\"Cancel\":\"Cancel\",\"Channel\":\"Channel\",\"Chat Ban
-        Evasion\":\"Chat Ban Evasion\",\"Cheating in Online Game\":\"Cheating in Online
-        Game\",\"Check out this clip from {{displayName}}'s broadcast\":\"Check out
-        this clip from {{displayName}}'s broadcast\",\"Clip\":\"Clip\",\"Clip Link\":\"Clip
-        Link\",\"Clip Shared\":\"Clip Shared\",\"Clipped By\":\"Clipped By\",\"Clipped
-        by {{curatorName}}\":\"Clipped by {{curatorName}}\",\"Clipped by {{displayName}}\":\"Clipped
-        by {{displayName}}\",\"Clipper\":\"Clipper\",\"Clips Manager\":\"Clips Manager\",\"Clips
-        of my Channel\":\"Clips of my Channel\",\"Clips you create are public and
-        may be shared with the Twitch community. To delete your clip, click on the
-        gear icon in the player.\":\"Clips you create are public and may be shared
-        with the Twitch community. To delete your clip, click on the gear icon in
-        the player.\",\"Close\":\"Close\",\"Copied\":\"Copied\",\"Copy\":\"Copy\",\"Could
-        not post your update\":\"Could not post your update\",\"Create Clips to fill
-        this space with the most memorable moments from your favorite Twitch streams.
-        Just hit the Clip button on the video player to create a 30-second video of
-        the action.\":\"Create Clips to fill this space with the most memorable moments
-        from your favorite Twitch streams. Just hit the Clip button on the video player
-        to create a 30-second video of the action.\",\"Created\":\"Created\",\"Creative
-        Conduct Violation\":\"Creative Conduct Violation\",\"Curator\":\"Curator\",\"Delete\":\"Delete\",\"Delete
-        All\":\"Delete All\",\"Delete All Clips\":\"Delete All Clips\",\"Delete All
-        Clips from Related Video\":\"Delete All Clips from Related Video\",\"Delete
-        Clip\":\"Delete Clip\",\"Delete This Clip\":\"Delete This Clip\",\"Description\":\"Description\",\"Disable
-        Dark Mode\":\"Disable Dark Mode\",\"Dismiss Keyboard Shortcuts\":\"Dismiss
-        Keyboard Shortcuts\",\"Drag the filmstrip to make edits\":\"Drag the filmstrip
-        to make edits\",\"Edit Clip\":\"Edit Clip\",\"Editing has expired\":\"Editing
-        has expired\",\"Embed Code\":\"Embed Code\",\"Enable Dark Mode\":\"Enable
-        Dark Mode\",\"Enable your Pulse to share this clip!\":\"Enable your Pulse
-        to share this clip!\",\"End Time\":\"End Time\",\"Entire Window\":\"Entire
-        Window\",\"Esc\":\"Esc\",\"Exit Fullscreen\":\"Exit Fullscreen\",\"Explore
-        Clips\":\"Explore Clips\",\"Follow\":\"Follow\",\"Follow {{broadcaster}}\":\"Follow
-        {{broadcaster}}\",\"Following {{broadcaster}}\":\"Following {{broadcaster}}\",\"Full
-        Video\":\"Full Video\",\"Full Video Unavailable\":\"Full Video Unavailable\",\"Fullscreen\":\"Fullscreen\",\"Fullscreen
-        unavailable on this page\":\"Fullscreen unavailable on this page\",\"Game\":\"Game\",\"Generating
-        Clipperino\":\"Generating Clipperino\",\"Give it a try.\":\"Give it a try.\",\"Gore
-        or Other Obscene Content\":\"Gore or Other Obscene Content\",\"Happy 1st birthday
-        to Clips! Celebrate with us this week. Learn more\":\"Happy 1st birthday to
-        Clips! Celebrate with us this week. Learn more\",\"Harassment\":\"Harassment\",\"Hate
-        Speech\":\"Hate Speech\",\"Hurry Up! You have \\u003c1m left to edit this
-        clip\":\"Hurry Up! You have \\u003c1m left to edit this clip\",\"Hurry Up!
-        You have {{count}}m left to edit this clip\":\"Hurry Up! You have {{count}}m
-        left to edit this clip\",\"Hurry Up! You have {{count}}m left to edit this
-        clip_plural\":\"Hurry Up! You have {{count}}m left to edit this clip\",\"Impersonation\":\"Impersonation\",\"Just
-        now\":\"Just now\",\"Keyboard Shortcuts\":\"Keyboard Shortcuts\",\"LIVE\":\"LIVE\",\"Learn
-        More\":\"Learn More\",\"Learn more about Pulse\":\"Learn more about Pulse\",\"Link\":\"Link\",\"Loading...\":\"Loading...\",\"Log
-        In\":\"Log In\",\"Login\":\"Login\",\"Logout\":\"Logout\",\"MORE CHAT \u2193\":\"MORE
-        CHAT \u2193\",\"Manage all your clips from here.\":\"Manage all your clips
-        from here.\",\"Moderation\":\"Moderation\",\"More\":\"More\",\"Music Conduct
-        Violation\":\"Music Conduct Violation\",\"Mute\":\"Mute\",\"My Clips\":\"My
-        Clips\",\"My Twitch Channel\":\"My Twitch Channel\",\"N/A\":\"N/A\",\"New
-        on Clips: Playback Speeds!\":\"New on Clips: Playback Speeds!\",\"Next time
-        you stream, ask your viewers to make and share Clips of your best moments.\":\"Next
-        time you stream, ask your viewers to make and share Clips of your best moments.\",\"No
-        Clips Found\":\"No Clips Found\",\"No title\":\"No title\",\"Non-Gaming Content\":\"Non-Gaming
-        Content\",\"Offensive Username\":\"Offensive Username\",\"Options\":\"Options\",\"Other
-        Terms of Service Violation\":\"Other Terms of Service Violation\",\"Pause\":\"Pause\",\"Pause/Play\":\"Pause/Play\",\"Play\":\"Play\",\"Plays
-        are updated every 15 minutes\":\"Plays are updated every 15 minutes\",\"Popular
-        Clips\":\"Popular Clips\",\"Popular Clips Clipped by {{curator}}\":\"Popular
-        Clips Clipped by {{curator}}\",\"Popular Clips from {{channel}}\":\"Popular
-        Clips from {{channel}}\",\"Popular Clips from {{game}}\":\"Popular Clips from
-        {{game}}\",\"Porn or Other Sexually Explicit Content\":\"Porn or Other Sexually
-        Explicit Content\",\"Post\":\"Post\",\"Press \u2318+C to Copy\":\"Press \u2318+C
-        to Copy\",\"Prohibited Game\":\"Prohibited Game\",\"Publish\":\"Publish\",\"Publishing...\":\"Publishing...\",\"Pulse\":\"Pulse\",\"Quality\":\"Quality\",\"Reactions\":\"Reactions\",\"Reactions
-        are here. Show the community how you feel about the clip!\":\"Reactions are
-        here. Show the community how you feel about the clip!\",\"Remove All Clips\":\"Remove
-        All Clips\",\"Remove Clips\":\"Remove Clips\",\"Replay\":\"Replay\",\"Report\":\"Report\",\"Report
-        Clip\":\"Report Clip\",\"Report this Clip\":\"Report this Clip\",\"Reset\":\"Reset\",\"SHIFT\":\"SHIFT\",\"Save\":\"Save\",\"Search
-        for Emotes\":\"Search for Emotes\",\"See what happens when you add {{hashtag}}
-        to your clip title!\":\"See what happens when you add {{hashtag}} to your
-        clip title!\",\"Select Reason\":\"Select Reason\",\"Select one...\":\"Select
-        one...\",\"Self-Harm\":\"Self-Harm\",\"Share\":\"Share\",\"Share Clip\":\"Share
-        Clip\",\"Share this Clip\":\"Share this Clip\",\"Share to Pulse\":\"Share
-        to Pulse\",\"Share to Twitch Pulse!\":\"Share to Twitch Pulse!\",\"Share your
-        clip to your Pulse!\":\"Share your clip to your Pulse!\",\"Sharing is Caring\":\"Sharing
-        is Caring\",\"Shift\":\"Shift\",\"Show this menu\":\"Show this menu\",\"Sign
-        up\":\"Sign up\",\"Similar Clips\":\"Similar Clips\",\"Site Suspension Evasion\":\"Site
-        Suspension Evasion\",\"Slow down/Speed up\":\"Slow down/Speed up\",\"Source\":\"Source\",\"Space\":\"Space\",\"Spam,
-        Scams, or Other Malicious Content\":\"Spam, Scams, or Other Malicious Content\",\"Speed\":\"Speed\",\"Start
-        Time\":\"Start Time\",\"Submit\":\"Submit\",\"Suspend User\":\"Suspend User\",\"Suspend
-        User (24 hr)\":\"Suspend User (24 hr)\",\"Suspend this Clip Creator for 24
-        hours from Your Channel\":\"Suspend this Clip Creator for 24 hours from Your
-        Channel\",\"Tell us your concern about this content so that we can review
-        it to determine whether there has been a violation of the {{termsOfService}}
-        (Abuse of this feature is violation of the terms of service.)\":\"Tell us
-        your concern about this content so that we can review it to determine whether
-        there has been a violation of the {{termsOfService}} (Abuse of this feature
-        is violation of the terms of service.)\",\"This clip and all other clips created
-        from the same video will be permanently deleted.\":\"This clip and all other
-        clips created from the same video will be permanently deleted.\",\"This clip
-        will be permanently deleted.\":\"This clip will be permanently deleted.\",\"Timeout
-        User\":\"Timeout User\",\"Timeout User (24 hr)\":\"Timeout User (24 hr)\",\"Timeout
-        this Clip Creator for 24 hours from Your Channel\":\"Timeout this Clip Creator
-        for 24 hours from Your Channel\",\"Title\":\"Title\",\"Toggle Fullscreen\":\"Toggle
-        Fullscreen\",\"Underaged\":\"Underaged\",\"Unmute\":\"Unmute\",\"VOD Link\":\"VOD
-        Link\",\"Video Deleted\":\"Video Deleted\",\"View Keyboard Shortcuts\":\"View
-        Keyboard Shortcuts\",\"View clip page\":\"View clip page\",\"View it now\":\"View
-        it now\",\"View on Clip Page {{rightArrow}}\":\"View on Clip Page {{rightArrow}}\",\"Views\":\"Views\",\"Watch
-        Full Video\":\"Watch Full Video\",\"Watch Live\":\"Watch Live\",\"Watch clips
-        at different speeds and even go frame by frame! Pro tip: enter \\\"?\\\" to
-        view keyboard shortcuts.\":\"Watch clips at different speeds and even go frame
-        by frame! Pro tip: enter \\\"?\\\" to view keyboard shortcuts.\",\"Watch full
-        video\":\"Watch full video\",\"Watch live stream\":\"Watch live stream\",\"Watch
-        the full video\":\"Watch the full video\",\"Watch the live stream\":\"Watch
-        the live stream\",\"Watch {{broadcaster}} Live\":\"Watch {{broadcaster}} Live\",\"You
-        can no longer edit this clip :(\":\"You can no longer edit this clip :(\",\"You
-        have {{count}}h left to edit this clip.\":\"You have {{count}}h left to edit
-        this clip.\",\"You have {{count}}h left to edit this clip._plural\":\"You
-        have {{count}}h left to edit this clip.\",\"You have {{count}}m left to edit
-        this clip\":\"You have {{count}}m left to edit this clip\",\"You have {{count}}m
-        left to edit this clip_plural\":\"You have {{count}}m left to edit this clip\",\"Your
-        Clips\":\"Your Clips\",\"Your clip was successfully shared to your Pulse.\":\"Your
-        clip was successfully shared to your Pulse.\",\"Your report has successfully
-        been submitted.\":\"Your report has successfully been submitted.\",\"playing
-        {{game}}\":\"playing {{game}}\",\"streaming {{directory}}\":\"streaming {{directory}}\",\"terms
-        of service\":\"terms of service\",\"tsk tsk bad word\":\"tsk tsk bad word\",\"{{clipCreatorName}}
-        will be permanently banned from creating clips and chatting in your channel.\":\"{{clipCreatorName}}
-        will be permanently banned from creating clips and chatting in your channel.\",\"{{clipCreatorName}}
-        will temporarily be timed out from creating clips and chatting in your channel
-        for 24 hours.\":\"{{clipCreatorName}} will temporarily be timed out from creating
-        clips and chatting in your channel for 24 hours.\",\"{{count}} day ago\":\"{{count}}
-        day ago\",\"{{count}} day ago_plural\":\"{{count}} days ago\",\"{{count}}
-        hour ago\":\"{{count}} hour ago\",\"{{count}} hour ago_plural\":\"{{count}}
-        hours ago\",\"{{count}} minute ago\":\"{{count}} minute ago\",\"{{count}}
-        minute ago_plural\":\"{{count}} minutes ago\",\"{{count}} month ago\":\"{{count}}
-        month ago\",\"{{count}} month ago_plural\":\"{{count}} months ago\",\"{{count}}
-        second ago\":\"{{count}} second ago\",\"{{count}} second ago_plural\":\"{{count}}
-        seconds ago\",\"{{count}} week ago\":\"{{count}} week ago\",\"{{count}} week
-        ago_plural\":\"{{count}} weeks ago\",\"{{count}} year ago\":\"{{count}} year
-        ago\",\"{{count}} year ago_plural\":\"{{count}} years ago\",\"{{ctrlKey}}
-        + {{shiftKey}} + {{shortcutDirection}} {{description}}\":\"{{ctrlKey}} + {{shiftKey}}
-        + {{shortcutDirection}} {{description}}\",\"{{displayName}} playing {{game}}\":\"{{displayName}}
-        playing {{game}}\",\"{{displayName}} streaming {{directory}}\":\"{{displayName}}
-        streaming {{directory}}\",\"{{login}} to share this clip to your Pulse!\":\"{{login}}
-        to share this clip to your Pulse!\",\"{{numberOfViews}} view\":\"{{numberOfViews}}
-        view\",\"{{numberOfViews}} view_plural\":\"{{numberOfViews}} views\",\"{{num}}
-        character over\":\"{{num}} character over\",\"{{num}} character over_plural\":\"{{num}}
-        characters over\",\"{{num}} character remaining\":\"{{num}} character remaining\",\"{{num}}
-        character remaining_plural\":\"{{num}} characters remaining\",\"{{playbackRate}}x\":\"{{playbackRate}}x\",\"{{playbackRate}}x
-        (Normal)\":\"{{playbackRate}}x (Normal)\",\"{{seconds}}s\":\"{{seconds}}s\",\"{{seconds}}s_plural\":\"{{seconds}}s\",\"{{shiftKey}}
-        + {{altKey}} + {{shortcutDirection}} {{description}}\":\"{{shiftKey}} + {{altKey}}
-        + {{shortcutDirection}} {{description}}\",\"{{shortcutDirection}} {{description}}\":\"{{shortcutDirection}}
-        {{description}}\"};</script>\n\n        \n        <meta property=\"fb:app_id\"
-        content=\"161273083968709\"/>\n        <meta property=\"og:url\" content=\"https://clips.twitch.tv/RelentlessDifficultYogurtArsonNoSexy\"/>\n
-        \       <meta property=\"og:site_name\" content=\"Twitch\"/>\n        <meta
-        property=\"og:type\" content=\"video.other\"/>\n        <meta property=\"og:image\"
-        content=\"https://clips-media-assets.twitch.tv/22467338656-index-0000000111-preview.jpg\"/>\n
-        \       \n        <meta property=\"og:title\" content='Avaail Playing Pok\xE9mon
-        Go - Twitch Clips'>\n        \n        \n        <meta property=\"og:description\"
-        content='TAKING EVERY GYM BY STORM. IRL IDIOT POKEMON GO. Level 25. @Snowboardjacket
-        - Clipped by Zer0v7'>\n        \n\n        \n        <meta name=\"twitter:card\"
-        content=\"player\">\n        <meta name=\"twitter:site\" content=\"@twitch\">\n
-        \       <meta name=\"twitter:image\" content=\"https://clips-media-assets.twitch.tv/22467338656-index-0000000111-preview.jpg\">\n
-        \       <meta name=\"twitter:player\" content=\"https://clips.twitch.tv/embed?clip=RelentlessDifficultYogurtArsonNoSexy\">\n
-        \       <meta name=\"twitter:player:width\" content=\"640\">\n        <meta
-        name=\"twitter:player:height\" content=\"360\">\n        \n        <meta property=\"twitter:title\"
-        content='Avaail Playing Pok\xE9mon Go - Twitch Clips'>\n        \n        \n
-        \       <meta property=\"twitter:description\" content='TAKING EVERY GYM BY
-        STORM. IRL IDIOT POKEMON GO. Level 25. @Snowboardjacket - Clipped by Zer0v7'>\n
-        \       \n\n        <meta name=\"viewport\" content=\"width=device-width,
-        initial-scale=1.0\">\n        <script>\n            window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new
-        Date;\n            ga('create', 'UA-23719667-11', { 'sampleRate': 0.1 });\n
-        \           ga('send', 'pageview');\n        </script>\n        <script async
-        src='https://www.google-analytics.com/analytics.js'></script>\n    </head>\n
-        \   <body>\n        <svg viewBox=\"0 0 32 32\" xmlns=\"http://www.w3.org/2000/svg\"
-        style=\"width:0;height:0;visibility:hidden;display:block;\">\n          <symbol
-        viewBox=\"0 0 32 32\" id=\"icon_fb\"><path clip-rule=\"evenodd\" d=\"M16.842
-        24v-6.842h2.653l.398-2.667h-3.051V12.79c0-.772.247-1.298 1.526-1.298L20 11.49V9.105A25.285
-        25.285 0 0 0 17.623 9c-2.353 0-3.963 1.243-3.963 3.525v1.967H11v2.666h2.66V24h3.182\"
-        fill-rule=\"evenodd\"></path></symbol>\n          <symbol viewBox=\"0 0 32
-        32\" id=\"icon_reddit\"><path d=\"M21.998 8.692c.545 0 .988.447.988.994a.992.992
-        0 0 1-.987.995.991.991 0 0 1-.987-.995c0-.547.442-.994.987-.994h-.001zm-.5
-        5.159c-1.38-.895-3.162-1.418-5.07-1.494l1.047-3.335 2.85.675c.003.923.75 1.671
-        1.674 1.676a1.683 1.683 0 0 0 1.674-1.687A1.683 1.683 0 0 0 22 8c-.688 0-1.28.42-1.538
-        1.018l-3.139-.744a.342.342 0 0 0-.406.233l-1.208 3.842c-2.005.038-3.887.567-5.328
-        1.502a2.014 2.014 0 0 0-1.347-.518A2.042 2.042 0 0 0 7 15.38c0 .72.376 1.386.992
-        1.757-.03.191-.045.386-.045.58 0 1.465.85 2.83 2.396 3.845a8.483 8.483 0 0
-        0 1.62.822c2.509.964 6.692.602 7.952 0 1.26-.601 1.128-.498 1.62-.822 1.545-1.015
-        2.396-2.38 2.396-3.844 0-.195-.015-.39-.045-.581a2.049 2.049 0 0 0-1.04-3.805c-.499
-        0-.979.185-1.348.519zm-5.56 7.327c1.333 0 2.284-.294 2.887-.901a.348.348 0
-        0 0 0-.49.342.342 0 0 0-.486 0c-.468.47-1.26.699-2.4.699-1.141 0-1.932-.229-2.4-.698a.342.342
-        0 0 0-.486 0 .347.347 0 0 0 0 .489c.603.607 1.553.901 2.886.901zm2.695-5.688a1.245
-        1.245 0 0 0-1.238 1.248c0 .686.555 1.246 1.238 1.246a1.245 1.245 0 0 0 1.239-1.247c0-.687-.556-1.246-1.239-1.246zm-5.39.001c-.682
-        0-1.237.559-1.237 1.247 0 .686.555 1.245 1.238 1.245.682 0 1.237-.559 1.237-1.245
-        0-.688-.555-1.247-1.237-1.247z\" fill-rule=\"evenodd\"/></symbol>\n          <symbol
-        viewBox=\"0 0 32 32\" id=\"icon_twitter\"><path clip-rule=\"evenodd\" d=\"M23.966
-        11.533c-.55.26-1.142.436-1.763.515a3.252 3.252 0 0 0 1.35-1.81c-.6.38-1.26.649-1.95.794A2.983
-        2.983 0 0 0 19.362 10c-1.696 0-3.07 1.464-3.07 3.27 0 .256.026.505.079.745-2.552-.136-4.815-1.438-6.33-3.417a3.417
-        3.417 0 0 0-.415 1.644c0 1.134.543 2.135 1.366 2.722a2.918 2.918 0 0 1-1.39-.41v.042c0
-        1.584 1.057 2.906 2.463 3.206-.452.131-.928.15-1.388.056.392 1.3 1.526 2.245
-        2.869 2.271A5.917 5.917 0 0 1 9 21.482a8.311 8.311 0 0 0 4.707 1.47c5.648
-        0 8.736-4.982 8.736-9.304 0-.141-.003-.283-.008-.422a6.481 6.481 0 0 0 1.531-1.693\"
-        fill-rule=\"evenodd\"></path></symbol>\n          <symbol viewBox=\"0 0 32
-        32\" id=\"icon_glitch_sm\"><path d=\"M8 10v12h4v2h3l2-2h2.087L23 18V8H9.023L8
-        10zm11 9h-3l-1 1-1 1 .007-2H11V9.995l10-.01V17l-2 2zm0-7h-1.25v4H19v-4zm-4.25
-        0v4H16v-4h-1.25z\" fill-rule=\"evenodd\"></path></symbol>\n          <symbol
-        viewbox=\"0 0 32 32\" id=\"icon_copy\"><g fill-rule=\"evenodd\"><path d=\"M9
-        19.607l4.755-4.755 3.535 3.535-4.754 4.755L9 19.607zm1.439-.025l4.023-4.023
-        2.121 2.121-4.023 4.024-2.121-2.122zM14.852 13.755L19.607 9l3.535 3.536-4.755
-        4.754-3.535-3.535zm.707.707l4.023-4.023 2.122 2.12-4.024 4.024-2.121-2.121z\"/><path
-        d=\"M12.987 17.741l4.754-4.754 1.414 1.414-4.754 4.754z\"/></g></symbol>\n
-        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_close_md\"><path clip-rule=\"evenodd\"
-        d=\"M20.657 10.757L16.414 15l4.243 4.242-1.415 1.415L15 16.414l-4.243 4.243-1.414-1.415L13.586
-        15l-4.243-4.243 1.414-1.414L15 13.586l4.242-4.243 1.415 1.414z\" fill-rule=\"evenodd\"></path></symbol>\n
-        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_play\"><path clip-rule=\"evenodd\"
-        d=\"M10,7l12,8l-12,8V7z\" fill-rule=\"evenodd\"></path></symbol>\n          <symbol
-        viewBox=\"0 0 30 30\" id=\"icon_pause\"><path clip-rule=\"evenodd\" d=\"M9,22h4V8H9V22z
-        M17,8v14h4V8H17z\" fill-rule=\"evenodd\"></path></symbol>\n          <symbol
-        viewBox=\"0 0 30 30\" id=\"icon_volumefull\"><path clip-rule=\"evenodd\" d=\"M22,21.5v-13L23,8v14L22,21.5z
-        M18,10.5l1-0.5v10l-1-0.5V10.5z M7,18v-6l3,0l5-4v14l-5-4L7,18z\" fill-rule=\"evenodd\"></path></symbol>\n
-        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_volumemute\"><path clip-rule=\"evenodd\"
-        d=\"M23,18L23,18h-0.7L20,15.7L17.7,18H17l0,0v-0.7l2.3-2.3L17,12.7V12l0,0h0.7l2.3,2.3l2.3-2.3H23l0,0v0.7L20.7,15l2.3,2.3V18z
-        M7,18v-6l3,0l5-4v14l-5-4L7,18z\" fill-rule=\"evenodd\"></path></symbol>\n
-        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_fullscreen\"><path clip-rule=\"evenodd\"
-        d=\"M7,7 L15.2,7 L12.8,9.4 L15.8,12.4 L12.4,15.8 L9.4,12.8 L7,15.2 L7,7 Z
-        M23,23 L14.8,23 L17.2,20.6 L14.2,17.6 L17.6,14.2 L20.6,17.2 L23,14.8 L23,23
-        Z\" fill-rule=\"evenodd\"></path></symbol>\n          <symbol viewBox=\"0
-        0 30 30\" id=\"icon_unfullscreen\"><path clip-rule=\"evenodd\" d=\"M15,15
-        L23.2,15 L20.8,17.4 L23.8,20.4 L20.4,23.8 L17.4,20.8 L15,23.2 L15,15 L15,15
-        Z M15,15 L6.8,15 L9.2,12.6 L6.2,9.6 L9.6,6.2 L12.6,9.2 L15,6.8 L15,15 L15,15
-        Z\" fill-rule=\"evenodd\"></path></symbol>\n          <symbol viewBox=\"0
-        0 94 32\" id=\"logo_twitch\"><path clip-rule=\"evenodd\" d=\"M88,5h-6V0h-9l-6,5h-5.5L59,7.5V5h-5V0H36v5H16l-5-5H0v22l5,5.25L14,32h6v-1.5l3,1.5h12l2-3l1,3h7v-3l3,3h8l0.5-3l2.5,3h10l3-3v3h4l3-3v3h7l7-6V10L88,5z
-        M13,13H8v6h5v6H6l-4-4V2h6v5h5V13z M36,21.5L32.5,25H15V7h6v12h2V7h6v12h2V7h5V21.5z
-        M44,25h-6V7h6V25z M44,5h-6V2h6V5z M57,13h-5v6h5v6h-7l-4-4V2h6v5h5V13z M72,13h-7v6h7v6h-9l-4-4V11l4-4h9V13z
-        M91,25h-6V13h-5v12h-6V2h6v5h7l4,4V25z\" fill-rule=\"evenodd\"></path></symbol>\n
-        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_close\"><path clip-rule=\"evenodd\"
-        d=\"M15.1035534,15.4571068 L11.5303301,19.0303301 L11.3535534,19.2071068 L11,18.8535534
-        L11.1767767,18.6767767 L14.75,15.1035534 L11.1767767,11.5303301 L11,11.3535534
-        L11.3535534,11 L11.5303301,11.1767767 L15.1035534,14.75 L18.6767767,11.1767767
-        L18.8535534,11 L19.2071068,11.3535534 L19.0303301,11.5303301 L15.4571068,15.1035534
-        L19.0303301,18.6767767 L19.2071068,18.8535534 L18.8535534,19.2071068 L18.6767767,19.0303301
-        L15.1035534,15.4571068 Z\" fill-rule=\"evenodd\"></path></symbol>\n          <symbol
-        viewBox=\"0 0 46 46\" id=\"icon_close_modal\"><path clip-rule=\"evenodd\"
-        d=\"M21.38 23.077l-4.531-4.531-.849-.849L17.697 16l.849.849 4.531 4.531 4.532-4.531.849-.849
-        1.697 1.697-.849.849-4.532 4.531 4.599 4.599.848.848-1.697 1.697-.848-.848-4.599-4.599-4.531
-        4.532-.849.849L16 28.458l.849-.849 4.531-4.532z\" fill-rule=\"evenodd\"/></symbol>\n
-        \         <symbol viewBox=\"0 0 14 14\" id=\"icon_arrow\"><path d=\"M6.46765898,5.00010938
-        L6.46755335,5 L3.08055618,8.27078515 C2.97320936,8.37444877 2.97610632,8.52662201
-        3.07163118,8.6255409 L3.47144895,9.03956433 C3.56460436,9.13602957 3.72584608,9.14003286
-        3.82630008,9.04302556 L6.46765898,6.49229492 L9.10901788,9.04302556 C9.20947188,9.14003286
-        9.3707136,9.13602957 9.46386901,9.03956433 L9.86368678,8.6255409 C9.95921164,8.52662201
-        9.9621086,8.37444877 9.85476178,8.27078515 L6.46776461,5 L6.46765898,5.00010938
-        Z\" transform=\"translate(6.467659, 7.056937) scale(-1, 1) rotate(-270.000000)
-        translate(-6.467659, -7.056937) \"></path></symbol>\n          <symbol viewBox=\"0
-        0 30 30\" id=\"icon_settings\"><path clip-rule=\"evenodd\" d=\"M13.3589744,7
-        L16.6410256,7 L18.0769231,9.8 L21.3589744,9.8 L23,12.2 L21.3589744,15 L23,17.8
-        L21.3589744,20.2 L18.0769231,20.2 L16.6410256,23 L13.3589744,23 L11.9230769,20.2
-        L8.64102564,20.2 L7,17.8 L8.64102564,15 L7,12.2 L8.64102564,9.8 L11.9230769,9.8
-        L13.3589744,7 Z M15,17.8 C16.5860485,17.8 17.8717949,16.5463973 17.8717949,15
-        C17.8717949,13.4536027 16.5860485,12.2 15,12.2 C13.4139515,12.2 12.1282051,13.4536027
-        12.1282051,15 C12.1282051,16.5463973 13.4139515,17.8 15,17.8 Z\" fill-rule=\"evenodd\"></path></symbol>\n
-        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_video\"><path clip-rule=\"evenodd\"
-        d=\"M9 11h22v18H9V11zm2 2h2v2h-2v-2zm16 0h2v2h-2v-2zm-16 4h2v2h-2v-2zm16 0h2v2h-2v-2zm-16
-        4h2v2h-2v-2zm16 0h2v2h-2v-2zm-16 4h2v2h-2v-2zm16 0h2v2h-2v-2z\" fill-rule=\"evenodd\"></path></symbol>\n
-        \         <symbol viewBox=\"0 0 30 30\" id=\"icon_share\"><g clip-rule=\"evenodd\"><path
-        d=\"M22 18h5v11H13V18h5v2h-3v7h10v-7h-3\"/><path d=\"M18.994 14.297L17 16l-1-1.2
-        3.987-3.8L24 14.8 23 16l-2.022-1.703V23h-1.984z\"/></g></symbol>\n        </svg>\n
-        \       <div class=\"nav-header js-nav-header\"></div>\n        <div class=\"clip-page-wrapper
-        js-whole-wrapper invisible\">\n            <div class=\" header js-header\"></div>\n
-        \           <div id=\"clip-meta\">\n                <div class=\"clip-card\">\n
-        \                   <div class=\" curator-info js-curator-info\">\n                        <div
-        class='js-curator-info-container'></div>\n                        <div class=\"top-share-container
-        js-top-share-container balloon-wrapper\"></div>\n                    </div>\n
-        \                   <div class=\"js-player-ui-root nv-clip\"></div>\n                </div>\n
-        \           </div>\n            <div class=\"js-acknowledgement\"></div>\n
-        \       </div>\n        <div class=\"js-modal-root\"></div>\n        <script
-        type=\"text/javascript\" src=\"https://clips.twitch.tv/assets/16d48e72d557c1c629f7a332e3e65ed8a3f6d0ba/view.js\"></script>\n
-        \       <script>\n            var clipCard = document.getElementsByClassName(\"clip-card\")[0];\n
-        \           var buttonsElem = document.getElementsByClassName(\"js-broadcaster-info\")[0];\n
-        \           var curatorLink = document.getElementsByClassName(\"js-curator-link\")[0];\n
-        \           var wholeWrapper = document.getElementsByClassName(\"js-whole-wrapper\")[0];\n
-        \           var broadcasterInfo = document.getElementsByClassName(\"js-broadcaster-info\")[0];\n
-        \           var playerElement = document.getElementsByClassName('js-clip')[0];\n
-        \           var DOMElements = {\n                clipCard: clipCard,\n                buttonsElem:
-        buttonsElem,\n                curatorLink: curatorLink,\n                wholeWrapper:
-        wholeWrapper,\n                broadcasterInfo: broadcasterInfo,\n                playerElement:
-        playerElement\n            };\n            var clipInfo = {\n                id:
-        \"38370183\",\n                \n                broadcast_id: \"22467338656\",\n
-        \               \n                \n                preview_image_url: \"https:\\/\\/clips-media-assets.twitch.tv\\/22467338656-index-0000000111-preview.jpg\",\n
-        \               \n                game: \"Pok\xE9mon Go\",\n                \n
-        \               \n                channel_title: \"TAKING EVERY GYM BY STORM.
-        IRL IDIOT POKEMON GO. Level 25. @Snowboardjacket\",\n                \n                \n
-        \               broadcaster_logo: \"https:\\/\\/static-cdn.jtvnw.net\\/jtv_user_pictures\\/avaail-profile_image-9cc2acc65a155bfe-150x150.png\",\n
-        \               \n                broadcaster_id: \"36386081\",\n                broadcaster_login:
-        \"avaail\",\n                broadcaster_display_name: \"Avaail\",\n                broadcaster_is_partner:
-        \ true ,\n                broadcaster_twitter_login: \"\",\n                curator_id:
-        \"38341734\",\n                curator_login: \"zer0v7\",\n                curator_display_name:
-        \"Zer0v7\",\n                embed_url: \"https:\\/\\/clips.twitch.tv\\/embed?clip=RelentlessDifficultYogurtArsonNoSexy\",\n
-        \               slug: \"RelentlessDifficultYogurtArsonNoSexy\",\n                clip_exists:
-        \ true ,\n                clip_origin: \"live\",\n                duration:
-        \ 32 ,\n                quality_options: [{\"quality\":\"720\",\"source\":\"https://clips-media-assets.twitch.tv/22467338656-index-0000000111.mp4\",\"frame_rate\":30},{\"quality\":\"480\",\"source\":\"https://clips-media-assets.twitch.tv/22467338656-index-0000000111-852x480.mp4\",\"frame_rate\":30},{\"quality\":\"360\",\"source\":\"https://clips-media-assets.twitch.tv/22467338656-index-0000000111-640x360.mp4\",\"frame_rate\":30}],\n
-        \               view_count:  982095 ,\n                language: \"en\",\n
-        \               has_editable_media:  false ,\n                created_at:
-        \"2016-07-23T02:44:02Z\",\n                url: \"https:\\/\\/clips.twitch.tv\\/RelentlessDifficultYogurtArsonNoSexy\"\n
-        \           };\n            Twitch.Clips.viewClip(DOMElements, clipInfo);\n
-        \       </script>\n    </body>\n</html>\n"}
+    body:
+      string: !!binary |
+        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
     headers:
       Cache-Control: ['public, max-age=300, s-maxage=300']
       Connection: [keep-alive]
+      Content-Encoding: [gzip]
       Content-Type: [text/html; charset=utf-8]
-      Date: ['Sun, 20 Aug 2017 13:25:06 GMT']
+      Date: ['Thu, 14 Sep 2017 04:40:18 GMT']
       Server: [nginx/1.8.1]
-      Via: [1.1 cbefa4574158a548775db8beda8075d2.cloudfront.net (CloudFront)]
-      X-Amz-Cf-Id: [2xcFsZt-awZHRQ3ML7EDWx4ediZDRAQ8R84SfBXB25J92uBiSuDBcw==]
+      Vary: [Accept-Encoding]
+      Via: [1.1 a29dc34c10e540224a5f3e235c41d4f5.cloudfront.net (CloudFront)]
+      X-Amz-Cf-Id: [qg4iqMj-gSCnk0IrWE6AKXnqGCq6qNrJ19YJGmzT4U6Yhj5x6ifdsw==]
       X-Cache: [Miss from cloudfront]
     status: {code: 200, message: OK}
 version: 1
