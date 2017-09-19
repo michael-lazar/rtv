@@ -47,66 +47,120 @@ class Theme(object):
         'white': 15,
     }
 
-    # Add keywords for the 256 ansi color codes
     for i in range(256):
         COLOR_CODES['ansi_{0}'.format(i)] = i
+
+    # TODO: Do another pass through these names
 
     # For compatibility with as many terminals as possible, the default theme
     # can only use the 8 basic colors with the default color as the background
     DEFAULT_THEME = {
-        '@normal':               (-1,                   -1,   curses.A_NORMAL),
-        '@highlight':            (-1,                   -1,   curses.A_NORMAL),
+        'Normal':                (None,                 None, None),
+        'Selected':              (None,                 None, None),
+        'SelectedCursor':        (None,                 None, curses.A_REVERSE),
 
-        'bar_level_1':           (curses.COLOR_MAGENTA, None, curses.A_NORMAL),
-        'bar_level_1.highlight': (curses.COLOR_MAGENTA, None, curses.A_REVERSE),
-        'bar_level_2':           (curses.COLOR_CYAN,    None, curses.A_NORMAL),
-        'bar_level_2.highlight': (curses.COLOR_CYAN,    None, curses.A_REVERSE),
-        'bar_level_3':           (curses.COLOR_GREEN,   None, curses.A_NORMAL),
-        'bar_level_3.highlight': (curses.COLOR_GREEN,   None, curses.A_REVERSE),
-        'bar_level_4':           (curses.COLOR_YELLOW,  None, curses.A_NORMAL),
-        'bar_level_4.highlight': (curses.COLOR_YELLOW,  None, curses.A_REVERSE),
-        'comment_author':        (curses.COLOR_BLUE,    None, curses.A_BOLD),
-        'comment_author_self':   (curses.COLOR_GREEN,   None, curses.A_BOLD),
-        'comment_count':         (None,                 None, curses.A_NORMAL),
-        'comment_text':          (None,                 None, curses.A_NORMAL),
-        'created':               (None,                 None, curses.A_NORMAL),
-        'cursor':                (None,                 None, curses.A_NORMAL),
-        'cursor.highlight':      (None,                 None, curses.A_REVERSE),
-        'downvote':              (curses.COLOR_RED,     None, curses.A_BOLD),
-        'gold':                  (curses.COLOR_YELLOW,  None, curses.A_BOLD),
-        'help_bar':              (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
-        'hidden_comment_expand': (None,                 None, curses.A_BOLD),
-        'hidden_comment_text':   (None,                 None, curses.A_NORMAL),
-        'multireddit_name':      (curses.COLOR_YELLOW,  None, curses.A_BOLD),
-        'multireddit_text':      (None,                 None, curses.A_NORMAL),
-        'neutral_vote':          (None,                 None, curses.A_BOLD),
-        'notice_info':           (None,                 None, curses.A_NORMAL),
-        'notice_loading':        (None,                 None, curses.A_NORMAL),
-        'notice_error':          (curses.COLOR_RED,     None, curses.A_NORMAL),
-        'notice_success':        (curses.COLOR_GREEN,   None, curses.A_NORMAL),
-        'nsfw':                  (curses.COLOR_RED,     None, curses.A_BOLD),
-        'order_bar':             (curses.COLOR_YELLOW,  None, curses.A_BOLD),
-        'order_bar.highlight':   (curses.COLOR_YELLOW,  None, curses.A_BOLD | curses.A_REVERSE),
-        'prompt':                (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
-        'saved':                 (curses.COLOR_GREEN,   None, curses.A_NORMAL),
-        'score':                 (None,                 None, curses.A_NORMAL),
-        'separator':             (None,                 None, curses.A_BOLD),
-        'stickied':              (curses.COLOR_GREEN,   None, curses.A_NORMAL),
-        'subscription_name':     (curses.COLOR_YELLOW,  None, curses.A_BOLD),
-        'subscription_text':     (None,                 None, curses.A_NORMAL),
-        'submission_author':     (curses.COLOR_GREEN,   None, curses.A_NORMAL),
-        'submission_flair':      (curses.COLOR_RED,     None, curses.A_NORMAL),
-        'submission_subreddit':  (curses.COLOR_YELLOW,  None, curses.A_NORMAL),
-        'submission_text':       (None,                 None, curses.A_NORMAL),
-        'submission_title':      (None,                 None, curses.A_BOLD),
-        'title_bar':             (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
-        'upvote':                (curses.COLOR_GREEN,   None, curses.A_BOLD),
-        'url':                   (curses.COLOR_BLUE,    None, curses.A_UNDERLINE),
-        'url_seen':              (curses.COLOR_MAGENTA, None, curses.A_UNDERLINE),
-        'user_flair':            (curses.COLOR_YELLOW,  None, curses.A_BOLD)
+        'PageTitle':             (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
+        'PageOrder':             (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+        'PageOrderHighlight':    (curses.COLOR_YELLOW,  None, curses.A_BOLD | curses.A_REVERSE),
+        'Help':                  (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
+        'Prompt':                (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
+        'NoticeInfo':            (None,                 None, curses.A_BOLD),
+        'NoticeLoading':         (None,                 None, curses.A_BOLD),
+        'NoticeError':           (None,                 None, curses.A_BOLD),
+        'NoticeSuccess':         (None,                 None, curses.A_BOLD),
+
+        'CursorBlock':           (None,                 None, None),
+        'CursorBar1':            (curses.COLOR_MAGENTA, None, None),
+        'CursorBar2':            (curses.COLOR_CYAN,    None, None),
+        'CursorBar3':            (curses.COLOR_GREEN,   None, None),
+        'CursorBar4':            (curses.COLOR_YELLOW,  None, None),
+
+        'CommentAuthor':         (curses.COLOR_BLUE,    None, curses.A_BOLD),
+        'CommentAuthorSelf':     (curses.COLOR_GREEN,   None, curses.A_BOLD),
+        'CommentCount':          (None,                 None, None),
+        'CommentText':           (None,                 None, None),
+        'Created':               (None,                 None, None),
+        'Downvote':              (curses.COLOR_RED,     None, curses.A_BOLD),
+        'Gold':                  (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+        'HiddenCommentExpand':   (None,                 None, curses.A_BOLD),
+        'HiddenCommentText':     (None,                 None, None),
+        'MultiredditName':       (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+        'MultiredditText':       (None,                 None, None),
+        'NeutralVote':           (None,                 None, curses.A_BOLD),
+        'NSFW':                  (curses.COLOR_RED,     None, curses.A_BOLD),
+        'Saved':                 (curses.COLOR_GREEN,   None, None),
+        'Score':                 (None,                 None, None),
+        'Separator':             (None,                 None, curses.A_BOLD),
+        'Stickied':              (curses.COLOR_GREEN,   None, None),
+        'SubscriptionName':      (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+        'SubscriptionText':      (None,                 None, None),
+        'SubmissionAuthor':      (curses.COLOR_GREEN,   None, None),
+        'SubmissionFlair':       (curses.COLOR_RED,     None, None),
+        'SubmissionSubreddit':   (curses.COLOR_YELLOW,  None, None),
+        'SubmissionText':        (None,                 None, None),
+        'SubmissionTitle':       (None,                 None, curses.A_BOLD),
+        'Upvote':                (curses.COLOR_GREEN,   None, curses.A_BOLD),
+        'Link':                  (curses.COLOR_BLUE,    None, curses.A_UNDERLINE),
+        'LinkSeen':              (curses.COLOR_MAGENTA, None, curses.A_UNDERLINE),
+        'UserFlair':             (curses.COLOR_YELLOW,  None, curses.A_BOLD)
     }
 
-    BAR_LEVELS = ['bar_level_1', 'bar_level_2', 'bar_level_3', 'bar_level_4']
+    # List of elements that might be highlighted by the "Selected" row
+    SELECTED_ELEMENTS = [
+        'CommentAuthor',
+        'CommentAuthorSelf',
+        'CommentCount',
+        'CommentText',
+        'Created',
+        'Downvote',
+        'Gold',
+        'HiddenCommentExpand',
+        'HiddenCommentText',
+        'MultiredditName',
+        'MultiredditText',
+        'NeutralVote',
+        'NSFW',
+        'Saved',
+        'Score',
+        'Separator',
+        'Stickied',
+        'SubscriptionName',
+        'SubscriptionText',
+        'SubmissionAuthor',
+        'SubmissionFlair',
+        'SubmissionSubreddit',
+        'SubmissionText',
+        'SubmissionTitle',
+        'Upvote',
+        'Link',
+        'LinkSeen',
+        'UserFlair'
+    ]
+
+    # List of elements that might be highlighted by the "SelectedCursor" row
+    SELECTED_CURSOR_ELEMENTS = [
+        'CursorBlock',
+        'CursorBar1',
+        'CursorBar2',
+        'CursorBar3',
+        'CursorBar4'
+    ]
+
+    # List of page elements that cannot be selected
+    PAGE_ELEMENTS = [
+        'PageOrder',
+        'PageOrderHighlight',
+        'PageTitle',
+        'Help',
+        'Prompt',
+        'NoticeInfo',
+        'NoticeLoading',
+        'NoticeError',
+        'NoticeSuccess',
+    ]
+
+    # The SubmissionPage uses this to determine which color bar to use
+    CURSOR_BARS = ['CursorBar1', 'CursorBar2', 'CursorBar3', 'CursorBar4']
 
     def __init__(self, name=None, source=None, elements=None, use_color=True):
         """
@@ -131,9 +185,10 @@ class Theme(object):
         self.name = name
         self.source = source
         self.use_color = use_color
+
         self._color_pair_map = None
         self._attribute_map = None
-        self._modifier = None
+        self._selected = None
 
         self.required_color_pairs = 0
         self.required_colors = 0
@@ -141,45 +196,32 @@ class Theme(object):
         if elements is None:
             elements = self.DEFAULT_THEME.copy()
 
-        # Fill in any keywords that are defined in the default theme but were
-        # not passed into the elements dictionary.
+        # Set any elements that weren't defined by the config to fallback to
+        # the default color and attributes
         for key in self.DEFAULT_THEME.keys():
-
-            # The "@normal"/"@highlight" are special elements that act as
-            # fallbacks for all of the other elements. They must always be
-            # defined and can't have the colors/attribute empty by setting
-            # them to "-" or None.
-            if key.startswith('@'):
-                if key not in elements:
-                    elements[key] = self.DEFAULT_THEME[key]
-                continue
-
-            # Modifiers are handled below
-            if key.endswith('.highlight'):
-                continue
-
-            # Set undefined elements to fallback to the default color
             if key not in elements:
                 elements[key] = (None, None, None)
 
-            # Set undefined highlight elements to match their base element
-            modifier_key = key + '.highlight'
-            if modifier_key not in elements:
-                elements[modifier_key] = elements[key]
+        self._set_fallback(elements, 'Normal', (-1, -1, curses.A_NORMAL))
+        self._set_fallback(elements, 'Selected', 'Normal')
+        self._set_fallback(elements, 'SelectedCursor', 'Normal')
 
-        # At this point all of the possible keys should exist in the element map.
-        # Now we can "bubble up" the undefined attributes to copy the default
-        # of the @normal and @highlight modifiers.
-        for key, val in elements.items():
-            if key.endswith('.highlight'):
-                default = elements['@highlight']
-            else:
-                default = elements['@normal']
+        # Most elements have two possible attribute states:
+        #   1. The default state - inherits from "Normal"
+        #   2. The selected state - inherits from "Selected" and is
+        #      prefixed by the "@" sign.
+        for name in self.SELECTED_ELEMENTS:
+            dest = '@{0}'.format(name)
+            self._set_fallback(elements, name, 'Selected', dest)
+            self._set_fallback(elements, name, 'Normal')
 
-            elements[key] = (
-                default[0] if val[0] is None else val[0],
-                default[1] if val[1] is None else val[1],
-                default[2] if val[2] is None else val[2])
+        for name in self.SELECTED_CURSOR_ELEMENTS:
+            dest = '@{0}'.format(name)
+            self._set_fallback(elements, name, 'SelectedCursor', dest)
+            self._set_fallback(elements, name, 'Normal')
+
+        for name in self.PAGE_ELEMENTS:
+            self._set_fallback(elements, name, 'Normal')
 
         self.elements = elements
 
@@ -238,47 +280,43 @@ class Theme(object):
 
             self._attribute_map[element] = attrs
 
-    def get(self, element, modifier=None):
+    def get(self, element, selected=False):
         """
-        Returns the curses attribute code for the given element.
-        
-        If element is None, return the background code (e.g. @normal).
+        Returns the curses attribute code for the given element.        
         """
         if self._attribute_map is None:
             raise RuntimeError('Attempted to access theme attribute before '
                                'calling initialize_curses_theme()')
 
-        modifier = modifier or self._modifier
-
-        if modifier and not element.startswith('@'):
-            element = element + '.' + modifier
+        if selected or self._selected:
+            element = '@{0}'.format(element)
 
         return self._attribute_map[element]
 
     @contextmanager
-    def set_modifier(self, modifier=None):
+    def turn_on_selected(self):
         """
-        Sets the active modifier inside of context block.
+        Sets the selected modifier inside of context block.
 
         For example:
-            >>> with theme.set_modifier('highlight'):
-            >>>     attr = theme.get('cursor')
+            >>> with theme.turn_on_selected():
+            >>>     attr = theme.get('CursorBlock')
 
         Is the same as:
-            >>> attr = theme.get('cursor', modifier='highlight')
+            >>> attr = theme.get('CursorBlock', selected=True)
 
         Is also the same as:
-            >>> attr = theme.get('cursor.highlight')
+            >>> attr = theme.get('@CursorBlock')
 
         """
-        # This case is undefined if the context manager is nested
-        assert self._modifier is None
+        # This context manager should never be nested
+        assert self._selected is None
 
-        self._modifier = modifier
+        self._selected = True
         try:
             yield
         finally:
-            self._modifier = None
+            self._selected = None
 
     @classmethod
     def list_themes(cls, path=THEMES):
@@ -378,9 +416,11 @@ class Theme(object):
             filename: The name of the filename to load.
             source: A description of where the theme was loaded from.
         """
+        _logger.info('Loading theme %s', filename)
 
         try:
             config = configparser.ConfigParser()
+            config.optionxform = six.text_type  # Preserve case
             with codecs.open(filename, encoding='utf-8') as fp:
                 config.readfp(fp)
         except configparser.ParsingError as e:
@@ -399,6 +439,7 @@ class Theme(object):
             if element not in cls.DEFAULT_THEME:
                 # Could happen if using a new config with an older version
                 # of the software
+                _logger.info('Skipping element %s', element)
                 continue
             elements[element] = cls._parse_line(element, line, filename)
 
@@ -453,12 +494,25 @@ class Theme(object):
             else:
                 attrs_code |= attr_code
 
-        if element.startswith('@') and None in (fg_code, bg_code, attrs_code):
-            raise ConfigError(
-                'Error loading {0}, {1} cannot have unspecified attributes:\n'
-                '    {1} = {2}'.format(filename, element, line))
-
         return fg_code, bg_code, attrs_code
+
+    @staticmethod
+    def _set_fallback(elements, src_field, fallback, dest_field=None):
+        """
+        Helper function used to set the fallback attributes of an element when
+        they are defined by the configuration as "None" or "-".
+        """
+
+        if dest_field is None:
+            dest_field = src_field
+        if isinstance(fallback, six.string_types):
+            fallback = elements[fallback]
+
+        attrs = elements[src_field]
+        elements[dest_field] = (
+            attrs[0] if attrs[0] is not None else fallback[0],
+            attrs[1] if attrs[1] is not None else fallback[1],
+            attrs[2] if attrs[2] is not None else fallback[2])
 
     @staticmethod
     def rgb_to_ansi(color):

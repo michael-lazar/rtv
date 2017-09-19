@@ -191,11 +191,11 @@ class Terminal(object):
         """
 
         if likes is None:
-            return self.neutral_arrow, self.attr('neutral_vote')
+            return self.neutral_arrow, self.attr('NeutralVote')
         elif likes:
-            return self.up_arrow, self.attr('upvote')
+            return self.up_arrow, self.attr('Upvote')
         else:
-            return self.down_arrow, self.attr('downvote')
+            return self.down_arrow, self.attr('Downvote')
 
     def clean(self, string, n_cols=None):
         """
@@ -287,7 +287,7 @@ class Terminal(object):
 
         window.addstr(row, col, ' ')
 
-    def show_notification(self, message, timeout=None, style='info'):
+    def show_notification(self, message, timeout=None, style='Info'):
         """
         Overlay a message box on the center of the screen and wait for input.
 
@@ -299,7 +299,7 @@ class Terminal(object):
                 notification window
         """
 
-        assert style in ('info', 'warning', 'error', 'success')
+        assert style in ('Info', 'Warning', 'Error', 'Success')
 
         if isinstance(message, six.string_types):
             message = message.splitlines()
@@ -319,7 +319,7 @@ class Terminal(object):
         s_col = (n_cols - box_width) // 2 + h_offset
 
         window = curses.newwin(box_height, box_width, s_row, s_col)
-        window.bkgd(str(' '), self.attr('notice_{0}'.format(style)))
+        window.bkgd(str(' '), self.attr('Notice{0}'.format(style)))
         window.erase()
         window.border()
 
@@ -708,7 +708,7 @@ class Terminal(object):
 
         n_rows, n_cols = self.stdscr.getmaxyx()
         v_offset, h_offset = self.stdscr.getbegyx()
-        ch, attr = str(' '), self.attr('prompt')
+        ch, attr = str(' '), self.attr('Prompt')
         prompt = self.clean(prompt, n_cols-1)
 
         # Create a new window to draw the text at the bottom of the screen,
@@ -864,8 +864,7 @@ class Terminal(object):
             theme = Theme()
 
         theme.bind_curses()
+        self.theme = theme
 
         # Apply the default color to the whole screen
-        self.stdscr.bkgd(str(' '), theme.get('@normal'))
-
-        self.theme = theme
+        self.stdscr.bkgd(str(' '), self.attr('Normal'))

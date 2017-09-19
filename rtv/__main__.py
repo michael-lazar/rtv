@@ -178,8 +178,10 @@ def main():
             term = Terminal(stdscr, config)
 
             if config['monochrome']:
+                _logger.info('Using monochrome theme')
                 theme = Theme(use_color=False)
             elif config['theme']:
+                _logger.info('Loading theme: %s', config['theme'])
                 theme = Theme.from_name(config['theme'])
             else:
                 # Set to None to let the terminal figure out which default

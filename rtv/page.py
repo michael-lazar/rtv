@@ -367,7 +367,7 @@ class Page(object):
         window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
         window.erase()
         # curses.bkgd expects bytes in py2 and unicode in py3
-        window.bkgd(str(' '), self.term.attr('title_bar'))
+        window.bkgd(str(' '), self.term.attr('PageTitle'))
 
         sub_name = self.content.name
         sub_name = sub_name.replace('/r/front', 'Front Page')
@@ -420,7 +420,7 @@ class Page(object):
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
         window.erase()
-        window.bkgd(str(' '), self.term.attr('order_bar'))
+        window.bkgd(str(' '), self.term.attr('PageOrder'))
 
         banner = docs.BANNER_SEARCH if self.content.query else docs.BANNER
         items = banner.strip().split(' ')
@@ -432,7 +432,7 @@ class Page(object):
         if self.content.order is not None:
             order = self.content.order.split('-')[0]
             col = text.find(order) - 3
-            attr = self.term.theme.get('order_bar', modifier='highlight')
+            attr = self.term.attr('PageOrderHighlight')
             window.chgat(0, col, 3, attr)
 
         self._row += 1
@@ -499,17 +499,17 @@ class Page(object):
             # pushed out of bounds
             self.nav.cursor_index = len(self._subwindows) - 1
 
+        # TODO: Don't highlight the submission box
+
         # Now that the windows are setup, we can take a second pass through
         # to draw the content
         for index, (win, data, inverted) in enumerate(self._subwindows):
             if index == self.nav.cursor_index:
-                win.bkgd(str(' '), self.term.attr('@highlight'))
-                # This lets the theme know to invert the cursor color and
-                # apply any other special highlighting effects to the window
-                with self.term.theme.set_modifier('highlight'):
+                win.bkgd(str(' '), self.term.attr('Selected'))
+                with self.term.theme.turn_on_selected():
                     self._draw_item(win, data, inverted)
             else:
-                win.bkgd(str(' '), self.term.attr('@normal'))
+                win.bkgd(str(' '), self.term.attr('Normal'))
                 self._draw_item(win, data, inverted)
 
         self._row += win_n_rows
@@ -519,7 +519,7 @@ class Page(object):
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
         window.erase()
-        window.bkgd(str(' '), self.term.attr('help_bar'))
+        window.bkgd(str(' '), self.term.attr('Help'))
 
         text = self.FOOTER.strip()
         self.term.add_line(window, text, 0, 0)
