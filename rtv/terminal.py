@@ -398,7 +398,7 @@ class Terminal(object):
                 _logger.warning(stderr)
                 self.show_notification(
                     'Program exited with status={0}\n{1}'.format(
-                        code, stderr.strip()), style='error')
+                        code, stderr.strip()), style='Error')
 
         else:
             # Non-blocking, open a background process
@@ -827,13 +827,15 @@ class Terminal(object):
         """
         Shortcut for fetching the color + attribute code for an element.
         """
+        # The theme must be initialized before calling this
+        assert self.theme is not None
 
         return self.theme.get(element)
 
     @staticmethod
-    def test_theme(theme):
+    def check_theme(theme):
         """
-        Check if the given theme is supported by the terminal
+        Check if the given theme is compatible with the terminal
         """
         terminal_colors = curses.COLORS if curses.has_colors() else 0
 

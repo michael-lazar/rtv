@@ -99,7 +99,7 @@ class Page(object):
     def previous_theme(self):
 
         theme = self.term.theme_list.previous(self.term.theme)
-        while not self.term.test_theme(theme):
+        while not self.term.check_theme(theme):
             theme = self.term.theme_list.previous(theme)
 
         self.term.set_theme(theme)
@@ -111,7 +111,7 @@ class Page(object):
     def next_theme(self):
 
         theme = self.term.theme_list.next(self.term.theme)
-        while not self.term.test_theme(theme):
+        while not self.term.check_theme(theme):
             theme = self.term.theme_list.next(theme)
 
         self.term.set_theme(theme)
