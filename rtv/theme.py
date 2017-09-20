@@ -50,114 +50,70 @@ class Theme(object):
     for i in range(256):
         COLOR_CODES['ansi_{0}'.format(i)] = i
 
-    # TODO: Do another pass through these names
+    # TODO: Apply selected on top of items, not underneath them
 
     # For compatibility with as many terminals as possible, the default theme
     # can only use the 8 basic colors with the default color as the background
     DEFAULT_THEME = {
-        'Normal':                (None,                 None, None),
-        'Selected':              (None,                 None, None),
-        'SelectedCursor':        (None,                 None, curses.A_REVERSE),
-
-        'PageTitle':             (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
-        'PageOrder':             (curses.COLOR_YELLOW,  None, curses.A_BOLD),
-        'PageOrderHighlight':    (curses.COLOR_YELLOW,  None, curses.A_BOLD | curses.A_REVERSE),
-        'Help':                  (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
-        'Prompt':                (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
-        'NoticeInfo':            (None,                 None, curses.A_BOLD),
-        'NoticeLoading':         (None,                 None, curses.A_BOLD),
-        'NoticeError':           (None,                 None, curses.A_BOLD),
-        'NoticeSuccess':         (None,                 None, curses.A_BOLD),
-
-        'CursorBlock':           (None,                 None, None),
-        'CursorBar1':            (curses.COLOR_MAGENTA, None, None),
-        'CursorBar2':            (curses.COLOR_CYAN,    None, None),
-        'CursorBar3':            (curses.COLOR_GREEN,   None, None),
-        'CursorBar4':            (curses.COLOR_YELLOW,  None, None),
-
-        'CommentAuthor':         (curses.COLOR_BLUE,    None, curses.A_BOLD),
-        'CommentAuthorSelf':     (curses.COLOR_GREEN,   None, curses.A_BOLD),
-        'CommentCount':          (None,                 None, None),
-        'CommentText':           (None,                 None, None),
-        'Created':               (None,                 None, None),
-        'Downvote':              (curses.COLOR_RED,     None, curses.A_BOLD),
-        'Gold':                  (curses.COLOR_YELLOW,  None, curses.A_BOLD),
-        'HiddenCommentExpand':   (None,                 None, curses.A_BOLD),
-        'HiddenCommentText':     (None,                 None, None),
-        'MultiredditName':       (curses.COLOR_YELLOW,  None, curses.A_BOLD),
-        'MultiredditText':       (None,                 None, None),
-        'NeutralVote':           (None,                 None, curses.A_BOLD),
-        'NSFW':                  (curses.COLOR_RED,     None, curses.A_BOLD),
-        'Saved':                 (curses.COLOR_GREEN,   None, None),
-        'Score':                 (None,                 None, None),
-        'Separator':             (None,                 None, curses.A_BOLD),
-        'Stickied':              (curses.COLOR_GREEN,   None, None),
-        'SubscriptionName':      (curses.COLOR_YELLOW,  None, curses.A_BOLD),
-        'SubscriptionText':      (None,                 None, None),
-        'SubmissionAuthor':      (curses.COLOR_GREEN,   None, None),
-        'SubmissionFlair':       (curses.COLOR_RED,     None, None),
-        'SubmissionSubreddit':   (curses.COLOR_YELLOW,  None, None),
-        'SubmissionText':        (None,                 None, None),
-        'SubmissionTitle':       (None,                 None, curses.A_BOLD),
-        'Upvote':                (curses.COLOR_GREEN,   None, curses.A_BOLD),
-        'Link':                  (curses.COLOR_BLUE,    None, curses.A_UNDERLINE),
-        'LinkSeen':              (curses.COLOR_MAGENTA, None, curses.A_UNDERLINE),
-        'UserFlair':             (curses.COLOR_YELLOW,  None, curses.A_BOLD)
+        'modifiers': {
+            'Normal':                (None,                 None, None),
+            'Selected':              (None,                 None, None),
+            'SelectedCursor':        (None,                 None, curses.A_REVERSE),
+        },
+        'page': {
+            'TitleBar':              (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
+            'OrderBar':              (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+            'OrderBarHighlight':     (curses.COLOR_YELLOW,  None, curses.A_BOLD | curses.A_REVERSE),
+            'HelpBar':               (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
+            'Prompt':                (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
+            'NoticeInfo':            (None,                 None, curses.A_BOLD),
+            'NoticeLoading':         (None,                 None, curses.A_BOLD),
+            'NoticeError':           (None,                 None, curses.A_BOLD),
+            'NoticeSuccess':         (None,                 None, curses.A_BOLD),
+        },
+        # Fields that might be highlighted by the "SelectedCursor" element
+        'cursor': {
+            'CursorBlock':           (None,                 None, None),
+            'CursorBar1':            (curses.COLOR_MAGENTA, None, None),
+            'CursorBar2':            (curses.COLOR_CYAN,    None, None),
+            'CursorBar3':            (curses.COLOR_GREEN,   None, None),
+            'CursorBar4':            (curses.COLOR_YELLOW,  None, None),
+        },
+        # Fields that might be highlighted by the "Selected" element
+        'normal': {
+            'CommentAuthor':         (curses.COLOR_BLUE,    None, curses.A_BOLD),
+            'CommentAuthorSelf':     (curses.COLOR_GREEN,   None, curses.A_BOLD),
+            'CommentCount':          (None,                 None, None),
+            'CommentText':           (None,                 None, None),
+            'Created':               (None,                 None, None),
+            'Downvote':              (curses.COLOR_RED,     None, curses.A_BOLD),
+            'Gold':                  (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+            'HiddenCommentExpand':   (None,                 None, curses.A_BOLD),
+            'HiddenCommentText':     (None,                 None, None),
+            'MultiredditName':       (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+            'MultiredditText':       (None,                 None, None),
+            'NeutralVote':           (None,                 None, curses.A_BOLD),
+            'NSFW':                  (curses.COLOR_RED,     None, curses.A_BOLD),
+            'Saved':                 (curses.COLOR_GREEN,   None, None),
+            'Score':                 (None,                 None, None),
+            'Separator':             (None,                 None, curses.A_BOLD),
+            'Stickied':              (curses.COLOR_GREEN,   None, None),
+            'SubscriptionName':      (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+            'SubscriptionText':      (None,                 None, None),
+            'SubmissionAuthor':      (curses.COLOR_GREEN,   None, None),
+            'SubmissionFlair':       (curses.COLOR_RED,     None, None),
+            'SubmissionSubreddit':   (curses.COLOR_YELLOW,  None, None),
+            'SubmissionText':        (None,                 None, None),
+            'SubmissionTitle':       (None,                 None, curses.A_BOLD),
+            'Upvote':                (curses.COLOR_GREEN,   None, curses.A_BOLD),
+            'Link':                  (curses.COLOR_BLUE,    None, curses.A_UNDERLINE),
+            'LinkSeen':              (curses.COLOR_MAGENTA, None, curses.A_UNDERLINE),
+            'UserFlair':             (curses.COLOR_YELLOW,  None, curses.A_BOLD)
+        }
     }
 
-    # List of elements that might be highlighted by the "Selected" row
-    SELECTED_ELEMENTS = [
-        'CommentAuthor',
-        'CommentAuthorSelf',
-        'CommentCount',
-        'CommentText',
-        'Created',
-        'Downvote',
-        'Gold',
-        'HiddenCommentExpand',
-        'HiddenCommentText',
-        'MultiredditName',
-        'MultiredditText',
-        'NeutralVote',
-        'NSFW',
-        'Saved',
-        'Score',
-        'Separator',
-        'Stickied',
-        'SubscriptionName',
-        'SubscriptionText',
-        'SubmissionAuthor',
-        'SubmissionFlair',
-        'SubmissionSubreddit',
-        'SubmissionText',
-        'SubmissionTitle',
-        'Upvote',
-        'Link',
-        'LinkSeen',
-        'UserFlair'
-    ]
-
-    # List of elements that might be highlighted by the "SelectedCursor" row
-    SELECTED_CURSOR_ELEMENTS = [
-        'CursorBlock',
-        'CursorBar1',
-        'CursorBar2',
-        'CursorBar3',
-        'CursorBar4'
-    ]
-
-    # List of page elements that cannot be selected
-    PAGE_ELEMENTS = [
-        'PageOrder',
-        'PageOrderHighlight',
-        'PageTitle',
-        'Help',
-        'Prompt',
-        'NoticeInfo',
-        'NoticeLoading',
-        'NoticeError',
-        'NoticeSuccess',
-    ]
+    DEFAULT_ELEMENTS = {k: v for group in DEFAULT_THEME.values()
+                        for k, v in group.items()}
 
     # The SubmissionPage uses this to determine which color bar to use
     CURSOR_BARS = ['CursorBar1', 'CursorBar2', 'CursorBar3', 'CursorBar4']
@@ -194,11 +150,11 @@ class Theme(object):
         self.required_colors = 0
 
         if elements is None:
-            elements = self.DEFAULT_THEME.copy()
+            elements = self.DEFAULT_ELEMENTS.copy()
 
         # Set any elements that weren't defined by the config to fallback to
         # the default color and attributes
-        for key in self.DEFAULT_THEME.keys():
+        for key in self.DEFAULT_ELEMENTS.keys():
             if key not in elements:
                 elements[key] = (None, None, None)
 
@@ -210,17 +166,17 @@ class Theme(object):
         #   1. The default state - inherits from "Normal"
         #   2. The selected state - inherits from "Selected" and is
         #      prefixed by the "@" sign.
-        for name in self.SELECTED_ELEMENTS:
+        for name in self.DEFAULT_THEME['normal']:
             dest = '@{0}'.format(name)
             self._set_fallback(elements, name, 'Selected', dest)
             self._set_fallback(elements, name, 'Normal')
 
-        for name in self.SELECTED_CURSOR_ELEMENTS:
+        for name in self.DEFAULT_THEME['cursor']:
             dest = '@{0}'.format(name)
             self._set_fallback(elements, name, 'SelectedCursor', dest)
             self._set_fallback(elements, name, 'Normal')
 
-        for name in self.PAGE_ELEMENTS:
+        for name in self.DEFAULT_THEME['page']:
             self._set_fallback(elements, name, 'Normal')
 
         self.elements = elements
@@ -233,14 +189,15 @@ class Theme(object):
                 colors.add(bg)
                 color_pairs.add((fg, bg))
 
-            # Don't count the default (-1, -1) as a color pair because it doesn't
-            # need to be initialized by curses.init_pair().
+            # Don't count the default (-1, -1) as a color pair because it
+            # doesn't need to be initialized by curses.init_pair().
             color_pairs.discard((-1, -1))
             self.required_color_pairs = len(color_pairs)
 
-            # Determine how many colors the terminal needs to support in order to
-            # be able to use the theme. This uses the common breakpoints that 99%
-            # of terminals follow and doesn't take into account 88 color themes.
+            # Determine how many colors the terminal needs to support in order
+            # to be able to use the theme. This uses the common breakpoints
+            # that 99% of terminals follow and doesn't take into account
+            # 88 color themes.
             self.required_colors = None
             for marker in [0, 8, 16, 256]:
                 if max(colors) < marker:
@@ -353,7 +310,7 @@ class Theme(object):
     @classmethod
     def print_themes(cls, path=THEMES):
         """
-        Prints a human-readable summary of all of the installed themes to stdout.
+        Prints a human-readable summary of the installed themes to stdout.
         
         This is intended to be used as a command-line utility, outside of the
         main curses display loop.
@@ -436,7 +393,7 @@ class Theme(object):
 
         elements = {}
         for element, line in config.items('theme'):
-            if element not in cls.DEFAULT_THEME:
+            if element not in cls.DEFAULT_ELEMENTS:
                 # Could happen if using a new config with an older version
                 # of the software
                 _logger.info('Skipping element %s', element)
@@ -550,52 +507,47 @@ class ThemeList(object):
     to cycle through all of the available themes.
     """
 
-    def __init__(self, current_theme=None):
-
-        self.index = 0
-        self.current_theme = current_theme
+    def __init__(self):
         self.themes = None
         self.errors = None
 
-    def load(self):
+    def reload(self):
         """
         This acts as a lazy load, it won't read all of the theme files from
         disk until the first time somebody tries to access the theme list.
         """
         self.themes, self.errors = Theme.list_themes()
 
-        if self.current_theme is not None:
-            # Try to find the starting index
-            key = (self.current_theme.source, self.current_theme.name)
-            for i, theme in enumerate(self.themes):
-                if (theme.source, theme.name) == key:
-                    self.index = i
-                    break
-            else:
-                # If the current_theme was set from a custom source it might
-                # not be a part of the list returned by list_themes().
-                self.themes.insert(0, self.current_theme)
-
-        self.current_theme = self.themes[self.index]
-
-    def next(self):
+    def _step(self, theme, direction):
         """
-        Retrieve the next theme in the list
+        Traverse the list in the given direction and return the next theme
         """
         if not self.themes:
-            self.load()
+            self.reload()
 
-        self.index = (self.index + 1) % len(self.themes)
-        self.current_theme = self.themes[self.index]
-        return self.current_theme
+        # Try to find the starting index
+        key = (theme.source, theme.name)
+        for i, theme in enumerate(self.themes):
+            if (theme.source, theme.name) == key:
+                index = i
+                break
+        else:
+            # If the theme was set from a custom source it might
+            # not be a part of the list returned by list_themes().
+            self.themes.insert(0, theme)
+            index = 0
 
-    def previous(self):
-        """
-        Retrieve the previous theme in the list
-        """
-        if not self.themes:
-            self.load()
+        index = (index + direction) % len(self.themes)
+        new_theme = self.themes[index]
+        return new_theme
 
-        self.index = (self.index - 1) % len(self.themes)
-        self.current_theme = self.themes[self.index]
-        return self.current_theme
+    def next(self, theme):
+        return self._step(theme, 1)
+
+    def previous(self, theme):
+        return self._step(theme, -1)
+
+
+theme_list = ThemeList()
+get_next_theme = theme_list.next
+get_previous_theme = theme_list.previous

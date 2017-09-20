@@ -400,13 +400,13 @@ class SubmissionPage(Page):
             self.term.add_space(win)
             self.term.add_line(win, '{flair}'.format(**data), attr=attr)
 
-        attr = self.term.attr('Created')
-        self.term.add_space(win)
-        self.term.add_line(win, '{created}'.format(**data), attr=attr)
-
         attr = self.term.attr('SubmissionSubreddit')
         self.term.add_space(win)
         self.term.add_line(win, '/r/{subreddit}'.format(**data), attr=attr)
+
+        attr = self.term.attr('Created')
+        self.term.add_space(win)
+        self.term.add_line(win, '{created_long}'.format(**data), attr=attr)
 
         row = len(data['split_title']) + 2
         if data['url_full'] in self.config.history:

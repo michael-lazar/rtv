@@ -7,6 +7,7 @@ import os
 import sys
 import time
 import curses
+import locale
 import threading
 from types import MethodType
 from collections import Counter
@@ -14,7 +15,7 @@ from collections import Counter
 from vcr import VCR
 from six.moves.urllib.parse import urlparse, parse_qs
 
-from rtv.theme import ThemeList
+from rtv.theme import Theme, get_next_theme, get_previous_theme, theme_list
 from rtv.config import Config
 from rtv.packages import praw
 from rtv.oauth import OAuthHelper
@@ -151,7 +152,7 @@ def draw_screen(stdscr, reddit, config, theme, oauth):
     term.getch = MethodType(notification_getch, term)
     thread = threading.Thread(target=term.show_notification,
                               args=('Success',),
-                              kwargs={'style': 'success'})
+                              kwargs={'style': 'Success'})
     thread.start()
     threads.append((thread, term))
 
@@ -172,7 +173,7 @@ def draw_screen(stdscr, reddit, config, theme, oauth):
     term.getch = MethodType(notification_getch, term)
     thread = threading.Thread(target=term.show_notification,
                               args=('Error',),
-                              kwargs={'style': 'error'})
+                              kwargs={'style': 'Error'})
     thread.start()
     threads.append((thread, term))
 
@@ -193,7 +194,7 @@ def draw_screen(stdscr, reddit, config, theme, oauth):
     term.getch = MethodType(notification_getch, term)
     thread = threading.Thread(target=term.show_notification,
                               args=('Info',),
-                              kwargs={'style': 'info'})
+                              kwargs={'style': 'Info'})
     thread.start()
     threads.append((thread, term))
 
@@ -212,14 +213,12 @@ def draw_screen(stdscr, reddit, config, theme, oauth):
 
 def main():
 
-    if len(sys.argv) > 1:
-        current_theme = sys.argv[1]
-    else:
-        current_theme = None
+    locale.setlocale(locale.LC_ALL, '')
 
-    theme_list = ThemeList(current_theme)
-    theme_list.load()
-    theme = theme_list.current_theme
+    if len(sys.argv) > 1:
+        theme = Theme.from_name(sys.argv[1])
+    else:
+        theme = Theme()
 
     vcr = initialize_vcr()
     with vcr.use_cassette('demo_theme.yaml') as cassette, \
@@ -234,6 +233,7 @@ def main():
         reddit = praw.Reddit(user_agent='RTV Theme Demo',
                              decode_html_entities=False,
                              disable_update_check=True)
+        reddit.config.api_request_delay = 0
 
         config.history.add('https://api.reddit.com/comments/6llvsl/_/djutc3s')
         config.history.add('http://i.imgur.com/Z9iGKWv.gifv')
@@ -245,7 +245,6 @@ def main():
         oauth.authorize()
 
         while True:
-
             term = Terminal(stdscr, config)
             term.set_theme(theme)
             threads = draw_screen(stdscr, reddit, config, theme, oauth)
@@ -264,12 +263,17 @@ def main():
             else:
                 cassette.play_counts = Counter()
 
+            theme_list.reload()
+
             if ch == curses.KEY_RIGHT:
-                theme = theme_list.next()
+                theme = get_next_theme(theme)
             elif ch == curses.KEY_LEFT:
-                theme = theme_list.previous()
+                theme = get_previous_theme(theme)
             elif ch == Terminal.ESCAPE:
                 break
-
+            else:
+                # Force the theme to reload
+                theme = get_next_theme(theme)
+                theme = get_previous_theme(theme)
 
 sys.exit(main())
