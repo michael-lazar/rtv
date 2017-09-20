@@ -21,7 +21,7 @@ import six
 from kitchen.text.display import textual_width_chop
 
 from . import exceptions, mime_parsers
-from .theme import Theme
+from .theme import Theme, ThemeList
 from .objects import LoadScreen
 
 try:
@@ -57,6 +57,7 @@ class Terminal(object):
         self.config = config
         self.loader = LoadScreen(self)
         self.theme = None  # Initialized by term.set_theme()
+        self.theme_list = ThemeList()
 
         self._display = None
         self._mailcap_dict = mailcap.getcaps()
@@ -829,6 +830,20 @@ class Terminal(object):
 
         return self.theme.get(element)
 
+    @staticmethod
+    def test_theme(theme):
+        """
+        Check if the given theme is supported by the terminal
+        """
+        terminal_colors = curses.COLORS if curses.has_colors() else 0
+
+        if theme.required_colors > terminal_colors:
+            return False
+        elif theme.required_color_pairs > curses.COLOR_PAIRS:
+            return False
+        else:
+            return True
+
     def set_theme(self, theme=None):
         """
         Check that the terminal supports the provided theme, and applies
@@ -839,10 +854,7 @@ class Terminal(object):
         should be compatible with any terminal that supports basic colors.
         """
 
-        if curses.has_colors():
-            terminal_colors = curses.COLORS
-        else:
-            terminal_colors = 0
+        terminal_colors = curses.COLORS if curses.has_colors() else 0
 
         if theme is None:
             theme = Theme(use_color=bool(terminal_colors))

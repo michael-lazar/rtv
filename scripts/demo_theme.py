@@ -15,7 +15,7 @@ from collections import Counter
 from vcr import VCR
 from six.moves.urllib.parse import urlparse, parse_qs
 
-from rtv.theme import Theme, get_next_theme, get_previous_theme, theme_list
+from rtv.theme import Theme, ThemeList
 from rtv.config import Config
 from rtv.packages import praw
 from rtv.oauth import OAuthHelper
@@ -244,6 +244,8 @@ def main():
         oauth = OAuthHelper(reddit, term, config)
         oauth.authorize()
 
+        theme_list = ThemeList()
+
         while True:
             term = Terminal(stdscr, config)
             term.set_theme(theme)
@@ -266,14 +268,15 @@ def main():
             theme_list.reload()
 
             if ch == curses.KEY_RIGHT:
-                theme = get_next_theme(theme)
+                theme = theme_list.next(theme)
             elif ch == curses.KEY_LEFT:
-                theme = get_previous_theme(theme)
+                theme = theme_list.previous(theme)
             elif ch == Terminal.ESCAPE:
                 break
             else:
                 # Force the theme to reload
-                theme = get_next_theme(theme)
-                theme = get_previous_theme(theme)
+                theme = theme_list.next(theme)
+                theme = theme_list.previous(theme)
 
 sys.exit(main())
+

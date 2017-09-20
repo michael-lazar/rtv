@@ -50,8 +50,6 @@ class Theme(object):
     for i in range(256):
         COLOR_CODES['ansi_{0}'.format(i)] = i
 
-    # TODO: Apply selected on top of items, not underneath them
-
     # For compatibility with as many terminals as possible, the default theme
     # can only use the 8 basic colors with the default color as the background
     DEFAULT_THEME = {
@@ -159,25 +157,27 @@ class Theme(object):
                 elements[key] = (None, None, None)
 
         self._set_fallback(elements, 'Normal', (-1, -1, curses.A_NORMAL))
-        self._set_fallback(elements, 'Selected', 'Normal')
-        self._set_fallback(elements, 'SelectedCursor', 'Normal')
 
-        # Most elements have two possible attribute states:
-        #   1. The default state - inherits from "Normal"
-        #   2. The selected state - inherits from "Selected" and is
-        #      prefixed by the "@" sign.
+        # Fill in the ``None`` values for all of the elements with normal text
         for name in self.DEFAULT_THEME['normal']:
-            dest = '@{0}'.format(name)
-            self._set_fallback(elements, name, 'Selected', dest)
             self._set_fallback(elements, name, 'Normal')
-
         for name in self.DEFAULT_THEME['cursor']:
-            dest = '@{0}'.format(name)
-            self._set_fallback(elements, name, 'SelectedCursor', dest)
             self._set_fallback(elements, name, 'Normal')
-
         for name in self.DEFAULT_THEME['page']:
             self._set_fallback(elements, name, 'Normal')
+
+        # Create the "Selected" versions of elements, which are prefixed with
+        # the @ symbol. For example, "@CommentText" represents how comment
+        # text is formatted when it is highlighted by the cursor.
+        for name in self.DEFAULT_THEME['normal']:
+            dest = '@{0}'.format(name)
+            self._set_fallback(elements, 'Selected', name, dest)
+        for name in self.DEFAULT_THEME['cursor']:
+            dest = '@{0}'.format(name)
+            self._set_fallback(elements, 'SelectedCursor', name, dest)
+
+        self._set_fallback(elements, 'Selected', 'Normal')
+        self._set_fallback(elements, 'SelectedCursor', 'Normal')
 
         self.elements = elements
 
@@ -546,8 +546,3 @@ class ThemeList(object):
 
     def previous(self, theme):
         return self._step(theme, -1)
-
-
-theme_list = ThemeList()
-get_next_theme = theme_list.next
-get_previous_theme = theme_list.previous

@@ -11,7 +11,6 @@ import six
 from kitchen.text.display import textual_width
 
 from . import docs
-from .theme import get_next_theme, get_previous_theme
 from .objects import Controller, Command
 from .clipboard import copy
 from .exceptions import TemporaryFileError, ProgramError
@@ -98,7 +97,11 @@ class Page(object):
 
     @PageController.register(Command('PREVIOUS_THEME'))
     def previous_theme(self):
-        theme = get_previous_theme(self.term.theme)
+
+        theme = self.term.theme_list.previous(self.term.theme)
+        while not self.term.test_theme(theme):
+            theme = self.term.theme_list.previous(theme)
+
         self.term.set_theme(theme)
         self.draw()
         message = self.term.theme.display_string
@@ -106,7 +109,11 @@ class Page(object):
 
     @PageController.register(Command('NEXT_THEME'))
     def next_theme(self):
-        theme = get_next_theme(self.term.theme)
+
+        theme = self.term.theme_list.next(self.term.theme)
+        while not self.term.test_theme(theme):
+            theme = self.term.theme_list.next(theme)
+
         self.term.set_theme(theme)
         self.draw()
         message = self.term.theme.display_string
