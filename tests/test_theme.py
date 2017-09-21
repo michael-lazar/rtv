@@ -265,7 +265,7 @@ def test_theme_presets_define_all_elements():
 
         def __init__(self, name=None, source=None, elements=None, use_color=True):
             if source == 'preset':
-                assert elements.keys() == Theme.DEFAULT_ELEMENTS.keys()
+                assert set(elements.keys()) == set(Theme.DEFAULT_ELEMENTS.keys())
             super(MockTheme, self).__init__(name, source, elements, use_color)
 
     themes, errors = MockTheme.list_themes()
