@@ -143,7 +143,7 @@ The default programs that RTV interacts with can be configured through environme
   <tr>
   <td><strong>$RTV_BROWSER</strong></td>
   <td>A program used to open links to external websites, e.g. <strong>firefox</strong>, <strong>google-chrome</strong>, <strong>w3m</strong>, <strong>lynx</strong>
-  <br/> <em>If not specified, will fallback to $BROWSER, or your system's default browser</em></td>
+  <br/> <em>If not specified, will fallback to $BROWSER, or your system's default browser.</em></td>
   </tr>
   <tr>
   <td><strong>$RTV_URLVIEWER</strong></td>
