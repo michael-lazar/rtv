@@ -71,7 +71,7 @@ yum install rtv
 yaourt -S rtv
 ```
 
-See the up-to-date list of supported packages on [Repology](https://repology.org/metapackage/rtv/information)
+See the up-to-date list of supported packages on [Repology](https://repology.org/metapackage/rtv/information).
 
 ## Usage
 
