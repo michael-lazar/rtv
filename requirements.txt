@@ -5,5 +5,5 @@ mailcap-fix==1.0.1
 requests==2.18.4
 six==1.11.0
 pytest==3.2.2
-vcrpy==1.10.5
+vcrpy==1.11.1
 pylint==1.6.5
