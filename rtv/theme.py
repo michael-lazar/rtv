@@ -535,8 +535,8 @@ class ThemeList(object):
 
         # Try to find the starting index
         key = (theme.source, theme.name)
-        for i, theme in enumerate(self.themes):
-            if (theme.source, theme.name) == key:
+        for i, val in enumerate(self.themes):
+            if (val.source, val.name) == key:
                 index = i
                 break
         else:
