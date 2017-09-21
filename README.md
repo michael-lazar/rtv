@@ -108,7 +108,7 @@ See [CONTROLS](https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst) fo
 
 Configuration files are stored in the ``{HOME}/.config/rtv/`` directory.
 
-Check out [rtv.cfg](https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg) for the full list of configurable options. You can clone this file into your home directory by running
+Check out [rtv.cfg](https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg) for the full list of configurable options. You can clone this file into your home directory by running:
 
 ```bash
 $ rtv --copy-config
