@@ -170,41 +170,48 @@ On Linux systems you will need to install either [xsel](http://www.vergenet.net/
 
 ## FAQ
 
-**Why am I getting an error during installation/when launching rtv?**
+<details>
+ <summary>Why am I getting an error during installation/when launching rtv?</summary>
+ 
+  > If your distro ships with an older version of python 2.7 or python-requests,
+  > you may experience SSL errors or other package incompatibilities. The
+  > easiest way to fix this is to install rtv using python 3. If you
+  > don't already have pip3, see http://stackoverflow.com/a/6587528 for setup
+  > instructions. Then do
+  >
+  > ```bash
+  > $ sudo pip uninstall rtv
+  > $ sudo pip3 install -U rtv
+  > ```
 
-> If your distro ships with an older version of python 2.7 or python-requests,
-> you may experience SSL errors or other package incompatibilities. The
-> easiest way to fix this is to install rtv using python 3. If you
-> don't already have pip3, see http://stackoverflow.com/a/6587528 for setup
-> instructions. Then do
->
-> ```bash
-> $ sudo pip uninstall rtv
-> $ sudo pip3 install -U rtv
-> ```
+</details>
+<details>
+  <summary>Why do I see garbled text like <em>M-b~@M-"</em> or <em>^@</em>?</summary>
+ 
+  > This type of text usually shows up when python is unable to render
+  > unicode properly.
+  >    
+  > 1. Try starting RTV in ascii-only mode with ``rtv --ascii``
+  > 2. Make sure that the terminal/font that you're using supports unicode
+  > 3. Try [setting the LOCALE to utf-8](https://perlgeek.de/en/article/set-up-a-clean-utf8-environment)
+  > 4. Your python may have been built against the wrong curses library,
+  >    see [here](stackoverflow.com/questions/19373027) and
+  >    [here](https://bugs.python.org/issue4787) for more information
 
-**Why do I see garbled text like** ``M-b~@M-"`` **or** ``^@`` **?**
+</details>
+<details>
+ <summary>How do I run the code directly from the repository?</summary>
+ 
+  > This project is structured to be run as a python *module*. This means that
+  > you need to launch it using python's ``-m`` flag. See the example below, which
+  > assumes that you have cloned the repository into the directory **~/rtv_project**.
+  >
+  > ```bash
+  > $ cd ~/rtv_project
+  > $ python3 -m rtv
+  > ```
 
-> This type of text usually shows up when python is unable to render
-> unicode properly.
->    
-> 1. Try starting RTV in ascii-only mode with ``rtv --ascii``
-> 2. Make sure that the terminal/font that you're using supports unicode
-> 3. Try [setting the LOCALE to utf-8](https://perlgeek.de/en/article/set-up-a-clean-utf8-environment)
-> 4. Your python may have been built against the wrong curses library,
->    see [here](stackoverflow.com/questions/19373027) and
->    [here](https://bugs.python.org/issue4787) for more information
-  
-**How do I run the code directly from the repository?**
-
-> This project is structured to be run as a python *module*. This means that
-> you need to launch it using python's ``-m`` flag. See the example below, which
-> assumes that you have cloned the repository into the directory **~/rtv_project**.
->
-> ```bash
-> $ cd ~/rtv_project
-> $ python3 -m rtv
-> ```
+</details>
 
 ## Contributing
 All feedback and suggestions are welcome, just post an issue!
