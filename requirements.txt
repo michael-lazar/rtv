@@ -2,7 +2,7 @@ beautifulsoup4==4.6.0
 decorator==4.1.2
 kitchen==1.2.5
 mailcap-fix==1.0.1
-requests==2.11.0
+requests==2.18.4
 six==1.10.0
 pytest==3.0.7
 vcrpy==1.10.5
