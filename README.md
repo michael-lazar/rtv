@@ -75,7 +75,7 @@ yaourt -S rtv
 
 ## Usage
 
-To run the program, type 
+To run the program, type:
 
 ```bash
 $ rtv --help
@@ -83,7 +83,7 @@ $ rtv --help
 
 ### Controls
 
-Move the cursor using either the arrow keys or *Vim* style movement
+Move the cursor using either the arrow keys or *Vim* style movement:
 
 - Press <kbd>▲</kbd> and <kbd>▼</kbd> to scroll through submissions
 - Press <kbd>▶</kbd> to view the selected submission and <kbd>◀</kbd> to return
@@ -91,7 +91,7 @@ Move the cursor using either the arrow keys or *Vim* style movement
 - Press <kbd>u</kbd> to login
 - Press <kbd>?</kbd> to open the help screen
 
-Press <kbd>/</kbd> to open the navigation prompt, where you can type things like
+Press <kbd>/</kbd> to open the navigation prompt, where you can type things like:
 
 - ``/front``
 - ``/r/commandprompt+linuxmasterrace``
@@ -100,15 +100,15 @@ Press <kbd>/</kbd> to open the navigation prompt, where you can type things like
 - ``/u/multi-mod/m/art``
 - ``/domain/github.com``
 
-See [CONTROLS](https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst) for the full list of commands
+See [CONTROLS](https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst) for the full list of commands.
 
 ## Settings
 
 ### Configuration File
 
-Configuration files are stored in the ``{HOME}/.config/rtv/`` directory
+Configuration files are stored in the ``{HOME}/.config/rtv/`` directory.
 
-See [rtv.cfg](https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg) for the full list of configurable options. You can clone this file into your home directory by running
+Check out [rtv.cfg](https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg) for the full list of configurable options. You can clone this file into your home directory by running
 
 ```bash
 $ rtv --copy-config
@@ -116,7 +116,7 @@ $ rtv --copy-config
 
 ### Viewing Media Links
 
-You can use [mailcap](https://en.wikipedia.org/wiki/Media_type#Mailcap) to configure how RTV will open different types of links
+You can use [mailcap](https://en.wikipedia.org/wiki/Media_type#Mailcap) to configure how RTV will open different types of links.
 
 <p align="center">
 <img alt="title image" src="resources/mailcap.gif"/>
@@ -128,14 +128,11 @@ A mailcap file allows you to associate different MIME media types, like ``image/
 $ rtv --copy-mailcap
 ```
 
-This template contains examples for common MIME types that work with popular reddit websites like *imgur*, *youtube*, and *gfycat*. Open the mailcap template and follow the [instructions](https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap) listed inside. 
-
-Once you've setup your mailcap file, enable it by launching rtv with the ``rtv --enable-media`` flag (or set it in your **rtv.cfg**)
+This template contains examples for common MIME types that work with popular reddit websites like *imgur*, *youtube*, and *gfycat*. Open the mailcap template and follow the [instructions](https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap) listed inside. Once you've setup your mailcap file, enable it by launching rtv with the ``rtv --enable-media`` flag (or set it in your **rtv.cfg**)
 
 ### Environment Variables
 
-The default programs that RTV interacts with can be configured through environment variables
-
+The default programs that RTV interacts with can be configured through environment variables:
 
 <table>
   <tr>
