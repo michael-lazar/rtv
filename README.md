@@ -149,21 +149,26 @@ Once you've setup your mailcap file, enable it by launching rtv with the ``rtv -
 
 The default programs that RTV interacts with can be configured through environment variables
 
-<dl>
-  <dt>$RTV_EDITOR</dt>
-  <dd>A program used to compose text submissions and comments, e.g. <strong>vim</strong>, <strong>emacs</strong>, <strong>gedit</strong>
-  <br/> <em>If not specified, will fallback to $VISUAL and $EDITOR in that order.</em></dd>
-  
-  <dt>$RTV_BROWSER</dt>
-  <dd>A program used to open links to external websites, e.g. <strong>firefox</strong>, <strong>google-chrome</strong>, <strong>w3m</strong>, <strong>lynx</strong>, <strong>elinks</strong>
-  <br/> <em>If not specified, will fallback to $BROWSER, or try to intelligently choose a browser supported by your system.</em></dd>
-  
-  <dt>$RTV_URLVIEWER</dt>
-  <dd>A tool used to extract hyperlinks from blocks of text, e.g.<a href=https://github.com/sigpipe/urlview>urlview</a>, <a href=https://github.com/firecat53/urlscan>urlscan</a>
-  <br/> <em>If not specified, will fallback to urlview if it is installed.</em></dd>
-</dl>
 
-### Copying to the Clipboard
+<table>
+  <tr>
+  <td><strong>$RTV_EDITOR</strong></td>
+  <td>A program used to compose text submissions and comments, e.g. <strong>vim</strong>, <strong>emacs</strong>, <strong>gedit</strong>
+  <br/> <em>If not specified, will fallback to $VISUAL and $EDITOR in that order.</em></td>
+  </tr>
+  <tr>
+  <td><strong>$RTV_BROWSER</strong></td>
+  <td>A program used to open links to external websites, e.g. <strong>firefox</strong>, <strong>google-chrome</strong>, <strong>w3m</strong>, <strong>lynx</strong>
+  <br/> <em>If not specified, will fallback to $BROWSER, or your system's default browser</em></td>
+  </tr>
+  <tr>
+  <td><strong>$RTV_URLVIEWER</strong></td>
+  <td>A tool used to extract hyperlinks from blocks of text, e.g. <a href=https://github.com/sigpipe/urlview>urlview</a>, <a href=https://github.com/firecat53/urlscan>urlscan</a>
+  <br/> <em>If not specified, will fallback to urlview if it is installed.</em></td>
+  </tr>
+</table>
+
+### Clipboard
 RTV supports copying submission links to the OS clipboard.
 On macOS this is supported out of the box.
 On Linux systems you will need to install either [xsel](http://www.vergenet.net/~conrad/software/xsel/) or [xclip](https://sourceforge.net/projects/xclip/).
