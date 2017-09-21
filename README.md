@@ -220,8 +220,4 @@ Before writing any code, please read the [Contributor Guidelines](https://github
 
 ## License
 This project is distributed under the [MIT](https://github.com/michael-lazar/rtv/blob/master/LICENSE) license.
-
-<p align="center">
-<img alt="title image" src="resources/retro_term.png"/>
-</p>
    
