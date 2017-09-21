@@ -54,7 +54,7 @@ class Theme(object):
     # can only use the 8 basic colors with the default color as the background
     DEFAULT_THEME = {
         'modifiers': {
-            'Normal':                (None,                 None, None),
+            'Normal':                (-1,                   -1,   None),
             'Selected':              (None,                 None, None),
             'SelectedCursor':        (None,                 None, curses.A_REVERSE),
         },
@@ -91,14 +91,14 @@ class Theme(object):
             'MultiredditName':       (curses.COLOR_YELLOW,  None, curses.A_BOLD),
             'MultiredditText':       (None,                 None, None),
             'NeutralVote':           (None,                 None, curses.A_BOLD),
-            'NSFW':                  (curses.COLOR_RED,     None, curses.A_BOLD),
+            'NSFW':                  (curses.COLOR_RED,     None, curses.A_BOLD | curses.A_REVERSE),
             'Saved':                 (curses.COLOR_GREEN,   None, None),
             'Score':                 (None,                 None, None),
             'Separator':             (None,                 None, curses.A_BOLD),
             'Stickied':              (curses.COLOR_GREEN,   None, None),
             'SubscriptionName':      (curses.COLOR_YELLOW,  None, curses.A_BOLD),
             'SubscriptionText':      (None,                 None, None),
-            'SubmissionAuthor':      (curses.COLOR_GREEN,   None, None),
+            'SubmissionAuthor':      (curses.COLOR_GREEN,   None, curses.A_BOLD),
             'SubmissionFlair':       (curses.COLOR_RED,     None, None),
             'SubmissionSubreddit':   (curses.COLOR_YELLOW,  None, None),
             'SubmissionText':        (None,                 None, None),
@@ -129,6 +129,9 @@ class Theme(object):
             elements (dict): The theme's element map, should be in the same
                 format as Theme.DEFAULT_THEME.
         """
+
+        if source not in (None, 'built-in', 'preset', 'installed', 'custom'):
+            raise ValueError('Invalid source')
 
         if name is None and source is None:
             name = 'default' if use_color else 'monochrome'
@@ -332,6 +335,12 @@ class Theme(object):
             line = '    {0:<20}[requires {1} colors]'
             print(line.format(theme.name, theme.required_colors))
 
+        print('\nBuilt-in:')
+        built_in = [t for t in themes if t.source == 'built-in']
+        for theme in built_in:
+            line = '    {0:<20}[requires {1} colors]'
+            print(line.format(theme.name, theme.required_colors))
+
         if errors:
             print('\nWARNING: Some files encountered errors:')
             for (source, name), error in errors.items():
@@ -496,7 +505,6 @@ class Theme(object):
             b = round(int(color[5:7], 16) / 51.0)
             n = 36 * r + 6 * g + b + 16
             return 'ansi_{0}'.format(n)
-
         except ValueError:
             return None
 

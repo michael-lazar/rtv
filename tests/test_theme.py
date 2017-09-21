@@ -17,53 +17,98 @@ except ImportError:
 
 
 INVALID_ELEMENTS = OrderedDict([
-    ('too_few_items', 'upvote = blue\n'),
-    ('too_many_items', 'upvote = blue blue bold underline\n'),
-    ('invalid_fg', 'upvote = invalid blue\n'),
-    ('invalid_bg', 'upvote = blue invalid\n'),
-    ('invalid_attr', 'upvote = blue blue bold+invalid\n'),
-    ('invalid_hex', 'upvote = #fffff blue\n'),
-    ('invalid_hex2', 'upvote = #gggggg blue\n'),
-    ('out_of_range', 'upvote = ansi_256 blue\n')
+    ('too_few_items', 'Upvote = blue\n'),
+    ('too_many_items', 'Upvote = blue blue bold underline\n'),
+    ('invalid_fg', 'Upvote = invalid blue\n'),
+    ('invalid_bg', 'Upvote = blue invalid\n'),
+    ('invalid_attr', 'Upvote = blue blue bold+invalid\n'),
+    ('invalid_hex', 'Upvote = #fffff blue\n'),
+    ('invalid_hex2', 'Upvote = #gggggg blue\n'),
+    ('out_of_range', 'Upvote = ansi_256 blue\n')
 ])
 
 
-def test_theme_construct():
+def test_theme_invalid_source():
+
+    with pytest.raises(ValueError):
+        Theme(name='default', source=None)
+    with pytest.raises(ValueError):
+        Theme(name=None, source='installed')
+
+
+def test_theme_default_construct():
 
     theme = Theme()
     assert theme.name == 'default'
-    assert theme.elements == Theme.DEFAULT_THEME
+    assert theme.source == 'built-in'
     assert theme.required_colors == 8
     assert theme.required_color_pairs == 6
+    for fg, bg, attr in theme.elements.values():
+        assert isinstance(fg, int)
+        assert isinstance(bg, int)
+        assert isinstance(attr, int)
 
-    theme = Theme(name='monochrome', monochrome=True)
+
+def test_theme_monochrome_construct():
+
+    theme = Theme(use_color=False)
     assert theme.name == 'monochrome'
-    assert theme.monochrome is True
+    assert theme.source == 'built-in'
     assert theme.required_colors == 0
     assert theme.required_color_pairs == 0
 
-    elements = {'bar_level_1': (100, 101, curses.A_UNDERLINE)}
+
+def test_theme_256_construct():
+
+    elements = {'CursorBar1': (None, 101, curses.A_UNDERLINE)}
     theme = Theme(elements=elements)
-    assert theme.elements['bar_level_1'] == elements['bar_level_1']
+    assert theme.elements['CursorBar1'] == (-1, 101, curses.A_UNDERLINE)
     assert theme.required_colors == 256
+
+
+def test_theme_element_selected_attributes():
+
+    elements = {
+        'Normal':   (1,    2,    curses.A_REVERSE),
+        'Selected': (2,    3,    None),
+        'TitleBar': (4,    None, curses.A_BOLD),
+        'Link':     (5,    None, None)}
+
+    theme = Theme(elements=elements)
+    assert theme.elements['Normal'] == (1, 2, curses.A_REVERSE)
+
+    # All of the normal elements fallback to the attributes of "Normal"
+    assert theme.elements['Selected'] == (2, 3, curses.A_REVERSE)
+    assert theme.elements['TitleBar'] == (4, 2, curses.A_BOLD)
+    assert theme.elements['Link'] == (5, 2, curses.A_REVERSE)
+
+    # The @Selected mode will overwrite any other attributes with
+    # the ones defined in "Selected". Because "Selected" defines
+    # a foreground and a background color, they will override the
+    # ones that "Link" had defined.
+    assert theme.elements['@Link'] == (2, 3, curses.A_REVERSE)
+    assert '@Normal' not in theme.elements
+    assert '@Selected' not in theme.elements
+    assert '@TitleBar' not in theme.elements
 
 
 def test_theme_default_cfg_matches_builtin():
 
-    filename = os.path.join(DEFAULT_THEMES, 'default.cfg')
-    default_theme = Theme.from_file(filename)
+    filename = os.path.join(DEFAULT_THEMES, 'default.cfg.example')
+    default_theme = Theme.from_file(filename, 'built-in')
 
     # The default theme file should match the hardcoded values
     assert default_theme.elements == Theme().elements
 
+    # Make sure that the elements passed into the constructor exactly match
+    # up with the hardcoded elements
     class MockTheme(Theme):
-        def __init__(self, name=None, elements=None, monochrome=False):
-            assert name == 'default'
-            assert elements == Theme.DEFAULT_THEME
-            assert monochrome is False
+        def __init__(self, name=None, source=None, elements=None):
+            assert name == 'default.cfg'
+            assert source == 'preset'
+            assert elements == Theme.DEFAULT_ELEMENTS
 
-    # Make sure that the config file elements exactly match the defaults
-    MockTheme.from_file(filename)
+    MockTheme.from_file(filename, 'preset')
 
 
 args, ids = INVALID_ELEMENTS.values(), list(INVALID_ELEMENTS)
@@ -75,31 +120,31 @@ def test_theme_from_file_invalid(line):
         fp.write(line)
         fp.flush()
         with pytest.raises(ConfigError):
-            Theme.from_file(fp.name)
+            Theme.from_file(fp.name, 'installed')
 
 
 def test_theme_from_file():
 
     with NamedTemporaryFile(mode='w+') as fp:
 
-        # Needs a [theme] section
         with pytest.raises(ConfigError):
-            Theme.from_file(fp.name)
+            Theme.from_file(fp.name, 'installed')
 
         fp.write('[theme]\n')
-        fp.write('unknown = neutral neutral\n')
-        fp.write('upvote = default red\n')
-        fp.write('downvote = ansi_0 ansi_255 bold\n')
-        fp.write('neutral_vote = #000000 #ffffff bold+reverse\n')
+        fp.write('Unknown = - -\n')
+        fp.write('Upvote = - red\n')
+        fp.write('Downvote = ansi_255 default bold\n')
+        fp.write('NeutralVote = #000000 #ffffff bold+reverse\n')
         fp.flush()
 
-        theme = Theme.from_file(fp.name)
-        assert 'unknown' not in theme.elements
-        assert theme.elements['upvote'] == (
+        theme = Theme.from_file(fp.name, 'installed')
+        assert theme.source == 'installed'
+        assert 'Unknown' not in theme.elements
+        assert theme.elements['Upvote'] == (
             -1, curses.COLOR_RED, curses.A_NORMAL)
-        assert theme.elements['downvote'] == (
-            0, 255, curses.A_BOLD)
-        assert theme.elements['neutral_vote'] == (
+        assert theme.elements['Downvote'] == (
+            255, -1, curses.A_BOLD)
+        assert theme.elements['NeutralVote'] == (
             16, 231, curses.A_BOLD | curses.A_REVERSE)
 
 
@@ -110,18 +155,20 @@ def test_theme_from_name():
         theme_name = filename[:-4]
 
         fp.write('[theme]\n')
-        fp.write('upvote = default default\n')
+        fp.write('Upvote = default default\n')
         fp.flush()
 
         # Full file path
         theme = Theme.from_name(fp.name, path=path)
         assert theme.name == theme_name
-        assert theme.elements['upvote'] == (-1, -1, curses.A_NORMAL)
+        assert theme.source == 'custom'
+        assert theme.elements['Upvote'] == (-1, -1, curses.A_NORMAL)
 
         # Relative to the directory
         theme = Theme.from_name(theme_name, path=path)
         assert theme.name == theme_name
-        assert theme.elements['upvote'] == (-1, -1, curses.A_NORMAL)
+        assert theme.source == 'installed'
+        assert theme.elements['Upvote'] == (-1, -1, curses.A_NORMAL)
 
         # Invalid theme name
         with pytest.raises(ConfigError, path=path):
@@ -131,28 +178,27 @@ def test_theme_from_name():
 def test_theme_initialize_attributes(stdscr):
 
     theme = Theme()
-
-    # Can't access elements before initializing curses
     with pytest.raises(RuntimeError):
-        theme.get('upvote')
+        theme.get('Upvote')
 
     theme.bind_curses()
-
-    # Our pre-computed required color pairs should have been correct
     assert len(theme._color_pair_map) == theme.required_color_pairs
-
-    for element in Theme.DEFAULT_THEME:
+    for element in Theme.DEFAULT_ELEMENTS:
         assert isinstance(theme.get(element), int)
+
+    theme = Theme(use_color=False)
+    theme.bind_curses()
 
 
 def test_theme_initialize_attributes_monochrome(stdscr):
 
-    theme = Theme(monochrome=True)
+    theme = Theme(use_color=False)
     theme.bind_curses()
+    theme.get('Upvote')
 
     # Avoid making these curses calls if colors aren't initialized
-    curses.init_pair.assert_not_called()
-    curses.color_pair.assert_not_called()
+    assert not curses.init_pair.called
+    assert not curses.color_pair.called
 
 
 def test_theme_list_themes():
@@ -165,12 +211,14 @@ def test_theme_list_themes():
         fp.flush()
 
         Theme.print_themes(path)
-        themes = Theme.list_themes(path)
-        assert themes['custom'][theme_name].name == theme_name
-        assert themes['default']['monochrome'].name == 'monochrome'
+        themes, errors = Theme.list_themes(path)
+        assert not errors
 
-        # This also checks that all of the default themes are valid
-        assert not themes['invalid']
+        theme_strings = [t.display_string for t in themes]
+        assert theme_name + ' (installed)' in theme_strings
+        assert 'default (built-in)' in theme_strings
+        assert 'monochrome (built-in)' in theme_strings
+        assert 'molokai (preset)' in theme_strings
 
 
 def test_theme_list_themes_invalid():
@@ -180,10 +228,24 @@ def test_theme_list_themes_invalid():
         theme_name = filename[:-4]
 
         fp.write('[theme]\n')
-        fp.write('upvote = invalid value\n')
+        fp.write('Upvote = invalid value\n')
         fp.flush()
 
         Theme.print_themes(path)
-        themes = Theme.list_themes(path)
-        assert theme_name in themes['invalid']
-        assert not themes['custom']
+        themes, errors = Theme.list_themes(path)
+        assert ('installed', theme_name) in errors
+
+
+def test_theme_presets_define_all_elements():
+
+    # The themes in the preset themes/ folder should have all of the valid
+    # elements defined in their configuration.
+    class MockTheme(Theme):
+
+        def __init__(self, name=None, source=None, elements=None, use_color=True):
+            if source == 'preset':
+                assert elements.keys() == Theme.DEFAULT_ELEMENTS.keys()
+            super(MockTheme, self).__init__(name, source, elements, use_color)
+
+    themes, errors = MockTheme.list_themes()
+    assert sum(theme.source == 'preset' for theme in themes) >= 4
