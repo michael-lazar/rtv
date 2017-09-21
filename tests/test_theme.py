@@ -1,10 +1,11 @@
 import os
+import shutil
 import curses
 from collections import OrderedDict
-from tempfile import NamedTemporaryFile
+from contextlib import contextmanager
+from tempfile import mkdtemp, NamedTemporaryFile
 
 import pytest
-
 
 from rtv.theme import Theme
 from rtv.config import DEFAULT_THEMES
@@ -26,6 +27,21 @@ INVALID_ELEMENTS = OrderedDict([
     ('invalid_hex2', 'Upvote = #gggggg blue\n'),
     ('out_of_range', 'Upvote = ansi_256 blue\n')
 ])
+
+
+@contextmanager
+def _ephemeral_directory():
+    # All of the temporary files for the theme tests must
+    # be initialized in separate directories, so the tests
+    # can run in parallel without accidentally loading theme
+    # files from each other
+    dirname = None
+    try:
+        dirname = mkdtemp()
+        yield dirname
+    finally:
+        if dirname:
+            shutil.rmtree(dirname, ignore_errors=True)
 
 
 def test_theme_invalid_source():
@@ -115,64 +131,67 @@ args, ids = INVALID_ELEMENTS.values(), list(INVALID_ELEMENTS)
 @pytest.mark.parametrize('line', args, ids=ids)
 def test_theme_from_file_invalid(line):
 
-    with NamedTemporaryFile(mode='w+') as fp:
-        fp.write('[theme]\n')
-        fp.write(line)
-        fp.flush()
-        with pytest.raises(ConfigError):
-            Theme.from_file(fp.name, 'installed')
+    with _ephemeral_directory() as dirname:
+        with NamedTemporaryFile(mode='w+', dir=dirname) as fp:
+            fp.write('[theme]\n')
+            fp.write(line)
+            fp.flush()
+            with pytest.raises(ConfigError):
+                Theme.from_file(fp.name, 'installed')
 
 
 def test_theme_from_file():
 
-    with NamedTemporaryFile(mode='w+') as fp:
+    with _ephemeral_directory() as dirname:
+        with NamedTemporaryFile(mode='w+', dir=dirname) as fp:
 
-        with pytest.raises(ConfigError):
-            Theme.from_file(fp.name, 'installed')
+            with pytest.raises(ConfigError):
+                Theme.from_file(fp.name, 'installed')
 
-        fp.write('[theme]\n')
-        fp.write('Unknown = - -\n')
-        fp.write('Upvote = - red\n')
-        fp.write('Downvote = ansi_255 default bold\n')
-        fp.write('NeutralVote = #000000 #ffffff bold+reverse\n')
-        fp.flush()
+            fp.write('[theme]\n')
+            fp.write('Unknown = - -\n')
+            fp.write('Upvote = - red\n')
+            fp.write('Downvote = ansi_255 default bold\n')
+            fp.write('NeutralVote = #000000 #ffffff bold+reverse\n')
+            fp.flush()
 
-        theme = Theme.from_file(fp.name, 'installed')
-        assert theme.source == 'installed'
-        assert 'Unknown' not in theme.elements
-        assert theme.elements['Upvote'] == (
-            -1, curses.COLOR_RED, curses.A_NORMAL)
-        assert theme.elements['Downvote'] == (
-            255, -1, curses.A_BOLD)
-        assert theme.elements['NeutralVote'] == (
-            16, 231, curses.A_BOLD | curses.A_REVERSE)
+            theme = Theme.from_file(fp.name, 'installed')
+            assert theme.source == 'installed'
+            assert 'Unknown' not in theme.elements
+            assert theme.elements['Upvote'] == (
+                -1, curses.COLOR_RED, curses.A_NORMAL)
+            assert theme.elements['Downvote'] == (
+                255, -1, curses.A_BOLD)
+            assert theme.elements['NeutralVote'] == (
+                16, 231, curses.A_BOLD | curses.A_REVERSE)
 
 
 def test_theme_from_name():
 
-    with NamedTemporaryFile(mode='w+', suffix='.cfg') as fp:
-        path, filename = os.path.split(fp.name)
-        theme_name = filename[:-4]
+    with _ephemeral_directory() as dirname:
+        with NamedTemporaryFile(mode='w+', suffix='.cfg', dir=dirname) as fp:
+            path, filename = os.path.split(fp.name)
+            theme_name = filename[:-4]
 
-        fp.write('[theme]\n')
-        fp.write('Upvote = default default\n')
-        fp.flush()
+            fp.write('[theme]\n')
+            fp.write('Upvote = default default\n')
+            fp.flush()
 
-        # Full file path
-        theme = Theme.from_name(fp.name, path=path)
-        assert theme.name == theme_name
-        assert theme.source == 'custom'
-        assert theme.elements['Upvote'] == (-1, -1, curses.A_NORMAL)
+            # Full file path
+            theme = Theme.from_name(fp.name, path=path)
+            assert theme.name == theme_name
+            assert theme.source == 'custom'
+            assert theme.elements['Upvote'] == (-1, -1, curses.A_NORMAL)
 
-        # Relative to the directory
-        theme = Theme.from_name(theme_name, path=path)
-        assert theme.name == theme_name
-        assert theme.source == 'installed'
-        assert theme.elements['Upvote'] == (-1, -1, curses.A_NORMAL)
+            # Relative to the directory
+            theme = Theme.from_name(theme_name, path=path)
+            assert theme.name == theme_name
+            assert theme.source == 'installed'
+            assert theme.elements['Upvote'] == (-1, -1, curses.A_NORMAL)
 
-        # Invalid theme name
-        with pytest.raises(ConfigError, path=path):
-            theme.from_name('invalid_theme_name')
+            # Invalid theme name
+            with pytest.raises(ConfigError, path=path):
+                theme.from_name('invalid_theme_name')
 
 
 def test_theme_initialize_attributes(stdscr):
@@ -203,37 +222,39 @@ def test_theme_initialize_attributes_monochrome(stdscr):
 
 def test_theme_list_themes():
 
-    with NamedTemporaryFile(mode='w+', suffix='.cfg') as fp:
-        path, filename = os.path.split(fp.name)
-        theme_name = filename[:-4]
+    with _ephemeral_directory() as dirname:
+        with NamedTemporaryFile(mode='w+', suffix='.cfg', dir=dirname) as fp:
+            path, filename = os.path.split(fp.name)
+            theme_name = filename[:-4]
 
-        fp.write('[theme]\n')
-        fp.flush()
+            fp.write('[theme]\n')
+            fp.flush()
 
-        Theme.print_themes(path)
-        themes, errors = Theme.list_themes(path)
-        assert not errors
+            Theme.print_themes(path)
+            themes, errors = Theme.list_themes(path)
+            assert not errors
 
-        theme_strings = [t.display_string for t in themes]
-        assert theme_name + ' (installed)' in theme_strings
-        assert 'default (built-in)' in theme_strings
-        assert 'monochrome (built-in)' in theme_strings
-        assert 'molokai (preset)' in theme_strings
+            theme_strings = [t.display_string for t in themes]
+            assert theme_name + ' (installed)' in theme_strings
+            assert 'default (built-in)' in theme_strings
+            assert 'monochrome (built-in)' in theme_strings
+            assert 'molokai (preset)' in theme_strings
 
 
 def test_theme_list_themes_invalid():
 
-    with NamedTemporaryFile(mode='w+', suffix='.cfg') as fp:
-        path, filename = os.path.split(fp.name)
-        theme_name = filename[:-4]
+    with _ephemeral_directory() as dirname:
+        with NamedTemporaryFile(mode='w+', suffix='.cfg', dir=dirname) as fp:
+            path, filename = os.path.split(fp.name)
+            theme_name = filename[:-4]
 
-        fp.write('[theme]\n')
-        fp.write('Upvote = invalid value\n')
-        fp.flush()
+            fp.write('[theme]\n')
+            fp.write('Upvote = invalid value\n')
+            fp.flush()
 
-        Theme.print_themes(path)
-        themes, errors = Theme.list_themes(path)
-        assert ('installed', theme_name) in errors
+            Theme.print_themes(path)
+            themes, errors = Theme.list_themes(path)
+            assert ('installed', theme_name) in errors
 
 
 def test_theme_presets_define_all_elements():
@@ -248,4 +269,4 @@ def test_theme_presets_define_all_elements():
             super(MockTheme, self).__init__(name, source, elements, use_color)
 
     themes, errors = MockTheme.list_themes()
-    assert sum(theme.source == 'preset' for theme in themes) >= 4
+    assert sum([theme.source == 'preset' for theme in themes]) >= 4

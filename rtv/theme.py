@@ -503,8 +503,8 @@ class Theme(object):
             r = round(int(color[1:3], 16) / 51.0)  # Normalize between 0-5
             g = round(int(color[3:5], 16) / 51.0)
             b = round(int(color[5:7], 16) / 51.0)
-            n = 36 * r + 6 * g + b + 16
-            return 'ansi_{0}'.format(n)
+            n = int(36 * r + 6 * g + b + 16)
+            return 'ansi_{0:d}'.format(n)
         except ValueError:
             return None
 

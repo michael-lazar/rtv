@@ -141,7 +141,7 @@ def test_page_cycle_theme(reddit, terminal, config, oauth):
 
         # Previous - will loop to one of the 256 color themes
         page.controller.trigger(curses.KEY_F2)
-        assert page.term.theme.source == 'installed'
+        assert page.term.theme.source in ('preset', 'installed')
 
         # Reset
         page.term.set_theme()
