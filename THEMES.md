@@ -33,41 +33,40 @@ Built-in:
 
 Custom themes can be installed by copying them into the **{HOME}/.config/rtv/themes/** folder.
 
-RTV allows you to cycle through themes using the <kbd>F2</kbd> & <kbd>F3</kbd> keys.
-This can be used to quickly preview the different options.
+The <kbd>F2</kbd> & <kbd>F3</kbd> keys can be used to cycle through themes from within RTV.
 
 ## Preview
 
 <table>
   <tr>
     <td align="center">
-      <strong>Default</strong>
-      <p>This theme is designed to work with the terminal's preset 16 color palette</p>
+      <p><strong>Default</strong><br>
+      Uses the terminal's preset 16 color palette</p>
       <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_default.png"></img>
     </td>
     <td align="center">
-      <strong>Monochrome</strong>
-      <p>This theme is a fallback for terminals that don't support colors</p>
-      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_solarized_light.png"></img>
+      <p><strong>Monochrome</strong><br>
+      Fallback for terminals that don't support colors</p>
+      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_monochrome.png"></img>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <strong>Solarized Dark</strong>
+      <p><strong>Solarized Dark</strong></p>
       <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_solarized_dark.png"></img>
     </td>
     <td align="center">
-      <strong>Solarized Light</strong>
+      <p><strong>Solarized Light</strong></p>
       <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_solarized_light.png"></img>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <strong>Papercolor</strong>
+      <p><strong>Papercolor</strong></p>
       <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_papercolor.png"></img>
     </td>
     <td align="center">
-      <strong>Molokai</strong>
+      <p><strong>Molokai</strong></p>
       <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_molokai.png"></img>
     </td>
   </tr>
