@@ -318,7 +318,7 @@ class Theme(object):
         This is intended to be used as a command-line utility, outside of the
         main curses display loop.
         """
-        themes, errors = cls.list_themes(path=path)
+        themes, errors = cls.list_themes(path=path + '/')
 
         print('\nInstalled ({0}):'.format(path))
         installed = [t for t in themes if t.source == 'installed']
