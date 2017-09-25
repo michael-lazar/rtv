@@ -172,7 +172,7 @@ Use the ``--theme`` flag to select a theme:
 $ rtv --theme=papercolor
 ```
 
-You can view the list of built-in and installed themes by using the ``--list-themes`` flag.
+You can view the list of built-in and installed themes with the ``--list-themes`` flag:
 
 ```bash
 $ rtv --list-themes
@@ -191,9 +191,7 @@ Built-in:
     monochrome          [requires 0 colors]
 ```
 
-Custom themes are installed into the **{HOME}/.config/rtv/themes/** folder.
-
-The <kbd>F2</kbd> & <kbd>F3</kbd> keys can be used to cycle through themes from within RTV.
+The <kbd>F2</kbd> & <kbd>F3</kbd> keys can also be used to cycle through available themes.
 
 ### Preview
 
