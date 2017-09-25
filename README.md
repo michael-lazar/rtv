@@ -162,8 +162,6 @@ On Linux systems you will need to install either [xsel](http://www.vergenet.net/
 
 ## Themes
 
-Themes can be used to customize the look and feel of RTV.
-
 ### Usage
 
 Use the ``--theme`` flag to select a theme:
