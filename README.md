@@ -34,7 +34,8 @@ RTV is built in **python** using the **curses** library.
 * [Demo](#demo)  
 * [Installation](#installation)  
 * [Usage](#usage)  
-* [Settings](#settings)  
+* [Settings](#settings)
+* [Themes](#themes)
 * [FAQ](#faq)  
 * [Contributing](#contributing)  
 * [License](#license)  
@@ -156,6 +157,31 @@ The default programs that RTV interacts with can be configured through environme
 RTV supports copying submission links to the OS clipboard.
 On macOS this is supported out of the box.
 On Linux systems you will need to install either [xsel](http://www.vergenet.net/~conrad/software/xsel/) or [xclip](https://sourceforge.net/projects/xclip/).
+
+## Themes
+
+<table>
+  <tr>
+    <td align="center">
+      <strong>Solarized Dark</strong>
+      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_solarized_dark.png"></img>
+    </td>
+    <td align="center">
+      <strong>Solarized Light</strong>
+      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_solarized_light.png"></img>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <strong>Papercolor</strong>
+      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_papercolor.png"></img>
+    </td>
+    <td align="center">
+      <strong>Molokai</strong>
+      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_molokai.png"></img>
+    </td>
+  </tr>
+</table>
 
 ## FAQ
 
