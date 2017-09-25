@@ -189,7 +189,7 @@ Built-in:
     monochrome          [requires 0 colors]
 ```
 
-The <kbd>F2</kbd> & <kbd>F3</kbd> keys can also be used to cycle through available themes.
+Inside of RTV, the <kbd>F2</kbd> & <kbd>F3</kbd> keys can be used to preview the available themes.
 
 ### Preview
 
