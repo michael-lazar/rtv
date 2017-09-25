@@ -164,7 +164,7 @@ On Linux systems you will need to install either [xsel](http://www.vergenet.net/
 
 ### Usage
 
-Use the ``--theme`` flag to select a theme:
+Use the ``--theme`` flag to select a theme (or set it in your **rtv.cfg**):
 
 ```bash
 $ rtv --theme=papercolor
