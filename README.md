@@ -48,7 +48,7 @@ RTV is built in **python** using the **curses** library.
 
 ## Installation
 
-### Python package
+### PyPI package
 
 RTV is available on [PyPI](https://pypi.python.org/pypi/rtv/) and can be installed with pip:
 
@@ -62,16 +62,16 @@ See [Repology](https://repology.org/metapackage/rtv/information) for an up-to-da
 
 ```bash
 # macOS
-brew install rtv
+$ brew install rtv
 
 # Debian 9+, Ubuntu 17.04+
-apt install rtv
+$ apt install rtv
 
 # Fedora 24+
-yum install rtv
+$ yum install rtv
 
 # Arch
-yaourt -S rtv
+$ yaourt -S rtv
 ```
 
 ## Usage
@@ -129,7 +129,9 @@ A mailcap file allows you to associate different MIME media types, like ``image/
 $ rtv --copy-mailcap
 ```
 
-This template contains examples for common MIME types that work with popular reddit websites like *imgur*, *youtube*, and *gfycat*. Open the mailcap template and follow the [instructions](https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap) listed inside. Once you've setup your mailcap file, enable it by launching rtv with the ``rtv --enable-media`` flag (or set it in your **rtv.cfg**)
+This template contains examples for common MIME types that work with popular reddit websites like *imgur*, *youtube*, and *gfycat*. Open the mailcap template and follow the [instructions](https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap) listed inside.
+
+Once you've setup your mailcap file, enable it by launching rtv with the ``rtv --enable-media`` flag (or set it in your **rtv.cfg**)
 
 ### Environment Variables
 
