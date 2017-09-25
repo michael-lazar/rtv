@@ -162,24 +162,71 @@ On Linux systems you will need to install either [xsel](http://www.vergenet.net/
 
 ## Themes
 
+Themes can be used to customize the look and feel of RTV.
+
+### Usage
+
+Use the ``--theme`` flag to select a theme:
+
+```bash
+$ rtv --theme=papercolor
+```
+
+You can view the list of built-in and installed themes by using the ``--list-themes`` flag.
+
+```bash
+$ rtv --list-themes
+
+Installed (~/.config/rtv/themes/):
+    (empty)
+
+Presets:
+    molokai             [requires 256 colors]
+    papercolor          [requires 256 colors]
+    solarized-dark      [requires 256 colors]
+    solarized-light     [requires 256 colors]
+
+Built-in:
+    default             [requires 8 colors]
+    monochrome          [requires 0 colors]
+```
+
+Custom themes are installed into the **{HOME}/.config/rtv/themes/** folder.
+
+The <kbd>F2</kbd> & <kbd>F3</kbd> keys can be used to cycle through themes from within RTV.
+
+### Preview
+
 <table>
   <tr>
     <td align="center">
-      <strong>Solarized Dark</strong>
+      <p><strong>Default</strong><br>
+      Uses the terminal's preset 16 color palette</p>
+      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_default.png"></img>
+    </td>
+    <td align="center">
+      <p><strong>Monochrome</strong><br>
+      Fallback for terminals that don't support colors</p>
+      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_monochrome.png"></img>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <p><strong>Solarized Dark</strong></p>
       <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_solarized_dark.png"></img>
     </td>
     <td align="center">
-      <strong>Solarized Light</strong>
+      <p><strong>Solarized Light</strong></p>
       <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_solarized_light.png"></img>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <strong>Papercolor</strong>
+      <p><strong>Papercolor</strong></p>
       <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_papercolor.png"></img>
     </td>
     <td align="center">
-      <strong>Molokai</strong>
+      <p><strong>Molokai</strong></p>
       <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_molokai.png"></img>
     </td>
   </tr>
