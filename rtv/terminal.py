@@ -270,9 +270,13 @@ class Terminal(object):
             # Trying to draw outside of the screen bounds
             return
 
-        text = self.clean(text, n_cols)
-        params = [] if attr is None else [attr]
-        window.addstr(row, col, text, *params)
+        try:
+            text = self.clean(text, n_cols)
+            params = [] if attr is None else [attr]
+            window.addstr(row, col, text, *params)
+        except curses.error as e:
+            _logger.warning('add_line raised an exception')
+            _logger.exception(str(e))
 
     @staticmethod
     def add_space(window):
