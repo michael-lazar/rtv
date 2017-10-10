@@ -1,0 +1,58 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.14.2]
+    method: GET
+    uri: https://imgtc.com/w/Sa2whPE
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      CF-Cache-Status: [MISS]
+      CF-RAY: [3abd0d47eb6371eb-ORD]
+      Cache-Control: ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0']
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Type: [text/html; charset=UTF-8]
+      Date: ['Tue, 10 Oct 2017 22:35:17 GMT']
+      Expires: ['Thu, 19 Nov 1981 08:52:00 GMT']
+      Pragma: [no-cache]
+      Server: [cloudflare-nginx]
+      Set-Cookie: ['__cfduid=d1e1904f409a5aec8d7224656fa010b0b1507674917; expires=Wed,
+          10-Oct-18 22:35:17 GMT; path=/; domain=.imgtc.com; HttpOnly', PHPSESSID=bo6o12ehdtop9cpo38po9muvh1;
+          path=/]
+      Vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+version: 1

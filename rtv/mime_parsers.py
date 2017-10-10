@@ -410,6 +410,13 @@ class GiphyMIMEParser(OpenGraphMIMEParser):
     pattern = re.compile(r'https?://(www\.)?giphy\.com/gifs/[^.]+$')
 
 
+class ImgtcMIMEParser(OpenGraphMIMEParser):
+    """
+    imgtc.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?imgtc\.com/w/[^.]+$')
+
+
 # Parsers should be listed in the order they will be checked
 parsers = [
     ClippitUserMIMEParser,
@@ -426,5 +433,6 @@ parsers = [
     TwitchMIMEParser,
     GifsMIMEParser,
     GiphyMIMEParser,
+    ImgtcMIMEParser,
     GifvMIMEParser,
     BaseMIMEParser]

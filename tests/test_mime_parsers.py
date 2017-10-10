@@ -102,6 +102,10 @@ URLS = OrderedDict([
         'https://giphy.com/gifs/cameron-dallas-OpesLQSjwdGj6',
         'https://media.giphy.com/media/OpesLQSjwdGj6/giphy.mp4',
         'video/mp4')),
+    ('imgtc', (
+        'https://imgtc.com/w/Sa2whPE',
+        'https://imgtc.b-cdn.net/uploads/ZHI3OopOhKJ.mp4',
+        'video/mp4')),
 ])
 
 
