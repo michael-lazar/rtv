@@ -94,6 +94,14 @@ URLS = OrderedDict([
         'https://www.clippituser.tv/c/edqqld',
         'https://clips.clippit.tv/edqqld/720.mp4',
         'video/mp4')),
+    ('gifs_com', (
+        'https://gifs.com/gif/cat-jumps-into-lake-after-guy-sneezes-0VqvRL',
+        'https://j.gifs.com/0VqvRL.gif',
+        'image/gif')),
+    ('giphy', (
+        'https://giphy.com/gifs/cameron-dallas-OpesLQSjwdGj6',
+        'https://media.giphy.com/media/OpesLQSjwdGj6/giphy.mp4',
+        'video/mp4')),
 ])
 
 
