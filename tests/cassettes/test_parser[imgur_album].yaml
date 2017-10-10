@@ -6,50 +6,52 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Authorization: ['**********']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.14.2]
     method: GET
-    uri: https://api.imgur.com/3/album/qx9t5
+    uri: https://api.imgur.com/3/album/pRYEi
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA5WS3W7bMAyF34XXRqx0iVP7rgV2sWEvUMyFoMiKrVaWPIlylhV591F14vQHLdBL
-        HopH5Ec+QSNQQPUEuoEK/vwtcQ0ZoEajoLLRmAwaFaTXA2pnZ0mgQt3Tk+WqKNm3gpXXGUg3Kk8u
-        8Tuyu18/4KTwvW6wg2q12ZyVTum2Q6iKDctASOmiRR69OfufpdTUpAxej0IeyH2IW6MlmRtxcJFM
-        YGtcS/Go1T6QZ8GWK8pq+0i5DnEIVZ3Xue7b6BfS9XUu6vw86U6MzmukSXbCBJWBDbv9HAQlp7Hh
-        xuqetFulbftT+cdAtaS0KvDnVokECZa3whjlD7ODDlw0l+i5AqrfJ94XUl8mvmSEDg8DKZNtnT8M
-        KnEQqVVUl19f8n9FPuh/VH5VrtlqxndVZrAVtjkVXa/XxbKgrEuMpl4+YDYlZ2SvN/npct9Asrx3
-        AfmovTCz2onAA9Vd3qFoE8p7cmz4RCJdUzP9BWlB7/fx/iwWLw7jtI/Fw9DC8f5I00QpVaBv0Md0
-        DygwJkiMHf8Doo3t9TsDAAA=
+        H4sIAAAAAAAAA+WVTW+cMBCG/0rkM93FBtvArao2VdRL1W5bVd0IeYEFK3wVG1abKP+94+UrNKqU
+        pMe9MeOZsed9PPgBxUILFDwgGaMA1V9+biSykJY6T8De/ri5uv744Qrb72wG/jhRUSNrLasSBWWb
+        55bJT7QsIBpTmzuYesS1UFR1SQMFtPz2Vdyf0OAJjzLWGYRy4oyuLJFppsFnc2YhEUVVW+qwbXJI
+        j6vsTuRodptTUt/ljseohepGdiI6mYO3+1xGEJiLU9VCNbTPqxTsTiZHhQLicFiT5R2sZFrXKtit
+        d2tZpG2ziqpitxa79dj8QXRVIzV0dBC5SixUqsNxMlQS9e2jT6KuBcTLQqSJCs8HRAE0L8swFXme
+        NKcpS6pQxLN1zkDBr0H2WaVB+EHaF6jNTGP6VBta57LQR2kaFyWYOpk3XUi/FF3Je1MR+x5hZNIM
+        UwdbaC/KeEz1HJc6PiYmpjIC9Yf6h2D94qRXby74Ll1Git7zl1plWFRKh51s4C6M3kyoUEHeHKdF
+        ajS9hYpx2Etin7/7u2RIPQfz/E6sntyKAczKSPpojUOS3ajN+ydj8nJanHqvpIUpnmn5BI+wOOfU
+        FBtZYe4tWPmY+sxxzCxeBqqByhLVttt632nxFlSMsP9BhTF2p8Eins0cNsNy/SUs7MNo+YQTA/Qi
+        aA1glrR+b7afr982WL7tvo4WPFMzLMamnyBxHMbsCRVz+ZIUNZNmExNxEaAGJj2o20fopo2iRME2
+        umkhW2mhW/PA2vbjH8FrHXBNCAAA
     headers:
       Accept-Ranges: [bytes]
+      Access-Control-Allow-Credentials: ['true']
       Access-Control-Allow-Headers: ['Authorization, Content-Type, Accept, X-Mashape-Authorization,
           IMGURPLATFORM, IMGURUIDJAFO, sessionCount, IMGURMWBETA, IMGURMWBETAOPTIN,
-          X-expSNKPK128']
+          X-expSNKPK127']
+      Access-Control-Allow-Origin: ['*']
       Access-Control-Expose-Headers: ['X-RateLimit-ClientLimit, X-RateLimit-ClientRemaining,
           X-RateLimit-UserLimit, X-RateLimit-UserRemaining, X-RateLimit-UserReset']
-      Age: ['0']
+      Age: ['31']
       Cache-Control: ['max-age=60, stale-while-revalidate=600, stale-if-error=86400,
           public']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
-      Content-Length: ['416']
+      Content-Length: ['591']
       Content-Type: [application/json]
-      Date: ['Thu, 14 Sep 2017 04:40:13 GMT']
-      ETag: [W/"d0ac94401e94efb8df60bfd684fbbfaf84b274df"]
-      Fastly-Debug-Digest: [b95c41c703e904c145c615cb1569a4d8cd685a4c48c40c1e2322fe3184806bf9]
+      Date: ['Sat, 07 Oct 2017 01:01:16 GMT']
+      ETag: [W/"8b0927b16241ada44f39c2294331b7b71d81dfb1"]
+      Fastly-Debug-Digest: [75f7908a66ef856621dff296f5ce58532966f39397442cc5b0bec6811e2cf406]
       Server: [cat factory 1.0]
       Vary: [Accept-Encoding]
-      X-Cache: ['MISS, MISS']
-      X-Cache-Hits: ['0, 0']
+      X-Cache: ['HIT, HIT']
+      X-Cache-Hits: ['2, 1']
       X-Frame-Options: [DENY]
-      X-RateLimit-ClientLimit: ['12500']
-      X-RateLimit-ClientRemaining: ['12463']
       X-RateLimit-UserLimit: ['500']
-      X-RateLimit-UserRemaining: ['497']
-      X-RateLimit-UserReset: ['1505367612']
-      X-Served-By: ['cache-iad2141-IAD, cache-mdw17335-MDW']
-      X-Timer: ['S1505364013.964019,VS0,VE55']
-      access-control-allow-methods: ['GET, PUT, POST, DELETE, OPTIONS']
-      access-control-allow-origin: ['*']
+      X-RateLimit-UserRemaining: ['498']
+      X-RateLimit-UserReset: ['1507341645']
+      X-Served-By: ['cache-iad2122-IAD, cache-mdw17331-MDW']
+      X-Timer: ['S1507338076.081694,VS0,VE12']
+      access-control-allow-methods: ['GET, PUT, POST, PATCH, DELETE, OPTIONS']
     status: {code: 200, message: OK}
 version: 1

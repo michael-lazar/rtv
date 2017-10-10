@@ -5,7 +5,7 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.14.2]
     method: GET
     uri: http://imgur.com/yW0kbMi
   response:
@@ -15,14 +15,14 @@ interactions:
       Cache-Control: ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0']
       Connection: [close]
       Content-Length: ['0']
-      Date: ['Thu, 14 Sep 2017 04:40:21 GMT']
+      Date: ['Sat, 07 Oct 2017 01:01:21 GMT']
       Location: ['https://imgur.com/yW0kbMi']
       Retry-After: ['0']
       Server: [cat factory 1.0]
       X-Cache: [HIT]
       X-Cache-Hits: ['0']
       X-Frame-Options: [DENY]
-      X-Served-By: [cache-dfw1821-DFW]
+      X-Served-By: [cache-atl6223-ATL]
     status: {code: 301, message: Moved Permanently}
 - request:
     body: null
@@ -30,7 +30,7 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.14.2]
     method: GET
     uri: https://imgur.com/yW0kbMi
   response:
@@ -44,7 +44,7 @@ interactions:
         gifs, memes, pictures, new pictures, reaction gifs, share photos, share images,
         latest images, funny, cute, visual storytelling, imgur\" />\n        \n    \n\n
         \   \n\n            <meta name=\"description\" content=\"Post with 52 votes
-        and 45 views. My local electronics store has a cat.\" />\n    \n    <meta
+        and 64 views. My local electronics store has a cat.\" />\n    \n    <meta
         name=\"copyright\" content=\"Copyright 2017 Imgur, Inc.\" />\n    <meta http-equiv=\"X-UA-Compatible\"
         content=\"IE=Edge;\" />\n    \n    <link rel=\"icon\" type=\"image/png\" href=\"//s.imgur.com/images/favicon-32x32.png\"
         sizes=\"32x32\">\n    <link rel=\"icon\" type=\"image/png\" href=\"//s.imgur.com/images/favicon-96x96.png\"
@@ -52,8 +52,8 @@ interactions:
         sizes=\"16x16\">\n    <link rel=\"apple-touch-icon-precomposed\" href=\"//s.imgur.com/images/favicon-152.png\">\n
         \   <meta name=\"msapplication-TileColor\" content=\"#2cd63c\">\n    <meta
         name=\"msapplication-TileImage\" content=\"//s.imgur.com/images/favicon-144.png\">\n
-        \           <link rel=\"stylesheet\" type=\"text/css\" href=\"//s.imgur.com/min/global.css?1505342023\"
-        />\n\n    \n        <link rel=\"stylesheet\" type=\"text/css\" href=\"//s.imgur.com/min/gallery.css?1505342023\"
+        \           <link rel=\"stylesheet\" type=\"text/css\" href=\"//s.imgur.com/min/global.css?1507313072\"
+        />\n\n    \n        <link rel=\"stylesheet\" type=\"text/css\" href=\"//s.imgur.com/min/gallery.css?1507313072\"
         />\n\n\n            <link rel=\"alternate\" type=\"application/json+oembed\"
         href=\"https://api.imgur.com/oembed.json?url=http://imgur.com/gallery/yW0kbMi\"
         title=\"My local electronics store has a cat. - Imgur\" />\n        <link
@@ -99,7 +99,7 @@ interactions:
         \"SearchAction\",\n                \"target\": \"https://imgur.com/search?q={search_term_string}\",\n
         \               \"query-input\": \"required name=search_term_string\"\n            }\n
         \       }\n    </script>\n    \n    <!--[if lte IE 8]><script type=\"text/javascript\"
-        src=\"//s.imgur.com/min/iepoly.js?1505342023\"></script>\n<![endif]-->\n    \n</head>\n<body
+        src=\"//s.imgur.com/min/iepoly.js?1507313072\"></script>\n<![endif]-->\n    \n</head>\n<body
         class=\"\">\n    <div id=\"drop-layer\"></div>\n                        \n\n<div
         id=\"cta-container-placeholder\"></div>\n<div id=\"topbar\">\n    <div class=\"header-center\">\n
         \       <a href=\"//imgur.com\" class=\"topbar-icon logo \" data-jafo=\"{@@event@@:@@header@@,@@meta@@:{@@link@@:@@logo@@}}\">\n
@@ -231,7 +231,7 @@ interactions:
         icon-take-me-up\"></div>\n                    </div>\n                </div>\n
         \           </div>\n        </div>\n        </div>\n\n        <div class=\"clear\"></div>\n
         \   </div>\n\n    <div class=\"tag-group-selector-container\"></div>\n\n    <input
-        id=\"sid\" type=\"hidden\" value=\"94c74ef4b698ce573cccd993d4a55cb7\" />\n\n
+        id=\"sid\" type=\"hidden\" value=\"7446bb35af059181971ad2c6d121f496\" />\n\n
         \   <div class=\"nodisplay\">\n\t<div id=\"colorbox-confirm\" class=\"popup\">\n\t\t<h3
         id=\"colorbox-confirm-title\"></h3>\n\t\t\n\t\t<div class=\"textbox\" id=\"colorbox-confirm-message\"></div>\n\n\t\t<div
         class=\"margin-top\">\n\t\t\t<div class=\"left\">\n\t\t\t\t<a href=\"javascript:;\"
@@ -288,11 +288,11 @@ interactions:
         type=\"text/javascript\">\nif(typeof jQuery === 'undefined') {\n    document.write('<script
         type=\"text/javascript\" src=\"//s.imgur.com/include/js/ext/jquery.2.1.1.min.js\"><'
         + '/script>');\n}\n</script>\n<!--<![endif]-->\n\n\n\n                    <script
-        type=\"text/javascript\" src=\"//s.imgur.com/min/react15.js?1505342023\"></script>\n\n
-        \       \n        <script type=\"text/javascript\" src=\"//s.imgur.com/min/global.js?1505342023\"></script>\n\n
+        type=\"text/javascript\" src=\"//s.imgur.com/min/react15.js?1507313072\"></script>\n\n
+        \       \n        <script type=\"text/javascript\" src=\"//s.imgur.com/min/global.js?1507313072\"></script>\n\n
         \       <script type=\"text/javascript\">\n            Imgur.Environment =
-        {\n                galleryScripts:             [\"\\/\\/s.imgur.com\\/min\\/gallery.js?1505342023\"],\n
-        \               galleryCSS:                 [\"\\/\\/s.imgur.com\\/min\\/gallery.css?1505342023\"],\n
+        {\n                galleryScripts:             [\"\\/\\/s.imgur.com\\/min\\/gallery.js?1507313072\"],\n
+        \               galleryCSS:                 [\"\\/\\/s.imgur.com\\/min\\/gallery.css?1507313072\"],\n
         \               isDev:                      false,\n                isSubdomain:
         \               Imgur.Util.isSubdomain('imgur.com'),\n                host:
         \                      'imgur.com',\n                cdnUrl:                     '//i.imgur.com',\n
@@ -300,7 +300,7 @@ interactions:
         \                 '//s.imgur.com',\n                socketUrl:                  '//browserevents.imgur.com',\n
         \               signed:                     false,\n                auth:
         \                      {},\n                recaptcha_key:              '6LdZsh4TAAAAAGnDJx9KXxURWygq8exADiSHLP-M',\n
-        \               msid:                       '94c74ef4b698ce573cccd993d4a55cb7',\n
+        \               msid:                       '7446bb35af059181971ad2c6d121f496',\n
         \               beta:                       {\n                    enabled:
         false,\n                    inBeta:  false\n                },\n                \n
         \               ctaConfig:                  {\"anonymous\":[{\"active\":false,\"type\":\"button\",\"trackingName\":\"anonymous\",\"localStorageName\":\"cta-anonymous\",\"url\":\"\\/\",\"buttonText\":\"start
@@ -333,8 +333,8 @@ interactions:
         the FCC\",\"title\":\"SAVE THE INTERNET\",\"description\":\"The future of
         a free and open internet is at risk.<br>We need your help to fight back and
         protect net neutrality.\",\"newTab\":true,\"frontPageOnly\":true,\"buttonColor\":\"#8B6FD0\",\"customClass\":\"netneutrality\",\"insidePageOK\":true}],\"global-lightbox\":[{\"active\":true,\"trackingName\":\"mobileApps\",\"localStorageName\":\"apps1442873156\",\"type\":\"custom\",\"jsReactClassName\":\"GetTheApp\",\"backgroundImage\":\"{STATIC}\\/images\\/space-med-bg.png?1433176979\",\"newTab\":true}],\"side-gallery\":[{\"active\":false,\"localStorageName\":\"cta-side-whatisimgur\",\"hash\":\"2gUGa\",\"is_album\":true,\"variation\":\"what-is-imgur\",\"readonly\":true}]},\n
-        \               experiments:                {\"expSNKPK128\":{\"active\":true,\"name\":\"Most
-        Viral A\\/B Threshold\",\"inclusionProbability\":0.4,\"expirationDate\":\"2017-12-31T00:00:00.000Z\",\"variations\":[{\"name\":\"timerelviralitypartthreetr\",\"inclusionProbability\":0.5},{\"name\":\"timerelviralitypartthreect\",\"inclusionProbability\":0.5}]}},\n
+        \               experiments:                {\"expSNKPK127\":{\"active\":true,\"name\":\"Most
+        Viral A\\/B Threshold\",\"inclusionProbability\":0.4,\"expirationDate\":\"2017-12-31T00:00:00.000Z\",\"variations\":[{\"name\":\"mvtimedecaycontroversialtr\",\"inclusionProbability\":0.5},{\"name\":\"mvtimedecaycontroversialct\",\"inclusionProbability\":0.5}]}},\n
         \               isGalleryAdmin:             false,\n                ppBlog:
         \                    '//imgur.com/blog/?p=6101',\n                videoIsLimited:
         \            false,\n                isPPUser:                   false,\n
@@ -354,7 +354,7 @@ interactions:
         if(w.attachEvent) { w.attachEvent(\"onload\", x); }\n                        else
         { w.onload = x; }\n                        }(window, document));\n\n                    \n
         \               }\n            })();\n        </script>\n\n    \n\n            <script
-        type=\"text/javascript\" src=\"//s.imgur.com/min/advertising.js?1505342023\"></script>\n\n\n
+        type=\"text/javascript\" src=\"//s.imgur.com/min/advertising.js?1507313072\"></script>\n\n\n
         \       <script>\n            !function(a9,a,p,s,t,A,g){if(a[a9])return;function
         q(c,r){a[a9]._Q.push([c,r])}a[a9]={init:function(){q(\"i\",arguments)},fetchBids:function()\n
         \           {q(\"f\",arguments)},setDisplayBids:function(){},_Q:[]};A=p.createElement(s);A.async=!0;A.src=t;g=p.getElementsByTagName(s)[0];g.parentNode.insertBefore(\n
@@ -367,12 +367,12 @@ interactions:
         {\"ads_website\":\"http:\\/\\/www.imgurads.com\\/\",\"allow_nsfw\":false,\"allow_unmoderated\":false,\"allow_subreddits_nsfw\":false,\"_enabled_\":true,\"active_slots\":[{\"name\":\"under_sidebar\",\"element\":\"div-gpt-ad-under_sidebar\",\"insertSelector\":\".panel-ad\",\"insertMethod\":\"append\",\"sizes\":[[300,250],[300,600]],\"slot_id\":\"\\/4761660\\/H_I_300x250\",\"prebid\":{\"sovrn\":{\"prod\":true,\"config\":{\"bidder\":\"sovrn\",\"params\":{\"tagid\":\"151260\"}}},\"aol\":{\"prod\":true,\"config\":{\"bidder\":\"aol\",\"params\":{\"placement\":\"3937264\",\"network\":\"9432.1\",\"sizeId\":\"170\"}}},\"indexExchange\":{\"prod\":true,\"config\":{\"bidder\":\"indexExchange\",\"params\":{\"id\":\"1\",\"siteID\":172790}}},\"criteo\":{\"prod\":false,\"config\":{\"bidder\":\"criteo\",\"params\":{\"zoneId\":\"706134\"}}},\"districtmDMX\":{\"prod\":true,\"config\":{\"bidder\":\"districtmDMX\",\"params\":{\"id\":\"144150\"}}},\"sonobi\":{\"prod\":true,\"config\":{\"bidder\":\"sonobi\",\"params\":{\"placement_id\":\"4ab906a688a14fe00b28\"}}}}},{\"name\":\"top_banner\",\"element\":\"div-gpt-ad-top_banner\",\"insertSelector\":\"#inside
         .post-container\",\"insertMethod\":\"before\",\"sizes\":[[728,90]],\"slot_id\":\"\\/4761660\\/Leaderboard_970x90_ATF\",\"prebid\":{\"sovrn\":{\"prod\":true,\"config\":{\"bidder\":\"sovrn\",\"params\":{\"tagid\":\"151259\"}}},\"aol\":{\"prod\":true,\"config\":{\"bidder\":\"aol\",\"params\":{\"placement\":\"3937263\",\"network\":\"9432.1\",\"sizeId\":\"225\"}}},\"indexExchange\":{\"prod\":true,\"config\":{\"bidder\":\"indexExchange\",\"params\":{\"id\":\"2\",\"siteID\":164899}}},\"criteo\":{\"prod\":false,\"config\":{\"bidder\":\"criteo\",\"params\":{\"zoneId\":\"706133\"}}},\"districtmDMX\":{\"prod\":true,\"config\":{\"bidder\":\"districtmDMX\",\"params\":{\"id\":\"144152\"}}},\"sonobi\":{\"prod\":true,\"config\":{\"bidder\":\"sonobi\",\"params\":{\"placement_id\":\"cee8b35ed54a1b43c870\"}}}}},{\"name\":\"spotlight\",\"element\":\"div-gpt-ad-spotlight\",\"domElement\":\"iframe\",\"sizes\":[[728,90]],\"slot_id\":\"\\/4761660\\/Leaderboard_728x90_ATF_LI\",\"prebid\":null},{\"name\":\"pop_sky\",\"element\":\"div-gpt-ad-sky_pop\",\"insertSelector\":\"#fixed-side-footer-links\",\"insertMethod\":\"after\",\"sizes\":[[300,600],[160,600],[300,250]],\"slot_id\":\"\\/4761660\\/H_I_160x600\",\"prebid\":{\"sovrn\":{\"prod\":true,\"config\":{\"bidder\":\"sovrn\",\"params\":{\"tagid\":\"151261\"}}},\"aol\":{\"prod\":true,\"config\":{\"bidder\":\"aol\",\"params\":{\"placement\":\"3937265\",\"network\":\"9432.1\",\"sizeId\":\"154\"}}},\"indexExchange\":{\"prod\":true,\"config\":{\"bidder\":\"indexExchange\",\"params\":{\"id\":\"3\",\"siteID\":172792}}},\"criteo\":{\"prod\":false,\"config\":{\"bidder\":\"criteo\",\"params\":{\"zoneId\":\"706132\"}}},\"districtmDMX\":{\"prod\":true,\"config\":{\"bidder\":\"districtmDMX\",\"params\":{\"id\":\"144151\"}}},\"sonobi\":{\"prod\":true,\"config\":{\"bidder\":\"sonobi\",\"params\":{\"placement_id\":\"691b4c88b69d09969705\"}}}}}],\"bidder_adjustments\":{\"aol\":0.9,\"districtmDMX\":0.9,\"indexExchange\":1,\"sovrn\":1,\"sonobi\":1,\"criteo\":1},\"partners\":{\"gpt\":{\"src\":\"\\/\\/www.googletagservices.com\\/tag\\/js\\/gpt.js\"},\"openx\":{\"src\":\"\\/\\/imgur-d.openx.net\\/w\\/1.0\\/jstag?nc=4761660-Imgur\"}},\"global_flags\":{\"page_load\":true,\"other\":false,\"user_page\":false,\"album_page\":true},\"gallery_flags\":{\"gallery\":true,\"subreddit\":true,\"subreddit_nsfw\":false},\"item_flags\":{\"album\":true,\"in_gallery\":true,\"mature\":false,\"sixth_unmod\":false,\"sixth_mod_safe\":true,\"sixth_mod_unsafe\":false,\"onsfw_unmod\":false,\"onsfw_mod_safe\":true,\"onsfw_mod_unsafe\":false,\"nsfw\":false,\"promoted\":false,\"referer\":true,\"share\":true,\"spam\":false,\"under_10\":false},\"defaultFlags\":{\"album\":true,\"in_gallery\":true,\"mature\":false,\"sixth_unmod\":false,\"sixth_mod_safe\":true,\"sixth_mod_unsafe\":false,\"onsfw_unmod\":false,\"onsfw_mod_safe\":true,\"onsfw_mod_unsafe\":false,\"nsfw\":false,\"promoted\":false,\"referer\":true,\"share\":true,\"spam\":false,\"under_10\":false,\"gallery\":true,\"subreddit\":true,\"subreddit_nsfw\":false,\"page_load\":true,\"other\":false,\"user_page\":false,\"album_page\":true}},\n
         \               item: {\"id\":120691550,\"hash\":\"yW0kbMi\",\"account_id\":null,\"account_url\":null,\"title\":\"My
-        local electronics store has a cat.\",\"score\":489,\"starting_score\":1,\"virality\":3895.061197,\"size\":861794,\"views\":\"45\",\"is_hot\":false,\"is_album\":false,\"album_cover\":null,\"album_cover_width\":0,\"album_cover_height\":0,\"mimetype\":\"image\\/jpeg\",\"ext\":\".jpg\",\"width\":2822,\"height\":2117,\"animated\":false,\"looping\":false,\"ups\":50,\"downs\":2,\"points\":48,\"reddit\":\"\\/r\\/mildlyinteresting\\/comments\\/4tstkp\\/my_local_electronics_store_has_a_cat\\/\",\"description\":\"\",\"bandwidth\":\"36.98
+        local electronics store has a cat.\",\"score\":489,\"starting_score\":1,\"virality\":3895.061197,\"size\":861794,\"views\":\"64\",\"is_hot\":false,\"is_album\":false,\"album_cover\":null,\"album_cover_width\":0,\"album_cover_height\":0,\"mimetype\":\"image\\/jpeg\",\"ext\":\".jpg\",\"width\":2822,\"height\":2117,\"animated\":false,\"looping\":false,\"ups\":50,\"downs\":2,\"points\":48,\"reddit\":\"\\/r\\/mildlyinteresting\\/comments\\/4tstkp\\/my_local_electronics_store_has_a_cat\\/\",\"description\":\"\",\"bandwidth\":\"52.60
         MB\",\"timestamp\":\"2016-07-20 19:14:58\",\"hot_datetime\":null,\"gallery_datetime\":\"2016-07-20
         19:14:58\",\"in_gallery\":true,\"section\":\"mildlyinteresting\",\"tags\":[\"0\",\"0\"],\"subtype\":null,\"spam\":0,\"pending\":\"0\",\"comment_count\":18,\"nsfw\":false,\"topic\":null,\"topic_id\":0,\"meme_name\":null,\"meme_top\":null,\"meme_bottom\":null,\"prefer_video\":false,\"video_source\":null,\"video_host\":null,\"num_images\":1,\"platform\":null,\"readonly\":false,\"ad_type\":0,\"ad_url\":\"\",\"weight\":-1,\"favorited\":false,\"adConfig\":{\"safeFlags\":[\"in_gallery\",\"gallery\",\"page_load\"],\"unsafeFlags\":[],\"showsAds\":true},\"vote\":null}\n
         \           };\n\n            var PREBID_TIMEOUT = 1000;\n            var
         pbjs = pbjs || { };\n            pbjs.que = pbjs.que || [];\n        </script>\n
-        \       <script type=\"text/javascript\" src=\"//s.imgur.com/min/runSlots.js?1505342023\"></script>\n\n
+        \       <script type=\"text/javascript\" src=\"//s.imgur.com/min/runSlots.js?1507313072\"></script>\n\n
         \   \n\n        <script type=\"text/javascript\">\n    (function(widgetFactory)
         {\n        widgetFactory.mergeConfig('gallery', {\n            account_url
         \        : null,\n            favs_account_url    : null,\n            sort
@@ -385,7 +385,7 @@ interactions:
         false,\n            safe_tags           : true,\n            hasAccess           :
         false,\n            inGallery           : false,\n            hashes              :
         null,\n        \n            image               : {\"id\":120691550,\"hash\":\"yW0kbMi\",\"account_id\":null,\"account_url\":null,\"title\":\"My
-        local electronics store has a cat.\",\"score\":489,\"starting_score\":1,\"virality\":3895.061197,\"size\":861794,\"views\":\"45\",\"is_hot\":false,\"is_album\":false,\"album_cover\":null,\"album_cover_width\":0,\"album_cover_height\":0,\"mimetype\":\"image\\/jpeg\",\"ext\":\".jpg\",\"width\":2822,\"height\":2117,\"animated\":false,\"looping\":false,\"ups\":50,\"downs\":2,\"points\":48,\"reddit\":\"\\/r\\/mildlyinteresting\\/comments\\/4tstkp\\/my_local_electronics_store_has_a_cat\\/\",\"description\":\"\",\"bandwidth\":\"36.98
+        local electronics store has a cat.\",\"score\":489,\"starting_score\":1,\"virality\":3895.061197,\"size\":861794,\"views\":\"64\",\"is_hot\":false,\"is_album\":false,\"album_cover\":null,\"album_cover_width\":0,\"album_cover_height\":0,\"mimetype\":\"image\\/jpeg\",\"ext\":\".jpg\",\"width\":2822,\"height\":2117,\"animated\":false,\"looping\":false,\"ups\":50,\"downs\":2,\"points\":48,\"reddit\":\"\\/r\\/mildlyinteresting\\/comments\\/4tstkp\\/my_local_electronics_store_has_a_cat\\/\",\"description\":\"\",\"bandwidth\":\"52.60
         MB\",\"timestamp\":\"2016-07-20 19:14:58\",\"hot_datetime\":null,\"gallery_datetime\":\"2016-07-20
         19:14:58\",\"in_gallery\":true,\"section\":\"mildlyinteresting\",\"tags\":[\"0\",\"0\"],\"subtype\":null,\"spam\":0,\"pending\":\"0\",\"comment_count\":18,\"nsfw\":false,\"topic\":null,\"topic_id\":0,\"meme_name\":null,\"meme_top\":null,\"meme_bottom\":null,\"prefer_video\":false,\"video_source\":null,\"video_host\":null,\"num_images\":1,\"platform\":null,\"readonly\":false,\"ad_type\":0,\"ad_url\":\"\",\"weight\":-1,\"favorited\":false,\"adConfig\":{\"safeFlags\":[\"in_gallery\",\"gallery\",\"page_load\"],\"unsafeFlags\":[],\"showsAds\":true},\"vote\":null},\n
         \           group               : null,\n                    comment_sort
@@ -415,7 +415,7 @@ interactions:
         _widgetFactory !== 'undefined') {\n                _widgetFactory.initNotifications(null,
         [{\"name\":\"Neutral\",\"reputation\":399},{\"name\":\"Accepted\",\"reputation\":999},{\"name\":\"Liked\",\"reputation\":1999},{\"name\":\"Trusted\",\"reputation\":3999},{\"name\":\"Idolized\",\"reputation\":7999},{\"name\":\"Renowned\",\"reputation\":19999},{\"name\":\"Glorious\",\"reputation\":9223372036854775807}]);\n
         \           }\n        </script>\n    \n\n    \n    <script type=\"text/javascript\"
-        src=\"//s.imgur.com/min/gallery.js?1505342023\"></script>\n\n    <script type=\"text/javascript\">\n
+        src=\"//s.imgur.com/min/gallery.js?1507313072\"></script>\n\n    <script type=\"text/javascript\">\n
         \   (function(widgetFactory) {\n        $.cookie('retina', Imgur.Util.isRetinaDisplay()
         ? 1 : 0);\n\n        var emitter = Imgur.Emitter.getInstance();\n        widgetFactory.produceLocationCommand(emitter);\n\n
         \       var galleryFactory = widgetFactory.produceInsideGalleryFactory();\n
@@ -473,7 +473,9 @@ interactions:
         \   scpt.parentNode.insertBefore(elem, scpt);\n})();\n_qevents.push({\n    qacct:\"p-f8oruOqDFlMeI\"\n});\n</script>\n\n<noscript>\n
         \   <div style=\"display:none;\"><img src=\"//pixel.quantserve.com/pixel/p-f8oruOqDFlMeI.gif\"
         border=\"0\" height=\"1\" width=\"1\" alt=\"Quantcast\"/></div>\n</noscript>\n<!--
-        End Quantcast tag -->\n\n\n\n        <script type=\"text/javascript\">\n            !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?\n
+        End Quantcast tag -->\n\n\n        <!-- Lotame Tag -->\n<script src=\"//tags.crwdcntrl.net/c/11429/cc_af.js\"
+        async></script>\n<!-- End Lotame Tag -->\n\n\n\n        <script type=\"text/javascript\">\n
+        \           !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?\n
         \           n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;\n
         \           n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;\n
         \           t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,\n
@@ -497,18 +499,18 @@ interactions:
       Cache-Control: ['max-age=60, stale-while-revalidate=600, stale-if-error=86400,
           public']
       Connection: [keep-alive]
-      Content-Length: ['50761']
+      Content-Length: ['50883']
       Content-Security-Policy: [upgrade-insecure-requests]
       Content-Type: [text/html;charset=UTF-8]
-      Date: ['Thu, 14 Sep 2017 04:40:21 GMT']
+      Date: ['Sat, 07 Oct 2017 01:01:21 GMT']
       Fastly-Debug-Digest: [7cae0ea75f411241b1ac71b061ab25fd2922d154535ce77bff25d47b872c53a5]
       Server: [cat factory 1.0]
       Vary: [Accept-Encoding]
       X-Cache: ['MISS, MISS']
       X-Cache-Hits: ['0, 0']
       X-Frame-Options: [DENY]
-      X-Served-By: ['cache-iad2149-IAD, cache-dfw1845-DFW']
-      X-Timer: ['S1505364022.597135,VS0,VE70']
+      X-Served-By: ['cache-iad2142-IAD, cache-atl6230-ATL']
+      X-Timer: ['S1507338082.666818,VS0,VE54']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -516,7 +518,7 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.14.2]
     method: GET
     uri: http://imgur.com/gallery/yjP1v4B
   response:
@@ -526,14 +528,14 @@ interactions:
       Cache-Control: ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0']
       Connection: [close]
       Content-Length: ['0']
-      Date: ['Thu, 14 Sep 2017 04:40:21 GMT']
+      Date: ['Sat, 07 Oct 2017 01:01:21 GMT']
       Location: ['https://imgur.com/gallery/yjP1v4B']
       Retry-After: ['0']
       Server: [cat factory 1.0]
       X-Cache: [HIT]
       X-Cache-Hits: ['0']
       X-Frame-Options: [DENY]
-      X-Served-By: [cache-dfw1828-DFW]
+      X-Served-By: [cache-atl6241-ATL]
     status: {code: 301, message: Moved Permanently}
 - request:
     body: null
@@ -541,7 +543,7 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.14.2]
     method: GET
     uri: https://imgur.com/gallery/yjP1v4B
   response:
@@ -556,7 +558,7 @@ interactions:
         latest images, funny, cute, visual storytelling, imgur\" />\n        \n    \n\n
         \                                                           \n                    \n
         \               \n            \n        \n    \n\n            <meta name=\"description\"
-        content=\"Post with 12544 votes and 481861 views. Tagged with Funny; Hey,
+        content=\"Post with 12547 votes and 483197 views. Tagged with Funny; Hey,
         Chubs! Do you want to play?\" />\n    \n    <meta name=\"copyright\" content=\"Copyright
         2017 Imgur, Inc.\" />\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge;\"
         />\n    \n    <link rel=\"icon\" type=\"image/png\" href=\"//s.imgur.com/images/favicon-32x32.png\"
@@ -565,8 +567,8 @@ interactions:
         sizes=\"16x16\">\n    <link rel=\"apple-touch-icon-precomposed\" href=\"//s.imgur.com/images/favicon-152.png\">\n
         \   <meta name=\"msapplication-TileColor\" content=\"#2cd63c\">\n    <meta
         name=\"msapplication-TileImage\" content=\"//s.imgur.com/images/favicon-144.png\">\n
-        \           <link rel=\"stylesheet\" type=\"text/css\" href=\"//s.imgur.com/min/global.css?1505342023\"
-        />\n\n    \n        <link rel=\"stylesheet\" type=\"text/css\" href=\"//s.imgur.com/min/gallery.css?1505342023\"
+        \           <link rel=\"stylesheet\" type=\"text/css\" href=\"//s.imgur.com/min/global.css?1507313072\"
+        />\n\n    \n        <link rel=\"stylesheet\" type=\"text/css\" href=\"//s.imgur.com/min/gallery.css?1507313072\"
         />\n\n\n            <link rel=\"alternate\" type=\"application/json+oembed\"
         href=\"https://api.imgur.com/oembed.json?url=http://imgur.com/gallery/yjP1v4B\"
         title=\"Hey, Chubs! Do you want to play? - GIF on Imgur\" />\n        <link
@@ -619,7 +621,7 @@ interactions:
         {\n                \"@type\": \"SearchAction\",\n                \"target\":
         \"https://imgur.com/search?q={search_term_string}\",\n                \"query-input\":
         \"required name=search_term_string\"\n            }\n        }\n    </script>\n
-        \   \n    <!--[if lte IE 8]><script type=\"text/javascript\" src=\"//s.imgur.com/min/iepoly.js?1505342023\"></script>\n<![endif]-->\n
+        \   \n    <!--[if lte IE 8]><script type=\"text/javascript\" src=\"//s.imgur.com/min/iepoly.js?1507313072\"></script>\n<![endif]-->\n
         \   \n</head>\n<body class=\"\">\n    <div id=\"drop-layer\"></div>\n                        \n\n<div
         id=\"cta-container-placeholder\"></div>\n<div id=\"topbar\">\n    <div class=\"header-center\">\n
         \       <a href=\"//imgur.com\" class=\"topbar-icon logo \" data-jafo=\"{@@event@@:@@header@@,@@meta@@:{@@link@@:@@logo@@}}\">\n
@@ -705,7 +707,7 @@ interactions:
         \               <source src=\"//i.imgur.com/yjP1v4B.mp4\" type=\"video/mp4\">\n
         \           </div>\n            <progress value=\"0\" max=\"100\" min=\"0\"></progress>\n
         \           \n            <script id=\"scriptyjP1v4B\" type=\"text/javascript\"
-        src=\"//s.imgur.com/min/imageViewerInline.js?1505342023\"></script>\n\n            <meta
+        src=\"//s.imgur.com/min/imageViewerInline.js?1507313072\"></script>\n\n            <meta
         itemprop=\"thumbnailUrl\" content=\"https://i.imgur.com/yjP1v4Bh.jpg\" />\n
         \           <meta itemprop=\"contentURL\" content=\"https://i.imgur.com/yjP1v4B.mp4\"
         />\n            <meta itemprop=\"embedURL\" content=\"https://i.imgur.com/yjP1v4B.gifv\"
@@ -762,7 +764,7 @@ interactions:
         icon-take-me-up\"></div>\n                    </div>\n                </div>\n
         \           </div>\n        </div>\n        </div>\n\n        <div class=\"clear\"></div>\n
         \   </div>\n\n    <div class=\"tag-group-selector-container\"></div>\n\n    <input
-        id=\"sid\" type=\"hidden\" value=\"94c74ef4b698ce573cccd993d4a55cb7\" />\n\n
+        id=\"sid\" type=\"hidden\" value=\"7446bb35af059181971ad2c6d121f496\" />\n\n
         \   <div class=\"nodisplay\">\n\t<div id=\"colorbox-confirm\" class=\"popup\">\n\t\t<h3
         id=\"colorbox-confirm-title\"></h3>\n\t\t\n\t\t<div class=\"textbox\" id=\"colorbox-confirm-message\"></div>\n\n\t\t<div
         class=\"margin-top\">\n\t\t\t<div class=\"left\">\n\t\t\t\t<a href=\"javascript:;\"
@@ -819,11 +821,11 @@ interactions:
         type=\"text/javascript\">\nif(typeof jQuery === 'undefined') {\n    document.write('<script
         type=\"text/javascript\" src=\"//s.imgur.com/include/js/ext/jquery.2.1.1.min.js\"><'
         + '/script>');\n}\n</script>\n<!--<![endif]-->\n\n\n\n                    <script
-        type=\"text/javascript\" src=\"//s.imgur.com/min/react15.js?1505342023\"></script>\n\n
-        \       \n        <script type=\"text/javascript\" src=\"//s.imgur.com/min/global.js?1505342023\"></script>\n\n
+        type=\"text/javascript\" src=\"//s.imgur.com/min/react15.js?1507313072\"></script>\n\n
+        \       \n        <script type=\"text/javascript\" src=\"//s.imgur.com/min/global.js?1507313072\"></script>\n\n
         \       <script type=\"text/javascript\">\n            Imgur.Environment =
-        {\n                galleryScripts:             [\"\\/\\/s.imgur.com\\/min\\/gallery.js?1505342023\"],\n
-        \               galleryCSS:                 [\"\\/\\/s.imgur.com\\/min\\/gallery.css?1505342023\"],\n
+        {\n                galleryScripts:             [\"\\/\\/s.imgur.com\\/min\\/gallery.js?1507313072\"],\n
+        \               galleryCSS:                 [\"\\/\\/s.imgur.com\\/min\\/gallery.css?1507313072\"],\n
         \               isDev:                      false,\n                isSubdomain:
         \               Imgur.Util.isSubdomain('imgur.com'),\n                host:
         \                      'imgur.com',\n                cdnUrl:                     '//i.imgur.com',\n
@@ -831,7 +833,7 @@ interactions:
         \                 '//s.imgur.com',\n                socketUrl:                  '//browserevents.imgur.com',\n
         \               signed:                     false,\n                auth:
         \                      {},\n                recaptcha_key:              '6LdZsh4TAAAAAGnDJx9KXxURWygq8exADiSHLP-M',\n
-        \               msid:                       '94c74ef4b698ce573cccd993d4a55cb7',\n
+        \               msid:                       '7446bb35af059181971ad2c6d121f496',\n
         \               beta:                       {\n                    enabled:
         false,\n                    inBeta:  false\n                },\n                \n
         \               ctaConfig:                  {\"anonymous\":[{\"active\":false,\"type\":\"button\",\"trackingName\":\"anonymous\",\"localStorageName\":\"cta-anonymous\",\"url\":\"\\/\",\"buttonText\":\"start
@@ -864,8 +866,8 @@ interactions:
         the FCC\",\"title\":\"SAVE THE INTERNET\",\"description\":\"The future of
         a free and open internet is at risk.<br>We need your help to fight back and
         protect net neutrality.\",\"newTab\":true,\"frontPageOnly\":true,\"buttonColor\":\"#8B6FD0\",\"customClass\":\"netneutrality\",\"insidePageOK\":true}],\"global-lightbox\":[{\"active\":true,\"trackingName\":\"mobileApps\",\"localStorageName\":\"apps1442873156\",\"type\":\"custom\",\"jsReactClassName\":\"GetTheApp\",\"backgroundImage\":\"{STATIC}\\/images\\/space-med-bg.png?1433176979\",\"newTab\":true}],\"side-gallery\":[{\"active\":false,\"localStorageName\":\"cta-side-whatisimgur\",\"hash\":\"2gUGa\",\"is_album\":true,\"variation\":\"what-is-imgur\",\"readonly\":true}]},\n
-        \               experiments:                {\"expSNKPK128\":{\"active\":true,\"name\":\"Most
-        Viral A\\/B Threshold\",\"inclusionProbability\":0.4,\"expirationDate\":\"2017-12-31T00:00:00.000Z\",\"variations\":[{\"name\":\"timerelviralitypartthreetr\",\"inclusionProbability\":0.5},{\"name\":\"timerelviralitypartthreect\",\"inclusionProbability\":0.5}]}},\n
+        \               experiments:                {\"expSNKPK127\":{\"active\":true,\"name\":\"Most
+        Viral A\\/B Threshold\",\"inclusionProbability\":0.4,\"expirationDate\":\"2017-12-31T00:00:00.000Z\",\"variations\":[{\"name\":\"mvtimedecaycontroversialtr\",\"inclusionProbability\":0.5},{\"name\":\"mvtimedecaycontroversialct\",\"inclusionProbability\":0.5}]}},\n
         \               isGalleryAdmin:             false,\n                ppBlog:
         \                    '//imgur.com/blog/?p=6101',\n                videoIsLimited:
         \            false,\n                isPPUser:                   false,\n
@@ -885,7 +887,7 @@ interactions:
         if(w.attachEvent) { w.attachEvent(\"onload\", x); }\n                        else
         { w.onload = x; }\n                        }(window, document));\n\n                    \n
         \               }\n            })();\n        </script>\n\n    \n\n            <script
-        type=\"text/javascript\" src=\"//s.imgur.com/min/advertising.js?1505342023\"></script>\n\n\n
+        type=\"text/javascript\" src=\"//s.imgur.com/min/advertising.js?1507313072\"></script>\n\n\n
         \       <script>\n            !function(a9,a,p,s,t,A,g){if(a[a9])return;function
         q(c,r){a[a9]._Q.push([c,r])}a[a9]={init:function(){q(\"i\",arguments)},fetchBids:function()\n
         \           {q(\"f\",arguments)},setDisplayBids:function(){},_Q:[]};A=p.createElement(s);A.async=!0;A.src=t;g=p.getElementsByTagName(s)[0];g.parentNode.insertBefore(\n
@@ -898,13 +900,13 @@ interactions:
         {\"ads_website\":\"http:\\/\\/www.imgurads.com\\/\",\"allow_nsfw\":false,\"allow_unmoderated\":false,\"allow_subreddits_nsfw\":false,\"_enabled_\":true,\"active_slots\":[{\"name\":\"under_sidebar\",\"element\":\"div-gpt-ad-under_sidebar\",\"insertSelector\":\".panel-ad\",\"insertMethod\":\"append\",\"sizes\":[[300,250],[300,600]],\"slot_id\":\"\\/4761660\\/H_I_300x250\",\"prebid\":{\"sovrn\":{\"prod\":true,\"config\":{\"bidder\":\"sovrn\",\"params\":{\"tagid\":\"151260\"}}},\"aol\":{\"prod\":true,\"config\":{\"bidder\":\"aol\",\"params\":{\"placement\":\"3937264\",\"network\":\"9432.1\",\"sizeId\":\"170\"}}},\"indexExchange\":{\"prod\":true,\"config\":{\"bidder\":\"indexExchange\",\"params\":{\"id\":\"1\",\"siteID\":172790}}},\"criteo\":{\"prod\":false,\"config\":{\"bidder\":\"criteo\",\"params\":{\"zoneId\":\"706134\"}}},\"districtmDMX\":{\"prod\":true,\"config\":{\"bidder\":\"districtmDMX\",\"params\":{\"id\":\"144150\"}}},\"sonobi\":{\"prod\":true,\"config\":{\"bidder\":\"sonobi\",\"params\":{\"placement_id\":\"4ab906a688a14fe00b28\"}}}}},{\"name\":\"top_banner\",\"element\":\"div-gpt-ad-top_banner\",\"insertSelector\":\"#inside
         .post-container\",\"insertMethod\":\"before\",\"sizes\":[[728,90]],\"slot_id\":\"\\/4761660\\/Leaderboard_970x90_ATF\",\"prebid\":{\"sovrn\":{\"prod\":true,\"config\":{\"bidder\":\"sovrn\",\"params\":{\"tagid\":\"151259\"}}},\"aol\":{\"prod\":true,\"config\":{\"bidder\":\"aol\",\"params\":{\"placement\":\"3937263\",\"network\":\"9432.1\",\"sizeId\":\"225\"}}},\"indexExchange\":{\"prod\":true,\"config\":{\"bidder\":\"indexExchange\",\"params\":{\"id\":\"2\",\"siteID\":164899}}},\"criteo\":{\"prod\":false,\"config\":{\"bidder\":\"criteo\",\"params\":{\"zoneId\":\"706133\"}}},\"districtmDMX\":{\"prod\":true,\"config\":{\"bidder\":\"districtmDMX\",\"params\":{\"id\":\"144152\"}}},\"sonobi\":{\"prod\":true,\"config\":{\"bidder\":\"sonobi\",\"params\":{\"placement_id\":\"cee8b35ed54a1b43c870\"}}}}},{\"name\":\"spotlight\",\"element\":\"div-gpt-ad-spotlight\",\"domElement\":\"iframe\",\"sizes\":[[728,90]],\"slot_id\":\"\\/4761660\\/Leaderboard_728x90_ATF_LI\",\"prebid\":null},{\"name\":\"pop_sky\",\"element\":\"div-gpt-ad-sky_pop\",\"insertSelector\":\"#fixed-side-footer-links\",\"insertMethod\":\"after\",\"sizes\":[[300,600],[160,600],[300,250]],\"slot_id\":\"\\/4761660\\/H_I_160x600\",\"prebid\":{\"sovrn\":{\"prod\":true,\"config\":{\"bidder\":\"sovrn\",\"params\":{\"tagid\":\"151261\"}}},\"aol\":{\"prod\":true,\"config\":{\"bidder\":\"aol\",\"params\":{\"placement\":\"3937265\",\"network\":\"9432.1\",\"sizeId\":\"154\"}}},\"indexExchange\":{\"prod\":true,\"config\":{\"bidder\":\"indexExchange\",\"params\":{\"id\":\"3\",\"siteID\":172792}}},\"criteo\":{\"prod\":false,\"config\":{\"bidder\":\"criteo\",\"params\":{\"zoneId\":\"706132\"}}},\"districtmDMX\":{\"prod\":true,\"config\":{\"bidder\":\"districtmDMX\",\"params\":{\"id\":\"144151\"}}},\"sonobi\":{\"prod\":true,\"config\":{\"bidder\":\"sonobi\",\"params\":{\"placement_id\":\"691b4c88b69d09969705\"}}}}}],\"bidder_adjustments\":{\"aol\":0.9,\"districtmDMX\":0.9,\"indexExchange\":1,\"sovrn\":1,\"sonobi\":1,\"criteo\":1},\"partners\":{\"gpt\":{\"src\":\"\\/\\/www.googletagservices.com\\/tag\\/js\\/gpt.js\"},\"openx\":{\"src\":\"\\/\\/imgur-d.openx.net\\/w\\/1.0\\/jstag?nc=4761660-Imgur\"}},\"global_flags\":{\"page_load\":true,\"other\":false,\"user_page\":false,\"album_page\":true},\"gallery_flags\":{\"gallery\":true,\"subreddit\":true,\"subreddit_nsfw\":false},\"item_flags\":{\"album\":true,\"in_gallery\":true,\"mature\":false,\"sixth_unmod\":false,\"sixth_mod_safe\":true,\"sixth_mod_unsafe\":false,\"onsfw_unmod\":false,\"onsfw_mod_safe\":true,\"onsfw_mod_unsafe\":false,\"nsfw\":false,\"promoted\":false,\"referer\":true,\"share\":true,\"spam\":false,\"under_10\":false},\"defaultFlags\":{\"album\":true,\"in_gallery\":true,\"mature\":false,\"sixth_unmod\":false,\"sixth_mod_safe\":true,\"sixth_mod_unsafe\":false,\"onsfw_unmod\":false,\"onsfw_mod_safe\":true,\"onsfw_mod_unsafe\":false,\"nsfw\":false,\"promoted\":false,\"referer\":true,\"share\":true,\"spam\":false,\"under_10\":false,\"gallery\":true,\"subreddit\":true,\"subreddit_nsfw\":false,\"page_load\":true,\"other\":false,\"user_page\":false,\"album_page\":true}},\n
         \               item: {\"id\":120637826,\"hash\":\"yjP1v4B\",\"account_id\":\"28570749\",\"account_url\":null,\"title\":\"Hey,
-        Chubs! Do you want to play?\",\"score\":12493,\"starting_score\":0,\"virality\":8762.235978,\"size\":19252700,\"views\":\"481861\",\"is_hot\":true,\"is_album\":false,\"album_cover\":null,\"album_cover_width\":0,\"album_cover_height\":0,\"mimetype\":\"image\\/gif\",\"ext\":\".gif\",\"width\":218,\"height\":396,\"animated\":true,\"looping\":true,\"ups\":12399,\"downs\":145,\"points\":12254,\"reddit\":\"\\/r\\/funny\\/comments\\/4tt778\\/hey_chubs_do_you_want_to_play\\/\",\"description\":\"\",\"bandwidth\":\"8.44
+        Chubs! Do you want to play?\",\"score\":12498,\"starting_score\":0,\"virality\":11681.618651,\"size\":19252700,\"views\":\"483197\",\"is_hot\":true,\"is_album\":false,\"album_cover\":null,\"album_cover_width\":0,\"album_cover_height\":0,\"mimetype\":\"image\\/gif\",\"ext\":\".gif\",\"width\":218,\"height\":396,\"animated\":true,\"looping\":true,\"ups\":12402,\"downs\":145,\"points\":12257,\"reddit\":\"\\/r\\/funny\\/comments\\/4tt778\\/hey_chubs_do_you_want_to_play\\/\",\"description\":\"\",\"bandwidth\":\"8.46
         TB\",\"timestamp\":\"2016-07-20 08:22:34\",\"hot_datetime\":\"2016-07-20 12:12:45\",\"gallery_datetime\":\"2016-07-20
         08:19:30\",\"in_gallery\":true,\"section\":\"funny\",\"tags\":[\"0\",\"0\"],\"subtype\":null,\"spam\":\"0\",\"pending\":\"0\",\"comment_count\":242,\"nsfw\":false,\"topic\":\"Funny\",\"topic_id\":2,\"meme_name\":null,\"meme_top\":null,\"meme_bottom\":null,\"prefer_video\":true,\"video_source\":null,\"video_host\":null,\"num_images\":1,\"platform\":null,\"readonly\":false,\"ad_type\":0,\"ad_url\":\"\",\"weight\":-1,\"galleryTags\":[{\"id\":\"95801901\",\"hash\":\"yjP1v4B\",\"account_id\":\"48\",\"tag_id\":\"1\",\"display\":\"Funny\",\"ups\":\"0\",\"downs\":\"0\",\"score\":\"0\",\"timestamp\":\"2017-02-05
-        21:54:16\",\"blocked\":\"0\",\"tag\":\"funny\",\"subscribers\":\"2780\",\"images\":\"355211\",\"background_hash\":\"Xcm21BQ\",\"thumbnail_hash\":null,\"spam\":\"0\",\"nsfw\":\"0\",\"is_promoted\":\"0\",\"animated\":\"0\",\"thumbnail_animated\":null,\"metadata\":{\"tag_id\":\"1\",\"title\":\"funny\",\"description\":null,\"logo_hash\":null,\"logo_destination_url\":null,\"is_promoted\":\"0\",\"accent\":\"5DAC9F\"},\"image\":{\"animated\":\"0\"},\"thumbnail\":{\"animated\":null}}],\"favorited\":false,\"adConfig\":{\"safeFlags\":[\"in_gallery\",\"gallery\",\"page_load\"],\"unsafeFlags\":[],\"showsAds\":true},\"vote\":null}\n
+        21:54:16\",\"blocked\":\"0\",\"tag\":\"funny\",\"subscribers\":\"3339\",\"images\":\"2024903\",\"background_hash\":\"82UOJdj\",\"thumbnail_hash\":null,\"spam\":\"0\",\"nsfw\":\"0\",\"is_promoted\":\"0\",\"animated\":\"0\",\"thumbnail_animated\":null,\"metadata\":{\"tag_id\":\"1\",\"title\":\"funny\",\"description\":null,\"logo_hash\":null,\"logo_destination_url\":null,\"is_promoted\":\"0\",\"accent\":\"633875\"},\"image\":{\"animated\":\"0\"},\"thumbnail\":{\"animated\":null}}],\"favorited\":false,\"adConfig\":{\"safeFlags\":[\"in_gallery\",\"gallery\",\"page_load\"],\"unsafeFlags\":[],\"showsAds\":true},\"vote\":null}\n
         \           };\n\n            var PREBID_TIMEOUT = 1000;\n            var
         pbjs = pbjs || { };\n            pbjs.que = pbjs.que || [];\n        </script>\n
-        \       <script type=\"text/javascript\" src=\"//s.imgur.com/min/runSlots.js?1505342023\"></script>\n\n
+        \       <script type=\"text/javascript\" src=\"//s.imgur.com/min/runSlots.js?1507313072\"></script>\n\n
         \   \n\n        <script type=\"text/javascript\">\n    (function(widgetFactory)
         {\n        widgetFactory.mergeConfig('gallery', {\n            account_url
         \        : null,\n            favs_account_url    : null,\n            sort
@@ -917,10 +919,10 @@ interactions:
         false,\n            safe_tags           : true,\n            hasAccess           :
         false,\n            inGallery           : false,\n            hashes              :
         null,\n        \n            image               : {\"id\":120637826,\"hash\":\"yjP1v4B\",\"account_id\":\"28570749\",\"account_url\":null,\"title\":\"Hey,
-        Chubs! Do you want to play?\",\"score\":12493,\"starting_score\":0,\"virality\":8762.235978,\"size\":19252700,\"views\":\"481861\",\"is_hot\":true,\"is_album\":false,\"album_cover\":null,\"album_cover_width\":0,\"album_cover_height\":0,\"mimetype\":\"image\\/gif\",\"ext\":\".gif\",\"width\":218,\"height\":396,\"animated\":true,\"looping\":true,\"ups\":12399,\"downs\":145,\"points\":12254,\"reddit\":\"\\/r\\/funny\\/comments\\/4tt778\\/hey_chubs_do_you_want_to_play\\/\",\"description\":\"\",\"bandwidth\":\"8.44
+        Chubs! Do you want to play?\",\"score\":12498,\"starting_score\":0,\"virality\":11681.618651,\"size\":19252700,\"views\":\"483197\",\"is_hot\":true,\"is_album\":false,\"album_cover\":null,\"album_cover_width\":0,\"album_cover_height\":0,\"mimetype\":\"image\\/gif\",\"ext\":\".gif\",\"width\":218,\"height\":396,\"animated\":true,\"looping\":true,\"ups\":12402,\"downs\":145,\"points\":12257,\"reddit\":\"\\/r\\/funny\\/comments\\/4tt778\\/hey_chubs_do_you_want_to_play\\/\",\"description\":\"\",\"bandwidth\":\"8.46
         TB\",\"timestamp\":\"2016-07-20 08:22:34\",\"hot_datetime\":\"2016-07-20 12:12:45\",\"gallery_datetime\":\"2016-07-20
         08:19:30\",\"in_gallery\":true,\"section\":\"funny\",\"tags\":[\"0\",\"0\"],\"subtype\":null,\"spam\":\"0\",\"pending\":\"0\",\"comment_count\":242,\"nsfw\":false,\"topic\":\"Funny\",\"topic_id\":2,\"meme_name\":null,\"meme_top\":null,\"meme_bottom\":null,\"prefer_video\":true,\"video_source\":null,\"video_host\":null,\"num_images\":1,\"platform\":null,\"readonly\":false,\"ad_type\":0,\"ad_url\":\"\",\"weight\":-1,\"galleryTags\":[{\"id\":\"95801901\",\"hash\":\"yjP1v4B\",\"account_id\":\"48\",\"tag_id\":\"1\",\"display\":\"Funny\",\"ups\":\"0\",\"downs\":\"0\",\"score\":\"0\",\"timestamp\":\"2017-02-05
-        21:54:16\",\"blocked\":\"0\",\"tag\":\"funny\",\"subscribers\":\"2780\",\"images\":\"355211\",\"background_hash\":\"Xcm21BQ\",\"thumbnail_hash\":null,\"spam\":\"0\",\"nsfw\":\"0\",\"is_promoted\":\"0\",\"animated\":\"0\",\"thumbnail_animated\":null,\"metadata\":{\"tag_id\":\"1\",\"title\":\"funny\",\"description\":null,\"logo_hash\":null,\"logo_destination_url\":null,\"is_promoted\":\"0\",\"accent\":\"5DAC9F\"},\"image\":{\"animated\":\"0\"},\"thumbnail\":{\"animated\":null}}],\"favorited\":false,\"adConfig\":{\"safeFlags\":[\"in_gallery\",\"gallery\",\"page_load\"],\"unsafeFlags\":[],\"showsAds\":true},\"vote\":null},\n
+        21:54:16\",\"blocked\":\"0\",\"tag\":\"funny\",\"subscribers\":\"3339\",\"images\":\"2024903\",\"background_hash\":\"82UOJdj\",\"thumbnail_hash\":null,\"spam\":\"0\",\"nsfw\":\"0\",\"is_promoted\":\"0\",\"animated\":\"0\",\"thumbnail_animated\":null,\"metadata\":{\"tag_id\":\"1\",\"title\":\"funny\",\"description\":null,\"logo_hash\":null,\"logo_destination_url\":null,\"is_promoted\":\"0\",\"accent\":\"633875\"},\"image\":{\"animated\":\"0\"},\"thumbnail\":{\"animated\":null}}],\"favorited\":false,\"adConfig\":{\"safeFlags\":[\"in_gallery\",\"gallery\",\"page_load\"],\"unsafeFlags\":[],\"showsAds\":true},\"vote\":null},\n
         \           group               : null,\n                    comment_sort
         \       : 'best',\n            comment_id          : '',\n            captionsEnabled
         \    : true,\n        \n                    onTheFlyThreshold   : 10485760,\n
@@ -948,7 +950,7 @@ interactions:
         _widgetFactory !== 'undefined') {\n                _widgetFactory.initNotifications(null,
         [{\"name\":\"Neutral\",\"reputation\":399},{\"name\":\"Accepted\",\"reputation\":999},{\"name\":\"Liked\",\"reputation\":1999},{\"name\":\"Trusted\",\"reputation\":3999},{\"name\":\"Idolized\",\"reputation\":7999},{\"name\":\"Renowned\",\"reputation\":19999},{\"name\":\"Glorious\",\"reputation\":9223372036854775807}]);\n
         \           }\n        </script>\n    \n\n    \n    <script type=\"text/javascript\"
-        src=\"//s.imgur.com/min/gallery.js?1505342023\"></script>\n\n    <script type=\"text/javascript\">\n
+        src=\"//s.imgur.com/min/gallery.js?1507313072\"></script>\n\n    <script type=\"text/javascript\">\n
         \   (function(widgetFactory) {\n        $.cookie('retina', Imgur.Util.isRetinaDisplay()
         ? 1 : 0);\n\n        var emitter = Imgur.Emitter.getInstance();\n        widgetFactory.produceLocationCommand(emitter);\n\n
         \       var galleryFactory = widgetFactory.produceInsideGalleryFactory();\n
@@ -1008,7 +1010,9 @@ interactions:
         \   scpt.parentNode.insertBefore(elem, scpt);\n})();\n_qevents.push({\n    qacct:\"p-f8oruOqDFlMeI\"\n});\n</script>\n\n<noscript>\n
         \   <div style=\"display:none;\"><img src=\"//pixel.quantserve.com/pixel/p-f8oruOqDFlMeI.gif\"
         border=\"0\" height=\"1\" width=\"1\" alt=\"Quantcast\"/></div>\n</noscript>\n<!--
-        End Quantcast tag -->\n\n\n\n        <script type=\"text/javascript\">\n            !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?\n
+        End Quantcast tag -->\n\n\n        <!-- Lotame Tag -->\n<script src=\"//tags.crwdcntrl.net/c/11429/cc_af.js\"
+        async></script>\n<!-- End Lotame Tag -->\n\n\n\n        <script type=\"text/javascript\">\n
+        \           !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?\n
         \           n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;\n
         \           n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;\n
         \           t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,\n
@@ -1032,18 +1036,18 @@ interactions:
       Cache-Control: ['max-age=60, stale-while-revalidate=600, stale-if-error=86400,
           public']
       Connection: [keep-alive]
-      Content-Length: ['53885']
+      Content-Length: ['54011']
       Content-Security-Policy: [upgrade-insecure-requests]
       Content-Type: [text/html;charset=UTF-8]
-      Date: ['Thu, 14 Sep 2017 04:40:22 GMT']
+      Date: ['Sat, 07 Oct 2017 01:01:22 GMT']
       Fastly-Debug-Digest: [a7852956de4deb4508be0e469a55c06aacc411c757072428d518231ad80d49e2]
       Server: [cat factory 1.0]
       Vary: [Accept-Encoding]
       X-Cache: ['MISS, MISS']
       X-Cache-Hits: ['0, 0']
       X-Frame-Options: [DENY]
-      X-Served-By: ['cache-iad2126-IAD, cache-dfw1826-DFW']
-      X-Timer: ['S1505364022.235412,VS0,VE51']
+      X-Served-By: ['cache-iad2132-IAD, cache-atl6243-ATL']
+      X-Timer: ['S1507338082.158889,VS0,VE33']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1051,89 +1055,64 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.14.2]
     method: GET
-    uri: http://imgur.com/a/qx9t5
-  response:
-    body: {string: ''}
-    headers:
-      Accept-Ranges: [bytes]
-      Cache-Control: ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0']
-      Connection: [close]
-      Content-Length: ['0']
-      Date: ['Thu, 14 Sep 2017 04:40:22 GMT']
-      Location: ['https://imgur.com/a/qx9t5']
-      Retry-After: ['0']
-      Server: [cat factory 1.0]
-      X-Cache: [HIT]
-      X-Cache-Hits: ['0']
-      X-Frame-Options: [DENY]
-      X-Served-By: [cache-dfw1826-DFW]
-    status: {code: 301, message: Moved Permanently}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
-    method: GET
-    uri: https://imgur.com/a/qx9t5
+    uri: https://imgur.com/a/pRYEi
   response:
     body: {string: "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n<html
         lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n    <link href=\"https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i\"
-        rel=\"stylesheet\">\n    <title>            \n    \n\n    Imgur: The most
-        awesome images on the Internet</title>\n    <meta http-equiv=\"content-type\"
+        rel=\"stylesheet\">\n    <title>                        \n        \n    \n\n
+        \   TWI FGC 10-06 - Album on Imgur</title>\n    <meta http-equiv=\"content-type\"
         content=\"text/html;charset=utf-8\" />\n    <meta name=\"viewport\" content=\"width=1138\">\n
         \           <meta name=\"robots\" content=\"noindex, nofollow\" />\n    \n
         \   <meta name=\"keywords\" content=\"images, photos, gif, gifs, memes, pictures,
         new pictures, reaction gifs, share photos, share images, latest images, funny,
         cute, visual storytelling, imgur\" />\n        \n    \n\n    \n\n            <meta
-        name=\"description\" content=\"Post with 66014 views.\" />\n    \n    <meta
-        name=\"copyright\" content=\"Copyright 2017 Imgur, Inc.\" />\n    <meta http-equiv=\"X-UA-Compatible\"
-        content=\"IE=Edge;\" />\n    \n    <link rel=\"icon\" type=\"image/png\" href=\"//s.imgur.com/images/favicon-32x32.png\"
+        name=\"description\" content=\"Post with 237 views. Shared by dohkal. TWI
+        FGC 10-06\" />\n    \n    <meta name=\"copyright\" content=\"Copyright 2017
+        Imgur, Inc.\" />\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge;\"
+        />\n    \n    <link rel=\"icon\" type=\"image/png\" href=\"//s.imgur.com/images/favicon-32x32.png\"
         sizes=\"32x32\">\n    <link rel=\"icon\" type=\"image/png\" href=\"//s.imgur.com/images/favicon-96x96.png\"
         sizes=\"96x96\">\n    <link rel=\"icon\" type=\"image/png\" href=\"//s.imgur.com/images/favicon-16x16.png\"
         sizes=\"16x16\">\n    <link rel=\"apple-touch-icon-precomposed\" href=\"//s.imgur.com/images/favicon-152.png\">\n
         \   <meta name=\"msapplication-TileColor\" content=\"#2cd63c\">\n    <meta
         name=\"msapplication-TileImage\" content=\"//s.imgur.com/images/favicon-144.png\">\n
-        \           <link rel=\"stylesheet\" type=\"text/css\" href=\"//s.imgur.com/min/global.css?1505342023\"
-        />\n\n    \n        <link rel=\"stylesheet\" type=\"text/css\" href=\"//s.imgur.com/min/gallery.css?1505342023\"
+        \           <link rel=\"stylesheet\" type=\"text/css\" href=\"//s.imgur.com/min/global.css?1507313072\"
+        />\n\n    \n        <link rel=\"stylesheet\" type=\"text/css\" href=\"//s.imgur.com/min/gallery.css?1507313072\"
         />\n\n\n            <link rel=\"alternate\" type=\"application/json+oembed\"
-        href=\"https://api.imgur.com/oembed.json?url=http://imgur.com/a/qx9t5\" title=\"Imgur:
-        The most awesome images on the Internet\" />\n        <link rel=\"alternate\"
-        type=\"application/xml+oembed\" href=\"https://api.imgur.com/oembed.xml?url=http://imgur.com/a/qx9t5\"
-        title=\"Imgur: The most awesome images on the Internet\" />\n    \n            <!--[if
-        IE 9]><link rel=\"stylesheet\" href=\"//imgur.com/include/css/ie-sucks.css?0\"
-        type=\"text/css\" /><![endif]-->\n    \n                <link rel=\"canonical\"
-        href=\"https://imgur.com/a/qx9t5\" />\n        <meta property=\"og:url\" content=\"https://imgur.com/a/qx9t5\"
+        href=\"https://api.imgur.com/oembed.json?url=http://imgur.com/a/pRYEi\" title=\"TWI
+        FGC 10-06 - Album on Imgur\" />\n        <link rel=\"alternate\" type=\"application/xml+oembed\"
+        href=\"https://api.imgur.com/oembed.xml?url=http://imgur.com/a/pRYEi\" title=\"TWI
+        FGC 10-06 - Album on Imgur\" />\n    \n            <!--[if IE 9]><link rel=\"stylesheet\"
+        href=\"//imgur.com/include/css/ie-sucks.css?0\" type=\"text/css\" /><![endif]-->\n
+        \   \n                <link rel=\"canonical\" href=\"https://imgur.com/a/pRYEi\"
+        />\n        <meta property=\"og:url\" content=\"https://imgur.com/a/pRYEi\"
         />\n    \n\n                <link rel=\"alternate\" media=\"only screen and
-        (max-width: 640px)\" href=\"https://m.imgur.com/a/qx9t5\">\n    \n\n    <meta
+        (max-width: 640px)\" href=\"https://m.imgur.com/a/pRYEi\">\n    \n\n    <meta
         name=\"p:domain_verify\" content=\"a1e7abe8af908cc6dfaf935dd9a20384\"/>\n
         \   <meta property=\"og:site_name\" content=\"Imgur\" />\n    <meta property=\"fb:admins\"
         content=\"12331492\" />\n    <meta property=\"fb:admins\" content=\"12301369\"
         />\n    <meta property=\"fb:app_id\" content=\"127621437303857\" />\n    <meta
-        property=\"al:android:url\" content=\"imgur://imgur.com/a/qx9t5?from=fbreferral\"
+        property=\"al:android:url\" content=\"imgur://imgur.com/a/pRYEi?from=fbreferral\"
         />\n    <meta property=\"al:android:app_name\" content=\"Imgur\" />\n    <meta
         property=\"al:android:package\" content=\"com.imgur.mobile\" />\n    <meta
-        property=\"al:ios:url\" content=\"imgur://imgur.com/a/qx9t5?from=fbreferral\"
+        property=\"al:ios:url\" content=\"imgur://imgur.com/a/pRYEi?from=fbreferral\"
         />\n    <meta property=\"al:ios:app_store_id\" content=\"639881495\" />\n
         \   <meta property=\"al:ios:app_name\" content=\"Imgur\" />\n    <meta property=\"al:web:url\"
-        content=\"https://imgur.com/a/qx9t5\" />\n    <meta name=\"twitter:site\"
+        content=\"https://imgur.com/a/pRYEi\" />\n    <meta name=\"twitter:site\"
         content=\"@imgur\" />\n    <meta name=\"twitter:domain\" content=\"imgur.com\"
         />\n    <meta name=\"twitter:app:id:googleplay\" content=\"com.imgur.mobile\"
-        />\n                <meta name=\"twitter:title\" content=\"Imgur: The most
-        awesome images on the Internet\"/>\n        <meta property=\"og:title\" content=\"Imgur:
-        The most awesome images on the Internet\"/>\n    \n\n    <meta property=\"author\"
-        content=\"Imgur\" />\n    <meta property=\"article:author\" content=\"Imgur\"
-        />\n    <meta property=\"article:publisher\" content=\"https://www.facebook.com/imgur\">\n\n
-        \   \n\n            <link rel=\"image_src\"            href=\"https://i.imgur.com/uEt0YLI.jpg\"/>\n
+        />\n                <meta name=\"twitter:title\" content=\"TWI FGC 10-06\"/>\n
+        \       <meta property=\"og:title\" content=\"TWI FGC 10-06\"/>\n    \n\n
+        \   <meta property=\"author\" content=\"Imgur\" />\n    <meta property=\"article:author\"
+        content=\"Imgur\" />\n    <meta property=\"article:publisher\" content=\"https://www.facebook.com/imgur\">\n\n
+        \   \n\n            <link rel=\"image_src\"            href=\"https://i.imgur.com/tiUSazy.jpg\"/>\n
         \       <meta property=\"og:type\"         content=\"article\" />\n        <meta
-        property=\"og:image\"        content=\"https://i.imgur.com/uEt0YLI.jpg?fb\"
+        property=\"og:image\"        content=\"https://i.imgur.com/tiUSazy.jpg?fb\"
         />\n        <meta property=\"og:image:width\"  content=\"600\" />\n        <meta
         property=\"og:image:height\" content=\"315\" />\n        <meta name=\"twitter:card\"
         \       content=\"summary_large_image\"/>\n        <meta name=\"twitter:image\"
-        \      content=\"https://i.imgur.com/uEt0YLIh.jpg\" />\n    \n\n            <meta
+        \      content=\"https://i.imgur.com/tiUSazyh.jpg\" />\n    \n\n            <meta
         property=\"og:description\" content=\"Imgur: The most awesome images on the
         Internet.\"/>\n        <meta name=\"twitter:description\" content=\"Imgur:
         The most awesome images on the Internet.\"/>\n    \n\n    \n    <script type=\"application/ld+json\">\n
@@ -1143,7 +1122,7 @@ interactions:
         \"SearchAction\",\n                \"target\": \"https://imgur.com/search?q={search_term_string}\",\n
         \               \"query-input\": \"required name=search_term_string\"\n            }\n
         \       }\n    </script>\n    \n    <!--[if lte IE 8]><script type=\"text/javascript\"
-        src=\"//s.imgur.com/min/iepoly.js?1505342023\"></script>\n<![endif]-->\n    \n</head>\n<body
+        src=\"//s.imgur.com/min/iepoly.js?1507313072\"></script>\n<![endif]-->\n    \n</head>\n<body
         class=\"\">\n    <div id=\"drop-layer\"></div>\n                        \n\n<div
         id=\"cta-container-placeholder\"></div>\n<div id=\"topbar\">\n    <div class=\"header-center\">\n
         \       <a href=\"//imgur.com\" class=\"topbar-icon logo \" data-jafo=\"{@@event@@:@@header@@,@@meta@@:{@@link@@:@@logo@@}}\">\n
@@ -1206,22 +1185,72 @@ interactions:
         post-pad\">\n            <div id=\"promoted-spotlight\"></div>\n            <div
         class=\"post-container\">\n                <div class=\"post-header\">\n                    <div
         class=\"post-title-container\">\n                                                    <h1
-        class=\"post-title \"></h1>\n                        \n                    </div>\n\n
-        \                   <div class=\"post-title-meta post-title-meta--notitle\">\n
-        \                       \n\n                        \n                                                    \n
-        \                           Uploaded\n                        \n\n                                                    <span
-        class=\"date\">Jul 20 2016</span>\n                        \n\n                        \n
+        class=\"post-title \">TWI FGC 10-06</h1>\n                        \n                    </div>\n\n
+        \                   <div class=\"post-title-meta\">\n                        \n\n
+        \                       \n                                                    <span>
+        by </span>\n                            <a class=\"post-account\" href=\"//imgur.com/user/dohkal\"
+        title=\"view account of dohkal\" data-jafo=\"{@@event@@:@@userProfileNav@@,@@meta@@:{@@accountId@@:@@59473865@@,@@method@@:@@usernamePost@@}}\">\n
+        \                               dohkal\n                            </a>\n
+        \                       \n\n                                                    <span
+        class=\"date\">6h</span>\n                        \n\n                        \n
         \                       \n                    </div>\n                </div>\n\n
         \               <div class=\"post-images\">\n\n                                    \n\n
         \                                           \n                        \n                        \n
-        \                       \n                                                    \n
-        \                       \n\n                        <div id=\"uEt0YLI\" class=\"post-image-container\"
+        \                       \n                        \n\n                        <div
+        id=\"tiUSazy\" class=\"post-image-container post-image-container--spacer\"
         itemscope itemtype=\"http://schema.org/ImageObject\">\n                                                            <div
-        class=\"post-image\">\n    \n\n                        <img src=\"//i.imgur.com/uEt0YLI.jpg\"
+        class=\"post-image\">\n    \n\n                        <a href=\"//i.imgur.com/tiUSazy.png\"
+        class=\"zoom\">\n                                    <img class=\"post-image-placeholder\"
+        src=\"//i.imgur.com/tiUSazyr.png\" alt=\"\" />\n                    <img class=\"js-post-image-thumb\"
+        src=\"//i.imgur.com/tiUSazyr.png\" alt=\"\" itemprop=\"contentURL\" />\n                \n
+        \           </a>\n        \n    \n</div>\n\n                            \n\n
+        \                           <div>\n                                \n\n                                \n
+        \                           </div>\n\n                                                            <meta
+        itemprop=\"datePublished\" content=\"2017-10-06\">\n                            \n\n
+        \                                                           <span itemprop=\"author\"
+        itemscope itemtype=\"http://schema.org/Person\">\n                                    <link
+        itemprop=\"url\" href=\"https://imgur.com/user/dohkal\">\n                                </span>\n
+        \                           \n                        </div>\n                                            \n
+        \                       \n                        \n                        \n
+        \                       \n\n                        <div id=\"phIsEAi\" class=\"post-image-container
+        post-image-container--spacer\" itemscope itemtype=\"http://schema.org/ImageObject\">\n
+        \                                                           <div class=\"post-image\">\n
+        \   \n\n                        <a href=\"//i.imgur.com/phIsEAi.png\" class=\"zoom\">\n
+        \                                   <img src=\"//i.imgur.com/phIsEAi.png\"
+        alt=\"\" itemprop=\"contentURL\" />\n                \n            </a>\n
+        \       \n    \n</div>\n\n                            \n\n                            <div>\n
+        \                               \n\n                                \n                            </div>\n\n
+        \                                                           <meta itemprop=\"datePublished\"
+        content=\"2017-10-06\">\n                            \n\n                                                            <span
+        itemprop=\"author\" itemscope itemtype=\"http://schema.org/Person\">\n                                    <link
+        itemprop=\"url\" href=\"https://imgur.com/user/dohkal\">\n                                </span>\n
+        \                           \n                        </div>\n                                            \n
+        \                       \n                        \n                        \n
+        \                       \n\n                        <div id=\"TvT8V5m\" class=\"post-image-container
+        post-image-container--spacer\" itemscope itemtype=\"http://schema.org/ImageObject\">\n
+        \                                                           <div class=\"post-image\">\n
+        \   \n\n                        <a href=\"//i.imgur.com/TvT8V5m.png\" class=\"zoom\">\n
+        \                                   <img src=\"//i.imgur.com/TvT8V5m.png\"
+        alt=\"\" itemprop=\"contentURL\" />\n                \n            </a>\n
+        \       \n    \n</div>\n\n                            \n\n                            <div>\n
+        \                               \n\n                                \n                            </div>\n\n
+        \                                                           <meta itemprop=\"datePublished\"
+        content=\"2017-10-06\">\n                            \n\n                                                            <span
+        itemprop=\"author\" itemscope itemtype=\"http://schema.org/Person\">\n                                    <link
+        itemprop=\"url\" href=\"https://imgur.com/user/dohkal\">\n                                </span>\n
+        \                           \n                        </div>\n                                            \n
+        \                       \n                        \n                        \n
+        \                                                   \n                        \n\n
+        \                       <div id=\"qETPFAi\" class=\"post-image-container\"
+        itemscope itemtype=\"http://schema.org/ImageObject\">\n                                                            <div
+        class=\"post-image\">\n    \n\n                        <img src=\"//i.imgur.com/qETPFAi.png\"
         alt=\"\" itemprop=\"contentURL\" />\n        \n    \n</div>\n\n                            \n\n
         \                           <div>\n                                \n\n                                \n
         \                           </div>\n\n                                                            <meta
-        itemprop=\"datePublished\" content=\"2016-07-20\">\n                            \n\n
+        itemprop=\"datePublished\" content=\"2017-10-06\">\n                            \n\n
+        \                                                           <span itemprop=\"author\"
+        itemscope itemtype=\"http://schema.org/Person\">\n                                    <link
+        itemprop=\"url\" href=\"https://imgur.com/user/dohkal\">\n                                </span>\n
         \                           \n                        </div>\n                    \n
         \               \n\n                \n\n                                    \n
         \               \n\n                \n                <div class=\"post-action\"></div>\n\n
@@ -1269,7 +1298,7 @@ interactions:
         icon-take-me-up\"></div>\n                    </div>\n                </div>\n
         \           </div>\n        </div>\n        </div>\n\n        <div class=\"clear\"></div>\n
         \   </div>\n\n    <div class=\"tag-group-selector-container\"></div>\n\n    <input
-        id=\"sid\" type=\"hidden\" value=\"94c74ef4b698ce573cccd993d4a55cb7\" />\n\n
+        id=\"sid\" type=\"hidden\" value=\"7446bb35af059181971ad2c6d121f496\" />\n\n
         \   <div class=\"nodisplay\">\n\t<div id=\"colorbox-confirm\" class=\"popup\">\n\t\t<h3
         id=\"colorbox-confirm-title\"></h3>\n\t\t\n\t\t<div class=\"textbox\" id=\"colorbox-confirm-message\"></div>\n\n\t\t<div
         class=\"margin-top\">\n\t\t\t<div class=\"left\">\n\t\t\t\t<a href=\"javascript:;\"
@@ -1326,11 +1355,11 @@ interactions:
         type=\"text/javascript\">\nif(typeof jQuery === 'undefined') {\n    document.write('<script
         type=\"text/javascript\" src=\"//s.imgur.com/include/js/ext/jquery.2.1.1.min.js\"><'
         + '/script>');\n}\n</script>\n<!--<![endif]-->\n\n\n\n                    <script
-        type=\"text/javascript\" src=\"//s.imgur.com/min/react15.js?1505342023\"></script>\n\n
-        \       \n        <script type=\"text/javascript\" src=\"//s.imgur.com/min/global.js?1505342023\"></script>\n\n
+        type=\"text/javascript\" src=\"//s.imgur.com/min/react15.js?1507313072\"></script>\n\n
+        \       \n        <script type=\"text/javascript\" src=\"//s.imgur.com/min/global.js?1507313072\"></script>\n\n
         \       <script type=\"text/javascript\">\n            Imgur.Environment =
-        {\n                galleryScripts:             [\"\\/\\/s.imgur.com\\/min\\/gallery.js?1505342023\"],\n
-        \               galleryCSS:                 [\"\\/\\/s.imgur.com\\/min\\/gallery.css?1505342023\"],\n
+        {\n                galleryScripts:             [\"\\/\\/s.imgur.com\\/min\\/gallery.js?1507313072\"],\n
+        \               galleryCSS:                 [\"\\/\\/s.imgur.com\\/min\\/gallery.css?1507313072\"],\n
         \               isDev:                      false,\n                isSubdomain:
         \               Imgur.Util.isSubdomain('imgur.com'),\n                host:
         \                      'imgur.com',\n                cdnUrl:                     '//i.imgur.com',\n
@@ -1338,7 +1367,7 @@ interactions:
         \                 '//s.imgur.com',\n                socketUrl:                  '//browserevents.imgur.com',\n
         \               signed:                     false,\n                auth:
         \                      {},\n                recaptcha_key:              '6LdZsh4TAAAAAGnDJx9KXxURWygq8exADiSHLP-M',\n
-        \               msid:                       '94c74ef4b698ce573cccd993d4a55cb7',\n
+        \               msid:                       '7446bb35af059181971ad2c6d121f496',\n
         \               beta:                       {\n                    enabled:
         false,\n                    inBeta:  false\n                },\n                \n
         \               ctaConfig:                  {\"anonymous\":[{\"active\":false,\"type\":\"button\",\"trackingName\":\"anonymous\",\"localStorageName\":\"cta-anonymous\",\"url\":\"\\/\",\"buttonText\":\"start
@@ -1371,8 +1400,8 @@ interactions:
         the FCC\",\"title\":\"SAVE THE INTERNET\",\"description\":\"The future of
         a free and open internet is at risk.<br>We need your help to fight back and
         protect net neutrality.\",\"newTab\":true,\"frontPageOnly\":true,\"buttonColor\":\"#8B6FD0\",\"customClass\":\"netneutrality\",\"insidePageOK\":true}],\"global-lightbox\":[{\"active\":true,\"trackingName\":\"mobileApps\",\"localStorageName\":\"apps1442873156\",\"type\":\"custom\",\"jsReactClassName\":\"GetTheApp\",\"backgroundImage\":\"{STATIC}\\/images\\/space-med-bg.png?1433176979\",\"newTab\":true}],\"side-gallery\":[{\"active\":false,\"localStorageName\":\"cta-side-whatisimgur\",\"hash\":\"2gUGa\",\"is_album\":true,\"variation\":\"what-is-imgur\",\"readonly\":true}]},\n
-        \               experiments:                {\"expSNKPK128\":{\"active\":true,\"name\":\"Most
-        Viral A\\/B Threshold\",\"inclusionProbability\":0.4,\"expirationDate\":\"2017-12-31T00:00:00.000Z\",\"variations\":[{\"name\":\"timerelviralitypartthreetr\",\"inclusionProbability\":0.5},{\"name\":\"timerelviralitypartthreect\",\"inclusionProbability\":0.5}]}},\n
+        \               experiments:                {\"expSNKPK127\":{\"active\":true,\"name\":\"Most
+        Viral A\\/B Threshold\",\"inclusionProbability\":0.4,\"expirationDate\":\"2017-12-31T00:00:00.000Z\",\"variations\":[{\"name\":\"mvtimedecaycontroversialtr\",\"inclusionProbability\":0.5},{\"name\":\"mvtimedecaycontroversialct\",\"inclusionProbability\":0.5}]}},\n
         \               isGalleryAdmin:             false,\n                ppBlog:
         \                    '//imgur.com/blog/?p=6101',\n                videoIsLimited:
         \            false,\n                isPPUser:                   false,\n
@@ -1392,7 +1421,7 @@ interactions:
         if(w.attachEvent) { w.attachEvent(\"onload\", x); }\n                        else
         { w.onload = x; }\n                        }(window, document));\n\n                    \n
         \               }\n            })();\n        </script>\n\n    \n\n            <script
-        type=\"text/javascript\" src=\"//s.imgur.com/min/advertising.js?1505342023\"></script>\n\n\n
+        type=\"text/javascript\" src=\"//s.imgur.com/min/advertising.js?1507313072\"></script>\n\n\n
         \       <script>\n            !function(a9,a,p,s,t,A,g){if(a[a9])return;function
         q(c,r){a[a9]._Q.push([c,r])}a[a9]={init:function(){q(\"i\",arguments)},fetchBids:function()\n
         \           {q(\"f\",arguments)},setDisplayBids:function(){},_Q:[]};A=p.createElement(s);A.async=!0;A.src=t;g=p.getElementsByTagName(s)[0];g.parentNode.insertBefore(\n
@@ -1404,26 +1433,34 @@ interactions:
         type=\"text/javascript\">\n            window.runSlots = {\n                config:
         {\"ads_website\":\"http:\\/\\/www.imgurads.com\\/\",\"allow_nsfw\":false,\"allow_unmoderated\":false,\"allow_subreddits_nsfw\":false,\"_enabled_\":true,\"active_slots\":[{\"name\":\"under_sidebar\",\"element\":\"div-gpt-ad-under_sidebar\",\"insertSelector\":\".panel-ad\",\"insertMethod\":\"append\",\"sizes\":[[300,250],[300,600]],\"slot_id\":\"\\/4761660\\/H_I_300x250\",\"prebid\":{\"sovrn\":{\"prod\":true,\"config\":{\"bidder\":\"sovrn\",\"params\":{\"tagid\":\"151260\"}}},\"aol\":{\"prod\":true,\"config\":{\"bidder\":\"aol\",\"params\":{\"placement\":\"3937264\",\"network\":\"9432.1\",\"sizeId\":\"170\"}}},\"indexExchange\":{\"prod\":true,\"config\":{\"bidder\":\"indexExchange\",\"params\":{\"id\":\"1\",\"siteID\":172790}}},\"criteo\":{\"prod\":false,\"config\":{\"bidder\":\"criteo\",\"params\":{\"zoneId\":\"706134\"}}},\"districtmDMX\":{\"prod\":true,\"config\":{\"bidder\":\"districtmDMX\",\"params\":{\"id\":\"144150\"}}},\"sonobi\":{\"prod\":true,\"config\":{\"bidder\":\"sonobi\",\"params\":{\"placement_id\":\"4ab906a688a14fe00b28\"}}}}},{\"name\":\"top_banner\",\"element\":\"div-gpt-ad-top_banner\",\"insertSelector\":\"#inside
         .post-container\",\"insertMethod\":\"before\",\"sizes\":[[728,90]],\"slot_id\":\"\\/4761660\\/Leaderboard_970x90_ATF\",\"prebid\":{\"sovrn\":{\"prod\":true,\"config\":{\"bidder\":\"sovrn\",\"params\":{\"tagid\":\"151259\"}}},\"aol\":{\"prod\":true,\"config\":{\"bidder\":\"aol\",\"params\":{\"placement\":\"3937263\",\"network\":\"9432.1\",\"sizeId\":\"225\"}}},\"indexExchange\":{\"prod\":true,\"config\":{\"bidder\":\"indexExchange\",\"params\":{\"id\":\"2\",\"siteID\":164899}}},\"criteo\":{\"prod\":false,\"config\":{\"bidder\":\"criteo\",\"params\":{\"zoneId\":\"706133\"}}},\"districtmDMX\":{\"prod\":true,\"config\":{\"bidder\":\"districtmDMX\",\"params\":{\"id\":\"144152\"}}},\"sonobi\":{\"prod\":true,\"config\":{\"bidder\":\"sonobi\",\"params\":{\"placement_id\":\"cee8b35ed54a1b43c870\"}}}}},{\"name\":\"spotlight\",\"element\":\"div-gpt-ad-spotlight\",\"domElement\":\"iframe\",\"sizes\":[[728,90]],\"slot_id\":\"\\/4761660\\/Leaderboard_728x90_ATF_LI\",\"prebid\":null},{\"name\":\"pop_sky\",\"element\":\"div-gpt-ad-sky_pop\",\"insertSelector\":\"#fixed-side-footer-links\",\"insertMethod\":\"after\",\"sizes\":[[300,600],[160,600],[300,250]],\"slot_id\":\"\\/4761660\\/H_I_160x600\",\"prebid\":{\"sovrn\":{\"prod\":true,\"config\":{\"bidder\":\"sovrn\",\"params\":{\"tagid\":\"151261\"}}},\"aol\":{\"prod\":true,\"config\":{\"bidder\":\"aol\",\"params\":{\"placement\":\"3937265\",\"network\":\"9432.1\",\"sizeId\":\"154\"}}},\"indexExchange\":{\"prod\":true,\"config\":{\"bidder\":\"indexExchange\",\"params\":{\"id\":\"3\",\"siteID\":172792}}},\"criteo\":{\"prod\":false,\"config\":{\"bidder\":\"criteo\",\"params\":{\"zoneId\":\"706132\"}}},\"districtmDMX\":{\"prod\":true,\"config\":{\"bidder\":\"districtmDMX\",\"params\":{\"id\":\"144151\"}}},\"sonobi\":{\"prod\":true,\"config\":{\"bidder\":\"sonobi\",\"params\":{\"placement_id\":\"691b4c88b69d09969705\"}}}}}],\"bidder_adjustments\":{\"aol\":0.9,\"districtmDMX\":0.9,\"indexExchange\":1,\"sovrn\":1,\"sonobi\":1,\"criteo\":1},\"partners\":{\"gpt\":{\"src\":\"\\/\\/www.googletagservices.com\\/tag\\/js\\/gpt.js\"},\"openx\":{\"src\":\"\\/\\/imgur-d.openx.net\\/w\\/1.0\\/jstag?nc=4761660-Imgur\"}},\"global_flags\":{\"page_load\":true,\"other\":false,\"user_page\":false,\"album_page\":true},\"gallery_flags\":{\"gallery\":true,\"subreddit\":true,\"subreddit_nsfw\":false},\"item_flags\":{\"album\":true,\"in_gallery\":true,\"mature\":false,\"sixth_unmod\":false,\"sixth_mod_safe\":true,\"sixth_mod_unsafe\":false,\"onsfw_unmod\":false,\"onsfw_mod_safe\":true,\"onsfw_mod_unsafe\":false,\"nsfw\":false,\"promoted\":false,\"referer\":true,\"share\":true,\"spam\":false,\"under_10\":false},\"defaultFlags\":{\"album\":true,\"in_gallery\":true,\"mature\":false,\"sixth_unmod\":false,\"sixth_mod_safe\":true,\"sixth_mod_unsafe\":false,\"onsfw_unmod\":false,\"onsfw_mod_safe\":true,\"onsfw_mod_unsafe\":false,\"nsfw\":false,\"promoted\":false,\"referer\":true,\"share\":true,\"spam\":false,\"under_10\":false,\"gallery\":true,\"subreddit\":true,\"subreddit_nsfw\":false,\"page_load\":true,\"other\":false,\"user_page\":false,\"album_page\":true}},\n
-        \               item: {\"id\":\"qx9t5\",\"account_id\":null,\"title\":null,\"description\":null,\"privacy\":\"0\",\"cover\":\"uEt0YLI\",\"order\":\"0\",\"layout\":\"b\",\"num_images\":\"1\",\"datetime\":\"2016-07-20
-        17:34:58\",\"title_clean\":\"7ES9F\",\"views\":\"66014\",\"isAd\":false,\"hash\":\"qx9t5\",\"album_cover\":\"uEt0YLI\",\"album_privacy\":\"0\",\"album_description\":null,\"album_layout\":\"b\",\"starting_score\":0,\"is_album\":true,\"operation\":null,\"favorited\":false,\"force_grid\":false,\"is_viral\":false,\"cover_deletehash\":\"\",\"album_images\":{\"count\":1,\"images\":[{\"hash\":\"uEt0YLI\",\"title\":\"\",\"description\":null,\"has_sound\":false,\"width\":477,\"height\":670,\"size\":29504,\"ext\":\".jpg\",\"animated\":false,\"prefer_video\":false,\"looping\":false,\"datetime\":\"2016-07-20
-        17:35:00\"}]},\"adConfig\":{\"safeFlags\":[\"sixth_mod_safe\",\"onsfw_mod_safe\",\"subreddit\",\"page_load\"],\"unsafeFlags\":[],\"showsAds\":true}}\n
+        \               item: {\"id\":\"pRYEi\",\"account_id\":\"59473865\",\"title\":\"TWI
+        FGC 10-06\",\"description\":null,\"privacy\":\"0\",\"cover\":\"tiUSazy\",\"order\":\"0\",\"layout\":\"b\",\"num_images\":\"4\",\"datetime\":\"2017-10-06
+        18:50:24\",\"title_clean\":null,\"views\":\"237\",\"isAd\":false,\"hash\":\"pRYEi\",\"album_cover\":\"tiUSazy\",\"album_privacy\":\"0\",\"album_description\":null,\"album_layout\":\"b\",\"starting_score\":0,\"is_album\":true,\"operation\":null,\"favorited\":false,\"force_grid\":false,\"is_viral\":false,\"account_url\":\"dohkal\",\"cover_deletehash\":\"\",\"album_images\":{\"count\":4,\"images\":[{\"hash\":\"tiUSazy\",\"title\":\"\",\"description\":null,\"has_sound\":false,\"width\":1723,\"height\":1076,\"size\":1198262,\"ext\":\".png\",\"animated\":false,\"prefer_video\":false,\"looping\":false,\"datetime\":\"2017-10-06
+        18:47:17\"},{\"hash\":\"phIsEAi\",\"title\":\"\",\"description\":null,\"has_sound\":false,\"width\":1151,\"height\":921,\"size\":777558,\"ext\":\".png\",\"animated\":false,\"prefer_video\":false,\"looping\":false,\"datetime\":\"2017-10-06
+        18:49:18\"},{\"hash\":\"TvT8V5m\",\"title\":\"\",\"description\":null,\"has_sound\":false,\"width\":1151,\"height\":1114,\"size\":1280636,\"ext\":\".png\",\"animated\":false,\"prefer_video\":false,\"looping\":false,\"datetime\":\"2017-10-06
+        18:47:06\"},{\"hash\":\"qETPFAi\",\"title\":\"\",\"description\":null,\"has_sound\":false,\"width\":582,\"height\":666,\"size\":233660,\"ext\":\".png\",\"animated\":false,\"prefer_video\":false,\"looping\":false,\"datetime\":\"2017-10-06
+        18:51:44\"}]},\"adConfig\":{\"safeFlags\":[\"onsfw_mod_safe\",\"subreddit\",\"page_load\"],\"unsafeFlags\":[],\"showsAds\":true}}\n
         \           };\n\n            var PREBID_TIMEOUT = 1000;\n            var
         pbjs = pbjs || { };\n            pbjs.que = pbjs.que || [];\n        </script>\n
-        \       <script type=\"text/javascript\" src=\"//s.imgur.com/min/runSlots.js?1505342023\"></script>\n\n
+        \       <script type=\"text/javascript\" src=\"//s.imgur.com/min/runSlots.js?1507313072\"></script>\n\n
         \   \n\n        <script type=\"text/javascript\">\n    (function(widgetFactory)
         {\n        widgetFactory.mergeConfig('gallery', {\n            account_url
-        \        : null,\n            favs_account_url    : null,\n            sort
+        \        : 'dohkal',\n            favs_account_url    : null,\n            sort
         \               : null,\n            section             : null,\n            window
         \             : null,\n            tag                 : null,\n            isHotImage
-        \         : null,\n            hash                : 'qx9t5',\n            baseURL
+        \         : null,\n            hash                : 'pRYEi',\n            baseURL
         \            : decodeURIComponent('%2Fgallery'),\n            page                :
         0,\n            isPro               : false,\n            searchQuery         :
         '',\n            advSearch           : null,\n            isRandom            :
         false,\n            safe_tags           : false,\n            hasAccess           :
         false,\n            inGallery           : false,\n            hashes              :
-        null,\n        \n            image               : {\"id\":\"qx9t5\",\"account_id\":null,\"title\":null,\"description\":null,\"privacy\":\"0\",\"cover\":\"uEt0YLI\",\"order\":\"0\",\"layout\":\"b\",\"num_images\":\"1\",\"datetime\":\"2016-07-20
-        17:34:58\",\"title_clean\":\"7ES9F\",\"views\":\"66014\",\"isAd\":false,\"hash\":\"qx9t5\",\"album_cover\":\"uEt0YLI\",\"album_privacy\":\"0\",\"album_description\":null,\"album_layout\":\"b\",\"starting_score\":0,\"is_album\":true,\"operation\":null,\"favorited\":false,\"force_grid\":false,\"is_viral\":false,\"cover_deletehash\":\"\",\"album_images\":{\"count\":1,\"images\":[{\"hash\":\"uEt0YLI\",\"title\":\"\",\"description\":null,\"has_sound\":false,\"width\":477,\"height\":670,\"size\":29504,\"ext\":\".jpg\",\"animated\":false,\"prefer_video\":false,\"looping\":false,\"datetime\":\"2016-07-20
-        17:35:00\"}]},\"adConfig\":{\"safeFlags\":[\"sixth_mod_safe\",\"onsfw_mod_safe\",\"subreddit\",\"page_load\"],\"unsafeFlags\":[],\"showsAds\":true}},\n
+        null,\n        \n            image               : {\"id\":\"pRYEi\",\"account_id\":\"59473865\",\"title\":\"TWI
+        FGC 10-06\",\"description\":null,\"privacy\":\"0\",\"cover\":\"tiUSazy\",\"order\":\"0\",\"layout\":\"b\",\"num_images\":\"4\",\"datetime\":\"2017-10-06
+        18:50:24\",\"title_clean\":null,\"views\":\"237\",\"isAd\":false,\"hash\":\"pRYEi\",\"album_cover\":\"tiUSazy\",\"album_privacy\":\"0\",\"album_description\":null,\"album_layout\":\"b\",\"starting_score\":0,\"is_album\":true,\"operation\":null,\"favorited\":false,\"force_grid\":false,\"is_viral\":false,\"account_url\":\"dohkal\",\"cover_deletehash\":\"\",\"album_images\":{\"count\":4,\"images\":[{\"hash\":\"tiUSazy\",\"title\":\"\",\"description\":null,\"has_sound\":false,\"width\":1723,\"height\":1076,\"size\":1198262,\"ext\":\".png\",\"animated\":false,\"prefer_video\":false,\"looping\":false,\"datetime\":\"2017-10-06
+        18:47:17\"},{\"hash\":\"phIsEAi\",\"title\":\"\",\"description\":null,\"has_sound\":false,\"width\":1151,\"height\":921,\"size\":777558,\"ext\":\".png\",\"animated\":false,\"prefer_video\":false,\"looping\":false,\"datetime\":\"2017-10-06
+        18:49:18\"},{\"hash\":\"TvT8V5m\",\"title\":\"\",\"description\":null,\"has_sound\":false,\"width\":1151,\"height\":1114,\"size\":1280636,\"ext\":\".png\",\"animated\":false,\"prefer_video\":false,\"looping\":false,\"datetime\":\"2017-10-06
+        18:47:06\"},{\"hash\":\"qETPFAi\",\"title\":\"\",\"description\":null,\"has_sound\":false,\"width\":582,\"height\":666,\"size\":233660,\"ext\":\".png\",\"animated\":false,\"prefer_video\":false,\"looping\":false,\"datetime\":\"2017-10-06
+        18:51:44\"}]},\"adConfig\":{\"safeFlags\":[\"onsfw_mod_safe\",\"subreddit\",\"page_load\"],\"unsafeFlags\":[],\"showsAds\":true}},\n
         \           group               : null,\n        \n        \n            galleryTitle
         \       : 'Imgur: The most awesome images on the Internet',\n            votedFavedRecently:
         false,\n            tagSectionIsPromoted: false\n        });\n\n        widgetFactory.mergeConfig('groups',
@@ -1448,12 +1485,12 @@ interactions:
         _widgetFactory !== 'undefined') {\n                _widgetFactory.initNotifications(null,
         [{\"name\":\"Neutral\",\"reputation\":399},{\"name\":\"Accepted\",\"reputation\":999},{\"name\":\"Liked\",\"reputation\":1999},{\"name\":\"Trusted\",\"reputation\":3999},{\"name\":\"Idolized\",\"reputation\":7999},{\"name\":\"Renowned\",\"reputation\":19999},{\"name\":\"Glorious\",\"reputation\":9223372036854775807}]);\n
         \           }\n        </script>\n    \n\n    \n    <script type=\"text/javascript\"
-        src=\"//s.imgur.com/min/gallery.js?1505342023\"></script>\n\n    <script type=\"text/javascript\">\n
+        src=\"//s.imgur.com/min/gallery.js?1507313072\"></script>\n\n    <script type=\"text/javascript\">\n
         \   (function(widgetFactory) {\n        $.cookie('retina', Imgur.Util.isRetinaDisplay()
         ? 1 : 0);\n\n        var emitter = Imgur.Emitter.getInstance();\n        widgetFactory.produceLocationCommand(emitter);\n\n
         \       var galleryFactory = widgetFactory.produceInsideGalleryFactory();\n
         \       var gallery = galleryFactory.produceInsideGallery(emitter);\n\n        gallery.insideInit();\n\n
-        \                   gallery.imgurInsideNav.setHash('qx9t5');\n            gallery.imgurInsideNav._.albumImageStore.setImages('qx9t5',
+        \                   gallery.imgurInsideNav.setHash('pRYEi');\n            gallery.imgurInsideNav._.albumImageStore.setImages('pRYEi',
         gallery._.image.album_images);\n            gallery.imgurInsideNav.insertPost(_widgetFactory.getConfig('gallery').image,
         true);\n        \n\n        // favorites need init at doc ready\n        //
         and teardown after each image nav\n        $(document).ready(function() {\n
@@ -1468,7 +1505,7 @@ interactions:
         \   <script type=\"text/javascript\">\n        $(function(){\n            //
         log the item view\n            var eventName = 'item';\n            Imgur.Util.jafoLog({\n
         \               event: eventName,\n                meta: _.extend(Imgur.Gallery.getInstance().getGalleryMetadata(eventName),
-        {\n                    'hash': 'qx9t5',\n                    'depth': 1,\n
+        {\n                    'hash': 'pRYEi',\n                    'depth': 1,\n
         \                   'inGallery': false,\n                    'isAlbum': true,\n
         \                   'nsfw': false,\n                    \n                    'galleryEntry':
         0,\n                    'oc': false,\n                    'isModerated': false\n
@@ -1508,7 +1545,9 @@ interactions:
         \   scpt.parentNode.insertBefore(elem, scpt);\n})();\n_qevents.push({\n    qacct:\"p-f8oruOqDFlMeI\"\n});\n</script>\n\n<noscript>\n
         \   <div style=\"display:none;\"><img src=\"//pixel.quantserve.com/pixel/p-f8oruOqDFlMeI.gif\"
         border=\"0\" height=\"1\" width=\"1\" alt=\"Quantcast\"/></div>\n</noscript>\n<!--
-        End Quantcast tag -->\n\n\n\n        <script type=\"text/javascript\">\n            !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?\n
+        End Quantcast tag -->\n\n\n        <!-- Lotame Tag -->\n<script src=\"//tags.crwdcntrl.net/c/11429/cc_af.js\"
+        async></script>\n<!-- End Lotame Tag -->\n\n\n\n        <script type=\"text/javascript\">\n
+        \           !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?\n
         \           n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;\n
         \           n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;\n
         \           t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,\n
@@ -1532,18 +1571,18 @@ interactions:
       Cache-Control: ['max-age=60, stale-while-revalidate=600, stale-if-error=86400,
           public']
       Connection: [keep-alive]
-      Content-Length: ['47697']
+      Content-Length: ['53477']
       Content-Security-Policy: [upgrade-insecure-requests]
       Content-Type: [text/html;charset=UTF-8]
-      Date: ['Thu, 14 Sep 2017 04:40:22 GMT']
-      Fastly-Debug-Digest: [2feb96fedec29f726b6925f2de2a141eca3129207c589b532476fef44a547eb1]
+      Date: ['Sat, 07 Oct 2017 01:01:22 GMT']
+      Fastly-Debug-Digest: [ecce514bc7d56e71d48ad7fba74741065c7d91035d9461edf5996e4ca6281647]
       Server: [cat factory 1.0]
       Vary: [Accept-Encoding]
       X-Cache: ['MISS, MISS']
       X-Cache-Hits: ['0, 0']
       X-Frame-Options: [DENY]
-      X-Served-By: ['cache-iad2138-IAD, cache-dfw1844-DFW']
-      X-Timer: ['S1505364023.859558,VS0,VE69']
+      X-Served-By: ['cache-iad2134-IAD, cache-atl6236-ATL']
+      X-Timer: ['S1507338083.540399,VS0,VE47']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1552,35 +1591,37 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Authorization: ['**********']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.14.2]
     method: GET
     uri: https://api.imgur.com/3/gallery/yW0kbMi
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA0VRQXKDMAz8CqMzk5A0bQh/6LmHpsM4RgGlxmYsORna6d8rSGhvluRd7a6+oTFi
-        oPoGaqCC8a34PL0S5CAkDrXzOmYuWOMydGglBk+WM5YQMesMZyazRlb6v0G2kQah4KHyybl8Ykah
-        Xlk2u5dDsdsWh1KJx2Hipd60eFxfBmwVbbzWgirhbBxjDjdqpINqW263OXRIbSdabTb7HJi+lKB8
-        2ewPuxyuhDeGavecw8n45oF7KvdlsX8qdB4EF0Fncw2RpvqxxfP59lew+pvVQ0+ucSN5wYgs5GeF
-        1obkpU7RLXRLa0ru3iGuzb8H8nUfWOorReP+uppazYr7/yemVQfvH8rY1Pd4ivk97wKYmVrjHMYR
-        KolpwoSB7LJ2LmYZinPkPxXViQxcHdfHNa2ob1Nc2dAf148Dry7DZEpbPaqD2YeeSc+TBtXyrDxN
-        uHl9avxD0CimjHXMVi8/PQ93t+6U+oeRH50ma5F5EcliJE0cRfHzC9ed7HdpAgAA
+        H4sIAAAAAAAAA0VRzW6zQAx8FeQzSiAiacI79NzDl09oszjgdtlFa28iWvXda0hob/6b8Yz9Ba0R
+        A/UXUAs1TG/Fx+WVIAchcaiV1ylzwRqXoUMrMXiynLGEiFlvODOZNbLR+RbZRhqFgofaJ+fymRmF
+        BmUpq8OpqHbF6ajE0zjz0mA6PG/fR+wUbbzmgirhahxjDndqpYd6d9ztcuiRul40K8uXHJg+leB4
+        KF9OVQ43wjtDfdDwYnz7xO335b46lgftB8FV0NXcQqQ5f27xfL3/Jqz+FvUwkGvdRF4wIgv5RaG1
+        IXlpUnQr3VqaL/eoEDfmzwP5ZggszY2icb9VvVrDivubE9Opg3//lbFtHucplnjZBbAwdcY5jBPU
+        EtOMCSPZde2SLDIU58h/KKoXGbk+b89b2tDQpbixYThvnw/evI+zKS0NqA4WH/omfU8aVcteedpw
+        9xrq+cegp9Cw0jZb/fwcnh5u3SUNTyPf2k3WIvMqksVImjmK4vsHR8+UJGkCAAA=
     headers:
       Accept-Ranges: [bytes]
+      Access-Control-Allow-Credentials: ['true']
       Access-Control-Allow-Headers: ['Authorization, Content-Type, Accept, X-Mashape-Authorization,
           IMGURPLATFORM, IMGURUIDJAFO, sessionCount, IMGURMWBETA, IMGURMWBETAOPTIN,
-          X-expSNKPK128']
+          X-expSNKPK127']
+      Access-Control-Allow-Origin: ['*']
       Access-Control-Expose-Headers: ['X-RateLimit-ClientLimit, X-RateLimit-ClientRemaining,
           X-RateLimit-UserLimit, X-RateLimit-UserRemaining, X-RateLimit-UserReset']
-      Age: ['11']
+      Age: ['7']
       Cache-Control: ['max-age=60, stale-while-revalidate=600, stale-if-error=86400,
           public']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
-      Content-Length: ['390']
+      Content-Length: ['389']
       Content-Type: [application/json]
-      Date: ['Thu, 14 Sep 2017 04:40:23 GMT']
-      ETag: [W/"94803bdd7421784ee8255f6ed6c4d7c1a52dd719"]
+      Date: ['Sat, 07 Oct 2017 01:01:22 GMT']
+      ETag: [W/"850a1abd432f374704beaf493c2838793a79bcb6"]
       Fastly-Debug-Digest: [a2793844ca4503867a65d6f254f258f0ee7f945487a64ad7c417e4b80e273f38]
       Server: [cat factory 1.0]
       Vary: [Accept-Encoding]
@@ -1588,14 +1629,13 @@ interactions:
       X-Cache-Hits: ['0, 1']
       X-Frame-Options: [DENY]
       X-RateLimit-ClientLimit: ['12500']
-      X-RateLimit-ClientRemaining: ['12488']
+      X-RateLimit-ClientRemaining: ['12466']
       X-RateLimit-UserLimit: ['500']
-      X-RateLimit-UserRemaining: ['497']
-      X-RateLimit-UserReset: ['1505286334']
-      X-Served-By: ['cache-iad2146-IAD, cache-mdw17346-MDW']
-      X-Timer: ['S1505364023.222985,VS0,VE0']
-      access-control-allow-methods: ['GET, PUT, POST, DELETE, OPTIONS']
-      access-control-allow-origin: ['*']
+      X-RateLimit-UserRemaining: ['496']
+      X-RateLimit-UserReset: ['1507338868']
+      X-Served-By: ['cache-iad2131-IAD, cache-mdw17347-MDW']
+      X-Timer: ['S1507338083.851875,VS0,VE0']
+      access-control-allow-methods: ['GET, PUT, POST, PATCH, DELETE, OPTIONS']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1604,39 +1644,41 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Authorization: ['**********']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.14.2]
     method: GET
     uri: https://api.imgur.com/3/gallery/yjP1v4B
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA4VTwY6bMBD9FTpnlIADIXCpurta9djeKjUVcsCAu8ZG2A6iUf69YwhsUlXaG555
-        82bmveECJTUUsgvwEjIYf38Lz9ET+GC4EQwjX9noe8+NPelP3ovyRmW9gUrjGeV1go6fEVoyXfS8
-        M1xJyKQVwnekzPAWCcJonwYBSeMIOcfOUfKW1uy4rXmFxVTi0zBsbnrLfBh4aRrISHjwoWG8bgxk
-        u3Tvg+Z/HF1KYpIEgQ9nzgYNWXQID/vQhxOV5a02JUkSOlg0A5Vhy1wVPaueu3dFhcZ2UlfD+tCs
-        mJeAyko5uumKQllpctuLhWIJOb3IIU6CJEp94Dqn5UrEZd4qbfIz76lYNmuozjWWvsMMrXGDnxeQ
-        1Em1di25dtrm/4QrJYQaWI81JDngZkYZKnJcp8XQLo5JGC4oLuu1zYkWb3XvOuc4AwoEP4qWhE/f
-        nc2NbU+ScnFLrTsyicJD/PLlOX2FBw636mrasslK878sxrpeteo+9nA0gB2EqtXDEFMAYYZL6mD3
-        JtxVYzuJOrhPVOFyvf7C+ct8vrVg+p4KXQ/0paZCsH5cTDGq4wUmX28aT+/ZW5yAyzfMNcZ0Ojtu
-        j1u+4W1t+02h2uP29q9s5jtuu+hjqAP5gAXnj7ETauLNb6e/JyFJd04YHNL5O6+AVS26lU9niXNH
-        OLntUIuQ7FI8zVINTpkwin3oFJdmShH3Q+pC9Y6ZRI7XWSdOtr15dMW8xUPQeumkUWbrri8Irn8B
-        SKDNnjkEAAA=
+        H4sIAAAAAAAAA4VTwa6bMBD8FbpnlICBBLhUaquq6qW99NRUyAEDfs/YCNtBNMq/dw2BJlWld8O7
+        szO7s8sVKmoo5FfgFeQwvXwPL/EH8MFwIxhGvrDJ9z629qzfeZ+UNynrjVQazyivF3R6j9CK6XLg
+        veFKQi6tEL4jZYZ3SBDGhywISJbEyDn1jpJ3tGGnfcNrLKYSn4ahuBks82HklWkhJ2HqQ8t40xrI
+        o+zgg+a/HV1GEnIMAh8unI0a8jiNwuzow5nK6l6bRQFJ40OahtkMVIatfdX0ogbu3jUVGuWkrsft
+        oVm5DAG1lXJy3ZWlstIUdhArxRpyfpE0OQbHOPOB64JWGxGXRae0KS58oGKdrKW60Fj6F2ZogxP8
+        vIKkzqpNteLaeVv8E66VEGpkA9ZEUYSiRhkqChynwxAJSJwF0Qrjstl0zrR8bQYnXWAT6BCk5Me3
+        r9WL23Nru7OkXNxT25BMovNwiKL0mMATh5t129o6ykbzvyzG+kF16jH2dDWACkI16qmJOYAwwyV1
+        sMctPFSjnEQj3CfacL3dfmH/VbEcWzB/z4VOAxfTUCHYMK1bMarnJSY/302e38tysQMuXzHXGtPr
+        /LQ/7fmOd40ddqXqTvv7z7JbDrnr47ehDuQDFlzexs6ombe43/6BhCSLnDHYpNvvMgJWdbitYr5L
+        7DvGzm2PXoQkDvC7UqNzJowTH3rFpZlTJMG/RpdqcMx4OulyxOJsu/uObpi3eAhar0oabbbzrQW3
+        P/HW4sQ6BAAA
     headers:
       Accept-Ranges: [bytes]
+      Access-Control-Allow-Credentials: ['true']
       Access-Control-Allow-Headers: ['Authorization, Content-Type, Accept, X-Mashape-Authorization,
           IMGURPLATFORM, IMGURUIDJAFO, sessionCount, IMGURMWBETA, IMGURMWBETAOPTIN,
-          X-expSNKPK128']
+          X-expSNKPK127']
+      Access-Control-Allow-Origin: ['*']
       Access-Control-Expose-Headers: ['X-RateLimit-ClientLimit, X-RateLimit-ClientRemaining,
           X-RateLimit-UserLimit, X-RateLimit-UserRemaining, X-RateLimit-UserReset']
-      Age: ['11']
+      Age: ['7']
       Cache-Control: ['max-age=60, stale-while-revalidate=600, stale-if-error=86400,
           public']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
-      Content-Length: ['578']
+      Content-Length: ['579']
       Content-Type: [application/json]
-      Date: ['Thu, 14 Sep 2017 04:40:23 GMT']
-      ETag: [W/"b46daf9bfc65027160be29ae143fbad7070432df"]
+      Date: ['Sat, 07 Oct 2017 01:01:22 GMT']
+      ETag: [W/"b37ea1c8ca8ed039ce0d1e9c0ed13fd6ef4bdddc"]
       Fastly-Debug-Digest: [ae54aa40bf3682f3981ed7edff859cf9919f30c245b7867aad44cdd61444b1b5]
       Server: [cat factory 1.0]
       Vary: [Accept-Encoding]
@@ -1644,14 +1686,13 @@ interactions:
       X-Cache-Hits: ['0, 1']
       X-Frame-Options: [DENY]
       X-RateLimit-ClientLimit: ['12500']
-      X-RateLimit-ClientRemaining: ['12464']
+      X-RateLimit-ClientRemaining: ['12465']
       X-RateLimit-UserLimit: ['500']
-      X-RateLimit-UserRemaining: ['498']
-      X-RateLimit-UserReset: ['1505367612']
-      X-Served-By: ['cache-iad2120-IAD, cache-mdw17335-MDW']
-      X-Timer: ['S1505364023.360756,VS0,VE0']
-      access-control-allow-methods: ['GET, PUT, POST, DELETE, OPTIONS']
-      access-control-allow-origin: ['*']
+      X-RateLimit-UserRemaining: ['495']
+      X-RateLimit-UserReset: ['1507338868']
+      X-Served-By: ['cache-iad2146-IAD, cache-mdw17328-MDW']
+      X-Timer: ['S1507338083.974644,VS0,VE1']
+      access-control-allow-methods: ['GET, PUT, POST, PATCH, DELETE, OPTIONS']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1660,50 +1701,52 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Authorization: ['**********']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.14.2]
     method: GET
-    uri: https://api.imgur.com/3/album/qx9t5
+    uri: https://api.imgur.com/3/album/pRYEi
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA5WS3W7bMAyF34XXRqx0iVP7rgV2sWEvUMyFoMiKrVaWPIlylhV591F14vQHLdBL
-        HopH5Ec+QSNQQPUEuoEK/vwtcQ0ZoEajoLLRmAwaFaTXA2pnZ0mgQt3Tk+WqKNm3gpXXGUg3Kk8u
-        8Tuyu18/4KTwvW6wg2q12ZyVTum2Q6iKDctASOmiRR69OfufpdTUpAxej0IeyH2IW6MlmRtxcJFM
-        YGtcS/Go1T6QZ8GWK8pq+0i5DnEIVZ3Xue7b6BfS9XUu6vw86U6MzmukSXbCBJWBDbv9HAQlp7Hh
-        xuqetFulbftT+cdAtaS0KvDnVokECZa3whjlD7ODDlw0l+i5AqrfJ94XUl8mvmSEDg8DKZNtnT8M
-        KnEQqVVUl19f8n9FPuh/VH5VrtlqxndVZrAVtjkVXa/XxbKgrEuMpl4+YDYlZ2SvN/npct9Asrx3
-        AfmovTCz2onAA9Vd3qFoE8p7cmz4RCJdUzP9BWlB7/fx/iwWLw7jtI/Fw9DC8f5I00QpVaBv0Md0
-        DygwJkiMHf8Doo3t9TsDAAA=
+        H4sIAAAAAAAAA+WVS2/bMAzHv0qhs5dIsi0/bsOQDsUuw5ZtGJbCUGzFFurXLNlBWvS7j4pf9YoB
+        bXfMzaRISvz/RPkBJVxzFD4gmaAQ1V9+biSykJY6F2Bvf9xcXX/8cEXwO8zAnwgVN7LWsipRWLZ5
+        bpl8oWUB0cTFnk1cnzoWiqtONFBAy29f+f0JDZ7oKBOdQahH7dGVCZlmGnzYYxbicVy1pY7aJof0
+        pMrueI5mtzmlGzie7TPXQnUjOx6fzMHbfS5jCMz5qWqhGtrnVQp2J8VRoZDaHqzJ8g5WMq1rFe7W
+        u7Us0rZZxVWxW/Pdemz+wLuqkRo6OvBcCQuV6nCcDCXivn30idc1h3hZ8FSo6HxAFELzsoxSnuei
+        OU1ZUkU8ma1zBgp/DbLPKg3CD9K+QG1mGtOn2tA6l4U+StM4L8HUYt50If1SdCXvTUUS+JTRSTPi
+        UmyhPS+TMdWnxDZ8wd1VRqD+UP8QrF+c9OrNBd+ly0jRe/5Sq4yKSumokw3chdGbcRUpyJvjNE+N
+        prdQMYl6SfD5u79LhtRzMM/vxOrJrRjArIykj9Y4JNmN2rx/MiYvp+W5/itpEZfMtAJKRlie57mm
+        2MiKeEtWAQ48h/rsYlANVJaott3W/+4Wb0HFKPsfVIQQZxos6mNmsxmW47PlYAXYxtTFgYm5CFoD
+        mCWt35vt5+u3DVaAndfRgmdshsXY9AhS22bnoelRMYcuSbkYw2SZh/EyQA1MelC3j9BNG8dCwTa6
+        aSFbaa5b84PF+PEPpTDhnk0IAAA=
     headers:
       Accept-Ranges: [bytes]
+      Access-Control-Allow-Credentials: ['true']
       Access-Control-Allow-Headers: ['Authorization, Content-Type, Accept, X-Mashape-Authorization,
           IMGURPLATFORM, IMGURUIDJAFO, sessionCount, IMGURMWBETA, IMGURMWBETAOPTIN,
-          X-expSNKPK128']
+          X-expSNKPK127']
+      Access-Control-Allow-Origin: ['*']
       Access-Control-Expose-Headers: ['X-RateLimit-ClientLimit, X-RateLimit-ClientRemaining,
           X-RateLimit-UserLimit, X-RateLimit-UserRemaining, X-RateLimit-UserReset']
-      Age: ['10']
+      Age: ['100']
       Cache-Control: ['max-age=60, stale-while-revalidate=600, stale-if-error=86400,
           public']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
-      Content-Length: ['416']
+      Content-Length: ['590']
       Content-Type: [application/json]
-      Date: ['Thu, 14 Sep 2017 04:40:23 GMT']
-      ETag: [W/"d0ac94401e94efb8df60bfd684fbbfaf84b274df"]
-      Fastly-Debug-Digest: [b95c41c703e904c145c615cb1569a4d8cd685a4c48c40c1e2322fe3184806bf9]
+      Date: ['Sat, 07 Oct 2017 01:01:23 GMT']
+      ETag: [W/"2e5e81168ad9cacba231d511a405bec409f67e93"]
+      Fastly-Debug-Digest: [75f7908a66ef856621dff296f5ce58532966f39397442cc5b0bec6811e2cf406]
       Server: [cat factory 1.0]
       Vary: [Accept-Encoding]
-      X-Cache: ['MISS, HIT']
-      X-Cache-Hits: ['0, 1']
+      X-Cache: ['HIT, HIT']
+      X-Cache-Hits: ['2, 1']
       X-Frame-Options: [DENY]
-      X-RateLimit-ClientLimit: ['12500']
-      X-RateLimit-ClientRemaining: ['12463']
       X-RateLimit-UserLimit: ['500']
-      X-RateLimit-UserRemaining: ['497']
-      X-RateLimit-UserReset: ['1505367612']
-      X-Served-By: ['cache-iad2141-IAD, cache-mdw17341-MDW']
-      X-Timer: ['S1505364024.501541,VS0,VE0']
-      access-control-allow-methods: ['GET, PUT, POST, DELETE, OPTIONS']
-      access-control-allow-origin: ['*']
+      X-RateLimit-UserRemaining: ['492']
+      X-RateLimit-UserReset: ['1507338790']
+      X-Served-By: ['cache-iad2145-IAD, cache-mdw17346-MDW']
+      X-Timer: ['S1507338083.107231,VS0,VE0']
+      access-control-allow-methods: ['GET, PUT, POST, PATCH, DELETE, OPTIONS']
     status: {code: 200, message: OK}
 version: 1

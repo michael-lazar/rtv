@@ -206,11 +206,14 @@ class ImgurApiMIMEParser(BaseMIMEParser):
             _logger.warning('Imgur API failure, resp %s', r.json())
             return cls.fallback(url, domain)
 
-        if 'images' in data:
+        if 'images' in data and len(data['images']) > 1:
             # TODO: handle imgur albums with mixed content, i.e. jpeg and gifv
             link = ' '.join([d['link'] for d in data['images'] if not d['animated']])
             mime = 'image/x-imgur-album'
         else:
+            data = data['images'][0] if 'images' in data else data
+            # this handles single image galleries
+
             link = data['mp4'] if data['animated'] else data['link']
             mime = 'video/mp4' if data['animated'] else data['type']
 
