@@ -106,6 +106,10 @@ URLS = OrderedDict([
         'https://imgtc.com/w/Sa2whPE',
         'https://imgtc.b-cdn.net/uploads/ZHI3OopOhKJ.mp4',
         'video/mp4')),
+    ('imgflip', (
+        'https://imgflip.com/i/1dtdbv',
+        'https://i.imgflip.com/1dtdbv.jpg',
+        'image/jpeg')),
 ])
 
 
