@@ -400,28 +400,42 @@ class GifsMIMEParser(OpenGraphMIMEParser):
     """
     Gifs.com uses the Open Graph protocol
     """
-    pattern = re.compile(r'https?://(www\.)?gifs\.com/gif/[^.]+$')
+    pattern = re.compile(r'https?://(www\.)?gifs\.com/gif/.+$')
 
 
 class GiphyMIMEParser(OpenGraphMIMEParser):
     """
     Giphy.com uses the Open Graph protocol
     """
-    pattern = re.compile(r'https?://(www\.)?giphy\.com/gifs/[^.]+$')
+    pattern = re.compile(r'https?://(www\.)?giphy\.com/gifs/.+$')
 
 
 class ImgtcMIMEParser(OpenGraphMIMEParser):
     """
     imgtc.com uses the Open Graph protocol
     """
-    pattern = re.compile(r'https?://(www\.)?imgtc\.com/w/[^.]+$')
+    pattern = re.compile(r'https?://(www\.)?imgtc\.com/w/.+$')
 
 
 class ImgflipMIMEParser(OpenGraphMIMEParser):
     """
     imgflip.com uses the Open Graph protocol
     """
-    pattern = re.compile(r'https?://(www\.)?imgflip\.com/i/[^.]+$')
+    pattern = re.compile(r'https?://(www\.)?imgflip\.com/i/.+$')
+
+
+class LivememeMIMEParser(OpenGraphMIMEParser):
+    """
+    livememe.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?livememe\.com/[^.]+$')
+
+
+class MakeamemeMIMEParser(OpenGraphMIMEParser):
+    """
+    makeameme.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?makeameme\.org/meme/.+$')
 
 
 # Parsers should be listed in the order they will be checked
@@ -442,5 +456,7 @@ parsers = [
     GiphyMIMEParser,
     ImgtcMIMEParser,
     ImgflipMIMEParser,
+    LivememeMIMEParser,
+    MakeamemeMIMEParser,
     GifvMIMEParser,
     BaseMIMEParser]

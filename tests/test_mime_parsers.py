@@ -110,6 +110,14 @@ URLS = OrderedDict([
         'https://imgflip.com/i/1dtdbv',
         'https://i.imgflip.com/1dtdbv.jpg',
         'image/jpeg')),
+    ('livememe', (
+        'http://www.livememe.com/v67cxy9',
+        'http://e.lvme.me/v67cxy9.jpg',
+        'image/jpeg')),
+    ('makeameme', (
+        'http://makeameme.org/meme/joined-reddit-for',
+        'https://media.makeameme.org/created/joined-reddit-for.jpg',
+        'image/jpeg')),
 ])
 
 
