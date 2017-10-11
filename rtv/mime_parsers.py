@@ -438,6 +438,14 @@ class MakeamemeMIMEParser(OpenGraphMIMEParser):
     pattern = re.compile(r'https?://(www\.)?makeameme\.org/meme/.+$')
 
 
+class FlickrMIMEParser(OpenGraphMIMEParser):
+    """
+    Flickr uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?flickr\.com/photos/[^/]+/[^/]+/?$')
+    # TODO: handle albums/photosets (https://www.flickr.com/services/api)
+
+
 # Parsers should be listed in the order they will be checked
 parsers = [
     ClippitUserMIMEParser,
@@ -452,6 +460,7 @@ parsers = [
     YoutubeMIMEParser,
     LiveleakMIMEParser,
     TwitchMIMEParser,
+    FlickrMIMEParser,
     GifsMIMEParser,
     GiphyMIMEParser,
     ImgtcMIMEParser,

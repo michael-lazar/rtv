@@ -118,6 +118,10 @@ URLS = OrderedDict([
         'http://makeameme.org/meme/joined-reddit-for',
         'https://media.makeameme.org/created/joined-reddit-for.jpg',
         'image/jpeg')),
+    ('flickr', (
+        'https://www.flickr.com/photos/obamawhitehouse/8191317327/',
+        'https://c1.staticflickr.com/9/8065/8191317327_5180e95d98_b.jpg',
+        'image/jpeg')),
 ])
 
 
