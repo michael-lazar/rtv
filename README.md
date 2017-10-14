@@ -67,7 +67,7 @@ $ brew install rtv
 $ apt install rtv
 
 # Fedora 24+
-$ yum install rtv
+$ dnf install rtv
 
 # Arch
 $ yaourt -S rtv
