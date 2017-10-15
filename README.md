@@ -71,6 +71,9 @@ $ yum install rtv
 
 # Arch
 $ yaourt -S rtv
+
+# Nix/NixOS
+$ nix-env -i rtv
 ```
 
 ## Usage
