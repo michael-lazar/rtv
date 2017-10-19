@@ -55,8 +55,10 @@ class OpenGraphMIMEParser(BaseMIMEParser):
     def get_mimetype(url):
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
-        for og_type in ['og:video:secure_url', 'og:video', 'og:image']:
-            tag = soup.find('meta', attrs={'property': og_type})
+        for og_type in ['video', 'image']:
+            tag = soup.find('meta',
+                    attrs={'property':'og:' + og_type + ':secure_url'}) or \
+                  soup.find('meta', attrs={'property': 'og:' + og_type})
             if tag:
                 return BaseMIMEParser.get_mimetype(tag.get('content'))
         return url, None
@@ -394,6 +396,56 @@ class ClippitUserMIMEParser(BaseMIMEParser):
         return tag.get(quality[0]), 'video/mp4'
 
 
+class GifsMIMEParser(OpenGraphMIMEParser):
+    """
+    Gifs.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?gifs\.com/gif/.+$')
+
+
+class GiphyMIMEParser(OpenGraphMIMEParser):
+    """
+    Giphy.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?giphy\.com/gifs/.+$')
+
+
+class ImgtcMIMEParser(OpenGraphMIMEParser):
+    """
+    imgtc.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?imgtc\.com/w/.+$')
+
+
+class ImgflipMIMEParser(OpenGraphMIMEParser):
+    """
+    imgflip.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?imgflip\.com/i/.+$')
+
+
+class LivememeMIMEParser(OpenGraphMIMEParser):
+    """
+    livememe.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?livememe\.com/[^.]+$')
+
+
+class MakeamemeMIMEParser(OpenGraphMIMEParser):
+    """
+    makeameme.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?makeameme\.org/meme/.+$')
+
+
+class FlickrMIMEParser(OpenGraphMIMEParser):
+    """
+    Flickr uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?flickr\.com/photos/[^/]+/[^/]+/?$')
+    # TODO: handle albums/photosets (https://www.flickr.com/services/api)
+
+
 # Parsers should be listed in the order they will be checked
 parsers = [
     ClippitUserMIMEParser,
@@ -408,5 +460,12 @@ parsers = [
     YoutubeMIMEParser,
     LiveleakMIMEParser,
     TwitchMIMEParser,
+    FlickrMIMEParser,
+    GifsMIMEParser,
+    GiphyMIMEParser,
+    ImgtcMIMEParser,
+    ImgflipMIMEParser,
+    LivememeMIMEParser,
+    MakeamemeMIMEParser,
     GifvMIMEParser,
     BaseMIMEParser]

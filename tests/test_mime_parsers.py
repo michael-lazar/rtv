@@ -94,6 +94,34 @@ URLS = OrderedDict([
         'https://www.clippituser.tv/c/edqqld',
         'https://clips.clippit.tv/edqqld/720.mp4',
         'video/mp4')),
+    ('gifs_com', (
+        'https://gifs.com/gif/cat-jumps-into-lake-after-guy-sneezes-0VqvRL',
+        'https://j.gifs.com/0VqvRL.gif',
+        'image/gif')),
+    ('giphy', (
+        'https://giphy.com/gifs/cameron-dallas-OpesLQSjwdGj6',
+        'https://media.giphy.com/media/OpesLQSjwdGj6/giphy.mp4',
+        'video/mp4')),
+    ('imgtc', (
+        'https://imgtc.com/w/Sa2whPE',
+        'https://imgtc.b-cdn.net/uploads/ZHI3OopOhKJ.mp4',
+        'video/mp4')),
+    ('imgflip', (
+        'https://imgflip.com/i/1dtdbv',
+        'https://i.imgflip.com/1dtdbv.jpg',
+        'image/jpeg')),
+    ('livememe', (
+        'http://www.livememe.com/v67cxy9',
+        'http://e.lvme.me/v67cxy9.jpg',
+        'image/jpeg')),
+    ('makeameme', (
+        'http://makeameme.org/meme/joined-reddit-for',
+        'https://media.makeameme.org/created/joined-reddit-for.jpg',
+        'image/jpeg')),
+    ('flickr', (
+        'https://www.flickr.com/photos/obamawhitehouse/8191317327/',
+        'https://c1.staticflickr.com/9/8065/8191317327_5180e95d98_b.jpg',
+        'image/jpeg')),
 ])
 
 
