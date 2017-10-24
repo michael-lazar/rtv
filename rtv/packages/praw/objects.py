@@ -115,6 +115,13 @@ class RedditContentObject(object):
         """Set the `name` attribute to `value."""
         if value and name == 'subreddit' and isinstance(value, six.string_types):
             value = Subreddit(self.reddit_session, value, fetch=False)
+        elif name == 'permalink' and isinstance(self, Comment):
+            # The Reddit API now returns the permalink field for comments. This
+            # will unfortunately break PRAW because permalink is a @property on the
+            # Comment object. I need to investigate if the property can be removed,
+            # for now this is a quick hack to get things working again.
+            #     https://github.com/michael-lazar/rtv/issues/462
+            return
         elif value and name in REDDITOR_KEYS:
             if isinstance(value, bool):
                 pass
