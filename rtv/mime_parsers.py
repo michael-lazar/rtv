@@ -376,11 +376,15 @@ class LiveleakMIMEParser(BaseMIMEParser):
             if source:
                 urls.append((source.get('src'), source.get('type')))
         # TODO: Handle pages with multiple videos
-        # TODO: Handle pages with youtube embeds
         if urls:
             return urls[0]
         else:
-            return url, None
+            iframe = soup.find_all(lambda t: t.name == 'iframe' and
+                                    'youtube.com' in t['src'])
+            if iframe:
+                return YoutubeMIMEParser.get_mimetype(iframe[0]['src'].strip('/'))
+            else:
+                return url, None
 
 
 class ClippitUserMIMEParser(BaseMIMEParser):
@@ -471,6 +475,8 @@ class WorldStarHipHopMIMEParser(BaseMIMEParser):
                                     'youtube.com' in t['src'])
             if iframe:
                 return YoutubeMIMEParser.get_mimetype(iframe[0]['src'])
+            else:
+                return url, None
 
 
 

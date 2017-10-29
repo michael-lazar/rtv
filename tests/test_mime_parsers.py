@@ -70,10 +70,14 @@ URLS = OrderedDict([
         re.compile('https://(.*)\.cloudfront\.net/videos/15694926/52450725.mp4(.*)'),
         'video/mp4',
         marks=pytest.mark.xfail(reason="vidme API appears to have changed format"))),
-    ('liveleak_video', (
+    ('liveleak_video_1', (
         'https://www.liveleak.com/view?i=08b_1499296574',
         re.compile('https://cdn\.liveleak\.com/(.*)\.mp4(.*)'),
         'video/mp4')),
+    ('liveleak_video_2', (
+        'https://www.liveleak.com/view?i=cad_1487311993',
+        re.compile('www\.youtube\.com/embed/D4GrlOMlOBY'),
+        'video/x-youtube')),
     ('reddit_gif', (
         'https://v.redd.it/wkm9zol8c6fz',
         'https://v.redd.it/wkm9zol8c6fz/DASH_600_K',
