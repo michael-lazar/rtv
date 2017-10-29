@@ -122,6 +122,10 @@ URLS = OrderedDict([
         'https://www.flickr.com/photos/obamawhitehouse/8191317327/',
         'https://c1.staticflickr.com/9/8065/8191317327_5180e95d98_b.jpg',
         'image/jpeg')),
+    ('worldstar', (
+        'http://www.worldstarhiphop.com/videos/video.php?v=wshh09DUN5MeDK2El4sO',
+        'https://hw-videos.worldstarhiphop.com/u/vid/2017/10/4OnndgEmNSME.mp4',
+        'video/mp4')),
 ])
 
 
