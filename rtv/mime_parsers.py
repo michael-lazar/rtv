@@ -376,11 +376,16 @@ class LiveleakMIMEParser(BaseMIMEParser):
             if source:
                 urls.append((source.get('src'), source.get('type')))
         # TODO: Handle pages with multiple videos
-        # TODO: Handle pages with youtube embeds
         if urls:
             return urls[0]
         else:
-            return url, None
+            iframe = soup.find_all(lambda t: t.name == 'iframe' and
+                                    'youtube.com' in t['src'])
+            if iframe:
+                return YoutubeMIMEParser.get_mimetype(iframe[0]['src'].strip('/'))
+            else:
+                return url, None
+
 
 class ClippitUserMIMEParser(BaseMIMEParser):
     """
@@ -446,6 +451,35 @@ class FlickrMIMEParser(OpenGraphMIMEParser):
     # TODO: handle albums/photosets (https://www.flickr.com/services/api)
 
 
+class WorldStarHipHopMIMEParser(BaseMIMEParser):
+    """
+    <video>
+        <source src="https://hw-mobile.worldstarhiphop.com/..mp4" type="video/mp4">
+        <source src="" type="video/mp4">
+    </video>
+    Sometimes only one video source is available
+    """
+    pattern = re.compile(r'https?://((www|m)\.)?worldstarhiphop\.com/videos/video.php\?v=\w+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        source = soup.find_all(lambda t: t.name == 'source' and
+                                t['src'] and t['type'] == 'video/mp4')
+        if source:
+            return source[0]['src'], 'video/mp4'
+        else:
+            iframe = soup.find_all(lambda t: t.name == 'iframe' and
+                                    'youtube.com' in t['src'])
+            if iframe:
+                return YoutubeMIMEParser.get_mimetype(iframe[0]['src'])
+            else:
+                return url, None
+
+
+
 # Parsers should be listed in the order they will be checked
 parsers = [
     ClippitUserMIMEParser,
@@ -467,5 +501,6 @@ parsers = [
     ImgflipMIMEParser,
     LivememeMIMEParser,
     MakeamemeMIMEParser,
+    WorldStarHipHopMIMEParser,
     GifvMIMEParser,
     BaseMIMEParser]
