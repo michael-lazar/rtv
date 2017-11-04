@@ -596,3 +596,16 @@ def test_set_theme(terminal, stdscr):
     terminal.set_theme(theme=theme)
     assert terminal.theme.monochrome
     stdscr.bkgd.assert_called_once_with(' ', 0)
+
+
+def test_set_theme_no_colors(terminal, stdscr):
+
+    with mock.patch('curses.has_colors') as has_colors:
+        has_colors.return_value = False
+
+        terminal.set_theme()
+        assert terminal.theme.monochrome
+
+        theme = Theme(monochrome=False)
+        terminal.set_theme(theme=theme)
+        assert terminal.theme.monochrome

@@ -83,6 +83,7 @@ def curses_session():
         # return from C start_color() is ignorable.
         try:
             curses.start_color()
+            curses.use_default_colors()
         except:
             _logger.warning('Curses failed to initialize color support')
 
@@ -91,9 +92,6 @@ def curses_session():
             curses.curs_set(0)
         except:
             _logger.warning('Curses failed to initialize the cursor mode')
-
-        # Assign the terminal's default (background) color to code -1
-        curses.use_default_colors()
 
         yield stdscr
 
