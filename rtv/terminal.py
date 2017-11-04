@@ -849,7 +849,7 @@ class Terminal(object):
         """
         monochrome = (not curses.has_colors())
 
-        if theme is None:
+        if theme is None or monochrome:
             theme = Theme(monochrome=monochrome)
 
         theme.bind_curses()
