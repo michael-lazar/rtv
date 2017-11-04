@@ -108,6 +108,11 @@ def test_subreddit_title(subreddit_page, terminal, capsys):
         out, _ = capsys.readouterr()
         assert not out
 
+    with mock.patch.dict('os.environ', {'INSIDE_EMACS': '25.3.1,term:0.96'}):
+        subreddit_page.draw()
+        out, _ = capsys.readouterr()
+        assert not out
+
 
 def test_subreddit_search(subreddit_page, terminal):
     window = terminal.stdscr.subwin

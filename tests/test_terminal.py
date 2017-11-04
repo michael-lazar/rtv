@@ -600,6 +600,7 @@ def test_set_theme(terminal, stdscr):
 
 def test_set_theme_no_colors(terminal, stdscr):
 
+    # Monochrome should be forced if the terminal doesn't support color
     with mock.patch('curses.has_colors') as has_colors:
         has_colors.return_value = False
 
