@@ -513,9 +513,21 @@ class Terminal(object):
                     # can re-use the webbrowser instance that has been patched
                     # by RTV. It's also safer because it doesn't inject
                     # python code through the command line.
-                    null = open(os.devnull, 'ab+', 0)
-                    sys.stdout, sys.stderr = null, null
-                    webbrowser.open_new_tab(url)
+
+                    # Surpress stdout/stderr from the browser, see
+                    # https://stackoverflow.com/questions/2323080. We can't
+                    # depend on replacing sys.stdout & sys.stderr because
+                    # webbrowser uses Popen().
+                    stdout, stderr = os.dup(1), os.dup(2)
+                    null = os.open(os.devnull, os.O_RDWR)
+                    try:
+                        os.dup2(null, 1)
+                        os.dup2(null, 2)
+                        webbrowser.open_new_tab(url)
+                    finally:
+                        null.close()
+                        os.dup2(stdout, 1)
+                        os.dup2(stderr, 2)
 
                 p = Process(target=open_url_silent, args=(url,))
                 p.start()
