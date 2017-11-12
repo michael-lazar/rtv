@@ -57,7 +57,7 @@ $ pip install rtv
 
 ### Native packages
 
-See [Repology](https://repology.org/metapackage/rtv/information) for an up-to-date list of supported packages:
+See [Repology](https://repology.org/metapackage/rtv/packages) for an up-to-date list of supported packages:
 
 ```bash
 # macOS
@@ -65,9 +65,6 @@ $ brew install rtv
 
 # Debian 9+, Ubuntu 17.04+
 $ apt install rtv
-
-# Fedora 24+
-$ dnf install rtv
 
 # Arch
 $ yaourt -S rtv
