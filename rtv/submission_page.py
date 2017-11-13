@@ -155,13 +155,15 @@ class SubmissionPage(Page):
         Open the selected item with the system's pager
         """
 
+        n_rows, n_cols = self.term.stdscr.getmaxyx()
+
         data = self.get_selected_item()
         if data['type'] == 'Submission':
             text = '\n\n'.join((data['permalink'], data['text']))
-            self.term.open_pager(text)
+            self.term.open_pager(text, wrap=n_cols)
         elif data['type'] == 'Comment':
             text = '\n\n'.join((data['permalink'], data['body']))
-            self.term.open_pager(text)
+            self.term.open_pager(text, wrap=n_cols)
         else:
             self.term.flash()
 
