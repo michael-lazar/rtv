@@ -20,7 +20,7 @@ from tempfile import NamedTemporaryFile
 import six
 from kitchen.text.display import textual_width_chop
 
-from . import exceptions, mime_parsers
+from . import exceptions, mime_parsers, content
 from .theme import Theme
 from .objects import LoadScreen
 
@@ -552,7 +552,7 @@ class Terminal(object):
             with self.suspend():
                 webbrowser.open_new_tab(url)
 
-    def open_pager(self, data):
+    def open_pager(self, data, wrap=None):
         """
         View a long block of text using the system's default pager.
 
@@ -561,6 +561,11 @@ class Terminal(object):
 
         pager = os.getenv('PAGER') or 'less'
         command = shlex.split(pager)
+
+        if wrap:
+            data_lines = content.Content.wrap_text(data, wrap)
+            data = '\n'.join(data_lines)
+
         try:
             with self.suspend():
                 _logger.debug('Running command: %s', command)
