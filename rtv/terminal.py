@@ -552,7 +552,7 @@ class Terminal(object):
             with self.suspend():
                 webbrowser.open_new_tab(url)
 
-    def open_pager(self, data, wrap=False):
+    def open_pager(self, data, wrap=None):
         """
         View a long block of text using the system's default pager.
 
@@ -564,10 +564,7 @@ class Terminal(object):
 
         if wrap:
             data_lines = content.Content.wrap_text(data, wrap)
-            data = ''
-            for line in data_lines:
-                data += line + '\n'
-
+            data = '\n'.join(data_lines)
 
         try:
             with self.suspend():
