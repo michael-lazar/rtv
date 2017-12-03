@@ -1,6 +1,6 @@
 <h1 align="center">
 <img alt="Reddit Terminal Viewer" src="resources/logo.png"/>
-</p>
+</h1>
 
 RTV provides an interface to view and interact with reddit from your terminal.<br/>
 It's compatible with *most* terminal emulators on Linux and OS X.
