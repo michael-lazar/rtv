@@ -1,13 +1,15 @@
-# RTV (Reddit Terminal Viewer)
+<h1 align="center">
+<img alt="Reddit Terminal Viewer" src="resources/logo.png"/>
+</h1>
 
-RTV provides an interface to view and interact with reddit from your terminal.<br/>
-It's compatible with *most* terminal emulators on Linux and OS X.
+RTV provides an interface to view and interact with reddit from your terminal.<br>
+It's compatible with most terminal emulators on Linux and macOS.
 
 <p align="center">
 <img alt="title image" src="resources/title_image.png"/>
 </p>
 
-RTV is built in **python** using the **curses** library.
+RTV is built in python using the curses library.
 
 ---
 
