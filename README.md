@@ -11,7 +11,7 @@ It's compatible with most terminal emulators on Linux and macOS.
 
 RTV is built in python using the curses library.
 
---
+---
 
 <p align="center">
   <a href="https://pypi.python.org/pypi/rtv/">
@@ -31,7 +31,7 @@ RTV is built in python using the curses library.
   </a>
 </p>
 
---
+---
 
 * [Demo](#demo)  
 * [Installation](#installation)  
