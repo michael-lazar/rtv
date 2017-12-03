@@ -1,4 +1,4 @@
-<p align="center">
+<h1 align="center">
 <img alt="Reddit Terminal Viewer" src="resources/logo.png"/>
 </p>
 
