@@ -2,14 +2,18 @@
 <img alt="Reddit Terminal Viewer" src="resources/logo.png"/>
 </h1>
 
+<p align="center">
 RTV provides an interface to view and interact with reddit from your terminal.<br>
 It's compatible with most terminal emulators on Linux and macOS.
+</p>
 
 <p align="center">
 <img alt="title image" src="resources/title_image.png"/>
 </p>
 
+<p align="center">
 RTV is built in python using the curses library.
+</p>
 
 ---
 
