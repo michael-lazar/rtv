@@ -2,14 +2,13 @@
 <img alt="Reddit Terminal Viewer" src="resources/logo.png"/>
 </h1>
 
-RTV provides an interface to view and interact with reddit from your terminal.<br/>
-It's compatible with *most* terminal emulators on Linux and OS X.
-
 <p align="center">
 <img alt="title image" src="resources/title_image.png"/>
 </p>
 
-RTV is built in **python** using the **curses** library.
+Reddit Terminal Viewer (RTV) is a lightweight TUI browser for www.reddit.com. It's built in **python** using **curses**, and is compatible with most terminal emulators on Linux and macOS.
+
+--
 
 <p align="center">
   <a href="https://pypi.python.org/pypi/rtv/">
@@ -28,6 +27,8 @@ RTV is built in **python** using the **curses** library.
     <img alt="gitter" src="https://img.shields.io/gitter/room/michael-lazar/rtv.js.svg"/>
   </a>
 </p>
+
+--
 
 * [Demo](#demo)  
 * [Installation](#installation)  
