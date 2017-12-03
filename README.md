@@ -11,8 +11,6 @@ It's compatible with *most* terminal emulators on Linux and OS X.
 
 RTV is built in **python** using the **curses** library.
 
----
-
 <p align="center">
   <a href="https://pypi.python.org/pypi/rtv/">
     <img alt="pypi" src="https://img.shields.io/pypi/v/rtv.svg?label=version"/>
@@ -30,8 +28,6 @@ RTV is built in **python** using the **curses** library.
     <img alt="gitter" src="https://img.shields.io/gitter/room/michael-lazar/rtv.js.svg"/>
   </a>
 </p>
-
----
 
 * [Demo](#demo)  
 * [Installation](#installation)  
