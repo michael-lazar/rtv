@@ -1660,6 +1660,13 @@ class Subreddit(Messageable, Refreshable):
 class Multireddit(Refreshable):
     """A class for users' Multireddits."""
 
+    # 2017-11-13
+    # Several of the @restrict_access decorators have been removed here,
+    # because they were duplicated in the corresponding reddit_session
+    # methods and raised assertion errors. The is the same category of
+    # bug as this issue:
+    #     https://github.com/praw-dev/praw/issues/477
+
     # Generic listing selectors
     get_controversial = _get_sorter('controversial')
     get_hot = _get_sorter('')
@@ -1694,6 +1701,15 @@ class Multireddit(Refreshable):
     def __init__(self, reddit_session, author=None, name=None,
                  json_dict=None, fetch=False, **kwargs):
         """Construct an instance of the Multireddit object."""
+
+        # When get_my_multireddits is called, we extract the author
+        # and multireddit name from the path. A trailing forward
+        # slash was recently added to the path string in the API
+        # response, the needs to be removed to fix the code.
+        # path = "/user/redditor/m/multi/"
+        if json_dict and json_dict['path']:
+            json_dict['path'] = json_dict['path'].rstrip('/')
+
         author = six.text_type(author) if author \
             else json_dict['path'].split('/')[-3]
         if not name:
@@ -1742,16 +1758,19 @@ class Multireddit(Refreshable):
         url = self.reddit_session.config['multireddit_add'].format(
             user=self._author, multi=self.name, subreddit=subreddit)
         method = 'DELETE' if _delete else 'PUT'
-        self.reddit_session.http.headers['x-modhash'] = \
-            self.reddit_session.modhash
+        # The modhash isn't necessary for OAuth requests
+        if not self.reddit_session._use_oauth:
+            self.reddit_session.http.headers['x-modhash'] = \
+                self.reddit_session.modhash
         data = {'model': dumps({'name': subreddit})}
         try:
             self.reddit_session.request(url, data=data, method=method,
                                         *args, **kwargs)
         finally:
-            del self.reddit_session.http.headers['x-modhash']
+            # The modhash isn't necessary for OAuth requests
+            if not self.reddit_session._use_oauth:
+                del self.reddit_session.http.headers['x-modhash']
 
-    @restrict_access(scope='subscribe')
     def copy(self, to_name):
         """Copy this multireddit.
 
@@ -1763,7 +1782,6 @@ class Multireddit(Refreshable):
         return self.reddit_session.copy_multireddit(self._author, self.name,
                                                     to_name)
 
-    @restrict_access(scope='subscribe')
     def delete(self):
         """Delete this multireddit.
 
@@ -1774,7 +1792,6 @@ class Multireddit(Refreshable):
         """
         return self.reddit_session.delete_multireddit(self.name)
 
-    @restrict_access(scope='subscribe')
     def edit(self, *args, **kwargs):
         """Edit this multireddit.
 
@@ -1786,12 +1803,10 @@ class Multireddit(Refreshable):
         return self.reddit_session.edit_multireddit(name=self.name, *args,
                                                     **kwargs)
 
-    @restrict_access(scope='subscribe')
     def remove_subreddit(self, subreddit, *args, **kwargs):
         """Remove a subreddit from the user's multireddit."""
         return self.add_subreddit(subreddit, True, *args, **kwargs)
 
-    @restrict_access(scope='subscribe')
     def rename(self, new_name, *args, **kwargs):
         """Rename this multireddit.
 

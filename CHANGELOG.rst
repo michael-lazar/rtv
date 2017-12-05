@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.20.0: http://github.com/michael-lazar/rtv/releases/tag/v1.20.0
 .. _1.19.0: http://github.com/michael-lazar/rtv/releases/tag/v1.19.0
 .. _1.18.0: http://github.com/michael-lazar/rtv/releases/tag/v1.18.0
 .. _1.17.1: http://github.com/michael-lazar/rtv/releases/tag/v1.17.1
@@ -30,6 +31,29 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.20.0_ (2017-12-05)
+--------------------
+
+Features
+
+* Text piped to the ``$PAGER`` will now wrap on word / sentence breaks.
+* New MIME parsers have been added for liveleak.com and worldstarhiphop.com.
+
+Bugfixes
+
+* Fixed a regression where text from the web browser's stdout/stderr was
+  being sent to the terminal window.
+* Fixed crashing on startup when the terminal doesn't support colors.
+* Fixed broken text formatting when running inside of emacs ``term``.
+
+Codebase
+
+* Dropped support for python 3.3 because it's no longer supported upstream
+  by **pytest**. The application will still install through pip but will no
+  longer be tested.
+* Added a text logo to the README.
 
 --------------------
 1.19.0_ (2017-10-24)

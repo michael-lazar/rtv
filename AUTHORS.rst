@@ -27,10 +27,10 @@ Thanks to the following people for their contributions to this project.
 * `Lorenz Leitner <https://github.com/LoLei>`_
 * `Reshef Elisha <https://github.com/ReshefElisha>`_
 * `Ryan Reno <https://github.com/rreno>`_
+* `jupart <https://github.com/jupart>`_
 * `afloofloo <https://github.com/afloofloo>`_
 * `Charles Saracco <https://github.com/crsaracco>`_
-* `cmccandless <https://github.com/cmccandless>`_
+* `Corey McCandless <https://github.com/cmccandless>`_
 * `Danilo G. Baio <https://github.com/dbaio>`_
 * `Fabio Alessandro Locati <https://github.com/Fale>`_
 * `Hans Roman <https://github.com/snahor>`_
-* `Marc Abramowitz <https://github.com/msabramo>`_
