@@ -37,6 +37,11 @@ def patch_webbrowser():
     # standard library
     webbrowser.register('surf', None, webbrowser.BackgroundBrowser('surf'))
 
+    # Fix the opera browser, see https://github.com/michael-lazar/rtv/issues/476.
+    # By default, opera will open a new tab in the current window, which is
+    # what we want to do anyway.
+    webbrowser.register('opera', None, webbrowser.BackgroundBrowser('opera'))
+
     if sys.platform != 'darwin' or 'BROWSER' not in os.environ:
         return
 
