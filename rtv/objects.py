@@ -33,6 +33,10 @@ def patch_webbrowser():
     https://bugs.python.org/issue31348
     """
 
+    # Add the suckless.org surf browser, which isn't in the python
+    # standard library
+    webbrowser.register('surf', None, webbrowser.BackgroundBrowser('surf'))
+
     if sys.platform != 'darwin' or 'BROWSER' not in os.environ:
         return
 
