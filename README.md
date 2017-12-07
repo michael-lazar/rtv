@@ -73,9 +73,9 @@ $ brew install rtv
 $ apt install rtv
 
 # Arch
-$ yaourt -S rtv
+$ pacaur -S rtv
 
-# Nix/NixOS
+# Nix
 $ nix-env -i rtv
 ```
 
