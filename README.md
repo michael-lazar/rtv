@@ -162,38 +162,19 @@ The default programs that RTV interacts with can be configured through environme
 </table>
 
 ### Clipboard
-RTV supports copying submission links to the OS clipboard.
-On macOS this is supported out of the box.
+
+RTV supports copying submission links to the OS clipboard. On macOS this is supported out of the box.
 On Linux systems you will need to install either [xsel](http://www.vergenet.net/~conrad/software/xsel/) or [xclip](https://sourceforge.net/projects/xclip/).
 
 ## Themes
 
-Use the ``--theme`` flag to select a theme (or set it in your **rtv.cfg**):
+Use the ``--theme`` flag to enable an alternate color theme, or set it permanently in your **rtv.cfg**.
 
 ```bash
 $ rtv --theme=papercolor
 ```
 
-You can view the list of built-in and installed themes with the ``--list-themes`` flag:
-
-```bash
-$ rtv --list-themes
-
-Installed (~/.config/rtv/themes/):
-    (empty)
-
-Presets:
-    molokai             [requires 256 colors]
-    papercolor          [requires 256 colors]
-    solarized-dark      [requires 256 colors]
-    solarized-light     [requires 256 colors]
-
-Built-in:
-    default             [requires 8 colors]
-    monochrome          [requires 0 colors]
-```
-
-Inside of RTV, the <kbd>F2</kbd> & <kbd>F3</kbd> keys can also be used to preview the available themes.
+You can also use the <kbd>F2</kbd> & <kbd>F3</kbd> keys to cycle through available themes.
 
 <table>
   <tr>
@@ -229,6 +210,8 @@ Inside of RTV, the <kbd>F2</kbd> & <kbd>F3</kbd> keys can also be used to previe
     </td>
   </tr>
 </table>
+
+For instructions on writing your own RTV theme, see [THEMES.md](THEMES.md)
 
 ## FAQ
 
