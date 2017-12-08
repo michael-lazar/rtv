@@ -168,7 +168,7 @@ On Linux systems you will need to install either [xsel](http://www.vergenet.net/
 
 ## Themes
 
-Use the ``--theme`` flag to enable an alternate color theme, or set it permanently in your **rtv.cfg**.
+Use the ``--theme`` flag to use an alternate color scheme, or set it permanently in your **rtv.cfg**.
 
 ```bash
 $ rtv --theme=papercolor
