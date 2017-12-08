@@ -878,25 +878,26 @@ class Terminal(object):
         """
 
         terminal_colors = curses.COLORS if curses.has_colors() else 0
+        default_theme = Theme(use_color=bool(terminal_colors))
 
         if theme is None:
-            theme = Theme(use_color=bool(terminal_colors))
+            theme = default_theme
 
         elif theme.required_color_pairs > curses.COLOR_PAIRS:
             _logger.warning(
-                'Theme %s requires %s color pairs, but TERM %s only '
+                'Theme `%s` requires %s color pairs, but $TERM=%s only '
                 'supports %s color pairs, switching to default theme',
                 theme.name, theme.required_color_pairs, self._term,
                 curses.COLOR_PAIRS)
-            theme = Theme()
+            theme = default_theme
 
         elif theme.required_colors > terminal_colors:
             _logger.warning(
-                'Theme %s requires %s colors, but TERM %s only '
+                'Theme `%s` requires %s colors, but $TERM=%s only '
                 'supports %s colors, switching to default theme',
                 theme.name, theme.required_colors, self._term,
                 curses.COLORS)
-            theme = Theme()
+            theme = default_theme
 
         theme.bind_curses()
         self.theme = theme

@@ -2,11 +2,11 @@ import os
 import codecs
 import curses
 import logging
-import configparser
 from collections import OrderedDict
 from contextlib import contextmanager
 
 import six
+from six.moves import configparser
 
 from .config import THEMES, DEFAULT_THEMES
 from .exceptions import ConfigError
