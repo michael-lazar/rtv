@@ -20,7 +20,7 @@ from tempfile import NamedTemporaryFile
 import six
 from kitchen.text.display import textual_width_chop
 
-from . import exceptions, mime_parsers
+from . import exceptions, mime_parsers, content
 from .theme import Theme, ThemeList
 from .objects import LoadScreen
 
@@ -269,9 +269,13 @@ class Terminal(object):
             # Trying to draw outside of the screen bounds
             return
 
-        text = self.clean(text, n_cols)
-        params = [] if attr is None else [attr]
-        window.addstr(row, col, text, *params)
+        try:
+            text = self.clean(text, n_cols)
+            params = [] if attr is None else [attr]
+            window.addstr(row, col, text, *params)
+        except curses.error as e:
+            _logger.warning('add_line raised an exception')
+            _logger.exception(str(e))
 
     @staticmethod
     def add_space(window):
@@ -508,9 +512,21 @@ class Terminal(object):
                     # can re-use the webbrowser instance that has been patched
                     # by RTV. It's also safer because it doesn't inject
                     # python code through the command line.
-                    null = open(os.devnull, 'ab+', 0)
-                    sys.stdout, sys.stderr = null, null
-                    webbrowser.open_new_tab(url)
+
+                    # Surpress stdout/stderr from the browser, see
+                    # https://stackoverflow.com/questions/2323080. We can't
+                    # depend on replacing sys.stdout & sys.stderr because
+                    # webbrowser uses Popen().
+                    stdout, stderr = os.dup(1), os.dup(2)
+                    null = os.open(os.devnull, os.O_RDWR)
+                    try:
+                        os.dup2(null, 1)
+                        os.dup2(null, 2)
+                        webbrowser.open_new_tab(url)
+                    finally:
+                        null.close()
+                        os.dup2(stdout, 1)
+                        os.dup2(stderr, 2)
 
                 p = Process(target=open_url_silent, args=(url,))
                 p.start()
@@ -535,7 +551,7 @@ class Terminal(object):
             with self.suspend():
                 webbrowser.open_new_tab(url)
 
-    def open_pager(self, data):
+    def open_pager(self, data, wrap=None):
         """
         View a long block of text using the system's default pager.
 
@@ -544,6 +560,11 @@ class Terminal(object):
 
         pager = os.getenv('PAGER') or 'less'
         command = shlex.split(pager)
+
+        if wrap:
+            data_lines = content.Content.wrap_text(data, wrap)
+            data = '\n'.join(data_lines)
+
         try:
             with self.suspend():
                 _logger.debug('Running command: %s', command)

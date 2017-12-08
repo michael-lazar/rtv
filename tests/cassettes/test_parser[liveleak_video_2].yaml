@@ -1,0 +1,341 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.14.2]
+    method: GET
+    uri: https://www.liveleak.com/view?i=cad_1487311993
+  response:
+    body: {string: "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"\r\n
+        \                   \"https://www.w3.org/TR/html4/loose.dtd\">\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\r\n<head>\r\n\t<title>LiveLeak.com
+        - Trump Toys with Reporters at Press Conference Today </title>\r\n    <meta
+        http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\r\n    <meta
+        property=\"og:title\" content=\"LiveLeak.com - Trump Toys with Reporters at
+        Press Conference Today \"/>\r\n    <meta property=\"og:description\" content=\"The
+        MSM is circling the drain and can't be done with fast enough!\"/>\r\n    <meta
+        property=\"og:image\" content=\"https://cdn.liveleak.com/80281E/s/s/19/media19/2017/Feb/17/2f1c6f735794_embed_thumbnail_1487312023.jpg?KebyEmlkZTkEeqXOaN99mM2CRKiCq-5LYqZGUBzwcayVLI8TW862Ktlhw3zDPYJP&ec_rate=499\"/>\r\n\r\n
+        \   <meta http-equiv=\"X-Frame-Options\" content=\"deny\">    <meta property=\"og:url\"
+        content=\"https://www.liveleak.com/view?i=cad_1487311993\"/>    <base href=\"https://www.liveleak.com/\"
+        />\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2_css/reset.css\"
+        />\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"css/default.css\"
+        />\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2_css/jquery_ui/jquery-ui-1.8.6.custom.css\"/>\r\n<script
+        language=\"javascript\" src=\"//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\"></script>\r\n<script
+        src=\"//ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js\" type=\"text/javascript\"
+        charset=\"utf-8\"></script>\r\n<link rel=\"stylesheet\" href=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2_css/prettyLoader.css\"
+        type=\"text/css\" media=\"screen\" charset=\"utf-8\" />\r\n<link rel=\"stylesheet\"
+        href=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2_css/prettyPhoto.css\"
+        type=\"text/css\" media=\"screen\" title=\"prettyPhoto main stylesheet\" charset=\"utf-8\"
+        />\r\n<script src=\"j/always_include.js\" type=\"text/javascript\" charset=\"utf-8\"></script>\r\n<script
+        type='text/javascript' src='//partner.googleadservices.com/gampad/google_service.js'></script>\r\n<script
+        type='text/javascript'>\r\nGS_googleAddAdSenseService(\"ca-pub-4761214798132470\");\r\nGS_googleEnableAllServices();\r\n</script>\r\n<script
+        type='text/javascript'>\r\nGA_googleAddSlot(\"ca-pub-4761214798132470\", \"video_ad_unit\");\r\nGA_googleAddSlot(\"ca-pub-4761214798132470\",
+        \"video_ad_unit_general_audiences\");\r\nGA_googleAddSlot(\"ca-pub-4761214798132470\",
+        \"below_video\");\r\nGA_googleAddSlot(\"ca-pub-4761214798132470\", \"below_video_general_audiences\");\r\n</script>\r\n<script
+        type='text/javascript'>\r\nGA_googleFetchAds();\r\n</script>\r\n</head>\r\n<body>\r\n\r\n<a
+        href=\"javascript://\" class=\"red_button\" style=\"position:fixed; top:0px;
+        right:0px;\" onClick=\"if(confirm('Turning the safe mode off will disable
+        the current protection that prevents mature preview images and avatars from
+        showing. By clicking OK you agree that you are 18 years and over and want
+        to turn the safe mode OFF')){ var url_part = '?'; current_url = window.location.href.replace(/[?&]safe_mode=(on|off)/g,
+        ''); if(current_url.indexOf('?') != -1)url_part = '&'; window.location.href
+        = current_url + url_part + 'safe_mode=off';}\" title=\"The safe mode is currently
+        on (default for new visitors), making mature preview images and mature avatars
+        hidden.\">Safe Mode: On</a>\r\n<div id=\"header\">\r\n\t<div class=\"container\">\r\n\t\t<a
+        name=\"topdoc\" href=\"\"><img id=\"logo\" src=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2/logo.gif\"
+        alt=\"\"/></a>\r\n\r\n\t\t<div id=\"header-right\">\r\n\t\t\t<p>\r\n\t\t\t\t
+        \               <a href=\"user?a=register\" onclick=\"asdasd\">Create Account</a>&nbsp;|&nbsp;\r\n\t\t\t\t<a
+        href=\"user?a=login\">Log in</a>&nbsp;|&nbsp;\r\n                <a href=\"facebook?a=redirect_to_login\"
+        rel=\"nofollow\" title=\"log in through Facebook\"><img src=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2/facebook-icon.png\"
+        width=\"12\" height=\"12\"></a>&nbsp;\r\n                <a href=\"twitter?a=redirect_to_login\"
+        rel=\"nofollow\" title=\"log in through Twitter\"><img src=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2/twitter-icon.gif\"
+        width=\"12\" height=\"12\"></a>\r\n                \t\t\t</p>\r\n<div class=\"clear\"><!----></div><!--clear-->\r\n\t\t\t<ul
+        id=\"nav\">\r\n\t\t\t\t<li class=\"current firstlevel\"><a class=\"firstlevela\"
+        href=\"\">Home</a></li>\r\n\t\t\t\t<li class=\"firstlevel\"><a class=\"firstlevela\"
+        href=\"browse\">Recent Items</a></li>\r\n                                <li
+        class=\"firstlevel\"><a class=\"firstlevela\" href=\"channel?a=browse\">Channels</a></li>\r\n
+        \                               \t\t\t\t\t\t\t</ul><!--nav-->\r\n\r\n\t\t\t<fieldset
+        id=\"search\">\r\n            <form action=\"browse\" method=\"get\">\r\n\t\t\t\t<input
+        type=\"text\" id=\"search_input\" name=\"q\" value=\"Your search entry...\"
+        onFocus=\"if(this.value=='Your search entry...')this.value='';\"/>\r\n\t\t\t\t<input
+        type=\"submit\" id=\"search_submit\" name=\"\" value=\"\"/>\r\n            </form><!--search-->\r\n\t\t
+        \   </fieldset>\r\n        </div><!--header-right-->\r\n\r\n\t\t<div class=\"clear\"><!----></div><!--clear-->\r\n\r\n\t\t\t\t\t<ul
+        id=\"subnav\">\r\n\t\t\t\t\t\t<li><a href=\"c/news\">News &amp; Politics</a>&nbsp;|</li>\r\n\t\t\t\t\t\t<li><a
+        href=\"c/yoursay\">Yoursay</a>&nbsp;|</li>\r\n                        <li><a
+        href=\"c/liveleakers\">Liveleakers</a>&nbsp;|</li>\r\n                        <li><a
+        href=\"c/must_see\">Must See</a>&nbsp;|</li>\r\n\t\t\t\t\t\t<li><a href=\"c/ukraine\">Ukraine</a>&nbsp;|</li>\r\n
+        \                       <li><a href=\"c/syria\">Syria</a>&nbsp;|</li>\r\n\t\t\t\t\t\t<li><a
+        href=\"c/entertainment\">Entertainment</a>&nbsp;|</li>\r\n                                                                        <li><a
+        href=\"channel?a=browse\">Browse Channels</a></li>\r\n                        \r\n\r\n\t\t\t\t\t</ul>\r\n\t</div><!--CONTAINER-->\r\n</div><!--header-->\r\n<div
+        class=\"clear\"><!----></div><!--clear-->\r\n<div id=\"content\" class=\"content_no_background\">\r\n\t<div
+        class=\"container\">\r\n\t\t<div id=\"content_box\" class=\"transparent\">
+        \    <div class=\"clear\">\r\n        <!---->\r\n      </div>\r\n      <!--clear-->\r\n
+        \     <div id=\"leftcol\">\r\n              <div>\r\n        <div style=\"float:left;\"><span
+        class=\"section_title\" style=\"vertical-align:top; padding-right:10px\">Trump
+        Toys with Reporters at Press Conference Today </span></div>\r\n        </div>\r\n
+        \       <div class=\"clear\"></div>\r\n                        <div class=\"attention_channel_message\"><img
+        src=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2/attention.gif\" alt=\"\"
+        height=\"12\"/>&nbsp;Part of channel(s): <a href=\"https://www.liveleak.com/c/Presidency_of_Donald_Trump\"
+        title=\"Presidency of Donald Trump\">Presidency of Donald Trump</a> (current
+        event)</div>\r\n                <div id=\"body_text\"><p>The MSM is circling
+        the drain and can't be done with fast enough!</p></div>\r\n\t\t<iframe width=\"100%\"
+        height=\"480\" src=\"//www.youtube.com/embed/D4GrlOMlOBY?rel=0\" frameborder=\"0\"
+        allowfullscreen></iframe>         <div class=\"clear\" style=\"padding-bottom:10px;\">\r\n
+        \         <!---->\r\n        </div>\r\n        <!--clear-->\r\n         <center>
+        \       <!-- below_video -->\r\n<script type='text/javascript'>\r\nGA_googleFillSlot(\"below_video_general_audiences\");\r\n</script>\r\n
+        \            </center>\r\n         <br />\r\n                   <div class=\"tab_nav_large\">\r\n\t\t\t\t\t<div
+        class=\"tab_nav_large_top\"></div>\r\n\t\t\t\t\t<ul class=\"tabs\" id=\"item_detail_tabs_cad_1487311993\">\r\n\t\t\t\t\t\t\t<li><a
+        href=\"javascript://\" class=\"current\" onclick=\"$('#item_detail_tabs_cad_1487311993
+        li a').removeClass('current'); $(this).addClass('current'); $('#item_info_cad_1487311993').show();
+        $('#item_embed_links_cad_1487311993').hide();\">Item Info</a></li>\r\n\t\t\t\t\t\t\t<li><a
+        href=\"javascript://\" onclick=\"$('#item_detail_tabs_cad_1487311993 li a').removeClass('current');
+        $(this).addClass('current'); $('#item_info_cad_1487311993').hide(); $('#item_embed_links_cad_1487311993').show();\">Links</a></li>\r\n\t\t\t\t\t\t</ul>\r\n\t\t\t
+        \           <div class=\"clear\"><!----></div><!--clear-->\r\n                        <div
+        class=\"tab_nav_contents\">\r\n\t\t\t\t\t\t<span id=\"item_info_cad_1487311993\">\r\n\t\t\t\t\t\t<span><strong>Added:</strong></span>
+        Feb-17-2017<span>&nbsp;<span><strong>Occurred On:</strong></span> Feb-17-2017
+        \                        <br /><strong>By:</strong> <a href=\"c/TurnOffTelevision\">TurnOffTelevision</a>
+        \                       <br /><strong>In:</strong></span> <a href=\"/c/News\">Politics</a>
+        \                       <br /><strong>Tags:</strong> <a href=\"browse?q=No\">No</a>,
+        <a href=\"browse?q=More\">More</a>, <a href=\"browse?q=Fake\">Fake</a>, <a
+        href=\"browse?q=News\">News</a><br /><strong>Location:</strong> <a href=\"browse?q=United
+        States\">United States</a> <span>(<a href=\"map?latitude=37.09024&longitude=-95.71289&mode=large\">load
+        item map</a>)</span>                        <br /><strong>Views:</strong>
+        18845 | <strong>Comments:</strong> 292 | <strong>Votes:</strong> <span><a
+        id=\"number_of_votes_cad_1487311993\" href=\"javascript://\" onclick=\"$(this).parent().load('item?a=show_voters&item_token=cad_1487311993&ajax=1');\">25</a></span>\r\n
+        | <strong>Favorites:</strong> <span id=\"number_of_favorites_cad_1487311993\">1</span>
+        | <strong>Shared:</strong> 38 | <strong>Updates:</strong> 0 | <span id=\"used_in_channels_cad_1487311993\"><strong>Times
+        used in channels:</strong> <a href=\"javascript://\" onclick=\"$('#used_in_channels_cad_1487311993').load('item?a=show_item_channels&item_token=cad_1487311993&ajax=1');\">3</a></span>
+        \                       <br />\r\n                            <script language=\"javascript\">\r\n\tfunction
+        post_button_click()\r\n\t\t{\r\n\t\t  var n = $('#total_postit_shares > .pw-button-counter
+        span').html();\r\n\t\t  $.post(\"item?a=update_number_of_times_shared&ajax=1\",
+        { number_of_times_shared: n,item_token: \"cad_1487311993\" });\r\n\t\t}\r\n\t</script>\r\n<div
+        id=\"share_item_cad_1487311993_menu\" style=\"margin-top:5px\" onclick=\"post_button_click();\">\r\n
+        \  <div class=\"pw-widget pw-counter-show pw-size-medium\" pw:url=\"https://www.liveleak.com/view?i=cad_1487311993\">\r\n\t<a
+        class=\"pw-button-facebook pw-counter\"  onclick=\"post_button_click();\"></a>\r\n\t<a
+        class=\"pw-button-twitter pw-counter\" onclick=\"post_button_click();\"></a>\r\n\t<a
+        class=\"pw-button-googleplus pw-counter\" onclick=\"post_button_click();\"></a>\r\n\t<a
+        class=\"pw-button-reddit\" onclick=\"post_button_click();\"></a>\r\n\t<a class=\"pw-button-digg\"
+        onclick=\"post_button_click();\"></a>\r\n\t<a class=\"pw-button-stumbleupon\"
+        onclick=\"post_button_click();\"></a>\r\n\t<a class=\"pw-button-email\" onclick=\"post_button_click();\"></a>\r\n\t<a
+        class=\"pw-button-post\" onclick=\"post_button_click();\" id=\"total_postit_shares\"></a>\r\n</div>\r\n<script
+        src=\"//i.po.st/share/script/post-widget.js#publisherKey=b7d4v628ekfvm29slpn2\"
+        type=\"text/javascript\"></script>\r\n</div> <!--share_item_cad_1487311993_menu-->\r\n\r\n
+        \                         <span id=\"item_embed_links_cad_1487311993\" style=\"display:none;\">\r\n
+        \                       <strong>Direct link:</strong><br /><input value=\"http://www.liveleak.com/view?i=cad_1487311993\"
+        onclick=\"this.select();\" /><br /><br />\r\n                        <strong>Direct
+        link without comments:</strong><br /> <input value=\"http://www.liveleak.com/view?i=cad_1487311993&p=1\"
+        onclick=\"this.select();\" />\r\n                        </span>\r\n                        </div>
+        <!--\"tab_nav_contents\"-->\r\n\t\t\t\t\t<div class=\"tab_nav_large_bottom\"></div>\r\n\t\t\t\t</div><!--tab_nav-->\r\n
+        \       <div class=\"clear\">\r\n          <!---->\r\n        </div>\r\n        <!--clear-->\r\n
+        \       <div class=\"clear\">\r\n          <!---->\r\n        </div>\r\n        <!--clear-->\r\n\r\n
+        \       <div class=\"msg\">You need to be registered in order to add comments!
+        <a href=\"user?a=register\">Register HERE</a></div>          <div class=\"clear\"></div>\r\n
+        \         <a name=\"comments\"></a>\r\n          <script language=\"javascript\">\r\n\t\t
+        \ var argument_url = \"\";  //global var\r\n\t\t  var previous_fragment =
+        \"\";\r\n\r\n\t\t  $(window).bind( 'hashchange', function(e) {\r\n\t        var
+        fragment = $.param.fragment();\r\n\r\n\t\t\tif(fragment.indexOf('comment_page')!=-1
+        || ((previous_fragment.indexOf('comment_page')!=-1) && (fragment=='' || fragment=='comments')))$('#comments_item_cad_1487311993').load(argument_url+'&ajax=1&'+fragment.replace('comment_page','page'),function(){$('html,body').animate({scrollTop:
+        $('#comments_item_cad_1487311993').offset().top},'slow')});\r\n\r\n\t\t\tprevious_fragment
+        = fragment;\r\n          });\r\n\r\n\t\t  </script>\r\n\r\n          <div
+        id=\"comments_item_cad_1487311993\">\r\n                      <a href=\"javascript://\"
+        class=\"form_button\" onclick=\"$(this).parent().load('comment?a=browse&item_token=cad_1487311993&ajax=1&container_id=comments_item_cad_1487311993');\"><span>View
+        comments (292)</span></a>\r\n                     </div>\r\n      </div>\r\n
+        \     <!--leftcol-->\r\n      <div id=\"rightcol\" style=\"padding:0px\">\r\n
+        \                     <div class=\"pw-widget pw-counter-vertical\" pw:url=\"https://www.liveleak.com/view?i=cad_1487311993\">\r\n\t<a
+        class=\"pw-button-facebook pw-look-native\"></a>\r\n    <a class=\"pw-button-twitter
+        pw-look-native\"></a>\r\n    <a class=\"pw-button-googleplus pw-look-native\"></a>\r\n</div><br
+        />\r\n<script src=\"//i.po.st/share/script/post-widget.js#publisherKey=b7d4v628ekfvm29slpn2\"
+        type=\"text/javascript\"></script>\r\n               <span style=\"font-size:9px;
+        font-weight:bold;\">Advertisement below</span>\r\n<table style=\"border:1px
+        #CCC dotted; width:304px; margin-bottom:9px;\"><tr><td>\r\n<div style=\"width:
+        300px;\">\r\n<!-- video_ad_unit_general_audiences -->\r\n<script type='text/javascript'>\r\nGA_googleFillSlot(\"video_ad_unit_general_audiences\");\r\n</script>\r\n</div>\r\n
+        \              </td></tr></table>\r\n               <table cellpadding=\"0\"
+        cellspacing=\"0\" style=\"border: 1px solid; background-color: #eceff5; border-color:
+        #94a3c4;\">\r\n<tbody><tr>\r\n  <td colspan=\"2\" align=\"left\" style=\"border:
+        1px solid; background-color: #3b5998; border-color: #244588; color:#FFF\"><strong>Liveleak
+        on Facebook</strong></td></tr>\r\n<tr><td rowspan=\"2\" width=\"60\"><a href=\"http://www.facebook.com/liveleak.official\"
+        target=\"_blank\"><img src=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2/ll_fb_logo.jpg\"
+        border=\"0\" /></a>\r\n</td>\r\n  <td height=\"30\"><a href=\"http://www.facebook.com/liveleak.official\"
+        target=\"_blank\" style=\"color:#3b5998;\"><strong>LIKE Liveleak.com</strong></a></td>\r\n</tr>\r\n<tr>\r\n
+        \ <td><iframe src=\"//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fliveleak.official&amp;send=false&amp;layout=standard&amp;width=240&amp;show_faces=false&amp;font&amp;colorscheme=light&amp;action=like&amp;height=35&amp;appId=392243290825542\"
+        scrolling=\"no\" frameborder=\"0\" style=\"border:none; overflow:hidden; width:240px;
+        height:35px;\" allowtransparency=\"true\"></iframe></td>\r\n</tr>\r\n</tbody>\r\n</table><br
+        />\r\n        <div class=\"section_title\">Items</div>\r\n        <div class=\"tab_nav\">\r\n\t\t\t\t\t<div
+        class=\"tab_nav_top\"></div>\r\n\t\t\t\t\t\t<ul class=\"tabs\" id=\"more_item_list_tabs_cad_1487311993\">\r\n
+        \                       \t\t\t\t\t\t\t<li><a href=\"javascript://\" onclick=\"$('#more_item_list_tabs_cad_1487311993
+        li a').removeClass('current'); $(this).addClass('current'); $('#more_item_list_cad_1487311993').load('item?a=show_more_item_list&selection=related_items&item_token=cad_1487311993&ajax=1');\"
+        class=\"current\">Related</a></li>\r\n                            \t\t\t\t\t\t\t<li><a
+        href=\"javascript://\" onclick=\"$('#more_item_list_tabs_cad_1487311993 li
+        a').removeClass('current'); $(this).addClass('current'); $('#more_item_list_cad_1487311993').load('item?a=show_more_item_list&selection=channel_items&channel_name=TurnOffTelevision&ajax=1');\">User</a></li>\r\n
+        \                            \t\t\t\t\t\t</ul>\r\n\t\t\t\t\t\t<div class=\"tab_nav_contents\">\r\n\t\t\t
+        \             <div class=\"clear\"><!----></div><!--clear-->\r\n\t\t\t\t\t\t\t<div
+        class=\"scroll_list\" style=\"height:260px;\">\r\n\t\t\t\t\t\t\t\t<ul id=\"more_item_list_cad_1487311993\">\r\n
+        \                                         \t<li>\r\n            \t\t\t  <div
+        class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=c17_1481488419\"
+        title=\"Tucker Carlson vs. Vox over &quot;Fake News&quot;\"><img class=\"thumbnail_image\"
+        src=\"https://cdn.liveleak.com/80281E/s/s/17/media17/2016/Dec/11/89e60e1dfd3e_embed_thumbnail_1481488473.jpg?a-0FBVyBNizz5KR1ifwb0wfkJ-bMr0-PLdp1qv3Z7pHb0TpUytjwublANkNc8mBY&ec_rate=499\"
+        alt=\"Tucker Carlson vs. Vox over &quot;Fake News&quot;\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t
+        \ </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a href=\"https://www.liveleak.com/view?i=c17_1481488419\"
+        title=\"Tucker Carlson vs. Vox over &quot;Fake News&quot;\">Tucker Carlson
+        vs. Vox over &quot;Fake News&quot;</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n
+        \           \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=bb9_1487113746\"
+        title=\"Nancy Pelosi Spreads More Fake News on Michael Flynn \"><img class=\"thumbnail_image\"
+        src=\"https://cdn.liveleak.com/80281E/s/s/19/media19/2017/Feb/14/0a9428bdd97c_embed_thumbnail_1487113913.jpg?l6l2_PqmNTd-Iq7Lryb3CLG0KEWsdDSlgtBMc32PUVLokX-pPDZeeu3pALinIsu6&ec_rate=499\"
+        alt=\"Nancy Pelosi Spreads More Fake News on Michael Flynn \" width=\"90\"
+        height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a
+        href=\"https://www.liveleak.com/view?i=bb9_1487113746\" title=\"Nancy Pelosi
+        Spreads More Fake News on Michael Flynn \">Nancy Pelosi Spreads More Fake
+        News on Michael Flynn </a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n
+        \           \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=5d2_1370369598\"
+        title=\"California To Wal-Mart: Enough! No More Taxpayer Subsidized Profits
+        For You\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/u/u/thumbs/2013/Jun/4/62f47d380dc5_thumb_1.jpg\"
+        alt=\"California To Wal-Mart: Enough! No More Taxpayer Subsidized Profits
+        For You\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t
+        \ <h4><a href=\"https://www.liveleak.com/view?i=5d2_1370369598\" title=\"California
+        To Wal-Mart: Enough! No More Taxpayer Subsidized Profits For You\">California
+        To Wal-Mart: Enough! No More Taxpayer Subsidized Profits For You</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
+        \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
+        \   <a href=\"https://www.liveleak.com/view?i=46a_1356977086\" title=\"Peaceful
+        protest gets global attention, Idle No More, \"><img class=\"thumbnail_image\"
+        src=\"https://cdn.liveleak.com/80281E/u/u/thumbs/2012/Dec/31/c3d56df4f503_thumb_10.jpg\"
+        alt=\"Peaceful protest gets global attention, Idle No More, \" width=\"90\"
+        height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a
+        href=\"https://www.liveleak.com/view?i=46a_1356977086\" title=\"Peaceful protest
+        gets global attention, Idle No More, \">Peaceful protest gets global attention,
+        Idle No More, </a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n            \t\t\t
+        \ <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=4fa_1480016236\"
+        title=\"Facebook Has Bad News For CNN &amp; NBC: No More Fake News.\"><img
+        class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/s/s/17/media17/2016/Nov/24/1bdfbfe8eebc_embed_thumbnail_1480016251.jpg?Tbtmopi0YpIQlioo_kUb2PCf-5YL-SK74D4c4jUyCL_hXzfp8NGRQIZrhHAvf1yV&ec_rate=499\"
+        alt=\"Facebook Has Bad News For CNN &amp; NBC: No More Fake News.\" width=\"90\"
+        height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a
+        href=\"https://www.liveleak.com/view?i=4fa_1480016236\" title=\"Facebook Has
+        Bad News For CNN &amp; NBC: No More Fake News.\">Facebook Has Bad News For
+        CNN &amp; NBC: No More Fake News.</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n
+        \           \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=f24_1358764841\"
+        title=\"Less than half of Canadians support the Idle No More movement\"><img
+        class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/u/u/thumbs/2013/Jan/21/d967969bcb4a_thumb_1.jpg\"
+        alt=\"Less than half of Canadians support the Idle No More movement\" width=\"90\"
+        height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a
+        href=\"https://www.liveleak.com/view?i=f24_1358764841\" title=\"Less than
+        half of Canadians support the Idle No More movement\">Less than half of Canadians
+        support the Idle No More movement</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n
+        \           \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=eae_1448752751\"
+        title=\"Planned Parenthood Shooting Suspect Made Comment About 'No More Baby
+        Parts': Sources\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2015/Nov/28/af121c798a7b_thumb_1.jpg\"
+        alt=\"Planned Parenthood Shooting Suspect Made Comment About 'No More Baby
+        Parts': Sources\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t
+        \ <h4><a href=\"https://www.liveleak.com/view?i=eae_1448752751\" title=\"Planned
+        Parenthood Shooting Suspect Made Comment About 'No More Baby Parts': Sources\">Planned
+        Parenthood Shooting Suspect Made Comment About 'No More Baby Parts': Sources</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
+        \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
+        \   <a href=\"https://www.liveleak.com/view?i=48e_1480730995\" title=\"Pizzagate
+        Is Waco TX - Same Script, Hoax Goal Is Censorship of 'Fake News'\"><img class=\"thumbnail_image\"
+        src=\"https://cdn.liveleak.com/80281E/s/s/17/media17/2016/Dec/2/ed73da0298c2_embed_thumbnail_1480731015.jpg?V_bU3J6dIgiDFs76nDT8B14PFcJ_3jV-_3zoyOjabaa0h48c0tm5joFEzj30U2wx&ec_rate=499\"
+        alt=\"Pizzagate Is Waco TX - Same Script, Hoax Goal Is Censorship of 'Fake
+        News'\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t
+        \ <h4><a href=\"https://www.liveleak.com/view?i=48e_1480730995\" title=\"Pizzagate
+        Is Waco TX - Same Script, Hoax Goal Is Censorship of 'Fake News'\">Pizzagate
+        Is Waco TX - Same Script, Hoax Goal Is Censorship of 'Fake News'</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
+        \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
+        \   <a href=\"https://www.liveleak.com/view?i=b1c_1447100543\" title=\"Fake
+        News ISIS Lies Fully Exposed in Must See Video!\"><img class=\"thumbnail_image\"
+        src=\"https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2015/Nov/9/d2168fc4da0e_thumb_5.jpg\"
+        alt=\"Fake News ISIS Lies Fully Exposed in Must See Video!\" width=\"90\"
+        height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t  <h4><a
+        href=\"https://www.liveleak.com/view?i=b1c_1447100543\" title=\"Fake News
+        ISIS Lies Fully Exposed in Must See Video!\">Fake News ISIS Lies Fully Exposed
+        in Must See Video!</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n
+        \           \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=7fd_1481778199\"
+        title=\"Aleppo fake news\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2016/Dec/15/a8a544d38309_thumb_2.jpg\"
+        alt=\"Aleppo fake news\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t
+        \ <h4><a href=\"https://www.liveleak.com/view?i=7fd_1481778199\" title=\"Aleppo
+        fake news\">Aleppo fake news</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n
+        \           \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=4c2_1482090285\"
+        title=\"Merkel: Jail People for 5 Years for Posting \u201CFake News\u201D/Russian
+        Propaganda on Facebook\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/ll_a_u/thumbs/2016/Dec/18/824405993c98_thumb_1.jpg\"
+        alt=\"Merkel: Jail People for 5 Years for Posting \u201CFake News\u201D/Russian
+        Propaganda on Facebook\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t
+        \ <h4><a href=\"https://www.liveleak.com/view?i=4c2_1482090285\" title=\"Merkel:
+        Jail People for 5 Years for Posting \u201CFake News\u201D/Russian Propaganda
+        on Facebook\">Merkel: Jail People for 5 Years for Posting \u201CFake News\u201D/Russian
+        Propaganda on Facebook</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t          \t<li>\r\n
+        \           \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t    <a href=\"https://www.liveleak.com/view?i=e66_1479260582\"
+        title=\"Google and Facebook will now tell us what &quot;fake&quot; news is.
+        No Im serious.\"><img class=\"thumbnail_image\" src=\"https://cdn.liveleak.com/80281E/s/s/17/media17/2016/Nov/15/a45a2ce5b494_embed_thumbnail_1479261133.jpg?B3ZQOH81cS0jAz_DPAdd1DTjt80ISZmbCYpJzrGY_4H2iJkAoMQdQrda91UZHRrD&ec_rate=499\"
+        alt=\"Google and Facebook will now tell us what &quot;fake&quot; news is.
+        No Im serious.\" width=\"90\" height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t
+        \ <h4><a href=\"https://www.liveleak.com/view?i=e66_1479260582\" title=\"Google
+        and Facebook will now tell us what &quot;fake&quot; news is. No Im serious.\">Google
+        and Facebook will now tell us what &quot;fake&quot; news is. No Im serious.</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t
+        \         \t<li>\r\n            \t\t\t  <div class=\"thumbnail_column\">\r\n\t\t\t
+        \   <a href=\"https://www.liveleak.com/view?i=4ac_1481922958\" title=\"QUIT
+        Facebook? YES or NO? 'Fake News' Censorship! (Soros, CIA, Snopes)\"><img class=\"thumbnail_image\"
+        src=\"https://cdn.liveleak.com/80281E/s/s/17/media17/2016/Dec/16/827e5c43cbdd_embed_thumbnail_1481922994.jpg?AIE_MuW0Ak5CC8YPQXGvcfo9ouXkeTTnQd_MjfahdwqopkXf6-5sc51B9XtzHSq5&ec_rate=499\"
+        alt=\"QUIT Facebook? YES or NO? 'Fake News' Censorship! (Soros, CIA, Snopes)\"
+        width=\"90\" height=\"68\"/></a>\r\n\t\t\t  </div><!--thumbnail_column-->\r\n\t\t\t
+        \ <h4><a href=\"https://www.liveleak.com/view?i=4ac_1481922958\" title=\"QUIT
+        Facebook? YES or NO? 'Fake News' Censorship! (Soros, CIA, Snopes)\">QUIT Facebook?
+        YES or NO? 'Fake News' Censorship! (Soros, CIA, Snopes)</a></h4>\r\n\t\t\t</li>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</ul>
+        <!--more_item_list_cad_1487311993-->\r\n\t\t\t\t\t\t\t</div><!--scroll_list-->\r\n\t\t\t\t\t\t</div><!--tab_nav_contents-->\r\n\t\t\t\t\t<div
+        class=\"tab_nav_bottom\"></div>\r\n\t\t\t\t</div> <!--tab_nav-->\r\n  \t\t<br
+        />\r\n        <div class=\"section_title\">Advertisers</div>\r\n<div class=\"sidebox\">\r\n\t\t\t<div
+        class=\"corners\"></div>\r\n\t\t\t<div class=\"cornersb\"></div>\r\n\t\t\t<div
+        class=\"gradient\">\r\n\t\t\t\t<p>\r\n                                  <a
+        href=\"contact_us?subject=advertise\">Advertise on Liveleak</a><br />\r\n
+        \                 <a href=\"http://forums.liveleak.com/\">Liveleak Forums</a><br
+        />\r\n                                    <a href=\"http://us.tomonews.net/\"
+        target=\"_blank\" rel=\"nofollow\">TomoNews - Animated News</a><br />\r\n
+        \                    </p>\r\n                 </div><!--gradient-->\r\n                              <iframe
+        src=\"//mgid.com/liveleak-composite-588.html\" width=\"270px\" height=\"300px\"
+        frameborder=\"0\" scrolling=\"no\"></iframe></div><!--sidebox-->        </div>
+        <!--rightcol-->\r\n        \t\t</div><!--content_box-->\r\n\t</div><!--CONTAINER-->\r\n</div><!--content-->\r\n<div
+        id=\"footer\">\r\n\t<div class=\"container\">\r\n\t\t<ul>\r\n        <li>&nbsp;<a
+        href=\"https://m.liveleak.com/view?i=cad_1487311993&selected_view_mode=mobile\">Switch
+        to Mobile site</a> |  </li>\r\n        <li><a href=\"faq\">F.A.Q.</a> |  </li>\r\n
+        \         <li>&nbsp;\r\n          <a href=\"contact_us?subject=support\">Site
+        Support</a> | </li>\r\n          <li>&nbsp;<a href=\"contact_us\">Contact
+        Us</a> |  </li>\r\n          <li>&nbsp;<a href=\"privacy\">Privacy Policy</a>
+        | </li>\r\n          <li>&nbsp;<a href=\"tos\">Terms &amp; Conditions</a>
+        | </li>\r\n          <li>&nbsp;<a href=\"copyright\">Copyright</a> | </li>\r\n
+        \         <li>&nbsp;<a href=\"contact_us?subject=advertise\">Advertise</a></li>\r\n\t\t</ul>\r\n\r\n\t\t<span
+        id=\"neado\"><a href=\"http://www.neadodesigns.com\" target=\"_blank\" rel=\"nofollow\"><img
+        src=\"https://cdn.liveleak.com/80281E/ll_a_u/misc/ll2/neado.gif\" alt=\"Web
+        Graphics and Design\"/></a></span>\r\n\t\t<a id=\"top\" onclick=\"window.scrollTo(0,0);\">BACK
+        TO TOP</a>\r\n\r\n\t</div><!--container-->\r\n</div><!--footer-->\r\n    <script
+        type=\"text/javascript\">\r\n            window._taboola = window._taboola
+        || [];\r\n            window._taboola.push({video: \"auto\"});\r\n            </script>\r\n
+        \           <script type=\"text/javascript\" src=\"//cdn.taboola.com/libtrc/liveleak/loader.js\"></script>\r\n\r\n<script
+        type=\"text/javascript\" src=\"https://apis.google.com/js/plusone.js\"></script>
+        <!--we should put this here to avoid IE6 from crashing-->\r\n<!-- Start Google
+        analytics -->\r\n</script>\r\n<script type=\"text/javascript\">\r\nvar _gaq
+        = _gaq || [];\r\n  _gaq.push(['_setAccount', 'UA-315839-4']);\r\n  _gaq.push(['_setDomainName',
+        'liveleak.com']);\r\n\r\n  \r\n  _gaq.push(['_trackPageview']);\r\n\r\n  (function()
+        {\r\n    var ga = document.createElement('script'); ga.type = 'text/javascript';
+        ga.async = true;\r\n    ga.src = ('https:' == document.location.protocol ?
+        'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\r\n    var
+        s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga,
+        s);\r\n  })();\r\n</script>\r\n<!-- End Google analytics -->\r\n<!-- Start
+        Quantcast tag -->\r\n<script type=\"text/javascript\" src=\"https://secure.quantserve.com/quant.js\"></script>\r\n<script
+        type=\"text/javascript\">_qacct=\"p-c4yHLoeBnD3eE\";quantserve();</script>\r\n<noscript>\r\n<a
+        href=\"//www.quantcast.com/p-c4yHLoeBnD3eE\" target=\"_blank\"><img src=\"//pixel.quantserve.com/pixel/p-c4yHLoeBnD3eE.gif\"
+        style=\"display: none\" border=\"0\" height=\"1\" width=\"1\" alt=\"Quantcast\"/></a>\r\n</noscript>\r\n<!--
+        End Quantcast tag -->\r\n</body>\r\n</html>\r\n"}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0']
+      Connection: [keep-alive]
+      Content-Type: [text/html; charset=UTF-8]
+      Date: ['Sun, 29 Oct 2017 13:56:26 GMT']
+      Expires: ['Thu, 19 Nov 1981 08:52:00 GMT']
+      Pragma: [no-cache]
+      Server: [nginx/1.6.1]
+      Set-Cookie: [PHPSESSID=c47884aaee715fa322e3e3952ac01ded; path=/; domain=.liveleak.com,
+        'liveleak_safe_mode=1; expires=Mon, 29-Oct-2018 13:56:26 GMT; Max-Age=31536000;
+          path=/; domain=.liveleak.com; httponly', 'liveleak_use_old_player=1; expires=Mon,
+          29-Oct-2018 13:56:26 GMT; Max-Age=31536000; path=/; domain=.liveleak.com;
+          httponly']
+      X-Powered-By: [PHP/5.6.30]
+    status: {code: 200, message: OK}
+version: 1

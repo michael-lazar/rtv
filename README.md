@@ -1,13 +1,19 @@
-# RTV (Reddit Terminal Viewer)
+<h1 align="center">
+<img alt="Reddit Terminal Viewer" src="resources/logo.png"/>
+</h1>
 
-RTV provides an interface to view and interact with reddit from your terminal.<br/>
-It's compatible with *most* terminal emulators on Linux and OS X.
+<p align="center">
+RTV provides an interface to view and interact with reddit from your terminal.<br>
+It's compatible with most terminal emulators on Linux and macOS.
+</p>
 
 <p align="center">
 <img alt="title image" src="resources/title_image.png"/>
 </p>
 
-RTV is built in **python** using the **curses** library.
+<p align="center">
+RTV is built in python using the curses library.
+</p>
 
 ---
 
@@ -58,7 +64,7 @@ $ pip install rtv
 
 ### Native packages
 
-See [Repology](https://repology.org/metapackage/rtv/information) for an up-to-date list of supported packages:
+See [Repology](https://repology.org/metapackage/rtv/packages) for an up-to-date list of supported packages:
 
 ```bash
 # macOS
@@ -67,11 +73,11 @@ $ brew install rtv
 # Debian 9+, Ubuntu 17.04+
 $ apt install rtv
 
-# Fedora 24+
-$ yum install rtv
-
 # Arch
-$ yaourt -S rtv
+$ pacaur -S rtv
+
+# Nix
+$ nix-env -i rtv
 ```
 
 ## Usage

@@ -55,8 +55,10 @@ class OpenGraphMIMEParser(BaseMIMEParser):
     def get_mimetype(url):
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
-        for og_type in ['og:video:secure_url', 'og:video', 'og:image']:
-            tag = soup.find('meta', attrs={'property': og_type})
+        for og_type in ['video', 'image']:
+            tag = soup.find('meta',
+                    attrs={'property':'og:' + og_type + ':secure_url'}) or \
+                  soup.find('meta', attrs={'property': 'og:' + og_type})
             if tag:
                 return BaseMIMEParser.get_mimetype(tag.get('content'))
         return url, None
@@ -206,11 +208,14 @@ class ImgurApiMIMEParser(BaseMIMEParser):
             _logger.warning('Imgur API failure, resp %s', r.json())
             return cls.fallback(url, domain)
 
-        if 'images' in data:
+        if 'images' in data and len(data['images']) > 1:
             # TODO: handle imgur albums with mixed content, i.e. jpeg and gifv
             link = ' '.join([d['link'] for d in data['images'] if not d['animated']])
             mime = 'image/x-imgur-album'
         else:
+            data = data['images'][0] if 'images' in data else data
+            # this handles single image galleries
+
             link = data['mp4'] if data['animated'] else data['link']
             mime = 'video/mp4' if data['animated'] else data['type']
 
@@ -371,11 +376,16 @@ class LiveleakMIMEParser(BaseMIMEParser):
             if source:
                 urls.append((source.get('src'), source.get('type')))
         # TODO: Handle pages with multiple videos
-        # TODO: Handle pages with youtube embeds
         if urls:
             return urls[0]
         else:
-            return url, None
+            iframe = soup.find_all(lambda t: t.name == 'iframe' and
+                                    'youtube.com' in t['src'])
+            if iframe:
+                return YoutubeMIMEParser.get_mimetype(iframe[0]['src'].strip('/'))
+            else:
+                return url, None
+
 
 class ClippitUserMIMEParser(BaseMIMEParser):
     """
@@ -389,6 +399,85 @@ class ClippitUserMIMEParser(BaseMIMEParser):
         tag = soup.find(id='jwplayer-container')
         quality = ['data-{}-file'.format(_) for _ in ['hd', 'sd']]
         return tag.get(quality[0]), 'video/mp4'
+
+
+class GifsMIMEParser(OpenGraphMIMEParser):
+    """
+    Gifs.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?gifs\.com/gif/.+$')
+
+
+class GiphyMIMEParser(OpenGraphMIMEParser):
+    """
+    Giphy.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?giphy\.com/gifs/.+$')
+
+
+class ImgtcMIMEParser(OpenGraphMIMEParser):
+    """
+    imgtc.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?imgtc\.com/w/.+$')
+
+
+class ImgflipMIMEParser(OpenGraphMIMEParser):
+    """
+    imgflip.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?imgflip\.com/i/.+$')
+
+
+class LivememeMIMEParser(OpenGraphMIMEParser):
+    """
+    livememe.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?livememe\.com/[^.]+$')
+
+
+class MakeamemeMIMEParser(OpenGraphMIMEParser):
+    """
+    makeameme.com uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?makeameme\.org/meme/.+$')
+
+
+class FlickrMIMEParser(OpenGraphMIMEParser):
+    """
+    Flickr uses the Open Graph protocol
+    """
+    pattern = re.compile(r'https?://(www\.)?flickr\.com/photos/[^/]+/[^/]+/?$')
+    # TODO: handle albums/photosets (https://www.flickr.com/services/api)
+
+
+class WorldStarHipHopMIMEParser(BaseMIMEParser):
+    """
+    <video>
+        <source src="https://hw-mobile.worldstarhiphop.com/..mp4" type="video/mp4">
+        <source src="" type="video/mp4">
+    </video>
+    Sometimes only one video source is available
+    """
+    pattern = re.compile(r'https?://((www|m)\.)?worldstarhiphop\.com/videos/video.php\?v=\w+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        source = soup.find_all(lambda t: t.name == 'source' and
+                                t['src'] and t['type'] == 'video/mp4')
+        if source:
+            return source[0]['src'], 'video/mp4'
+        else:
+            iframe = soup.find_all(lambda t: t.name == 'iframe' and
+                                    'youtube.com' in t['src'])
+            if iframe:
+                return YoutubeMIMEParser.get_mimetype(iframe[0]['src'])
+            else:
+                return url, None
+
 
 
 # Parsers should be listed in the order they will be checked
@@ -405,5 +494,13 @@ parsers = [
     YoutubeMIMEParser,
     LiveleakMIMEParser,
     TwitchMIMEParser,
+    FlickrMIMEParser,
+    GifsMIMEParser,
+    GiphyMIMEParser,
+    ImgtcMIMEParser,
+    ImgflipMIMEParser,
+    LivememeMIMEParser,
+    MakeamemeMIMEParser,
+    WorldStarHipHopMIMEParser,
     GifvMIMEParser,
     BaseMIMEParser]

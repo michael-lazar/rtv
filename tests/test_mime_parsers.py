@@ -50,8 +50,8 @@ URLS = OrderedDict([
         'https://i.imgur.com/yjP1v4B.mp4',
         'video/mp4')),
     ('imgur_album', (
-        'http://imgur.com/a/qx9t5',
-        'https://i.imgur.com/uEt0YLI.jpg',
+        'https://imgur.com/a/pRYEi',
+        'https://i.imgur.com/tiUSazy.png https://i.imgur.com/phIsEAi.png https://i.imgur.com/TvT8V5m.png https://i.imgur.com/qETPFAi.png',
         'image/x-imgur-album')),
     ('instagram_image', (
         'https://www.instagram.com/p/BIxQ0vrBN2Y/?taken-by=kimchi_chic',
@@ -70,10 +70,14 @@ URLS = OrderedDict([
         re.compile('https://(.*)\.cloudfront\.net/videos/15694926/52450725.mp4(.*)'),
         'video/mp4',
         marks=pytest.mark.xfail(reason="vidme API appears to have changed format"))),
-    ('liveleak_video', (
+    ('liveleak_video_1', (
         'https://www.liveleak.com/view?i=08b_1499296574',
         re.compile('https://cdn\.liveleak\.com/(.*)\.mp4(.*)'),
         'video/mp4')),
+    ('liveleak_video_2', (
+        'https://www.liveleak.com/view?i=cad_1487311993',
+        re.compile('www\.youtube\.com/embed/D4GrlOMlOBY'),
+        'video/x-youtube')),
     ('reddit_gif', (
         'https://v.redd.it/wkm9zol8c6fz',
         'https://v.redd.it/wkm9zol8c6fz/DASH_600_K',
@@ -94,6 +98,42 @@ URLS = OrderedDict([
         'https://www.clippituser.tv/c/edqqld',
         'https://clips.clippit.tv/edqqld/720.mp4',
         'video/mp4')),
+    ('gifs_com', (
+        'https://gifs.com/gif/cat-jumps-into-lake-after-guy-sneezes-0VqvRL',
+        'https://j.gifs.com/0VqvRL.gif',
+        'image/gif')),
+    ('giphy', (
+        'https://giphy.com/gifs/cameron-dallas-OpesLQSjwdGj6',
+        'https://media.giphy.com/media/OpesLQSjwdGj6/giphy.mp4',
+        'video/mp4')),
+    ('imgtc', (
+        'https://imgtc.com/w/Sa2whPE',
+        'https://imgtc.b-cdn.net/uploads/ZHI3OopOhKJ.mp4',
+        'video/mp4')),
+    ('imgflip', (
+        'https://imgflip.com/i/1dtdbv',
+        'https://i.imgflip.com/1dtdbv.jpg',
+        'image/jpeg')),
+    ('livememe', (
+        'http://www.livememe.com/v67cxy9',
+        'http://e.lvme.me/v67cxy9.jpg',
+        'image/jpeg')),
+    ('makeameme', (
+        'http://makeameme.org/meme/joined-reddit-for',
+        'https://media.makeameme.org/created/joined-reddit-for.jpg',
+        'image/jpeg')),
+    ('flickr', (
+        'https://www.flickr.com/photos/obamawhitehouse/8191317327/',
+        'https://c1.staticflickr.com/9/8065/8191317327_5180e95d98_b.jpg',
+        'image/jpeg')),
+    ('worldstar_1', (
+        'http://www.worldstarhiphop.com/videos/video.php?v=wshh09DUN5MeDK2El4sO',
+        'https://hw-videos.worldstarhiphop.com/u/vid/2017/10/4OnndgEmNSME.mp4',
+        'video/mp4')),
+    ('worldstar_2', (
+        'http://www.worldstarhiphop.com/videos/video.php?v=wshhJ6bVdAv0iMrNGFZG',
+        'http://www.youtube.com/embed/Bze53qwHS8o?autoplay=1',
+        'video/x-youtube')),
 ])
 
 

@@ -33,6 +33,15 @@ def patch_webbrowser():
     https://bugs.python.org/issue31348
     """
 
+    # Add the suckless.org surf browser, which isn't in the python
+    # standard library
+    webbrowser.register('surf', None, webbrowser.BackgroundBrowser('surf'))
+
+    # Fix the opera browser, see https://github.com/michael-lazar/rtv/issues/476.
+    # By default, opera will open a new tab in the current window, which is
+    # what we want to do anyway.
+    webbrowser.register('opera', None, webbrowser.BackgroundBrowser('opera'))
+
     if sys.platform != 'darwin' or 'BROWSER' not in os.environ:
         return
 
@@ -83,6 +92,7 @@ def curses_session():
         # return from C start_color() is ignorable.
         try:
             curses.start_color()
+            curses.use_default_colors()
         except:
             _logger.warning('Curses failed to initialize color support')
 
@@ -91,9 +101,6 @@ def curses_session():
             curses.curs_set(0)
         except:
             _logger.warning('Curses failed to initialize the cursor mode')
-
-        # Assign the terminal's default (background) color to code -1
-        curses.use_default_colors()
 
         yield stdscr
 

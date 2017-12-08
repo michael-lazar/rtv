@@ -2310,13 +2310,17 @@ class MultiredditMixin(AuthenticatedReddit):
         """
         url = self.config['multireddit_about'].format(user=self.user.name,
                                                       multi=name)
-        self.http.headers['x-modhash'] = self.modhash
+
+        # The modhash isn't necessary for OAuth requests
+        if not self._use_oauth:
+            self.http.headers['x-modhash'] = self.modhash
+
         try:
             self.request(url, data={}, method='DELETE', *args, **kwargs)
         finally:
-            del self.http.headers['x-modhash']
+            if not self._use_oauth:
+                del self.http.headers['x-modhash']
 
-    @decorators.restrict_access(scope='subscribe')
     def edit_multireddit(self, *args, **kwargs):
         """Edit a multireddit, or create one if it doesn't already exist.
 

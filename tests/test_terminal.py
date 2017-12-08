@@ -650,3 +650,16 @@ def test_set_theme(terminal, stdscr):
     terminal.theme = None
     terminal.set_theme(Theme.from_name('molokai'))
     assert terminal.theme.display_string == 'molokai (preset)'
+
+
+def test_set_theme_no_colors(terminal, stdscr):
+
+    # Monochrome should be forced if the terminal doesn't support color
+    with mock.patch('curses.has_colors') as has_colors:
+        has_colors.return_value = False
+
+        terminal.set_theme()
+        assert not terminal.theme.use_color
+
+        terminal.set_theme(Theme(use_color=True))
+        assert not terminal.theme.use_color
