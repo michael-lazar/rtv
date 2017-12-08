@@ -168,7 +168,9 @@ On Linux systems you will need to install either [xsel](http://www.vergenet.net/
 
 ## Themes
 
-Use the ``--theme`` flag to use an alternate color scheme, or set it permanently in your **rtv.cfg**:
+Themes can be used to customize the look and feel of RTV. They control the color and special attributes (bold, underline, etc.) of every text element drawn on the screen.
+
+List installed themes with ``--list-themes`` flag, and select one using ``--theme`` (or set it permanently in your **rtv.cfg**):
 
 ```bash
 $ rtv --theme=papercolor
