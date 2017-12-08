@@ -168,8 +168,6 @@ On Linux systems you will need to install either [xsel](http://www.vergenet.net/
 
 ## Themes
 
-### Usage
-
 Use the ``--theme`` flag to select a theme (or set it in your **rtv.cfg**):
 
 ```bash
@@ -196,8 +194,6 @@ Built-in:
 ```
 
 Inside of RTV, the <kbd>F2</kbd> & <kbd>F3</kbd> keys can also be used to preview the available themes.
-
-### Preview
 
 <table>
   <tr>
