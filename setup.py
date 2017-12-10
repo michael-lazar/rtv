@@ -59,7 +59,7 @@ setuptools.setup(
         'rtv.packages.praw'
     ],
     package_data={
-        'rtv': ['templates/*'],
+        'rtv': ['templates/*', 'themes/*'],
         'rtv.packages.praw': ['praw.ini']
     },
     data_files=[("share/man/man1", ["rtv.1"])],
