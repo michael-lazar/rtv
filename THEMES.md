@@ -37,7 +37,7 @@ running it in.
 
 <p align="center">
 <img alt="iTerm preferences" src="resources/iterm_preferences.png"/>
-<br><i>Setting the system colors in iTerm preferences</i>
+<br><i>Setting the 16 system colors in iTerm preferences</i>
 </p>
 
 The curses library determines your terminal's color support by reading your
