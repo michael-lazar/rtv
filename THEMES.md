@@ -10,10 +10,7 @@ Color support on modern terminals can be split into 4 categories:
 3. 16 system colors - Everything above + bright variations
 4. 256 extended colors - Everything above + 6x6x6 color palette + 24 greyscale colors
 
-<div>
-    <img alt="terminal colors" src="resources/terminal_colors.png"/>
-    <p>The 256 terminal color codes, image from <a href=https://github.com/eikenb/terminal_colors>https://github.com/eikenb/terminal_colors</p>
-</div>
+<img alt="terminal colors" src="resources/terminal_colors.png"/>
 
 The 16 system colors, along with the default foreground and background,
 can usually be customized through your terminal's profile settings. The
@@ -22,10 +19,7 @@ all terminals. RTV's default theme only uses the 8 primary system colors,
 which is why it matches the "look and feel" of the terminal that you're
 running it in.
 
-<figure>
-    <img alt="iTerm preferences" src="resources/iterm_preferences.png"/>
-    <figcaption>Setting the system colors in iTerm preferences</figcaption>
-</figure>
+<img alt="iTerm preferences" src="resources/iterm_preferences.png"/>
 
 The curses library determines your terminal's color support by reading your
 environment's ``$TERM`` variable, and looking up your terminal's
@@ -173,10 +167,7 @@ SelectedCursor        = ansi_241      ansi_254      bold+reverse
 Link                  = ansi_33       -             underline
 ```
 
-<figure>
-    <img alt="iTerm preferences" src="resources/theme_modifiers.png"/>
-    <figcaption>The default solarized-light theme</figcaption>
-</figure>
+<img alt="iTerm preferences" src="resources/theme_modifiers.png"/>
 
 In the snippet above, the ``Link`` element has it's background color set
 to the ``-`` token. This means that it will inherit it's background
@@ -195,10 +186,7 @@ SelectedCursor        = ansi_241      ansi_254      bold+reverse
 Link                  = ansi_33       ansi_230      underline
 ```
 
-<figure>
-    <img alt="iTerm preferences" src="resources/theme_modifiers_2.png"/>
-    <figcaption>A modified solarized-light theme, with the Link background set to ansi_230</figcaption>
-</figure>
+<img alt="iTerm preferences" src="resources/theme_modifiers_2.png"/>
 
 In this case, the ``Link`` background stays ansi_230 (yellow) even the link is
 selected by the cursor.
