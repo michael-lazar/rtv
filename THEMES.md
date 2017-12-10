@@ -145,7 +145,7 @@ The ``<attributes>`` property can be set to any of the following values:
 - ``reverse`` will swap the foreground and background colors.
 
 Attributes can be mixed together using the + symbol. For example,
-  ``bold+underline`` will make the text <b><u>bold and underlined</u></b>.
+  ``bold+underline`` will make the text bold and underlined.
 
 ### Modifiers
 
