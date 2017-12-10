@@ -1,5 +1,18 @@
 # Themes
 
+## Installing Themes
+
+You can install custom themes by copying them into your **~/.config/rtv/themes/**
+directory. The name of the theme will match the name of the file.
+
+```
+$ cp my-custom-theme.cfg ~/.config/rtv/themes/
+$ rtv --theme my-custom-theme
+```
+
+If you've created a cool theme and would like to share it with the community,
+please submit a pull request!
+
 ## A quick primer on ANSI colors
 
 Color support on modern terminals can be split into 4 categories:
@@ -202,16 +215,3 @@ Link                  = ansi_33       ansi_230      underline
 
 In this case, the ``Link`` background stays ansi_230 (yellow) even the link is
 selected by the cursor.
-
-## Installing Themes
-
-You can install custom themes by copying them into your **~/.config/rtv/themes/**
-directory. The name of the theme will match the name of the file.
-
-```
-$ cp my-custom-theme.cfg ~/.config/rtv/themes/
-$ rtv --theme my-custom-theme
-```
-
-If you've created a cool theme and would like to share it with the community,
-please submit a pull request!
