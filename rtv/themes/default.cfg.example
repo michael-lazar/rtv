@@ -44,6 +44,7 @@ SubmissionFlair       = red           -             -
 SubmissionSubreddit   = yellow        -             -
 SubmissionText        = -             -             -
 SubmissionTitle       = -             -             bold
+SubmissionTitleSeen   = -             -             -
 Upvote                = green         -             bold
 Link                  = blue          -             underline
 LinkSeen              = magenta       -             underline
