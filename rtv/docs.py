@@ -60,6 +60,8 @@ https://github.com/michael-lazar/rtv
   b     : Display urls with urlview
   y     : Copy submission permalink to clipboard
   Y     : Copy submission link to clipboard
+  F2    : Cycle to previous theme
+  F3    : Cycle to next theme
 
 [Prompt]
   The `/` prompt accepts subreddits in the following formats
@@ -86,7 +88,6 @@ BANNER = """
 BANNER_SEARCH = """
 [1]relevance [2]top [3]comments [4]new
 """
-
 
 FOOTER_SUBREDDIT = """
 [?]Help [q]Quit [l]Comments [/]Prompt [u]Login [o]Open [c]Post [a/z]Vote

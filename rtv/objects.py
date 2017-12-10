@@ -238,7 +238,7 @@ class LoadScreen(object):
             # Some exceptions we want to swallow and display a notification
             if isinstance(e, e_type):
                 msg = message.format(e)
-                self._terminal.show_notification(msg, style='error')
+                self._terminal.show_notification(msg, style='Error')
                 return True
 
     def animate(self, delay, interval, message, trail):
@@ -267,7 +267,7 @@ class LoadScreen(object):
         s_row = (n_rows - 3) // 2 + v_offset
         s_col = (n_cols - message_len - 1) // 2 + h_offset
         window = curses.newwin(3, message_len + 2, s_row, s_col)
-        window.bkgd(str(' '), self._terminal.attr('notice_loading'))
+        window.bkgd(str(' '), self._terminal.attr('NoticeLoading'))
 
         # Animate the loading prompt until the stopping condition is triggered
         # when the context manager exits.

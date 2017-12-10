@@ -93,20 +93,20 @@ class SubscriptionPage(Page):
         row = offset
         if row in valid_rows:
             if data['type'] == 'Multireddit':
-                attr = self.term.attr('multireddit_name')
+                attr = self.term.attr('MultiredditName')
             else:
-                attr = self.term.attr('subscription_name')
+                attr = self.term.attr('SubscriptionName')
             self.term.add_line(win, '{name}'.format(**data), row, 1, attr)
 
         row = offset + 1
         for row, text in enumerate(data['split_title'], start=row):
             if row in valid_rows:
                 if data['type'] == 'Multireddit':
-                    attr = self.term.attr('multireddit_text')
+                    attr = self.term.attr('MultiredditText')
                 else:
-                    attr = self.term.attr('subscription_text')
+                    attr = self.term.attr('SubscriptionText')
                 self.term.add_line(win, text, row, 1, attr)
 
-        attr = self.term.attr('cursor')
+        attr = self.term.attr('CursorBlock')
         for y in range(n_rows):
             self.term.addch(win, y, 0, str(' '), attr)

@@ -317,15 +317,15 @@ class SubmissionPage(Page):
         row = offset
         if row in valid_rows:
             if data['is_author']:
-                attr = self.term.attr('comment_author_self')
+                attr = self.term.attr('CommentAuthorSelf')
                 text = '{author} [S]'.format(**data)
             else:
-                attr = self.term.attr('comment_author')
+                attr = self.term.attr('CommentAuthor')
                 text = '{author}'.format(**data)
             self.term.add_line(win, text, row, 1, attr)
 
             if data['flair']:
-                attr = self.term.attr('user_flair')
+                attr = self.term.attr('UserFlair')
                 self.term.add_space(win)
                 self.term.add_line(win, '{flair}'.format(**data), attr=attr)
 
@@ -333,38 +333,38 @@ class SubmissionPage(Page):
             self.term.add_space(win)
             self.term.add_line(win, arrow, attr=attr)
 
-            attr = self.term.attr('score')
+            attr = self.term.attr('Score')
             self.term.add_space(win)
             self.term.add_line(win, '{score}'.format(**data), attr=attr)
 
-            attr = self.term.attr('created')
+            attr = self.term.attr('Created')
             self.term.add_space(win)
             self.term.add_line(win, '{created}'.format(**data), attr=attr)
 
             if data['gold']:
-                attr = self.term.attr('gold')
+                attr = self.term.attr('Gold')
                 self.term.add_space(win)
                 self.term.add_line(win, self.term.guilded, attr=attr)
 
             if data['stickied']:
-                attr = self.term.attr('stickied')
+                attr = self.term.attr('Stickied')
                 self.term.add_space(win)
                 self.term.add_line(win, '[stickied]', attr=attr)
 
             if data['saved']:
-                attr = self.term.attr('saved')
+                attr = self.term.attr('Saved')
                 self.term.add_space(win)
                 self.term.add_line(win, '[saved]', attr=attr)
 
         for row, text in enumerate(split_body, start=offset+1):
-            attr = self.term.attr('comment_text')
+            attr = self.term.attr('CommentText')
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1, attr=attr)
 
-        # Unfortunately vline() doesn't support custom color so we have to
-        # build it one segment at a time.
-        index = data['level'] % len(self.term.theme.BAR_LEVELS)
-        attr = self.term.attr(self.term.theme.BAR_LEVELS[index])
+        # curses.vline() doesn't support custom colors so need to build the
+        # cursor bar on the left of the comment one character at a time
+        index = data['level'] % len(self.term.theme.CURSOR_BARS)
+        attr = self.term.attr(self.term.theme.CURSOR_BARS[index])
         for y in range(n_rows):
             self.term.addch(win, y, 0, self.term.vline, attr)
 
@@ -373,15 +373,15 @@ class SubmissionPage(Page):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 1
 
-        attr = self.term.attr('hidden_comment_text')
+        attr = self.term.attr('HiddenCommentText')
         self.term.add_line(win, '{body}'.format(**data), 0, 1, attr=attr)
 
-        attr = self.term.attr('hidden_comment_expand')
+        attr = self.term.attr('HiddenCommentExpand')
         self.term.add_space(win)
         self.term.add_line(win, '[{count}]'.format(**data), attr=attr)
 
-        index = data['level'] % len(self.term.theme.BAR_LEVELS)
-        attr = self.term.attr(self.term.theme.BAR_LEVELS[index])
+        index = data['level'] % len(self.term.theme.CURSOR_BARS)
+        attr = self.term.attr(self.term.theme.CURSOR_BARS[index])
         self.term.addch(win, 0, 0, self.term.vline, attr)
 
     def _draw_submission(self, win, data):
@@ -389,32 +389,32 @@ class SubmissionPage(Page):
         n_rows, n_cols = win.getmaxyx()
         n_cols -= 3  # one for each side of the border + one for offset
 
-        attr = self.term.attr('submission_title')
+        attr = self.term.attr('SubmissionTitle')
         for row, text in enumerate(data['split_title'], start=1):
             self.term.add_line(win, text, row, 1, attr)
 
         row = len(data['split_title']) + 1
-        attr = self.term.attr('submission_author')
+        attr = self.term.attr('SubmissionAuthor')
         self.term.add_line(win, '{author}'.format(**data), row, 1, attr)
 
         if data['flair']:
-            attr = self.term.attr('submission_flair')
+            attr = self.term.attr('SubmissionFlair')
             self.term.add_space(win)
             self.term.add_line(win, '{flair}'.format(**data), attr=attr)
 
-        attr = self.term.attr('created')
-        self.term.add_space(win)
-        self.term.add_line(win, '{created}'.format(**data), attr=attr)
-
-        attr = self.term.attr('submission_subreddit')
+        attr = self.term.attr('SubmissionSubreddit')
         self.term.add_space(win)
         self.term.add_line(win, '/r/{subreddit}'.format(**data), attr=attr)
 
+        attr = self.term.attr('Created')
+        self.term.add_space(win)
+        self.term.add_line(win, '{created_long}'.format(**data), attr=attr)
+
         row = len(data['split_title']) + 2
         if data['url_full'] in self.config.history:
-            attr = self.term.attr('url_seen')
+            attr = self.term.attr('LinkSeen')
         else:
-            attr = self.term.attr('url')
+            attr = self.term.attr('Link')
         self.term.add_line(win, '{url}'.format(**data), row, 1, attr)
 
         offset = len(data['split_title']) + 3
@@ -426,34 +426,34 @@ class SubmissionPage(Page):
             split_text = split_text[:-cutoff]
             split_text.append('(Not enough space to display)')
 
-        attr = self.term.attr('submission_text')
+        attr = self.term.attr('SubmissionText')
         for row, text in enumerate(split_text, start=offset):
             self.term.add_line(win, text, row, 1, attr=attr)
 
         row = len(data['split_title']) + len(split_text) + 3
-        attr = self.term.attr('score')
+        attr = self.term.attr('Score')
         self.term.add_line(win, '{score}'.format(**data), row, 1, attr=attr)
 
         arrow, attr = self.term.get_arrow(data['likes'])
         self.term.add_space(win)
         self.term.add_line(win, arrow, attr=attr)
 
-        attr = self.term.attr('comment_count')
+        attr = self.term.attr('CommentCount')
         self.term.add_space(win)
         self.term.add_line(win, '{comments}'.format(**data), attr=attr)
 
         if data['gold']:
-            attr = self.term.attr('gold')
+            attr = self.term.attr('Gold')
             self.term.add_space(win)
             self.term.add_line(win, self.term.guilded, attr=attr)
 
         if data['nsfw']:
-            attr = self.term.attr('nsfw')
+            attr = self.term.attr('NSFW')
             self.term.add_space(win)
             self.term.add_line(win, 'NSFW', attr=attr)
 
         if data['saved']:
-            attr = self.term.attr('saved')
+            attr = self.term.attr('Saved')
             self.term.add_space(win)
             self.term.add_line(win, '[saved]', attr=attr)
 

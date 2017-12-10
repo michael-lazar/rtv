@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import curses
+
 import pytest
 
 from rtv.page import Page, PageController, logged_in
@@ -112,3 +114,40 @@ def test_page_authenticated(reddit, terminal, config, oauth, refresh_token):
     terminal.stdscr.getch.return_value = ord('y')
     page.controller.trigger('u')
     assert not reddit.is_oauth_session()
+
+
+def test_page_cycle_theme(reddit, terminal, config, oauth):
+
+    page = Page(reddit, terminal, config, oauth)
+    page.controller = PageController(page, keymap=config.keymap)
+
+    page.term.set_theme()
+    assert page.term.theme.name == 'default'
+
+    with mock.patch.object(terminal, 'show_notification'), \
+            mock.patch.object(page, 'draw'):
+
+        # Next theme
+        page.controller.trigger(curses.KEY_F3)
+        assert page.term.theme.name == 'monochrome'
+        terminal.show_notification.assert_called_with(
+            'monochrome (built-in)', timeout=1)
+
+        # Previous theme
+        page.controller.trigger(curses.KEY_F2)
+        assert page.term.theme.name == 'default'
+        terminal.show_notification.assert_called_with(
+            'default (built-in)', timeout=1)
+
+        # Previous - will loop to one of the 256 color themes
+        page.controller.trigger(curses.KEY_F2)
+        assert page.term.theme.source in ('preset', 'installed')
+
+        # Reset
+        page.term.set_theme()
+
+        # Will skip over any installed themes that aren't supported
+        curses.has_colors.return_value = False
+        page.controller.trigger(curses.KEY_F2)
+        assert page.term.theme.required_colors == 0
+

@@ -89,7 +89,9 @@ def test_config_get_args():
             '--non-persistent',
             '--clear-auth',
             '--copy-config',
-            '--enable-media']
+            '--enable-media',
+            '--theme', 'molokai',
+            '--list-themes']
 
     with mock.patch('sys.argv', ['rtv']):
         config_dict = Config.get_args()
@@ -111,6 +113,8 @@ def test_config_get_args():
         assert config['config'] == 'configfile.cfg'
         assert config['copy_config'] is True
         assert config['enable_media'] is True
+        assert config['theme'] == 'molokai'
+        assert config['list_themes'] is True
 
 
 def test_config_link_deprecated():
@@ -143,7 +147,8 @@ def test_config_from_file():
         'subreddit': 'cfb',
         'enable_media': True,
         'max_comment_cols': 150,
-        'hide_username': True}
+        'hide_username': True,
+        'theme': 'molokai'}
 
     bindings = {
         'REFRESH': 'r, <KEY_F5>',

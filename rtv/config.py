@@ -13,16 +13,19 @@ from six.moves import configparser
 from . import docs, __version__
 from .objects import KeyMap
 
+
 PACKAGE = os.path.dirname(__file__)
 HOME = os.path.expanduser('~')
 TEMPLATES = os.path.join(PACKAGE, 'templates')
 DEFAULT_CONFIG = os.path.join(TEMPLATES, 'rtv.cfg')
 DEFAULT_MAILCAP = os.path.join(TEMPLATES, 'mailcap')
+DEFAULT_THEMES = os.path.join(PACKAGE, 'themes')
 XDG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
 CONFIG = os.path.join(XDG_HOME, 'rtv', 'rtv.cfg')
 MAILCAP = os.path.join(HOME, '.mailcap')
 TOKEN = os.path.join(XDG_HOME, 'rtv', 'refresh-token')
 HISTORY = os.path.join(XDG_HOME, 'rtv', 'history.log')
+THEMES = os.path.join(XDG_HOME, 'rtv', 'themes')
 
 
 def build_parser():
@@ -52,6 +55,12 @@ def build_parser():
     parser.add_argument(
         '--monochrome', action='store_const', const=True,
         help='Disable color')
+    parser.add_argument(
+        '--theme', metavar='FILE', action='store',
+        help='Color theme to use, see --list-themes for valid options')
+    parser.add_argument(
+        '--list-themes', metavar='FILE', action='store_const', const=True,
+        help='List all of the available color themes')
     parser.add_argument(
         '--non-persistent', dest='persistent', action='store_const', const=False,
         help='Forget the authenticated user when the program exits')

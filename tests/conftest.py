@@ -167,6 +167,8 @@ def stdscr():
         curses.color_pair.return_value = 23
         curses.has_colors.return_value = True
         curses.ACS_VLINE = 0
+        curses.COLORS = 256
+        curses.COLOR_PAIRS = 256
         yield out
 
 
@@ -199,6 +201,7 @@ def reddit(vcr, request):
 @pytest.fixture()
 def terminal(stdscr, config):
     term = Terminal(stdscr, config=config)
+    term.set_theme()
     # Disable the python 3.4 addch patch so that the mock stdscr calls are
     # always made the same way
     term.addch = lambda window, *args: window.addch(*args)

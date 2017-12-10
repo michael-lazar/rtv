@@ -40,7 +40,8 @@ RTV is built in python using the curses library.
 * [Demo](#demo)  
 * [Installation](#installation)  
 * [Usage](#usage)  
-* [Settings](#settings)  
+* [Settings](#settings)
+* [Themes](#themes)
 * [FAQ](#faq)  
 * [Contributing](#contributing)  
 * [License](#license)  
@@ -106,7 +107,7 @@ Press <kbd>/</kbd> to open the navigation prompt, where you can type things like
 - ``/u/multi-mod/m/art``
 - ``/domain/github.com``
 
-See [CONTROLS](https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst) for the full list of commands.
+See [CONTROLS](CONTROLS.rst) for the full list of commands.
 
 ## Settings
 
@@ -114,7 +115,7 @@ See [CONTROLS](https://github.com/michael-lazar/rtv/blob/master/CONTROLS.rst) fo
 
 Configuration files are stored in the ``{HOME}/.config/rtv/`` directory.
 
-Check out [rtv.cfg](https://github.com/michael-lazar/rtv/blob/master/rtv/templates/rtv.cfg) for the full list of configurable options. You can clone this file into your home directory by running:
+Check out [rtv.cfg](rtv/templates/rtv.cfg) for the full list of configurable options. You can clone this file into your home directory by running:
 
 ```bash
 $ rtv --copy-config
@@ -134,7 +135,7 @@ A mailcap file allows you to associate different MIME media types, like ``image/
 $ rtv --copy-mailcap
 ```
 
-This template contains examples for common MIME types that work with popular reddit websites like *imgur*, *youtube*, and *gfycat*. Open the mailcap template and follow the [instructions](https://github.com/michael-lazar/rtv/blob/master/rtv/templates/mailcap) listed inside.
+This template contains examples for common MIME types that work with popular reddit websites like *imgur*, *youtube*, and *gfycat*. Open the mailcap template and follow the [instructions](rtv/templates/mailcap) listed inside.
 
 Once you've setup your mailcap file, enable it by launching rtv with the ``rtv --enable-media`` flag (or set it in your **rtv.cfg**)
 
@@ -161,9 +162,40 @@ The default programs that RTV interacts with can be configured through environme
 </table>
 
 ### Clipboard
-RTV supports copying submission links to the OS clipboard.
-On macOS this is supported out of the box.
+
+RTV supports copying submission links to the OS clipboard. On macOS this is supported out of the box.
 On Linux systems you will need to install either [xsel](http://www.vergenet.net/~conrad/software/xsel/) or [xclip](https://sourceforge.net/projects/xclip/).
+
+## Themes
+
+Themes can be used to customize the look and feel of RTV
+
+<table>
+  <tr>
+    <td align="center">
+      <p><strong>Solarized Dark</strong></p>
+      <img src="resources/theme_solarized_dark.png"></img>
+    </td>
+    <td align="center">
+      <p><strong>Solarized Light</strong></p>
+      <img src="resources/theme_solarized_light.png"></img>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <p><strong>Papercolor</strong></p>
+      <img src="resources/theme_papercolor.png"></img>
+    </td>
+    <td align="center">
+      <p><strong>Molokai</strong></p>
+      <img src="resources/theme_molokai.png"></img>
+    </td>
+  </tr>
+</table>
+
+List installed themes with ``--list-themes`` command, and select one with ``--theme``. You can also set the theme permenantly in your [rtv.cfg](rtv/templates/rtv.cfg) file. While inside of RTV, you can use the <kbd>F2</kbd> & <kbd>F3</kbd> keys for a live preview.
+
+For instructions on writing and installing your own themes, see [THEMES.md](THEMES.md).
 
 ## FAQ
 
@@ -213,8 +245,8 @@ On Linux systems you will need to install either [xsel](http://www.vergenet.net/
 ## Contributing
 All feedback and suggestions are welcome, just post an issue!
 
-Before writing any code, please read the [Contributor Guidelines](https://github.com/michael-lazar/rtv/blob/master/CONTRIBUTING.rst).
+Before writing any code, please read the [Contributor Guidelines](CONTRIBUTING.rst).
 
 ## License
-This project is distributed under the [MIT](https://github.com/michael-lazar/rtv/blob/master/LICENSE) license.
+This project is distributed under the [MIT](LICENSE) license.
    

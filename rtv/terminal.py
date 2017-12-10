@@ -21,7 +21,7 @@ import six
 from kitchen.text.display import textual_width_chop
 
 from . import exceptions, mime_parsers, content
-from .theme import Theme
+from .theme import Theme, ThemeList
 from .objects import LoadScreen
 
 try:
@@ -51,14 +51,13 @@ class Terminal(object):
     RETURN = 10
     SPACE = 32
 
-    def __init__(self, stdscr, config, theme=None):
+    def __init__(self, stdscr, config):
 
         self.stdscr = stdscr
         self.config = config
         self.loader = LoadScreen(self)
-
-        self.theme = None
-        self.set_theme(theme)
+        self.theme = None  # Initialized by term.set_theme()
+        self.theme_list = ThemeList()
 
         self._display = None
         self._mailcap_dict = mailcap.getcaps()
@@ -193,11 +192,11 @@ class Terminal(object):
         """
 
         if likes is None:
-            return self.neutral_arrow, self.attr('neutral_vote')
+            return self.neutral_arrow, self.attr('NeutralVote')
         elif likes:
-            return self.up_arrow, self.attr('upvote')
+            return self.up_arrow, self.attr('Upvote')
         else:
-            return self.down_arrow, self.attr('downvote')
+            return self.down_arrow, self.attr('Downvote')
 
     def clean(self, string, n_cols=None):
         """
@@ -293,7 +292,7 @@ class Terminal(object):
 
         window.addstr(row, col, ' ')
 
-    def show_notification(self, message, timeout=None, style='info'):
+    def show_notification(self, message, timeout=None, style='Info'):
         """
         Overlay a message box on the center of the screen and wait for input.
 
@@ -305,7 +304,7 @@ class Terminal(object):
                 notification window
         """
 
-        assert style in ('info', 'warning', 'error', 'success')
+        assert style in ('Info', 'Warning', 'Error', 'Success')
 
         if isinstance(message, six.string_types):
             message = message.splitlines()
@@ -325,7 +324,7 @@ class Terminal(object):
         s_col = (n_cols - box_width) // 2 + h_offset
 
         window = curses.newwin(box_height, box_width, s_row, s_col)
-        window.bkgd(str(' '), self.attr('notice_{0}'.format(style)))
+        window.bkgd(str(' '), self.attr('Notice{0}'.format(style)))
         window.erase()
         window.border()
 
@@ -403,7 +402,7 @@ class Terminal(object):
                 _logger.warning(stderr)
                 self.show_notification(
                     'Program exited with status={0}\n{1}'.format(
-                        code, stderr.strip()), style='error')
+                        code, stderr.strip()), style='Error')
 
         else:
             # Non-blocking, open a background process
@@ -731,7 +730,7 @@ class Terminal(object):
 
         n_rows, n_cols = self.stdscr.getmaxyx()
         v_offset, h_offset = self.stdscr.getbegyx()
-        ch, attr = str(' '), self.attr('prompt')
+        ch, attr = str(' '), self.attr('Prompt')
         prompt = self.clean(prompt, n_cols-1)
 
         # Create a new window to draw the text at the bottom of the screen,
@@ -849,14 +848,27 @@ class Terminal(object):
         """
         Shortcut for fetching the color + attribute code for an element.
         """
+        # The theme must be initialized before calling this
+        assert self.theme is not None
 
         return self.theme.get(element)
 
+    @staticmethod
+    def check_theme(theme):
+        """
+        Check if the given theme is compatible with the terminal
+        """
+        terminal_colors = curses.COLORS if curses.has_colors() else 0
+
+        if theme.required_colors > terminal_colors:
+            return False
+        elif theme.required_color_pairs > curses.COLOR_PAIRS:
+            return False
+        else:
+            return True
+
     def set_theme(self, theme=None):
         """
-        Set the terminal theme. This is a stub for what will eventually
-        support managing custom themes.
-        
         Check that the terminal supports the provided theme, and applies
         the theme to the terminal if possible.
 
@@ -864,14 +876,31 @@ class Terminal(object):
         default theme. The default theme only requires 8 colors so it
         should be compatible with any terminal that supports basic colors.
         """
-        monochrome = (not curses.has_colors())
 
-        if theme is None or monochrome:
-            theme = Theme(monochrome=monochrome)
+        terminal_colors = curses.COLORS if curses.has_colors() else 0
+        default_theme = Theme(use_color=bool(terminal_colors))
+
+        if theme is None:
+            theme = default_theme
+
+        elif theme.required_color_pairs > curses.COLOR_PAIRS:
+            _logger.warning(
+                'Theme `%s` requires %s color pairs, but $TERM=%s only '
+                'supports %s color pairs, switching to default theme',
+                theme.name, theme.required_color_pairs, self._term,
+                curses.COLOR_PAIRS)
+            theme = default_theme
+
+        elif theme.required_colors > terminal_colors:
+            _logger.warning(
+                'Theme `%s` requires %s colors, but $TERM=%s only '
+                'supports %s colors, switching to default theme',
+                theme.name, theme.required_colors, self._term,
+                curses.COLORS)
+            theme = default_theme
 
         theme.bind_curses()
+        self.theme = theme
 
         # Apply the default color to the whole screen
-        self.stdscr.bkgd(str(' '), theme.get('normal'))
-
-        self.theme = theme
+        self.stdscr.bkgd(str(' '), self.attr('Normal'))

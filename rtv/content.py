@@ -217,6 +217,7 @@ class Content(object):
         data['title'] = sub.title
         data['text'] = sub.selftext
         data['created'] = cls.humanize_timestamp(sub.created_utc)
+        data['created_long'] = cls.humanize_timestamp(sub.created_utc, True)
         data['comments'] = '{0} comments'.format(sub.num_comments)
         data['score'] = '{0} pts'.format('-' if sub.hide_score else sub.score)
         data['author'] = name

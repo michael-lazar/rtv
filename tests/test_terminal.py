@@ -575,27 +575,81 @@ def test_add_space(terminal, stdscr):
 
 def test_attr(terminal):
 
-    assert terminal.attr('cursor') == 0
-    assert terminal.attr('cursor.selected') == curses.A_REVERSE
-    assert terminal.attr('neutral_vote') == curses.A_BOLD
+    assert terminal.attr('CursorBlock') == 0
+    assert terminal.attr('@CursorBlock') == curses.A_REVERSE
+    assert terminal.attr('NeutralVote') == curses.A_BOLD
 
-    with terminal.theme.set_modifier('selected'):
-        assert terminal.attr('cursor') == curses.A_REVERSE
-        assert terminal.attr('neutral_vote') == curses.A_BOLD
+    with terminal.theme.turn_on_selected():
+        assert terminal.attr('CursorBlock') == curses.A_REVERSE
+        assert terminal.attr('NeutralVote') == curses.A_BOLD
+
+
+def test_check_theme(terminal):
+
+    monochrome = Theme(use_color=False)
+    default = Theme()
+    color256 = Theme.from_name('molokai')
+
+    curses.has_colors.return_value = False
+    assert terminal.check_theme(monochrome)
+    assert not terminal.check_theme(default)
+    assert not terminal.check_theme(color256)
+
+    curses.has_colors.return_value = True
+    curses.COLORS = 0
+    assert terminal.check_theme(monochrome)
+    assert not terminal.check_theme(default)
+    assert not terminal.check_theme(color256)
+
+    curses.COLORS = 8
+    assert terminal.check_theme(monochrome)
+    assert terminal.check_theme(default)
+    assert not terminal.check_theme(color256)
+
+    curses.COLORS = 256
+    assert terminal.check_theme(monochrome)
+    assert terminal.check_theme(default)
+    assert terminal.check_theme(color256)
+
+    curses.COLOR_PAIRS = 8
+    assert terminal.check_theme(monochrome)
+    assert terminal.check_theme(default)
+    assert not terminal.check_theme(color256)
 
 
 def test_set_theme(terminal, stdscr):
 
+    # Default with color enabled
     stdscr.reset_mock()
     terminal.set_theme()
-    assert not terminal.theme.monochrome
+    assert terminal.theme.use_color
+    assert terminal.theme.display_string == 'default (built-in)'
     stdscr.bkgd.assert_called_once_with(' ', 0)
 
-    stdscr.reset_mock()
-    theme = Theme(monochrome=True)
-    terminal.set_theme(theme=theme)
-    assert terminal.theme.monochrome
-    stdscr.bkgd.assert_called_once_with(' ', 0)
+    # When the user passes in the --monochrome flag
+    terminal.theme = None
+    terminal.set_theme(Theme(use_color=False))
+    assert not terminal.theme.use_color
+    assert terminal.theme.display_string == 'monochrome (built-in)'
+
+    # When the terminal doesn't support colors
+    curses.COLORS = 0
+    terminal.theme = None
+    terminal.set_theme()
+    assert terminal.theme.display_string == 'monochrome (built-in)'
+
+    # When the terminal doesn't support 256 colors so it falls back to the
+    # built-in default theme
+    curses.COLORS = 8
+    terminal.theme = None
+    terminal.set_theme(Theme.from_name('molokai'))
+    assert terminal.theme.display_string == 'default (built-in)'
+
+    # When the terminal does support the 256 color theme
+    curses.COLORS = 256
+    terminal.theme = None
+    terminal.set_theme(Theme.from_name('molokai'))
+    assert terminal.theme.display_string == 'molokai (preset)'
 
 
 def test_set_theme_no_colors(terminal, stdscr):
@@ -605,8 +659,7 @@ def test_set_theme_no_colors(terminal, stdscr):
         has_colors.return_value = False
 
         terminal.set_theme()
-        assert terminal.theme.monochrome
+        assert not terminal.theme.use_color
 
-        theme = Theme(monochrome=False)
-        terminal.set_theme(theme=theme)
-        assert terminal.theme.monochrome
+        terminal.set_theme(Theme(use_color=True))
+        assert not terminal.theme.use_color

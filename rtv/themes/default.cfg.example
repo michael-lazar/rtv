@@ -1,0 +1,50 @@
+[theme]
+;<element>            = <foreground>  <background>  <attributes>
+Normal                = default       default       normal
+Selected              = default       default       normal
+SelectedCursor        = default       default       reverse
+
+TitleBar              = cyan          -             bold+reverse
+OrderBar              = yellow        -             bold
+OrderBarHighlight     = yellow        -             bold+reverse
+HelpBar               = cyan          -             bold+reverse
+Prompt                = cyan          -             bold+reverse
+NoticeInfo            = -             -             bold
+NoticeLoading         = -             -             bold
+NoticeError           = -             -             bold
+NoticeSuccess         = -             -             bold
+
+CursorBlock           = -             -             -
+CursorBar1            = magenta       -             -
+CursorBar2            = cyan          -             -
+CursorBar3            = green         -             -
+CursorBar4            = yellow        -             -
+
+CommentAuthor         = blue          -             bold
+CommentAuthorSelf     = green         -             bold
+CommentCount          = -             -             -
+CommentText           = -             -             -
+Created               = -             -             -
+Downvote              = red           -             bold
+Gold                  = yellow        -             bold
+HiddenCommentExpand   = -             -             bold
+HiddenCommentText     = -             -             -
+MultiredditName       = yellow        -             bold
+MultiredditText       = -             -             -
+NeutralVote           = -             -             bold
+NSFW                  = red           -             bold+reverse
+Saved                 = green         -             -
+Score                 = -             -             -
+Separator             = -             -             bold
+Stickied              = green         -             -
+SubscriptionName      = yellow        -             bold
+SubscriptionText      = -             -             -
+SubmissionAuthor      = green         -             bold
+SubmissionFlair       = red           -             -
+SubmissionSubreddit   = yellow        -             -
+SubmissionText        = -             -             -
+SubmissionTitle       = -             -             bold
+Upvote                = green         -             bold
+Link                  = blue          -             underline
+LinkSeen              = magenta       -             underline
+UserFlair             = yellow        -             bold
