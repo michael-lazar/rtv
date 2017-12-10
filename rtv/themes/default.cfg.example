@@ -1,8 +1,8 @@
 [theme]
 ;<element>            = <foreground>  <background>  <attributes>
-Normal                = default       default       -
-Selected              = -             -             -
-SelectedCursor        = -             -             reverse
+Normal                = default       default       normal
+Selected              = default       default       normal
+SelectedCursor        = default       default       reverse
 
 TitleBar              = cyan          -             bold+reverse
 OrderBar              = yellow        -             bold

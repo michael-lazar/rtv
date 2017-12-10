@@ -54,9 +54,9 @@ class Theme(object):
     # can only use the 8 basic colors with the default color as the background
     DEFAULT_THEME = {
         'modifiers': {
-            'Normal':                (-1,                   -1,   None),
-            'Selected':              (None,                 None, None),
-            'SelectedCursor':        (None,                 None, curses.A_REVERSE),
+            'Normal':                (-1,                   -1,   curses.A_NORMAL),
+            'Selected':              (-1,                   -1,   curses.A_NORMAL),
+            'SelectedCursor':        (-1,                   -1,   curses.A_REVERSE),
         },
         'page': {
             'TitleBar':              (curses.COLOR_CYAN,    None, curses.A_BOLD | curses.A_REVERSE),
@@ -160,6 +160,18 @@ class Theme(object):
                 elements[key] = (None, None, None)
 
         self._set_fallback(elements, 'Normal', (-1, -1, curses.A_NORMAL))
+        self._set_fallback(elements, 'Selected', 'Normal')
+        self._set_fallback(elements, 'SelectedCursor', 'Normal')
+
+        # Create the "Selected" versions of elements, which are prefixed with
+        # the @ symbol. For example, "@CommentText" represents how comment
+        # text is formatted when it is highlighted by the cursor.
+        for name in self.DEFAULT_THEME['normal']:
+            dest = '@{0}'.format(name)
+            self._set_fallback(elements, name, 'Selected', dest)
+        for name in self.DEFAULT_THEME['cursor']:
+            dest = '@{0}'.format(name)
+            self._set_fallback(elements, name, 'SelectedCursor', dest)
 
         # Fill in the ``None`` values for all of the elements with normal text
         for name in self.DEFAULT_THEME['normal']:
@@ -168,19 +180,6 @@ class Theme(object):
             self._set_fallback(elements, name, 'Normal')
         for name in self.DEFAULT_THEME['page']:
             self._set_fallback(elements, name, 'Normal')
-
-        # Create the "Selected" versions of elements, which are prefixed with
-        # the @ symbol. For example, "@CommentText" represents how comment
-        # text is formatted when it is highlighted by the cursor.
-        for name in self.DEFAULT_THEME['normal']:
-            dest = '@{0}'.format(name)
-            self._set_fallback(elements, 'Selected', name, dest)
-        for name in self.DEFAULT_THEME['cursor']:
-            dest = '@{0}'.format(name)
-            self._set_fallback(elements, 'SelectedCursor', name, dest)
-
-        self._set_fallback(elements, 'Selected', 'Normal')
-        self._set_fallback(elements, 'SelectedCursor', 'Normal')
 
         self.elements = elements
 

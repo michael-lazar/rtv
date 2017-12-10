@@ -102,7 +102,11 @@ def test_theme_element_selected_attributes():
     # the ones defined in "Selected". Because "Selected" defines
     # a foreground and a background color, they will override the
     # ones that "Link" had defined.
-    assert theme.elements['@Link'] == (2, 3, curses.A_REVERSE)
+    # assert theme.elements['@Link'] == (2, 3, curses.A_REVERSE)
+
+    # I can't remember why the above rule was implemented, so I reverted it
+    assert theme.elements['@Link'] == (5, 3, curses.A_REVERSE)
+
     assert '@Normal' not in theme.elements
     assert '@Selected' not in theme.elements
     assert '@TitleBar' not in theme.elements
