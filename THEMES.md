@@ -1,85 +1,65 @@
 # Themes
 
-Different themes can be used to customize the look and feel of RTV.
-They control the color and special attributes (bold, underline, etc.) of
-every text element drawn on the screen.
+## A quick primer on ANSI colors
 
-## Usage
+Color support on modern terminals can be split into 4 categories:
 
-Use the ``--theme`` flag to select a theme:
+1. No support for colors
+2. 8 system colors - Black, Red, Green, Yellow, Blue, Magenta,
+   Cyan, and White
+3. 16 system colors - Everything above + bright variations
+4. 256 extended colors - Everything above + 6x6x6 color palette + 24 greyscale colors
 
-```bash
-$ rtv --theme=papercolor
+<figure>
+    <img alt="terminal colors" src="resources/terminal_colors.png"/>
+    <figcaption>The 256 terminal color codes, image from
+    <a href=https://github.com/eikenb/terminal_colors>https://github.com/eikenb/terminal_colors</a></figcaption>
+</figure>
+
+The 16 system colors, along with the default foreground and background,
+can usually be customized through your terminal's profile settings. The
+6x6x6 color palette and grayscale colors are constant RGB values across
+all terminals. RTV's default theme only uses the 8 primary system colors,
+which is why it matches the "look and feel" of the terminal that you're
+running it in.
+
+<figure>
+    <img alt="iTerm preferences" src="resources/iterm_preferences.png"/>
+    <figcaption>Setting the system colors in iTerm preferences</figcaption>
+</figure>
+
+The curses library determines your terminal's color support by reading your
+environment's ``$TERM`` variable, and looking up your terminal's
+capabilities in the [terminfo](https://linux.die.net/man/5/terminfo)
+database. You can emulate this behavior by using the ``tput`` command:
+
+```
+bash$ export TERM=xterm
+bash$ tput colors
+8
+bash$ export TERM=xterm-256color
+bash$ tput colors
+256
+bash$ export TERM=vt220
+bash$ tput colors
+-1
 ```
 
-You can also view a list of built-in and installed themes by using the ``--list-themes`` flag:
+In general you should not be setting your ``$TERM`` variable manually,
+it will be set automatically by you terminal. Often, problems with
+terminal colors can be traced back to somebody hardcoding
+``TERM=xterm-256color`` in their .bashrc file.
 
-```bash
-$ rtv --list-themes
+## Understanding RTV Themes
 
-Installed (~/.config/rtv/themes/):
-    (empty)
-
-Presets:
-    molokai             [requires 256 colors]
-    papercolor          [requires 256 colors]
-    solarized-dark      [requires 256 colors]
-    solarized-light     [requires 256 colors]
-
-Built-in:
-    default             [requires 8 colors]
-    monochrome          [requires 0 colors]
-```
-
-Custom themes can be installed by copying them into the **{HOME}/.config/rtv/themes/** folder.
-
-The <kbd>F2</kbd> & <kbd>F3</kbd> keys can be used to cycle through themes from within RTV.
-
-## Preview
-
-<table>
-  <tr>
-    <td align="center">
-      <p><strong>Default</strong><br>
-      Uses the terminal's preset 16 color palette</p>
-      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_default.png"></img>
-    </td>
-    <td align="center">
-      <p><strong>Monochrome</strong><br>
-      Fallback for terminals that don't support colors</p>
-      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_monochrome.png"></img>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <p><strong>Solarized Dark</strong></p>
-      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_solarized_dark.png"></img>
-    </td>
-    <td align="center">
-      <p><strong>Solarized Light</strong></p>
-      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_solarized_light.png"></img>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <p><strong>Papercolor</strong></p>
-      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_papercolor.png"></img>
-    </td>
-    <td align="center">
-      <p><strong>Molokai</strong></p>
-      <img src="https://github.com/michael-lazar/rtv/blob/themes/resources/theme_molokai.png"></img>
-    </td>
-  </tr>
-</table>
-
-## Designing a theme
+Here's an example of what an RTV theme file looks like:
 
 ```
 [theme]
 ;<element>            = <foreground>  <background>  <attributes>
-Normal                = default       default       -
-Selected              = -             -             -
-SelectedCursor        = -             -             reverse
+Normal                = default       default       normal
+Selected              = default       default       normal
+SelectedCursor        = default       default       reverse
 
 TitleBar              = cyan          -             bold+reverse
 OrderBar              = yellow        -             bold
@@ -126,3 +106,113 @@ Link                  = blue          -             underline
 LinkSeen              = magenta       -             underline
 UserFlair             = yellow        -             bold
 ```
+
+Every piece of text drawn on the screen is assigned to an ``<element>``,
+which has three properties:
+
+- ``<foreground>``: The text color
+- ``<background>``: The background color
+- ``<attributes>``: Additional text attributes, like bold or underlined
+
+### Colors
+
+The ``<foreground>`` and ``<background>`` properties can be set to any the following values:
+
+- ``default``, which means use the terminal's default foreground or background color.
+- The 16 system colors:
+  <p>
+  <table>
+    <tr><td>black</td><td>dark_gray</td></tr>
+    <tr><td>red</td></td><td>bright_red</td></tr>
+    <tr><td>green</td></td><td>bright_green</td></tr>
+    <tr><td>yellow</td></td><td>bright_yellow</td></tr>
+    <tr><td>blue</td></td><td>bright_blue</td></tr>
+    <tr><td>magenta</td></td><td>bright_magenta</td></tr>
+    <tr><td>cyan</td></td><td>bright_cyan</td></tr>
+    <tr><td>light_gray</td></td><td>white</td></tr>
+  </table>
+  </p>
+- ``ansi_{n}``, where n is between 0 and 255. These will map to their
+  corresponding ANSI colors (see the figure above).
+- Hex RGB codes, like ``#0F0F0F``, which will be converted to their nearest
+  ANSI color. This is generally not recommended because the conversion process
+  downscales the color resolution and the resulting colors will look "off".
+
+### Attributes
+
+The ``<attributes>`` property can be set to any of the following values:
+
+- ``normal``, ``bold``, ``underline``, or ``standout``.
+- ``reverse`` will swap the foreground and background colors.
+
+Attributes can be mixed together using the + symbol. For example,
+  ``bold+underline`` will make the text <b><u>bold and underlined</u></b>.
+
+### Modifiers
+
+RTV themes use special "modifer" elements to define the default
+application style. This allows you to do things like set the default
+background color without needing to set ``<background>`` on every
+single element. The three modifier elements are:
+
+- ``Normal`` - The default modifier that applies to all text elements.
+- ``Selected`` - Applies to text elements that are highlighted on the page.
+- ``SelectedCursor`` - Like ``Selected``, but only applies to ``CursorBlock``
+  and ``CursorBar{n}`` elements.
+
+When an element is marked with a ``-`` token, it means inherit the
+attribute value from the relevant modifier. This is best explained
+through an example:
+
+```
+[theme]
+;<element>            = <foreground>  <background>  <attributes>
+Normal                = ansi_241      ansi_230      normal
+Selected              = ansi_241      ansi_254      normal
+SelectedCursor        = ansi_241      ansi_254      bold+reverse
+
+Link                  = ansi_33       -             underline
+```
+
+<figure>
+    <img alt="iTerm preferences" src="resources/theme_modifiers.png"/>
+    <figcaption>The default solarized-light theme</figcaption>
+</figure>
+
+In the snippet above, the ``Link`` element has it's background color set
+to the ``-`` token. This means that it will inherit it's background
+from either the ``Normal`` (light yellow) or the ``Selected`` (light grey)
+element, depending on if it's selected or not.
+
+Compare this to with what happens when the ``Link`` background is explicitly set:
+
+```
+[theme]
+;<element>            = <foreground>  <background>  <attributes>
+Normal                = ansi_241      ansi_230      normal
+Selected              = ansi_241      ansi_254      normal
+SelectedCursor        = ansi_241      ansi_254      bold+reverse
+
+Link                  = ansi_33       ansi_230      underline
+```
+
+<figure>
+    <img alt="iTerm preferences" src="resources/theme_modifiers_2.png"/>
+    <figcaption>A modified solarized-light theme, with the Link background set to ansi_230</figcaption>
+</figure>
+
+In this case, the ``Link`` background stays ansi_230 (yellow) even the link is
+selected by the cursor.
+
+## Installing Themes
+
+You can install custom themes by copying them into your **~/.config/rtv/themes/**
+directory. The name of the theme will match the name of the file.
+
+```
+$ cp my-custom-theme.cfg ~/.config/rtv/themes/
+$ rtv --theme my-custom-theme
+```
+
+If you've created a cool theme and would like to share it with the community,
+please submit a pull request!

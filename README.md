@@ -176,19 +176,9 @@ List installed themes with ``--list-themes`` flag, and select one using ``--them
 $ rtv --theme=papercolor
 ```
 
-You can also use the <kbd>F2</kbd> & <kbd>F3</kbd> keys to cycle through available themes:
+You can also use the <kbd>F2</kbd> & <kbd>F3</kbd> keys for a live preview of the available themes.
 
 <table>
-  <tr>
-    <td align="center">
-      <p><strong>Default</strong></p>
-      <img src="resources/theme_default.png"></img>
-    </td>
-    <td align="center">
-      <p><strong>Monochrome</strong></p>
-      <img src="resources/theme_monochrome.png"></img>
-    </td>
-  </tr>
   <tr>
     <td align="center">
       <p><strong>Solarized Dark</strong></p>
@@ -211,7 +201,7 @@ You can also use the <kbd>F2</kbd> & <kbd>F3</kbd> keys to cycle through availab
   </tr>
 </table>
 
-See [THEMES.md](THEMES.md) for instructions on how to create your own theme.
+For instructions on writing and installing your own themes, see [THEMES.md](THEMES.md).
 
 ## FAQ
 
