@@ -210,7 +210,7 @@ Link                  = ansi_33       ansi_230      underline
 
 <p align="center">
 <img src="resources/theme_modifiers_2.png"/>
-<br><i>What happens when the ``Link`` background is set to ``ansi_230``</i>
+<br><i>What happens when the Link background is set to a constant color</i>
 </p>
 
 In this case, the ``Link`` background stays yellow even when the link is
