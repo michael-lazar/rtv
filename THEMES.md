@@ -213,5 +213,5 @@ Link                  = ansi_33       ansi_230      underline
 <br><i>What happens when the ``Link`` background is set to ``ansi_230``</i>
 </p>
 
-In this case, the ``Link`` background stays ansi_230 (yellow) even the link is
+In this case, the ``Link`` background stays yellow even when the link is
 selected by the cursor.
