@@ -10,7 +10,10 @@ Color support on modern terminals can be split into 4 categories:
 3. 16 system colors - Everything above + bright variations
 4. 256 extended colors - Everything above + 6x6x6 color palette + 24 greyscale colors
 
+<span align="center">
 <img alt="terminal colors" src="resources/terminal_colors.png"/>
+<p><i>The 256 terminal color codes, image from <a href=https://github.com/eikenb/terminal_colors>https://github.com/eikenb/terminal_colors</a></i></p>
+</span>
 
 The 16 system colors, along with the default foreground and background,
 can usually be customized through your terminal's profile settings. The
