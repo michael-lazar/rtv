@@ -196,7 +196,7 @@ to the ``-`` token. This means that it will inherit it's background
 from either the ``Normal`` (light yellow) or the ``Selected`` (light grey)
 element, depending on if it's selected or not.
 
-Compare this to with what happens when the ``Link`` background is explicitly set:
+Compare this with what happens when the ``Link`` background is explicitly set to ``ansi_230``:
 
 ```
 [theme]
@@ -210,7 +210,7 @@ Link                  = ansi_33       ansi_230      underline
 
 <p align="center">
 <img src="resources/theme_modifiers_2.png"/>
-<br><i>A modified solarized-light theme, with the Link background set to ansi_230</i>
+<br><i>What happens when the ``Link`` background is set to ``ansi_230``</i>
 </p>
 
 In this case, the ``Link`` background stays ansi_230 (yellow) even the link is
