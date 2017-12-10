@@ -12,7 +12,7 @@ Color support on modern terminals can be split into 4 categories:
 
 <p align="center">
 <img alt="terminal colors" src="resources/terminal_colors.png"/>
-<i>The 256 terminal color codes, image from <a href=https://github.com/eikenb/terminal_colors>https://github.com/eikenb/terminal_colors</a></i>
+<br><i>The 256 terminal color codes, image from <a href=https://github.com/eikenb/terminal_colors>https://github.com/eikenb/terminal_colors</a></i>
 </p>
 
 The 16 system colors, along with the default foreground and background,
@@ -22,7 +22,10 @@ all terminals. RTV's default theme only uses the 8 primary system colors,
 which is why it matches the "look and feel" of the terminal that you're
 running it in.
 
+<p align="center">
 <img alt="iTerm preferences" src="resources/iterm_preferences.png"/>
+<br><i>Setting the system colors in iTerm preferences</i>
+</p>
 
 The curses library determines your terminal's color support by reading your
 environment's ``$TERM`` variable, and looking up your terminal's
@@ -170,7 +173,10 @@ SelectedCursor        = ansi_241      ansi_254      bold+reverse
 Link                  = ansi_33       -             underline
 ```
 
-<img alt="iTerm preferences" src="resources/theme_modifiers.png"/>
+<p align="center">
+<img src="resources/theme_modifiers.png"/>
+<br><i>The default solarized-light theme</i>
+</p>
 
 In the snippet above, the ``Link`` element has it's background color set
 to the ``-`` token. This means that it will inherit it's background
@@ -189,7 +195,10 @@ SelectedCursor        = ansi_241      ansi_254      bold+reverse
 Link                  = ansi_33       ansi_230      underline
 ```
 
-<img alt="iTerm preferences" src="resources/theme_modifiers_2.png"/>
+<p align="center">
+<img src="resources/theme_modifiers_2.png"/>
+<br><i>A modified solarized-light theme, with the Link background set to ansi_230</i>
+</p>
 
 In this case, the ``Link`` background stays ansi_230 (yellow) even the link is
 selected by the cursor.
