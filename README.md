@@ -168,16 +168,6 @@ On Linux systems you will need to install either [xsel](http://www.vergenet.net/
 
 ## Themes
 
-Themes can be used to customize the look and feel of RTV. They control the color and special attributes (bold, underline, etc.) of every text element drawn on the screen.
-
-List installed themes with ``--list-themes`` flag, and select one using ``--theme`` (or set it permanently in your **rtv.cfg**):
-
-```bash
-$ rtv --theme=papercolor
-```
-
-You can also use the <kbd>F2</kbd> & <kbd>F3</kbd> keys for a live preview of the available themes.
-
 <table>
   <tr>
     <td align="center">
@@ -200,6 +190,14 @@ You can also use the <kbd>F2</kbd> & <kbd>F3</kbd> keys for a live preview of th
     </td>
   </tr>
 </table>
+
+Themes can be used to customize the look and feel of RTV. List installed themes with ``--list-themes`` command, and set one using ``--theme`` (or set it permanently in [rtv.cfg](rtv/templates/rtv.cfg)):
+
+```bash
+$ rtv --theme=papercolor
+```
+
+You can also use the <kbd>F2</kbd> & <kbd>F3</kbd> keys for a live preview of available themes.
 
 For instructions on writing and installing your own themes, see [THEMES.md](THEMES.md).
 
