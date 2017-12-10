@@ -191,7 +191,7 @@ Link                  = ansi_33       -             underline
 <br><i>The default solarized-light theme</i>
 </p>
 
-In the snippet above, the ``Link`` element has it's background color set
+In the snippet above, the ``Link`` element has its background color set
 to the ``-`` token. This means that it will inherit it's background
 from either the ``Normal`` (light yellow) or the ``Selected`` (light grey)
 element, depending on if it's selected or not.
