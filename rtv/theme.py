@@ -103,6 +103,7 @@ class Theme(object):
             'SubmissionSubreddit':   (curses.COLOR_YELLOW,  None, None),
             'SubmissionText':        (None,                 None, None),
             'SubmissionTitle':       (None,                 None, curses.A_BOLD),
+            'SubmissionTitleSeen':   (None,                 None, None),
             'Upvote':                (curses.COLOR_GREEN,   None, curses.A_BOLD),
             'Link':                  (curses.COLOR_BLUE,    None, curses.A_UNDERLINE),
             'LinkSeen':              (curses.COLOR_MAGENTA, None, curses.A_UNDERLINE),
