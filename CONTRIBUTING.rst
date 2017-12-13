@@ -23,7 +23,7 @@ Considerations
 
 - If you're adding a new feature, try to include a few test cases.
   See the section below on setting up your test environment
-- If you tried, but you **ABSOLUTELY CAN'T** get the tests to run, it's ok
+- If you tried, but you can't get the tests running in your environment, it's ok
 - If you are unsure about anything, ask!
 
 Submitting a pull request
