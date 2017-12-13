@@ -70,7 +70,7 @@ This both speeds up the tests and helps to maintain consistency across runs.
 
    .. code-block:: bash
   
-      $ pip install .[test]
+      $ pip install rtv[test]
 
 2. Set your ``$PYTHONPATH`` to point to the directory of your RTV repository.
 
