@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-RTV provides an interface to view and interact with reddit from your terminal.<br>
+RTV provides a terminal interface to view and interact with reddit.<br>
 It's compatible with most terminal emulators on Linux and macOS.
 </p>
 
