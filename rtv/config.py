@@ -20,12 +20,13 @@ TEMPLATES = os.path.join(PACKAGE, 'templates')
 DEFAULT_CONFIG = os.path.join(TEMPLATES, 'rtv.cfg')
 DEFAULT_MAILCAP = os.path.join(TEMPLATES, 'mailcap')
 DEFAULT_THEMES = os.path.join(PACKAGE, 'themes')
-XDG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
-CONFIG = os.path.join(XDG_HOME, 'rtv', 'rtv.cfg')
+XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME', os.path.join(HOME, '.config'))
+XDG_DATA_HOME = os.getenv('XDG_DATA_HOME', os.path.join(HOME, '.local', 'share'))
+CONFIG = os.path.join(XDG_CONFIG_HOME, 'rtv', 'rtv.cfg')
 MAILCAP = os.path.join(HOME, '.mailcap')
-TOKEN = os.path.join(XDG_HOME, 'rtv', 'refresh-token')
-HISTORY = os.path.join(XDG_HOME, 'rtv', 'history.log')
-THEMES = os.path.join(XDG_HOME, 'rtv', 'themes')
+TOKEN = os.path.join(XDG_DATA_HOME, 'rtv', 'refresh-token')
+HISTORY = os.path.join(XDG_DATA_HOME, 'rtv', 'history.log')
+THEMES = os.path.join(XDG_CONFIG_HOME, 'rtv', 'themes')
 
 
 def build_parser():
