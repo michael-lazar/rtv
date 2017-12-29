@@ -40,7 +40,7 @@ for name in ['vcr.matchers', 'vcr.stubs']:
 def pytest_addoption(parser):
     parser.addoption('--record-mode', dest='record_mode', default='none')
     parser.addoption('--refresh-token', dest='refresh_token',
-                     default='~/.config/rtv/refresh-token')
+                     default='~/.local/share/rtv/refresh-token')
 
 
 class MockStdscr(mock.MagicMock):
