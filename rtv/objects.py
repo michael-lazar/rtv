@@ -33,9 +33,9 @@ def patch_webbrowser():
     https://bugs.python.org/issue31348
     """
 
-    # Add the suckless.org surf browser, which isn't in the python
-    # standard library
+    # Add support for browsers that aren't defined in the python standard library
     webbrowser.register('surf', None, webbrowser.BackgroundBrowser('surf'))
+    webbrowser.register('vimb', None, webbrowser.BackgroundBrowser('vimb'))
 
     # Fix the opera browser, see https://github.com/michael-lazar/rtv/issues/476.
     # By default, opera will open a new tab in the current window, which is
