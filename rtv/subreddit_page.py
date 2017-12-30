@@ -303,17 +303,20 @@ class SubredditPage(Page):
         offset = 0 if not inverted else -(data['n_rows'] - n_rows)
 
         n_title = len(data['split_title'])
-        for row, text in enumerate(data['split_title'], start=offset):
+        if data['url_full'] in self.config.history:
+            attr = self.term.attr('SubmissionTitleSeen')
+        else:
             attr = self.term.attr('SubmissionTitle')
+        for row, text in enumerate(data['split_title'], start=offset):
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1, attr)
 
         row = n_title + offset
+        if data['url_full'] in self.config.history:
+            attr = self.term.attr('LinkSeen')
+        else:
+            attr = self.term.attr('Link')
         if row in valid_rows:
-            if data['url_full'] in self.config.history:
-                attr = self.term.attr('LinkSeen')
-            else:
-                attr = self.term.attr('Link')
             self.term.add_line(win, '{url}'.format(**data), row, 1, attr)
 
         row = n_title + offset + 1
