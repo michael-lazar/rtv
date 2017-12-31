@@ -26,6 +26,7 @@ def main():
     parser = config.build_parser()
     help_text = parser.format_help()
     help_sections = help_text.split('\n\n')
+    del help_sections[1]
 
     data = {}
     print('Fetching version')

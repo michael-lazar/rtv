@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.21.0: http://github.com/michael-lazar/rtv/releases/tag/v1.21.0
 .. _1.20.0: http://github.com/michael-lazar/rtv/releases/tag/v1.20.0
 .. _1.19.0: http://github.com/michael-lazar/rtv/releases/tag/v1.19.0
 .. _1.18.0: http://github.com/michael-lazar/rtv/releases/tag/v1.18.0
@@ -31,6 +32,22 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.21.0_ (2017-12-30)
+--------------------
+
+Features
+
+* Full support for customizable themes has been added. For more information,
+  see the new section on themes in the README, and the ``THEMES.md`` file.
+
+Bugfixes
+
+* Fixed incorrect URL strings being sent to the **opera** web browser.
+* Fixed timeout messages for the **surf** and **vimb** web browsers.
+* Switched to using ``XDG_DATA_HOME`` to store the rtv browser history and
+  credentials file.
 
 --------------------
 1.20.0_ (2017-12-05)

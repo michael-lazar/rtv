@@ -34,6 +34,7 @@ def build_parser():
     parser = argparse.ArgumentParser(
         prog='rtv', description=docs.SUMMARY,
         epilog=docs.CONTROLS,
+        usage=docs.USAGE,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(
         'link', metavar='URL', nargs='?',

@@ -11,7 +11,7 @@ Thanks to the following people for their contributions to this project.
 * `Yusuke Sakamoto <https://github.com/yskmt>`_
 * `Johnathan Jenkins <https://github.com/shaggytwodope>`_
 * `tyjak <https://github.com/tyjak>`_
-* `Alexandre Kaskasoli <https://github.com/alx-k>`_
+* `alxk <https://github.com/sheeplepie>`_
 * `Josue Ortega <https://github.com/noahfx>`_
 * `mekhami <https://github.com/mekhami>`_
 * `obosob <https://github.com/obosob>`_
@@ -29,8 +29,8 @@ Thanks to the following people for their contributions to this project.
 * `Ryan Reno <https://github.com/rreno>`_
 * `jupart <https://github.com/jupart>`_
 * `afloofloo <https://github.com/afloofloo>`_
+* `Caleb Perkins <https://github.com/calebperkins>`_
 * `Charles Saracco <https://github.com/crsaracco>`_
 * `Corey McCandless <https://github.com/cmccandless>`_
 * `Danilo G. Baio <https://github.com/dbaio>`_
 * `Fabio Alessandro Locati <https://github.com/Fale>`_
-* `Hans Roman <https://github.com/snahor>`_

@@ -7,7 +7,14 @@ desktop:https://github.com/michael-lazar/rtv:{version}\
 """
 
 SUMMARY = """
-Reddit Terminal Viewer is a lightweight browser for https://www.reddit.com
+RTV (Reddit Terminal Viewer) is a terminal interface to view and interact with reddit.
+"""
+
+USAGE = """\
+rtv [URL] [-s SUBREDDIT]
+
+  $ rtv https://www.reddit.com/r/programming/comments/7h9l31
+  $ rtv -s linux
 """
 
 CONTROLS = """

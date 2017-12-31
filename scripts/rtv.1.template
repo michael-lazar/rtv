@@ -9,19 +9,24 @@ RTV - Reddit Terminal Viewer
 {options}
 .SH CONTROLS
 Move the cursor using the arrow keys or vim style movement.
+.br
 Press \fBup\fR and \fBdown\fR to scroll through submissions.
+.br
 Press \fBright\fR to view the selected submission and \fBleft\fR to return.
+.br
 Press \fB?\fR to open the help screen.
 .SH FILES
 .TP
 .BR $XDG_CONFIG_HOME/rtv/rtv.cfg
-The configuration file can be used to customize default program settings, see
-README.md for more information.
+The configuration file can be used to customize default program settings.
 .TP
-.BR $XDG_CONFIG_HOME/rtv/refresh-token
+.BR $XDG_DATA_HOME/rtv/refresh-token
 After you login to reddit, your most recent OAuth refresh token will be stored
-for future sessions. You can disable this behavior by setting the option
-\fBpersistent=False\fR in your configuration file.
+for future sessions.
+.TP
+.BR $XDG_DATA_HOME/rtv/history.log
+This file stores URLs that have been recently opened in order to
+visually highlight them as "seen".
 .SH ENVIRONMENT
 .TP
 .BR RTV_EDITOR
