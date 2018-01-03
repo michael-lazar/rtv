@@ -32,7 +32,7 @@ Once you are logged in your username will appear in the top-right corner of the 
 :``c``: Compose a new post or comment
 :``e``: Edit an existing post or comment
 :``d``: Delete an existing post or comment
-:``i``: Display new messages prompt
+:``i``: Check if you have any unread messages
 :``s``: View a list of subscribed subreddits
 :``S``: View a list of subscribed multireddits
 :``w``: Save a submission
@@ -45,8 +45,9 @@ In subreddit mode you can browse through the top submissions on either the front
 
 :``l`` or ``►``: Enter the selected submission
 :``o`` or ``ENTER``:  Open the submission link with your web browser
-:``f``: Open a prompt to search the current subreddit
 :``p``: Toggle between the front page and the last visited subreddit
+:``f``: Open a prompt to search the current subreddit
+:``/``: Open a prompt to switch subreddits
 
 The ``/`` prompt accepts subreddits in the following formats
 
