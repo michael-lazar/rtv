@@ -1,7 +1,7 @@
 # Example mailcap file for Reddit Terminal Viewer
 # https://github.com/michael-lazar/rtv/
 #
-# Copy the contents of this file to {HOME}/.mailcap, or point to using $MAILCAPS
+# Copy the contents of this file to {HOME}/.mailcap, or point to it using $MAILCAPS
 # Then launch RTV using the --enable-media flag. All shell commands defined in
 # this file depend on external programs that must be installed on your system.
 #
@@ -39,7 +39,7 @@ video/*; mpv '%s' --autofit 640x480 --loop=inf; test=test -n "$DISPLAY"
 
 ###############################################################################
 # Commands below this point will attempt to display media directly in the
-# terminal when X is not available.
+# terminal when a desktop is not available (e.g. inside of an SSH session)
 ###############################################################################
 
 # View images directly in your terminal with iTerm2
