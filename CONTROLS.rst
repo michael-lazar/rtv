@@ -67,7 +67,7 @@ The ``/`` prompt accepts subreddits in the following formats
 Submission Mode
 ---------------
 
-In addition to the basic commands, the following actions can be performed when you're viewing a single **submission** window.
+In addition to the basic commands, the following actions can be performed when you're viewing a **submission** window.
 
 :``h`` or ``◄``: Return to the subreddit
 :``l`` or ``►``: Open the selected comment in a new window
