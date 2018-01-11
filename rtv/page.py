@@ -159,7 +159,9 @@ class Page(object):
     @logged_in
     def hide(self):
         data = self.get_selected_item()
-        if data['hidden']:
+        if not hasattr(data["object"], 'hide'):
+            self.term.flash()
+        elif data['hidden']:
             with self.term.loader('Unhiding'):
                 data['object'].unhide()
             if not self.term.loader.exception:
