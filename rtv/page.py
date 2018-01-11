@@ -159,10 +159,16 @@ class Page(object):
     @logged_in
     def hide(self):
         data = self.get_selected_item()
-        with self.term.loader('Hiding'):
-            data['object'].hide()
-        if not self.term.loader.exception:
-            data['hidden'] = True
+        if data['hidden']:
+            with self.term.loader('Unhiding'):
+                data['object'].unhide()
+            if not self.term.loader.exception:
+                data['hidden'] = False
+        else:
+            with self.term.loader('Hiding'):
+                data['object'].hide()
+            if not self.term.loader.exception:
+                data['hidden'] = True
 
     @PageController.register(Command('UPVOTE'))
     @logged_in
