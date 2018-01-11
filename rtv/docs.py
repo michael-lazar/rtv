@@ -51,6 +51,7 @@ https://github.com/michael-lazar/rtv
   ?     : Show the help screen
   q     : Quit
   Q     : Force quit
+  x     : Hide/unhide
   a     : Upvote
   z     : Downvote
   c     : Compose a new submission/comment
@@ -97,7 +98,7 @@ BANNER_SEARCH = """
 """
 
 FOOTER_SUBREDDIT = """
-[?]Help [q]Quit [l]Comments [/]Prompt [u]Login [o]Open [c]Post [a/z]Vote
+[?]Help [q]Quit [l]Comments [/]Prompt [u]Login [o]Open [c]Post [a/z]Vote [x] hide/unhide
 """
 
 FOOTER_SUBMISSION = """
