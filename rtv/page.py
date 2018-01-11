@@ -155,6 +155,13 @@ class Page(object):
         self.nav.cursor_index = 0
         self.nav.inverted = True
 
+    @PageController.register(Command('HIDE'))
+    @logged_in
+    def hide(self):
+        data = self.get_selected_item()
+        with self.term.loader('Hiding'):
+            data['object'].hide()
+
     @PageController.register(Command('UPVOTE'))
     @logged_in
     def upvote(self):
