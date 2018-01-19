@@ -192,7 +192,7 @@ Link                  = ansi_33       -             underline
 
 In the snippet above, the ``Link`` element has its background color set
 to the ``-`` token. This means that it will inherit it's background
-from either the ``Normal`` (light yellow) or the ``Selected`` (light grey)
+from either the ``Normal`` (light yellow, ansi_230) or the ``Selected`` (light grey, ansi_254)
 element, depending on if it's selected or not.
 
 Compare this with what happens when the ``Link`` background is hard-coded to ``ansi_230``:
@@ -211,5 +211,5 @@ Link                  = ansi_33       ansi_230      underline
 <br><i>The Link element hard-coded to ansi_230</i>
 </p>
 
-In this case, the ``Link`` background stays yellow even when the link is
+In this case, the ``Link`` background stays yellow (ansi_230) even when the link is
 selected by the cursor.
