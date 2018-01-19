@@ -181,7 +181,6 @@ through an example:
 ;<element>            = <foreground>  <background>  <attributes>
 Normal                = ansi_241      ansi_230      normal
 Selected              = ansi_241      ansi_254      normal
-SelectedCursor        = ansi_241      ansi_254      bold+reverse
 
 Link                  = ansi_33       -             underline
 ```
@@ -196,14 +195,13 @@ to the ``-`` token. This means that it will inherit it's background
 from either the ``Normal`` (light yellow) or the ``Selected`` (light grey)
 element, depending on if it's selected or not.
 
-Compare this with what happens when the ``Link`` background is explicitly set to ``ansi_230``:
+Compare this with what happens when the ``Link`` background is hard-coded to ``ansi_230``:
 
 ```
 [theme]
 ;<element>            = <foreground>  <background>  <attributes>
 Normal                = ansi_241      ansi_230      normal
 Selected              = ansi_241      ansi_254      normal
-SelectedCursor        = ansi_241      ansi_254      bold+reverse
 
 Link                  = ansi_33       ansi_230      underline
 ```
