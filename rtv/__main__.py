@@ -11,7 +11,7 @@ import warnings
 import six
 import requests
 
-# Need to check for curses comparability before performing the rtv imports
+# Need to check for curses compatibility before performing the rtv imports
 try:
     import curses
 except ImportError:
@@ -41,7 +41,7 @@ from .terminal import Terminal
 from .content import RequestHeaderRateLimiter
 from .objects import curses_session, patch_webbrowser
 from .subreddit_page import SubredditPage
-from .exceptions import ConfigError
+from .exceptions import ConfigError, SubredditError
 from .__version__ import __version__
 
 
@@ -82,11 +82,9 @@ def main():
     if bindings:
         config.keymap.set_bindings(bindings)
 
-    # Copy the default config file and quit
     if config['copy_config']:
         copy_default_config()
         return
-
     if config['copy_mailcap']:
         copy_default_mailcap()
         return
@@ -122,6 +120,7 @@ def main():
             ('$DISPLAY', os.getenv('DISPLAY')),
             ('$TERM', os.getenv('TERM')),
             ('$XDG_CONFIG_HOME', os.getenv('XDG_CONFIG_HOME')),
+            ('$XDG_DATA_HOME', os.getenv('$XDG_DATA_HOME')),
             ('$RTV_EDITOR', os.getenv('RTV_EDITOR')),
             ('$RTV_URLVIEWER', os.getenv('RTV_URLVIEWER')),
             ('$RTV_BROWSER', RTV_BROWSER),
@@ -205,10 +204,19 @@ def main():
             if config.refresh_token:
                 oauth.authorize()
 
+            page = None
             name = config['subreddit']
             with term.loader('Loading subreddit'):
-                page = SubredditPage(reddit, term, config, oauth, name)
-            if term.loader.exception:
+                try:
+                    page = SubredditPage(reddit, term, config, oauth, name)
+                except Exception as e:
+                    # If we can't load the subreddit that was requested, try
+                    # to load the front page instead so at least the
+                    # application still launches.
+                    _logger.exception(e)
+                    page = SubredditPage(reddit, term, config, oauth, 'front')
+                    raise SubredditError('Unable to load {0}'.format(name))
+            if page is None:
                 return
 
             # Open the supplied submission link before opening the subreddit
