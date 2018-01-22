@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import curses
 
 import six
+import pytest
 
 from rtv import __version__
 from rtv.subreddit_page import SubredditPage
@@ -388,7 +389,9 @@ def test_subreddit_open_subscriptions(subreddit_page, refresh_token):
         assert loop.called
 
 
-def test_subreddit_get_inbox_timeout(subreddit_page, refresh_token, terminal):
+def test_subreddit_get_inbox_timeout(subreddit_page, refresh_token, terminal, vcr):
+    if vcr.record_mode == 'none':
+        pytest.skip('Unable to test ReadTimeout exceptions using a cassette')
 
     # Log in
     subreddit_page.config.refresh_token = refresh_token
@@ -396,7 +399,6 @@ def test_subreddit_get_inbox_timeout(subreddit_page, refresh_token, terminal):
 
     subreddit_page.reddit.config.timeout = 0.00000001
     subreddit_page.controller.trigger('i')
-
     text = 'HTTP request timed out'.encode('utf-8')
     terminal.stdscr.subwin.addstr.assert_called_with(1, 1, text)
     assert isinstance(terminal.loader.exception, ReadTimeout)
