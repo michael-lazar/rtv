@@ -290,9 +290,13 @@ class Page(object):
         Checks the inbox for unread messages and displays a notification.
         """
 
-        inbox = len(list(self.reddit.get_unread(limit=1)))
-        message = 'New Messages' if inbox > 0 else 'No New Messages'
-        self.term.show_notification(message)
+        with self.term.loader('Loading'):
+            messages = self.reddit.get_unread(limit=1)
+            inbox = len(list(messages))
+
+        if self.term.loader.exception is None:
+            message = 'New Messages' if inbox > 0 else 'No New Messages'
+            self.term.show_notification(message)
 
     @PageController.register(Command('COPY_PERMALINK'))
     def copy_permalink(self):

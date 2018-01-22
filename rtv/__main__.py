@@ -192,6 +192,7 @@ def main():
                 reddit = praw.Reddit(user_agent=user_agent,
                                      decode_html_entities=False,
                                      disable_update_check=True,
+                                     timeout=10,  # 10 second request timeout
                                      handler=RequestHeaderRateLimiter())
 
             # Dial the request cache up from 30 seconds to 5 minutes
@@ -246,5 +247,6 @@ def main():
         # Ensure sockets are closed to prevent a ResourceWarning
         if 'reddit' in locals():
             reddit.handler.http.close()
+
 
 sys.exit(main())

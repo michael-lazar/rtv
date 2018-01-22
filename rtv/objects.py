@@ -159,6 +159,7 @@ class LoadScreen(object):
         (praw.errors.InvalidCaptcha, 'Error, captcha required'),
         (praw.errors.InvalidSubreddit, '{0.args[0]}'),
         (praw.errors.PRAWException, '{0.__class__.__name__}'),
+        (requests.exceptions.Timeout, 'HTTP request timed out'),
         (requests.exceptions.RequestException, '{0.__class__.__name__}'),
     ]
 
