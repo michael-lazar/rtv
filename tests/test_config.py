@@ -91,7 +91,8 @@ def test_config_get_args():
             '--copy-config',
             '--enable-media',
             '--theme', 'molokai',
-            '--list-themes']
+            '--list-themes',
+            '--no-flash']
 
     with mock.patch('sys.argv', ['rtv']):
         config_dict = Config.get_args()
@@ -115,6 +116,7 @@ def test_config_get_args():
         assert config['enable_media'] is True
         assert config['theme'] == 'molokai'
         assert config['list_themes'] is True
+        assert config['flash'] is False
 
 
 def test_config_link_deprecated():
@@ -148,7 +150,8 @@ def test_config_from_file():
         'enable_media': True,
         'max_comment_cols': 150,
         'hide_username': True,
-        'theme': 'molokai'}
+        'theme': 'molokai',
+        'flash': True}
 
     bindings = {
         'REFRESH': 'r, <KEY_F5>',
