@@ -80,6 +80,9 @@ def build_parser():
         help='Open external links using programs defined in the mailcap config')
     parser.add_argument(
         '-V', '--version', action='version', version='rtv '+__version__)
+    parser.add_argument(
+        '--no-flash', dest='flash', action='store_const', const=False,
+        help='Disable screen flashing')
     return parser
 
 
@@ -264,7 +267,8 @@ class Config(object):
             'oauth_redirect_port': partial(config.getint, 'rtv'),
             'oauth_scope': lambda x: rtv[x].split(','),
             'max_comment_cols': partial(config.getint, 'rtv'),
-            'hide_username': partial(config.getboolean, 'rtv')
+            'hide_username': partial(config.getboolean, 'rtv'),
+            'flash': partial(config.getboolean, 'rtv')
         }
 
         for key, func in params.items():

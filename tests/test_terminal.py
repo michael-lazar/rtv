@@ -93,6 +93,13 @@ def test_terminal_functions(terminal):
     terminal.stdscr.addch.assert_called_with(3, 5, 'ch', 'attr')
 
 
+def test_terminal_no_flash(terminal):
+
+    terminal.config['flash'] = False
+    terminal.flash()
+    assert not curses.flash.called
+
+
 def test_terminal_clean_ascii(terminal):
 
     terminal.config['ascii'] = True

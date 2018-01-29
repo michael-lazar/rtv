@@ -118,12 +118,14 @@ class Terminal(object):
             self._display = display
         return self._display
 
-    @staticmethod
-    def flash():
+    def flash(self):
         """
         Flash the screen to indicate that an action was invalid.
         """
-        return curses.flash()
+        if self.config['flash']:
+            return curses.flash()
+        else:
+            return None
 
     @staticmethod
     def curs_set(val):
