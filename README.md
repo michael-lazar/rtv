@@ -78,6 +78,9 @@ $ pacaur -S rtv
 
 # Nix
 $ nix-env -i rtv
+
+# FreeBSD
+$ pkg install rtv
 ```
 
 ## Usage
