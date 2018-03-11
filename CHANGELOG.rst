@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.22.0: http://github.com/michael-lazar/rtv/releases/tag/v1.22.0
 .. _1.21.0: http://github.com/michael-lazar/rtv/releases/tag/v1.21.0
 .. _1.20.0: http://github.com/michael-lazar/rtv/releases/tag/v1.20.0
 .. _1.19.0: http://github.com/michael-lazar/rtv/releases/tag/v1.19.0
@@ -32,6 +33,26 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.22.0_ (2018-03-07)
+--------------------
+
+Features
+
+* Added the ``--no-flash`` option to disable terminal flashing.
+
+Bugfixes
+
+* Fixed automatically exiting on launch when trying to open an invalid
+  subreddit with the ``-s`` flag.
+* Fixed error handling for HTTP request timeouts when checking for new
+  messages in the inbox.
+* Fixed a typo in the sample theme config.
+
+Documentation
+
+* Added the FreeBSD package to the README.
 
 --------------------
 1.21.0_ (2017-12-30)
