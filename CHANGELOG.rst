@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.22.1: http://github.com/michael-lazar/rtv/releases/tag/v1.22.1
 .. _1.22.0: http://github.com/michael-lazar/rtv/releases/tag/v1.22.0
 .. _1.21.0: http://github.com/michael-lazar/rtv/releases/tag/v1.21.0
 .. _1.20.0: http://github.com/michael-lazar/rtv/releases/tag/v1.20.0
@@ -33,6 +34,17 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.22.1_ (2018-03-11)
+--------------------
+
+I forgot to check in a commit before publishing the 1.22.0 release (whoops!)
+
+Bugfixes
+
+* Updated the ``__version__.py`` file to report the current version.
+* Added the missing v1.22.0 entry to the CHANGELOG.
 
 --------------------
 1.22.0_ (2018-03-07)
