@@ -25,7 +25,6 @@ class SubredditPage(Page):
         """
         Params:
             name (string): Name of subreddit to open
-            url (string): Optional submission to load upon start
         """
         super(SubredditPage, self).__init__(reddit, term, config, oauth)
 
