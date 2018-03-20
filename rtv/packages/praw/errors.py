@@ -451,18 +451,6 @@ class RateLimitExceeded(APIException):
 
     ERROR_TYPE = 'RATELIMIT'
 
-    def __init__(self, error_type, message, field, response):
-        """Construct an instance of the RateLimitExceeded exception.
-
-        The parameters match that of :class:`APIException`.
-
-        The `sleep_time` attribute is extracted from the response object.
-
-        """
-        super(RateLimitExceeded, self).__init__(error_type, message,
-                                                field, response)
-        self.sleep_time = self.response['ratelimit']
-
 
 class SubredditExists(APIException):
     """An exception to indicate that a subreddit name is not available."""
