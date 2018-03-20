@@ -24,6 +24,18 @@ _logger = logging.getLogger(__name__)
 INDEX = os.path.join(TEMPLATES, 'index.html')
 
 
+class OAuthHTTPServer(HTTPServer):
+
+    def handle_error(self, request, client_address):
+        """
+        The default HTTPServer's error handler prints the request traceback
+        to stdout, which breaks the curses display.
+
+        Override it to log to a file instead.
+        """
+        _logger.exception('Error processing request in OAuth HTTP Server')
+
+
 class OAuthHandler(BaseHTTPRequestHandler):
 
     # params are stored as a global because we don't have control over what
@@ -160,7 +172,7 @@ class OAuthHelper(object):
 
         if self.server is None:
             address = ('', self.config['oauth_redirect_port'])
-            self.server = HTTPServer(address, OAuthHandler)
+            self.server = OAuthHTTPServer(address, OAuthHandler)
 
         if self.term.display:
             # Open a background browser (e.g. firefox) which is non-blocking.
