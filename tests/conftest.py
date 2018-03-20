@@ -10,9 +10,8 @@ from functools import partial
 import pytest
 from vcr import VCR
 from six.moves.urllib.parse import urlparse, parse_qs
-from six.moves.BaseHTTPServer import HTTPServer
 
-from rtv.oauth import OAuthHelper, OAuthHandler
+from rtv.oauth import OAuthHelper, OAuthHandler, OAuthHTTPServer
 from rtv.content import RequestHeaderRateLimiter
 from rtv.config import Config
 from rtv.packages import praw
@@ -216,7 +215,7 @@ def oauth(reddit, terminal, config):
 @pytest.yield_fixture()
 def oauth_server():
     # Start the OAuth server on a random port in the background
-    server = HTTPServer(('', 0), OAuthHandler)
+    server = OAuthHTTPServer(('', 0), OAuthHandler)
     server.url = 'http://{0}:{1}/'.format(*server.server_address)
     thread = threading.Thread(target=server.serve_forever)
     thread.start()
