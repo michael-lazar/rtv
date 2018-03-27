@@ -70,9 +70,6 @@ See [Repology](https://repology.org/metapackage/rtv/packages) for an up-to-date 
 # macOS
 $ brew install rtv
 
-# Debian 9+, Ubuntu 17.04+
-$ apt install rtv
-
 # Arch
 $ pacaur -S rtv
 
