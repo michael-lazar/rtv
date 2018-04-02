@@ -813,7 +813,7 @@ class Terminal(object):
 
         # Prune empty lines at the bottom of the textbox.
         for item in stack[::-1]:
-            if item:
+            if not item:
                 stack.pop()
             else:
                 break
