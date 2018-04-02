@@ -278,5 +278,6 @@ def main():
                 theme = theme_list.next(theme)
                 theme = theme_list.previous(theme)
 
+
 sys.exit(main())
 

@@ -13,7 +13,6 @@ from six.moves import configparser
 from . import docs, __version__
 from .objects import KeyMap
 
-
 PACKAGE = os.path.dirname(__file__)
 HOME = os.path.expanduser('~')
 TEMPLATES = os.path.join(PACKAGE, 'templates')
@@ -30,7 +29,6 @@ THEMES = os.path.join(XDG_CONFIG_HOME, 'rtv', 'themes')
 
 
 def build_parser():
-
     parser = argparse.ArgumentParser(
         prog='rtv', description=docs.SUMMARY,
         epilog=docs.CONTROLS,
@@ -79,7 +77,7 @@ def build_parser():
         '--enable-media', dest='enable_media', action='store_const', const=True,
         help='Open external links using programs defined in the mailcap config')
     parser.add_argument(
-        '-V', '--version', action='version', version='rtv '+__version__)
+        '-V', '--version', action='version', version='rtv ' + __version__)
     parser.add_argument(
         '--no-flash', dest='flash', action='store_const', const=False,
         help='Disable screen flashing')

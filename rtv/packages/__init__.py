@@ -7,8 +7,8 @@ Reference:
     https://github.com/kennethreitz/requests/blob/master/requests/packages/__init__.py
 """
 from __future__ import absolute_import
-import sys
 
+import sys
 
 __praw_hash__ = '1e82eb0f8690a2acbdc15d030130dc50507eb4ba'
 __praw_bundled__ = True
@@ -18,6 +18,7 @@ try:
     from . import praw
 except ImportError:
     import praw
+
     if not praw.__version__.startswith('3.'):
         raise RuntimeError('Invalid PRAW version ({0}) detected, '
                            'rtv requires PRAW version 3'.format(praw.__version__))

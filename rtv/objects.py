@@ -289,7 +289,7 @@ class LoadScreen(object):
 
                     # Break up the designated sleep interval into smaller
                     # chunks so we can more responsively check for interrupts.
-                    for _ in range(int(interval/0.01)):
+                    for _ in range(int(interval / 0.01)):
                         # Pressing escape triggers a keyboard interrupt
                         if self._terminal.getch() == self._terminal.ESCAPE:
                             os.kill(os.getpid(), signal.SIGINT)
@@ -457,12 +457,12 @@ class Navigator(object):
                 valid = True
             else:
                 # flip to the direction of movement
-                if ((direction > 0) & (self.inverted is True))\
-                   | ((direction < 0) & (self.inverted is False)):
-                    self.page_index += (self.step * (n_windows-1))
+                if ((direction > 0) & (self.inverted is True)) \
+                        | ((direction < 0) & (self.inverted is False)):
+                    self.page_index += (self.step * (n_windows - 1))
                     self.inverted = not self.inverted
                     self.cursor_index \
-                        = (n_windows-(direction < 0)) - self.cursor_index
+                        = (n_windows - (direction < 0)) - self.cursor_index
 
                 valid = False
                 adj = 0

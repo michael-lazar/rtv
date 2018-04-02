@@ -79,5 +79,6 @@ def main():
     with open(os.path.join(ROOT, 'rtv.1'), 'w') as fp:
         fp.write(out)
 
+
 if __name__ == '__main__':
     main()

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=wrong-import-position
+
 from __future__ import unicode_literals
 from __future__ import print_function
 
@@ -44,8 +46,8 @@ from .subreddit_page import SubredditPage
 from .exceptions import ConfigError, SubredditError
 from .__version__ import __version__
 
-
 _logger = logging.getLogger(__name__)
+
 
 # Pycharm debugging note:
 # You can use pycharm to debug a curses application by launching rtv in a
@@ -62,7 +64,7 @@ def main():
     logging.captureWarnings(True)
     if six.PY3:
         # These ones get triggered even when capturing warnings is turned on
-        warnings.simplefilter('ignore', ResourceWarning)  #pylint:disable=E0602
+        warnings.simplefilter('ignore', ResourceWarning)  # pylint:disable=E0602
 
     # Set the terminal title
     if os.getenv('DISPLAY'):

@@ -24,7 +24,6 @@ _____/  /_/  \___/____/|__/ \___//_/
 (RTV)
 """
 
-
 from __future__ import unicode_literals
 
 from .__version__ import __version__

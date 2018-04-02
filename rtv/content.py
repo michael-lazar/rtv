@@ -747,7 +747,7 @@ class SubscriptionContent(Content):
             name = 'Popular Subreddits'
             items = reddit.get_popular_subreddits(limit=None)
         else:
-            raise exceptions.SubscriptionError('Invalid type %s', content_type)
+            raise exceptions.SubscriptionError('Invalid type %s' % content_type)
 
         return cls(name, items, loader)
 
@@ -898,7 +898,7 @@ class RequestHeaderRateLimiter(DefaultHandler):
     def request(self, _cache_key, _cache_ignore, _cache_timeout, **kwargs):
         """
         This is a wrapper function that handles the caching of the request.
-        
+
         See DefaultHandler.with_cache for reference.
         """
         if _cache_key:

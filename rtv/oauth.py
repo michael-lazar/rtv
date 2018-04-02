@@ -9,7 +9,7 @@ import codecs
 import logging
 import threading
 
-#pylint: disable=import-error
+# pylint: disable=import-error
 from six.moves.urllib.parse import urlparse, parse_qs
 from six.moves.BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
@@ -17,7 +17,6 @@ from . import docs
 from .config import TEMPLATES
 from .exceptions import InvalidRefreshToken
 from .packages.praw.errors import HTTPException, OAuthException
-
 
 _logger = logging.getLogger(__name__)
 
@@ -82,11 +81,11 @@ class OAuthHandler(BaseHTTPRequestHandler):
             thread.daemon = True
             thread.start()
 
-    def log_message(self, format, *args):
+    def log_message(self, fmt, *args):
         """
         Redirect logging to our own handler instead of stdout
         """
-        _logger.debug(format, *args)
+        _logger.debug(fmt, *args)
 
     def build_body(self, template_file=INDEX):
         """

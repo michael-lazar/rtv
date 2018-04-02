@@ -56,11 +56,14 @@ class OpenGraphMIMEParser(BaseMIMEParser):
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
         for og_type in ['video', 'image']:
-            tag = soup.find('meta',
-                    attrs={'property':'og:' + og_type + ':secure_url'}) or \
-                  soup.find('meta', attrs={'property': 'og:' + og_type})
+            prop = 'og:' + og_type + ':secure_url'
+            tag = soup.find('meta', attrs={'property': prop})
+            if not tag:
+                prop = 'og:' + og_type
+                tag = soup.find('meta', attrs={'property': prop})
             if tag:
                 return BaseMIMEParser.get_mimetype(tag.get('content'))
+
         return url, None
 
 
@@ -148,8 +151,8 @@ class RedditVideoMIMEParser(BaseMIMEParser):
             rep = sorted(reps, reverse=True,
                          key=lambda t: int(t.get('bandwidth')))[0]
             return url + '/' + rep.find('baseurl').text, 'video/mp4'
-        else:
-            return request_url, 'video/x-youtube'
+
+        return request_url, 'video/x-youtube'
 
 
 class ImgurApiMIMEParser(BaseMIMEParser):
@@ -291,8 +294,8 @@ class ImgurScrapeAlbumMIMEParser(BaseMIMEParser):
 
         if urls:
             return " ".join(urls), 'image/x-imgur-album'
-        else:
-            return url, None
+
+        return url, None
 
 
 class InstagramMIMEParser(OpenGraphMIMEParser):
@@ -324,8 +327,8 @@ class TwitchMIMEParser(BaseMIMEParser):
         suffix = '-preview.jpg'
         if thumbnail.endswith(suffix):
             return thumbnail.replace(suffix, '.mp4'), 'video/mp4'
-        else:
-            return url, None
+
+        return url, None
 
 
 class OddshotMIMEParser(OpenGraphMIMEParser):
@@ -348,8 +351,8 @@ class VidmeMIMEParser(BaseMIMEParser):
         resp = requests.get('https://api.vid.me/videoByUrl?url=' + url)
         if resp.status_code == 200 and resp.json()['status']:
             return resp.json()['video']['complete_url'], 'video/mp4'
-        else:
-            return url, None
+
+        return url, None
 
 
 class LiveleakMIMEParser(BaseMIMEParser):
@@ -371,24 +374,28 @@ class LiveleakMIMEParser(BaseMIMEParser):
         urls = []
         videos = soup.find_all('video')
         for vid in videos:
-            source = vid.find('source', attr={'res': 'HD'}) \
-                        or vid.find('source')
+            source = vid.find('source', attr={'res': 'HD'})
+            source = source or vid.find('source')
             if source:
                 urls.append((source.get('src'), source.get('type')))
+
         # TODO: Handle pages with multiple videos
         if urls:
             return urls[0]
-        else:
-            iframe = soup.find_all(lambda t: t.name == 'iframe' and
-                                    'youtube.com' in t['src'])
-            if iframe:
-                return YoutubeMIMEParser.get_mimetype(iframe[0]['src'].strip('/'))
-            else:
-                return url, None
+
+        def filter_iframe(t):
+            return t.name == 'iframe' and 'youtube.com' in t['src']
+
+        iframe = soup.find_all(filter_iframe)
+        if iframe:
+            return YoutubeMIMEParser.get_mimetype(iframe[0]['src'].strip('/'))
+
+        return url, None
 
 
 class ClippitUserMIMEParser(BaseMIMEParser):
     """
+    Clippit uses a video player container
     """
     pattern = re.compile(r'https?://(www\.)?clippituser\.tv/c/.+$')
 
@@ -447,8 +454,8 @@ class FlickrMIMEParser(OpenGraphMIMEParser):
     """
     Flickr uses the Open Graph protocol
     """
-    pattern = re.compile(r'https?://(www\.)?flickr\.com/photos/[^/]+/[^/]+/?$')
     # TODO: handle albums/photosets (https://www.flickr.com/services/api)
+    pattern = re.compile(r'https?://(www\.)?flickr\.com/photos/[^/]+/[^/]+/?$')
 
 
 class WorldStarHipHopMIMEParser(BaseMIMEParser):
@@ -466,18 +473,21 @@ class WorldStarHipHopMIMEParser(BaseMIMEParser):
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
 
-        source = soup.find_all(lambda t: t.name == 'source' and
-                                t['src'] and t['type'] == 'video/mp4')
+        def filter_source(t):
+            return t.name == 'source' and t['src'] and t['type'] == 'video/mp4'
+
+        source = soup.find_all(filter_source)
         if source:
             return source[0]['src'], 'video/mp4'
-        else:
-            iframe = soup.find_all(lambda t: t.name == 'iframe' and
-                                    'youtube.com' in t['src'])
-            if iframe:
-                return YoutubeMIMEParser.get_mimetype(iframe[0]['src'])
-            else:
-                return url, None
 
+        def filter_iframe(t):
+            return t.name == 'iframe' and 'youtube.com' in t['src']
+
+        iframe = soup.find_all(filter_iframe)
+        if iframe:
+            return YoutubeMIMEParser.get_mimetype(iframe[0]['src'])
+
+        return url, None
 
 
 # Parsers should be listed in the order they will be checked

@@ -137,7 +137,7 @@ class SubmissionPage(Page):
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):
         """
-        Open the selected item with the web browser 
+        Open the selected item with the web browser
         """
 
         data = self.get_selected_item()
@@ -356,7 +356,7 @@ class SubmissionPage(Page):
                 self.term.add_space(win)
                 self.term.add_line(win, '[saved]', attr=attr)
 
-        for row, text in enumerate(split_body, start=offset+1):
+        for row, text in enumerate(split_body, start=offset + 1):
             attr = self.term.attr('CommentText')
             if row in valid_rows:
                 self.term.add_line(win, text, row, 1, attr=attr)

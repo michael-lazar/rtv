@@ -59,7 +59,7 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
-disable=execfile-builtin,zip-builtin-not-iterating,range-builtin-not-iterating,hex-method,old-division,file-builtin,long-builtin,input-builtin,no-absolute-import,invalid-name,delslice-method,suppressed-message,coerce-builtin,buffer-builtin,import-star-module-level,round-builtin,old-ne-operator,apply-builtin,missing-final-newline,basestring-builtin,xrange-builtin,getslice-method,filter-builtin-not-iterating,map-builtin-not-iterating,raw_input-builtin,indexing-exception,dict-iter-method,metaclass-assignment,setslice-method,next-method-called,intern-builtin,using-cmp-argument,missing-docstring,oct-method,backtick,print-statement,reload-builtin,long-suffix,old-raise-syntax,unicode-builtin,nonzero-method,old-octal-literal,cmp-method,useless-suppression,dict-view-method,parameter-unpacking,unpacking-in-except,coerce-method,unichr-builtin,raising-string,cmp-builtin,reduce-builtin,standarderror-builtin
+disable=execfile-builtin,zip-builtin-not-iterating,range-builtin-not-iterating,hex-method,old-division,file-builtin,long-builtin,input-builtin,no-absolute-import,invalid-name,delslice-method,suppressed-message,coerce-builtin,buffer-builtin,import-star-module-level,round-builtin,old-ne-operator,apply-builtin,missing-final-newline,basestring-builtin,xrange-builtin,getslice-method,filter-builtin-not-iterating,map-builtin-not-iterating,raw_input-builtin,indexing-exception,dict-iter-method,metaclass-assignment,setslice-method,next-method-called,intern-builtin,using-cmp-argument,missing-docstring,oct-method,backtick,print-statement,reload-builtin,long-suffix,old-raise-syntax,unicode-builtin,nonzero-method,old-octal-literal,cmp-method,useless-suppression,dict-view-method,parameter-unpacking,unpacking-in-except,coerce-method,unichr-builtin,raising-string,cmp-builtin,reduce-builtin,standarderror-builtin,no-else-return,too-many-locals,too-many-statements,too-few-public-methods,too-many-public-methods,too-many-instance-attributes
 
 
 [REPORTS]
@@ -337,7 +337,7 @@ exclude-protected=_asdict,_fields,_replace,_source,_make
 [DESIGN]
 
 # Maximum number of arguments for function / method
-max-args=5
+max-args=7
 
 # Argument names that match this expression will be ignored. Default to name
 # with leading underscore

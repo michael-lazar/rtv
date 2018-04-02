@@ -190,6 +190,7 @@ def test_content_flatten_comments_3(reddit):
             self.id = comment_id
             self.parent_id = parent_id
             self.replies = []
+
         def __repr__(self):
             return '%s (%s)' % (self.id, self.parent_id)
 

@@ -320,7 +320,7 @@ class Terminal(object):
         # Cut off the lines of the message that don't fit on the screen
         box_width = min(box_width, n_cols)
         box_height = min(box_height, n_rows)
-        message = message[:box_height-2]
+        message = message[:box_height - 2]
 
         s_row = (n_rows - box_height) // 2 + v_offset
         s_col = (n_cols - box_width) // 2 + h_offset
@@ -377,13 +377,15 @@ class Terminal(object):
         """
 
         if not self.config['enable_media']:
-            return self.open_browser(url)
+            self.open_browser(url)
+            return
 
         try:
             with self.loader('Checking link', catch_exception=False):
                 command, entry = self.get_mailcap_entry(url)
         except exceptions.MailcapEntryNotFound:
-            return self.open_browser(url)
+            self.open_browser(url)
+            return
 
         _logger.info('Executing command: %s', command)
         needs_terminal = 'needsterminal' in entry
@@ -733,7 +735,7 @@ class Terminal(object):
         n_rows, n_cols = self.stdscr.getmaxyx()
         v_offset, h_offset = self.stdscr.getbegyx()
         ch, attr = str(' '), self.attr('Prompt')
-        prompt = self.clean(prompt, n_cols-1)
+        prompt = self.clean(prompt, n_cols - 1)
 
         # Create a new window to draw the text at the bottom of the screen,
         # so we can erase it when we're done.
@@ -811,7 +813,7 @@ class Terminal(object):
 
         # Prune empty lines at the bottom of the textbox.
         for item in stack[::-1]:
-            if len(item) == 0:
+            if item:
                 stack.pop()
             else:
                 break
@@ -874,7 +876,7 @@ class Terminal(object):
         Check that the terminal supports the provided theme, and applies
         the theme to the terminal if possible.
 
-        If the terminal doesn't support the theme, this falls back to the 
+        If the terminal doesn't support the theme, this falls back to the
         default theme. The default theme only requires 8 colors so it
         should be compatible with any terminal that supports basic colors.
         """

@@ -1,3 +1,5 @@
+# pylint: disable=bad-whitespace
+
 import os
 import codecs
 import curses
@@ -167,20 +169,20 @@ class Theme(object):
         # Create the "Selected" versions of elements, which are prefixed with
         # the @ symbol. For example, "@CommentText" represents how comment
         # text is formatted when it is highlighted by the cursor.
-        for name in self.DEFAULT_THEME['normal']:
-            dest = '@{0}'.format(name)
-            self._set_fallback(elements, name, 'Selected', dest)
-        for name in self.DEFAULT_THEME['cursor']:
-            dest = '@{0}'.format(name)
-            self._set_fallback(elements, name, 'SelectedCursor', dest)
+        for key in self.DEFAULT_THEME['normal']:
+            dest = '@{0}'.format(key)
+            self._set_fallback(elements, key, 'Selected', dest)
+        for key in self.DEFAULT_THEME['cursor']:
+            dest = '@{0}'.format(key)
+            self._set_fallback(elements, key, 'SelectedCursor', dest)
 
         # Fill in the ``None`` values for all of the elements with normal text
-        for name in self.DEFAULT_THEME['normal']:
-            self._set_fallback(elements, name, 'Normal')
-        for name in self.DEFAULT_THEME['cursor']:
-            self._set_fallback(elements, name, 'Normal')
-        for name in self.DEFAULT_THEME['page']:
-            self._set_fallback(elements, name, 'Normal')
+        for key in self.DEFAULT_THEME['normal']:
+            self._set_fallback(elements, key, 'Normal')
+        for key in self.DEFAULT_THEME['cursor']:
+            self._set_fallback(elements, key, 'Normal')
+        for key in self.DEFAULT_THEME['page']:
+            self._set_fallback(elements, key, 'Normal')
 
         self.elements = elements
 
@@ -215,7 +217,7 @@ class Theme(object):
         """
         Bind the theme's colors to curses's internal color pair map.
 
-        This method must be called once (after curses has been initialized)        
+        This method must be called once (after curses has been initialized)
         before any element attributes can be accessed. Color codes and other
         special attributes will be mixed bitwise into a single value that
         can be passed into curses draw functions.
@@ -242,7 +244,7 @@ class Theme(object):
 
     def get(self, element, selected=False):
         """
-        Returns the curses attribute code for the given element.        
+        Returns the curses attribute code for the given element.
         """
         if self._attribute_map is None:
             raise RuntimeError('Attempted to access theme attribute before '
@@ -314,7 +316,7 @@ class Theme(object):
     def print_themes(cls, path=THEMES):
         """
         Prints a human-readable summary of the installed themes to stdout.
-        
+
         This is intended to be used as a command-line utility, outside of the
         main curses display loop.
         """
@@ -377,7 +379,7 @@ class Theme(object):
     def from_file(cls, filename, source):
         """
         Load a theme from the specified configuration file.
-        
+
         Parameters:
             filename: The name of the filename to load.
             source: A description of where the theme was loaded from.
@@ -415,7 +417,7 @@ class Theme(object):
     def _parse_line(cls, element, line, filename=None):
         """
         Parse a single line from a theme file.
-        
+
         Format:
             <element>: <foreground> <background> <attributes>
         """
@@ -484,14 +486,14 @@ class Theme(object):
     def rgb_to_ansi(color):
         """
         Converts hex RGB to the 6x6x6 xterm color space
-        
+
         Args:
             color (str): RGB color string in the format "#RRGGBB"
-        
+
         Returns:
             str: ansi color string in the format "ansi_n", where n
                 is between 16 and 230
-            
+
         Reference:
             https://github.com/chadj2/bash-ui/blob/master/COLORS.md
         """
@@ -554,5 +556,3 @@ class ThemeList(object):
 
     def previous(self, theme):
         return self._step(theme, -1)
-
-    

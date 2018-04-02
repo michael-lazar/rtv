@@ -23,11 +23,12 @@ def logged_in(f):
     """
     Decorator for Page methods that require the user to be authenticated.
     """
+
     @wraps(f)
     def wrapped_method(self, *args, **kwargs):
         if not self.reddit.is_oauth_session():
             self.term.show_notification('Not logged in')
-            return
+            return None
         return f(self, *args, **kwargs)
     return wrapped_method
 
@@ -58,7 +59,7 @@ class Page(object):
     def refresh_content(self, order=None, name=None):
         raise NotImplementedError
 
-    def _draw_item(self, window, data, inverted):
+    def _draw_item(self, win, data, inverted):
         raise NotImplementedError
 
     def get_selected_item(self):
@@ -501,7 +502,8 @@ class Page(object):
             # if the content will fill up the page, given that it is dependent
             # on the size of the terminal.
             self.nav.flip((len(self._subwindows) - 1))
-            return self._draw_content()
+            self._draw_content()
+            return
 
         if self.nav.cursor_index >= len(self._subwindows):
             # Don't allow the cursor to go over the number of subwindows
