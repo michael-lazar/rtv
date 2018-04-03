@@ -48,6 +48,7 @@ setuptools.setup(
     version=version,
     description='A simple terminal viewer for Reddit (Reddit Terminal Viewer)',
     long_description=long_description(),
+    long_description_content_type='text/markdown',
     url='https://github.com/michael-lazar/rtv',
     author='Michael Lazar',
     author_email='lazar.michael22@gmail.com',
