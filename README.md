@@ -102,7 +102,7 @@ Press <kbd>/</kbd> to open the navigation prompt, where you can type things like
 
 - ``/front``
 - ``/r/commandprompt+linuxmasterrace``
-- ``/r/programming/controversial-week``
+- ``/r/programming/controversial``
 - ``/u/me``
 - ``/u/multi-mod/m/art``
 - ``/domain/github.com``
