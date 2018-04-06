@@ -129,7 +129,7 @@ You can use [mailcap](https://en.wikipedia.org/wiki/Media_type#Mailcap) to confi
 <img alt="title image" src="resources/mailcap.gif"/>
 </p>
 
-A mailcap file allows you to associate different MIME media types, like ``image/jpeg`` or ``video/mp4``, with shell commands. This feature is disabled by default because it takes a a few extra steps to configure. To get started, copy the default mailcap template to your home directory.
+A mailcap file allows you to associate different MIME media types, like ``image/jpeg`` or ``video/mp4``, with shell commands. This feature is disabled by default because it takes a few extra steps to configure. To get started, copy the default mailcap template to your home directory.
 
 ```bash
 $ rtv --copy-mailcap
