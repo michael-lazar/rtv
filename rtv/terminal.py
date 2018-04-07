@@ -275,8 +275,10 @@ class Terminal(object):
             text = self.clean(text, n_cols)
             params = [] if attr is None else [attr]
             window.addstr(row, col, text, *params)
-        except (curses.error, ValueError) as e:
-            # window.addstr could raise "ValueError: embedded null byte"
+        except (curses.error, ValueError, TypeError) as e:
+            # Curses handling of strings with invalid null bytes (b'\00')
+            #   python 2: TypeError: "int,int,str"
+            #   python 3: ValueError: "embedded null byte"
             _logger.warning('add_line raised an exception')
             _logger.exception(str(e))
 
