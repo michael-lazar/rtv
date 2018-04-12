@@ -22,7 +22,7 @@ RTV is built in python using the curses library.
     <img alt="pypi" src="https://img.shields.io/pypi/v/rtv.svg?label=version"/>
   </a>
   <a href="https://pypi.python.org/pypi/rtv/">
-    <img alt="python" src="https://img.shields.io/badge/python-2.7%2C%203.6-blue.svg"/>
+    <img alt="python" src="https://img.shields.io/badge/python-2.7%2C%203.4+-blue.svg"/>
   </a>
   <a href="https://travis-ci.org/michael-lazar/rtv">
     <img alt="travis-ci" src="https://travis-ci.org/michael-lazar/rtv.svg?branch=master"/>
@@ -32,6 +32,9 @@ RTV is built in python using the curses library.
   </a>
   <a href="https://gitter.im/michael-lazar/rtv">
     <img alt="gitter" src="https://img.shields.io/gitter/room/michael-lazar/rtv.js.svg"/>
+  </a>
+  <a href="https://saythanks.io/to/michael-lazar">
+    <img alt="say-thanks" src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg"/>
   </a>
 </p>
 
