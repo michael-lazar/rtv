@@ -36,6 +36,7 @@ def patch_webbrowser():
     # Add support for browsers that aren't defined in the python standard library
     webbrowser.register('surf', None, webbrowser.BackgroundBrowser('surf'))
     webbrowser.register('vimb', None, webbrowser.BackgroundBrowser('vimb'))
+    webbrowser.register('qutebrowser', None, webbrowser.BackgroundBrowser('qutebrowser'))
 
     # Fix the opera browser, see https://github.com/michael-lazar/rtv/issues/476.
     # By default, opera will open a new tab in the current window, which is
