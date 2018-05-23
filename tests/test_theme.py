@@ -194,8 +194,8 @@ def test_theme_from_name():
             assert theme.elements['Upvote'] == (-1, -1, curses.A_NORMAL)
 
             # Invalid theme name
-            with pytest.raises(ConfigError, path=path):
-                theme.from_name('invalid_theme_name')
+            with pytest.raises(ConfigError):
+                theme.from_name('invalid_theme_name', path=path)
 
 
 def test_theme_initialize_attributes(stdscr):
