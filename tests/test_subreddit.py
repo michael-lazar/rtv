@@ -487,3 +487,35 @@ def test_subreddit_frontpage_toggle(subreddit_page, terminal):
         assert subreddit_page.content.name == '/r/aww'
         subreddit_page.controller.trigger('p')
         assert subreddit_page.content.name == '/r/front'
+
+
+def test_subreddit_hide_submission(subreddit_page, refresh_token):
+
+    # Log in
+    subreddit_page.config.refresh_token = refresh_token
+    subreddit_page.oauth.authorize()
+
+    # The api won't return hidden posts in the submission listing, so the
+    # first post should always have hidden set to false
+    data = subreddit_page.get_selected_item()
+    assert data['hidden'] is False
+
+    # Hide the first submission by pressing the space key
+    subreddit_page.controller.trigger(0x20)
+    assert subreddit_page.term.loader.exception is None
+    data = subreddit_page.get_selected_item()
+    assert data['hidden'] is True
+
+    # Make sure that the status was actually updated on the server side
+    data['object'].refresh()
+    assert data['object'].hidden is True
+
+    # Now undo the hide by pressing space again
+    subreddit_page.controller.trigger(0x20)
+    assert subreddit_page.term.loader.exception is None
+    data = subreddit_page.get_selected_item()
+    assert data['hidden'] is False
+
+    # Make sure that the status was actually updated on the server side
+    data['object'].refresh()
+    assert data['object'].hidden is False
