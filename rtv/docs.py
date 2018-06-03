@@ -63,7 +63,7 @@ https://github.com/michael-lazar/rtv
   l     : View comments, or open comment in pager
   h     : Return to subreddit
   o     : Open the submission or comment url
-  SPACE : Fold or expand the selected comment tree
+  SPACE : Hide a submission, or fold/expand the selected comment tree
   b     : Display urls with urlview
   y     : Copy submission permalink to clipboard
   Y     : Copy submission link to clipboard

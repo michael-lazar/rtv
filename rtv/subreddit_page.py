@@ -292,6 +292,21 @@ class SubredditPage(Page):
             self.content = page.selected_subreddit
             self.nav = Navigator(self.content.get)
 
+    @SubredditController.register(Command('SUBREDDIT_HIDE'))
+    @logged_in
+    def hide(self):
+        data = self.get_selected_item()
+        if not hasattr(data["object"], 'hide'):
+            self.term.flash()
+        elif data['hidden']:
+            with self.term.loader('Unhiding'):
+                data['object'].unhide()
+                data['hidden'] = False
+        else:
+            with self.term.loader('Hiding'):
+                data['object'].hide()
+                data['hidden'] = True
+
     def _draw_item(self, win, data, inverted):
 
         n_rows, n_cols = win.getmaxyx()
@@ -345,6 +360,11 @@ class SubredditPage(Page):
                 attr = self.term.attr('Saved')
                 self.term.add_space(win)
                 self.term.add_line(win, '[saved]', attr=attr)
+
+            if data['hidden']:
+                attr = self.term.attr('Hidden')
+                self.term.add_space(win)
+                self.term.add_line(win, '[hidden]', attr=attr)
 
             if data['stickied']:
                 attr = self.term.attr('Stickied')

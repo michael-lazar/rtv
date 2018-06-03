@@ -188,6 +188,7 @@ class Content(object):
             data['gold'] = comment.gilded > 0
             data['author'] = author
             data['flair'] = flair
+            data['hidden'] = False
 
         return data
 
@@ -229,7 +230,7 @@ class Content(object):
         data['gold'] = sub.gilded > 0
         data['nsfw'] = sub.over_18
         data['stickied'] = sub.stickied
-        data['hidden'] = False
+        data['hidden'] = sub.hidden
         data['xpost_subreddit'] = None
         data['index'] = None  # This is filled in later by the method caller
         data['saved'] = sub.saved

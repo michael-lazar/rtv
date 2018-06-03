@@ -34,6 +34,7 @@ MultiredditText       = -             -             -
 NeutralVote           = -             -             bold
 NSFW                  = red           -             bold+reverse
 Saved                 = green         -             -
+Hidden                = yellow        -             -
 Score                 = -             -             -
 Separator             = -             -             bold
 Stickied              = green         -             -
