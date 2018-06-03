@@ -45,6 +45,7 @@ In addition to the basic commands, the following actions can be performed when y
 
 :``l`` or ``►``: Enter the selected submission
 :``o`` or ``ENTER``:  Open the submission link with your web browser
+:``SPACE``: Hide the selected submission
 :``p``: Toggle between the front page and the last visited subreddit
 :``f``: Open a prompt to search the current subreddit
 :``/``: Open a prompt to switch subreddits
