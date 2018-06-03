@@ -188,6 +188,7 @@ class Content(object):
             data['gold'] = comment.gilded > 0
             data['author'] = author
             data['flair'] = flair
+            data['hidden'] = False
 
         return data
 

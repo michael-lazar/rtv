@@ -95,6 +95,7 @@ class Theme(object):
             'NeutralVote':           (None,                 None, curses.A_BOLD),
             'NSFW':                  (curses.COLOR_RED,     None, curses.A_BOLD | curses.A_REVERSE),
             'Saved':                 (curses.COLOR_GREEN,   None, None),
+            'Hidden':                (curses.COLOR_GREEN,   None, None),
             'Score':                 (None,                 None, None),
             'Separator':             (None,                 None, curses.A_BOLD),
             'Stickied':              (curses.COLOR_GREEN,   None, None),

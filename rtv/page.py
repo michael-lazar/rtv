@@ -156,6 +156,23 @@ class Page(object):
         self.nav.cursor_index = 0
         self.nav.inverted = True
 
+    @PageController.register(Command('HIDE'))
+    @logged_in
+    def hide(self):
+        data = self.get_selected_item()
+        if not hasattr(data["object"], 'hide'):
+            self.term.flash()
+        elif data['hidden']:
+            with self.term.loader('Unhiding'):
+                data['object'].unhide()
+            if not self.term.loader.exception:
+                data['hidden'] = False
+        else:
+            with self.term.loader('Hiding'):
+                data['object'].hide()
+            if not self.term.loader.exception:
+                data['hidden'] = True
+
     @PageController.register(Command('UPVOTE'))
     @logged_in
     def upvote(self):

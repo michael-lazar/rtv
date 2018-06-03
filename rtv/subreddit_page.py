@@ -346,6 +346,11 @@ class SubredditPage(Page):
                 self.term.add_space(win)
                 self.term.add_line(win, '[saved]', attr=attr)
 
+            if data['hidden']:
+                attr = self.term.attr('Hidden')
+                self.term.add_space(win)
+                self.term.add_line(win, '[hidden]', attr=attr)
+
             if data['stickied']:
                 attr = self.term.attr('Stickied')
                 self.term.add_space(win)
