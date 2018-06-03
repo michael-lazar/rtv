@@ -51,7 +51,6 @@ https://github.com/michael-lazar/rtv
   ?     : Show the help screen
   q     : Quit
   Q     : Force quit
-  x     : Hide/unhide
   a     : Upvote
   z     : Downvote
   c     : Compose a new submission/comment
@@ -64,7 +63,7 @@ https://github.com/michael-lazar/rtv
   l     : View comments, or open comment in pager
   h     : Return to subreddit
   o     : Open the submission or comment url
-  SPACE : Fold or expand the selected comment tree
+  SPACE : Hide a submission, or fold/expand the selected comment tree
   b     : Display urls with urlview
   y     : Copy submission permalink to clipboard
   Y     : Copy submission link to clipboard
@@ -98,7 +97,7 @@ BANNER_SEARCH = """
 """
 
 FOOTER_SUBREDDIT = """
-[?]Help [q]Quit [l]Comments [/]Prompt [u]Login [o]Open [c]Post [a/z]Vote [x] hide/unhide
+[?]Help [q]Quit [l]Comments [/]Prompt [u]Login [o]Open [c]Post [a/z]Vote
 """
 
 FOOTER_SUBMISSION = """
