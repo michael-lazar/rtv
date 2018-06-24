@@ -67,6 +67,33 @@ class OpenGraphMIMEParser(BaseMIMEParser):
         return url, None
 
 
+class VideoTagMIMEParser(BaseMIMEParser):
+    """
+    <video width="320" height="240" controls>
+        <source src="movie.mp4" res="HD" type="video/mp4">
+        <source src="movie.mp4" res="SD" type="video/mp4">
+        <source src="movie.ogg" type="video/ogg">
+    </video>
+    """
+    pattern = re.compile(r'.*$')
+
+    @staticmethod
+    def get_mimetype(url):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        # TODO: Handle pages with multiple videos
+        video = soup.find('video')
+        if video:
+            source = video.find('source', attr={'res': 'HD'})
+            source = source or video.find('source', attr={'type': 'video/mp4'})
+            source = source or video.find('source')
+        if source:
+            return source.get('src'), source.get('type')
+        else:
+            return url, None
+
+
 class GfycatMIMEParser(BaseMIMEParser):
     """
     Gfycat provides a primitive json api to generate image links. URLs can be
@@ -470,6 +497,13 @@ class FlickrMIMEParser(OpenGraphMIMEParser):
     pattern = re.compile(r'https?://(www\.)?flickr\.com/photos/[^/]+/[^/]+/?$')
 
 
+class StreamjaMIMEParser(VideoTagMIMEParser):
+    """
+    Embedded HTML5 video element
+    """
+    pattern = re.compile(r'https?://(www\.)?streamja\.com/[^/]+/?$')
+
+
 class WorldStarHipHopMIMEParser(BaseMIMEParser):
     """
     <video>
@@ -504,6 +538,7 @@ class WorldStarHipHopMIMEParser(BaseMIMEParser):
 
 # Parsers should be listed in the order they will be checked
 parsers = [
+    StreamjaMIMEParser,
     ClippitUserMIMEParser,
     OddshotMIMEParser,
     StreamableMIMEParser,

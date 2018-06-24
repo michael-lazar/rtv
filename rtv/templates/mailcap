@@ -32,7 +32,7 @@ image/*; feh -g 640x480 '%s'; test=test -n "$DISPLAY"
 # Youtube videos are assigned a custom mime-type, which can be streamed with
 # vlc or youtube-dl.
 video/x-youtube; vlc '%s' --width 640 --height 480; test=test -n "$DISPLAY"
-video/x-youtube; mpv --ytdl-format=best '%s' --autofit 640x480; test=test -n "$DISPLAY"
+video/x-youtube; mpv --ytdl-format=bestvideo+bestaudio/best '%s' --autofit 640x480; test=test -n "$DISPLAY"
 
 # Mpv is a simple and effective video streamer
 video/*; mpv '%s' --autofit 640x480 --loop=inf; test=test -n "$DISPLAY"
