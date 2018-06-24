@@ -134,6 +134,10 @@ URLS = OrderedDict([
         'http://www.worldstarhiphop.com/videos/video.php?v=wshhJ6bVdAv0iMrNGFZG',
         'http://www.youtube.com/embed/Bze53qwHS8o?autoplay=1',
         'video/x-youtube')),
+    ('vimeo', (
+        'https://vimeo.com/247872788',
+        'https://vimeo.com/247872788',
+        'video/x-youtube')),
     ('streamja', (
         'https://streamja.com/6WMb',
         'https://cdnja.r.worldssl.net/mp4/6w/6WMb.mp4',

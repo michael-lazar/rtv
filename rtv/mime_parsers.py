@@ -130,6 +130,18 @@ class YoutubeMIMEParser(BaseMIMEParser):
         return url, 'video/x-youtube'
 
 
+class VimeoMIMEParser(BaseMIMEParser):
+    """
+    Vimeo videos can be streamed with vlc or downloaded with youtube-dl.
+    Assign a custom mime-type so they can be referenced in mailcap.
+    """
+    pattern = re.compile(r'https?://(www\.)?vimeo\.com/\d+$')
+
+    @staticmethod
+    def get_mimetype(url):
+        return url, 'video/x-youtube'
+
+
 class GifvMIMEParser(BaseMIMEParser):
     """
     Special case for .gifv, which is a custom video format for imgur serves
@@ -537,6 +549,7 @@ parsers = [
     RedditUploadsMIMEParser,
     RedditVideoMIMEParser,
     YoutubeMIMEParser,
+    VimeoMIMEParser,
     LiveleakMIMEParser,
     TwitchMIMEParser,
     FlickrMIMEParser,
