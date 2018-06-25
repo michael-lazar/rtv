@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.23.0: http://github.com/michael-lazar/rtv/releases/tag/v1.23.0
 .. _1.22.1: http://github.com/michael-lazar/rtv/releases/tag/v1.22.1
 .. _1.22.0: http://github.com/michael-lazar/rtv/releases/tag/v1.22.0
 .. _1.21.0: http://github.com/michael-lazar/rtv/releases/tag/v1.21.0
@@ -34,6 +35,29 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.23.0_ (2018-06-24)
+--------------------
+
+Features
+
+* Submissions can now be marked as *[hidden]* using the ``space`` key. Hidden
+  submissions will be removed from the feed when the page is reloaded.
+* New MIME parsers have been added for vimeo.com and streamja.com.
+* Added support for opening links with **qutebrowser**.
+
+Bugfixes
+
+* Fixed unhandled OAuth server log messages being dumped to stdout.
+* Fixed the application crashing when performing rate-limited requests.
+* Fixed crash when displaying posts that contain null byte characters.
+
+Documentation
+
+* Added README badge for *saythanks.io*.
+* Updated the mailcap template to support *v.redd.it* links.
+
 
 --------------------
 1.22.1_ (2018-03-11)
