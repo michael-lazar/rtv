@@ -560,12 +560,17 @@ class Terminal(object):
 
     def open_pager(self, data, wrap=None):
         """
-        View a long block of text using the system's default pager.
+        View a long block of text using an external pager / viewer.  The setting
+        of the RTV_PAGER variable will be used if set, otherwise the system's
+        default pager is chosen, finally defaulting to 'less' if both RTV_PAGER
+        and PAGER is unset in the calling environment.
 
         The data string will be piped directly to the pager.
         """
 
-        pager = os.getenv('PAGER') or 'less'
+        pager = os.getenv('RTV_PAGER')
+        if pager is None:
+                pager = os.getenv('PAGER') or 'less'
         command = shlex.split(pager)
 
         if wrap:
