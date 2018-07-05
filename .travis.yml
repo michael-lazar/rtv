@@ -5,6 +5,7 @@ python:
   - 3.4
   - 3.5
   - 3.6
+  - 3.7
   - nightly
 matrix:
   allow_failures:
@@ -16,8 +17,7 @@ install:
   - pip install .[test]
   - pip install .
 script:
-    # https://github.com/PyCQA/pylint/issues/1113
-  - if [ $TRAVIS_PYTHON_VERSION != 3.6 ] && [ $TRAVIS_PYTHON_VERSION != nightly ]; then pylint --rcfile .pylintrc -E rtv/; fi
+  - pylint --rcfile .pylintrc -E rtv/
   - coverage run -m py.test -v
 after_success:
   - coveralls
