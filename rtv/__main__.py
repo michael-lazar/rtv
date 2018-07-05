@@ -127,6 +127,7 @@ def main():
             ('$RTV_URLVIEWER', os.getenv('RTV_URLVIEWER')),
             ('$RTV_BROWSER', RTV_BROWSER),
             ('$BROWSER', BROWSER),
+            ('$RTV_PAGER', os.getenv('RTV_PAGER')),
             ('$PAGER', os.getenv('PAGER')),
             ('$VISUAL', os.getenv('VISUAL')),
             ('$EDITOR', os.getenv('EDITOR'))]
