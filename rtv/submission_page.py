@@ -49,7 +49,7 @@ class SubmissionPage(Page):
         self.refresh_content(order='rising')
 
     @SubmissionController.register(Command('SORT_GILDED'))
-    def sort_content_rising(self):
+    def sort_content_gilded(self):
         self.refresh_content(order='gilded')
 
     @SubmissionController.register(Command('SORT_NEW'))
