@@ -36,7 +36,7 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
     assert name in [args[0][2] for args in window.addstr.call_args_list]
 
     # Banner shouldn't be drawn
-    menu = '[1]hot [2]top [3]rising [4]new [5]controversial [6]gilded'.encode('utf-8')
+    menu = '[1]hot     [2]top     [3]rising     [4]new     [5]controversial     [6]gilded'.encode('utf-8')
     with pytest.raises(AssertionError):
         window.addstr.assert_any_call(0, 0, menu)
 
