@@ -1579,6 +1579,7 @@ class Subreddit(Messageable, Refreshable):
     get_hot = _get_sorter('')
     get_new = _get_sorter('new')
     get_top = _get_sorter('top')
+    get_gilded = _get_sorter('gilded')
 
     # Explicit listing selectors
     get_controversial_from_all = _get_sorter('controversial', t='all')
