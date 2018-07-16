@@ -31,6 +31,7 @@ SUBREDDIT_PROMPTS = OrderedDict([
     ('top', ('pics/top', '/r/pics', 'top')),
     ('rising', ('r/pics/rising', '/r/pics', 'rising')),
     ('controversial', ('/r/pics/controversial', '/r/pics', 'controversial')),
+    ('gilded', ('/r/pics/gilded', '/r/pics', 'gilded'))
     ('top-day', ('/r/pics/top-day', '/r/pics', 'top-day')),
     ('top-hour', ('/r/pics/top-hour', '/r/pics', 'top-hour')),
     ('top-month', ('/r/pics/top-month', '/r/pics', 'top-month')),

@@ -40,7 +40,8 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
             '[2]top         '
             '[3]rising         '  # Whitespace is relevant
             '[4]new         '
-            '[5]controversial').encode('utf-8')
+            '[5]controversial'
+            '[6]gilded         ').encode('utf-8')
     with pytest.raises(AssertionError):
         window.addstr.assert_any_call(0, 0, menu)
 
