@@ -30,12 +30,7 @@ def test_subreddit_page_construct(reddit, terminal, config, oauth):
     window.addstr.assert_any_call(0, 0, title)
 
     # Banner
-    menu = ('[1]hot         '
-            '[2]top         '
-            '[3]rising         '
-            '[4]new         '
-            '[5]controversial'
-            '[6]gilded         ').encode('utf-8')
+    menu = '[1]hot [2]top [3]rising [4]new [5]controversial [6]gilded'.encode('utf-8')
     window.addstr.assert_any_call(0, 0, menu)
 
     # Submission
