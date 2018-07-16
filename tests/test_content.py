@@ -18,7 +18,7 @@ try:
     from unittest import mock
 except ImportError:
     import mock
-
+ 
 # Test entering a bunch of text into the prompt
 # (text, parsed subreddit, parsed order)
 SUBREDDIT_PROMPTS = OrderedDict([
