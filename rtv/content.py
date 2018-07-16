@@ -543,7 +543,7 @@ class SubredditContent(Content):
             orders = ['relevance', 'top', 'comments', 'new', None]
             period_allowed = ['top', 'comments']
         else:
-            orders = ['hot', 'top', 'rising', 'new', 'controversial', None]
+            orders = ['hot', 'top', 'rising', 'new', 'controversial', 'gilded', None]
             period_allowed = ['top', 'controversial']
 
         if order not in orders:
