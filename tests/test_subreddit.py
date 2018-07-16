@@ -34,7 +34,8 @@ def test_subreddit_page_construct(reddit, terminal, config, oauth):
             '[2]top         '
             '[3]rising         '
             '[4]new         '
-            '[5]controversial').encode('utf-8')
+            '[5]controversial'
+            '[6]gilded         ').encode('utf-8')
     window.addstr.assert_any_call(0, 0, menu)
 
     # Submission
@@ -241,6 +242,23 @@ def test_subreddit_order_controversial(subreddit_page, terminal):
         terminal.show_notification.return_value = ord('\n')
         subreddit_page.controller.trigger('5')
         assert subreddit_page.content.order == 'controversial'
+
+
+def test_subreddit_order_gilded(subreddit_page, terminal):
+
+    # Sort by controversial
+    with mock.patch.object(terminal, 'show_notification'):
+        # Invalid selection
+        terminal.show_notification.return_value = ord('x')
+        subreddit_page.controller.trigger('6')
+        terminal.show_notification.assert_called_with('Invalid option')
+        assert subreddit_page.content.order is None
+
+        # Valid selection - sort by default
+        terminal.show_notification.reset_mock()
+        terminal.show_notification.return_value = ord('\n')
+        subreddit_page.controller.trigger('6')
+        assert subreddit_page.content.order == 'gilded'
 
 
 def test_subreddit_order_search(subreddit_page, terminal):
