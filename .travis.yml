@@ -5,10 +5,13 @@ python:
   - 3.4
   - 3.5
   - 3.6
+  - 3.7
   - nightly
 matrix:
   allow_failures:
-    - python: nightly
+    - python:
+      - nightly
+      - 3.7
   fast_finish: true
 before_install:
   - pip install --upgrade pip   
