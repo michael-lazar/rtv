@@ -9,7 +9,7 @@ python:
   - nightly
 matrix:
   allow_failures:
-    - python:
+    python:
       - nightly
       - 3.7
   fast_finish: true
