@@ -131,8 +131,8 @@ URLS = OrderedDict([
         'https://vimeo.com/247872788',
         'video/x-youtube')),
     ('streamja', (
-        'https://streamja.com/6WMb',
-        'https://cdnja.r.worldssl.net/mp4/6w/6WMb.mp4',
+        'https://streamja.com/qLaQ',
+        'https://cdnja.r.worldssl.net/mp4/ql/qLaQ.mp4',
         'video/mp4')),
 ])
 
