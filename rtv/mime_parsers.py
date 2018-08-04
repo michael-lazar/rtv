@@ -436,9 +436,14 @@ class ClippitUserMIMEParser(BaseMIMEParser):
     def get_mimetype(url):
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
-        tag = soup.find(id='jwplayer-container')
-        quality = ['data-{}-file'.format(_) for _ in ['hd', 'sd']]
-        return tag.get(quality[0]), 'video/mp4'
+        tag = soup.find(id='player-container')
+        if tag:
+            quality = ['data-{}-file'.format(_) for _ in ['hd', 'sd']]
+            new_url = tag.get(quality[0])
+            if new_url:
+                return new_url, 'video/mp4'
+
+        return url, None
 
 
 class GifsMIMEParser(OpenGraphMIMEParser):
