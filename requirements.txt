@@ -7,3 +7,4 @@ six==1.10.0
 pytest==3.2.3
 vcrpy==1.10.5
 pylint==1.6.5
+pytest-xdist==1.22.5

@@ -18,7 +18,7 @@ try:
     from unittest import mock
 except ImportError:
     import mock
- 
+
 # Test entering a bunch of text into the prompt
 # (text, parsed subreddit, parsed order)
 SUBREDDIT_PROMPTS = OrderedDict([
@@ -31,8 +31,7 @@ SUBREDDIT_PROMPTS = OrderedDict([
     ('top', ('pics/top', '/r/pics', 'top')),
     ('rising', ('r/pics/rising', '/r/pics', 'rising')),
     ('controversial', ('/r/pics/controversial', '/r/pics', 'controversial')),
-# Need a cassette for this, I think
-#    ('gilded', ('/r/pics/gilded', '/r/pics', 'gilded')),
+    ('gilded', ('/r/pics/gilded', '/r/pics', 'gilded')),
     ('top-day', ('/r/pics/top-day', '/r/pics', 'top-day')),
     ('top-hour', ('/r/pics/top-hour', '/r/pics', 'top-hour')),
     ('top-month', ('/r/pics/top-month', '/r/pics', 'top-month')),
@@ -456,6 +455,14 @@ def test_content_subreddit_random(reddit, terminal):
     content = SubredditContent.from_name(reddit, name, terminal.loader)
     assert content.name.startswith('/r/')
     assert content.name != name
+
+
+def test_content_subreddit_gilded(reddit, terminal):
+
+    name = '/r/python/gilded'
+    content = SubredditContent.from_name(reddit, name, terminal.loader)
+    assert content.order == 'gilded'
+    assert content.get(0)['object'].gilded
 
 
 def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):

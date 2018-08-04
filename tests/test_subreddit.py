@@ -190,6 +190,9 @@ def test_subreddit_prompt_submission_invalid(subreddit_page, terminal):
 
 def test_subreddit_order(subreddit_page):
 
+    # /r/python doesn't always have rising submissions, so use a larger sub
+    subreddit_page.refresh_content(name='all')
+
     subreddit_page.content.query = ''
     subreddit_page.controller.trigger('1')
     assert subreddit_page.content.order == 'hot'
@@ -197,11 +200,18 @@ def test_subreddit_order(subreddit_page):
     assert subreddit_page.content.order == 'rising'
     subreddit_page.controller.trigger('4')
     assert subreddit_page.content.order == 'new'
+    subreddit_page.controller.trigger('6')
+    assert subreddit_page.content.order == 'gilded'
 
     subreddit_page.content.query = 'search text'
     subreddit_page.controller.trigger('1')
     assert subreddit_page.content.order == 'relevance'
     subreddit_page.controller.trigger('4')
+    assert subreddit_page.content.order == 'new'
+
+    # Shouldn't be able to sort queries by gilded
+    subreddit_page.controller.trigger('6')
+    assert curses.flash.called
     assert subreddit_page.content.order == 'new'
 
 
@@ -237,23 +247,6 @@ def test_subreddit_order_controversial(subreddit_page, terminal):
         terminal.show_notification.return_value = ord('\n')
         subreddit_page.controller.trigger('5')
         assert subreddit_page.content.order == 'controversial'
-
-
-# def test_subreddit_order_gilded(subreddit_page, terminal):
-#
-#     # Sort by gilded
-#     with mock.patch.object(terminal, 'show_notification'):
-#         # Invalid selection
-#         terminal.show_notification.return_value = ord('x')
-#         subreddit_page.controller.trigger('6')
-#         terminal.show_notification.assert_called_with('Invalid option')
-#         assert subreddit_page.content.order is None
-
-#         # Valid selection - sort by default
-#         terminal.show_notification.reset_mock()
-#         terminal.show_notification.return_value = ord('\n')
-#         subreddit_page.controller.trigger('6')
-#         assert subreddit_page.content.order == 'gilded'
 
 
 def test_subreddit_order_search(subreddit_page, terminal):
