@@ -19,6 +19,7 @@ class SubredditController(PageController):
 
 class SubredditPage(Page):
 
+    BANNER = docs.BANNER_SUBREDDIT
     FOOTER = docs.FOOTER_SUBREDDIT
 
     def __init__(self, reddit, term, config, oauth, name):
@@ -99,6 +100,13 @@ class SubredditPage(Page):
                 self.term.show_notification('Invalid option')
             else:
                 self.refresh_content(order=order)
+
+    @SubredditController.register(Command('SORT_GILDED'))
+    def sort_content_gilded(self):
+        if self.content.query:
+            self.term.flash()
+        else:
+            self.refresh_content(order='gilded')
 
     @SubredditController.register(Command('SUBREDDIT_SEARCH'))
     def search_subreddit(self, name=None):

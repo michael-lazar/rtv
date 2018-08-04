@@ -10,6 +10,7 @@ python:
 matrix:
   allow_failures:
     - python: nightly
+    - python: 3.7
   fast_finish: true
 before_install:
   - pip install --upgrade pip   

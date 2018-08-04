@@ -17,6 +17,7 @@ class SubmissionController(PageController):
 
 class SubmissionPage(Page):
 
+    BANNER = docs.BANNER_SUBMISSION
     FOOTER = docs.FOOTER_SUBMISSION
 
     def __init__(self, reddit, term, config, oauth, url=None, submission=None):

@@ -30,11 +30,7 @@ def test_subreddit_page_construct(reddit, terminal, config, oauth):
     window.addstr.assert_any_call(0, 0, title)
 
     # Banner
-    menu = ('[1]hot         '
-            '[2]top         '
-            '[3]rising         '
-            '[4]new         '
-            '[5]controversial').encode('utf-8')
+    menu = '[1]hot     [2]top     [3]rising     [4]new     [5]controversial     [6]gilded'.encode('utf-8')
     window.addstr.assert_any_call(0, 0, menu)
 
     # Submission
@@ -194,6 +190,9 @@ def test_subreddit_prompt_submission_invalid(subreddit_page, terminal):
 
 def test_subreddit_order(subreddit_page):
 
+    # /r/python doesn't always have rising submissions, so use a larger sub
+    subreddit_page.refresh_content(name='all')
+
     subreddit_page.content.query = ''
     subreddit_page.controller.trigger('1')
     assert subreddit_page.content.order == 'hot'
@@ -201,11 +200,18 @@ def test_subreddit_order(subreddit_page):
     assert subreddit_page.content.order == 'rising'
     subreddit_page.controller.trigger('4')
     assert subreddit_page.content.order == 'new'
+    subreddit_page.controller.trigger('6')
+    assert subreddit_page.content.order == 'gilded'
 
     subreddit_page.content.query = 'search text'
     subreddit_page.controller.trigger('1')
     assert subreddit_page.content.order == 'relevance'
     subreddit_page.controller.trigger('4')
+    assert subreddit_page.content.order == 'new'
+
+    # Shouldn't be able to sort queries by gilded
+    subreddit_page.controller.trigger('6')
+    assert curses.flash.called
     assert subreddit_page.content.order == 'new'
 
 

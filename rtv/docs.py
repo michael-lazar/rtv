@@ -43,6 +43,7 @@ https://github.com/michael-lazar/rtv
   3     : Sort by rising
   4     : Sort by new
   5     : Sort by controversial
+  6     : Sort by gilded
   p     : Return to the front page
   r     : Refresh page
   u     : Login or logout
@@ -77,6 +78,7 @@ https://github.com/michael-lazar/rtv
   - /r/python
   - /r/python/new                (sort)
   - /r/python/controversial-year (sort and order)
+  - /r/python/gilded             (gilded within subreddit)
   - /r/python+linux              (multireddit)
   - /r/python/comments/30rwj2    (submission comments)
   - /comments/30rwj2             (submission comments shorthand)
@@ -88,7 +90,11 @@ https://github.com/michael-lazar/rtv
   - /domain/python.org           (search by domain)
 """
 
-BANNER = """
+BANNER_SUBREDDIT = """
+[1]hot [2]top [3]rising [4]new [5]controversial [6]gilded
+"""
+
+BANNER_SUBMISSION = """
 [1]hot [2]top [3]rising [4]new [5]controversial
 """
 

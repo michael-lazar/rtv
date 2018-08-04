@@ -39,6 +39,7 @@ class PageController(Controller):
 
 class Page(object):
 
+    BANNER = None
     FOOTER = None
 
     def __init__(self, reddit, term, config, oauth):
@@ -353,7 +354,9 @@ class Page(object):
                 continue
 
     def draw(self):
-
+        """
+        Clear the terminal screen and redraw all of the sub-windows
+        """
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         if n_rows < self.term.MIN_HEIGHT or n_cols < self.term.MIN_WIDTH:
             # TODO: Will crash when you try to navigate if the terminal is too
@@ -369,7 +372,9 @@ class Page(object):
         self.term.stdscr.refresh()
 
     def _draw_header(self):
-
+        """
+        Draw the title bar at the top of the screen
+        """
         n_rows, n_cols = self.term.stdscr.getmaxyx()
 
         # Note: 2 argument form of derwin breaks PDcurses on Windows 7!
@@ -427,13 +432,15 @@ class Page(object):
         self._row += 1
 
     def _draw_banner(self):
-
+        """
+        Draw the banner with sorting options at the top of the page
+        """
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
         window.erase()
         window.bkgd(str(' '), self.term.attr('OrderBar'))
 
-        banner = docs.BANNER_SEARCH if self.content.query else docs.BANNER
+        banner = docs.BANNER_SEARCH if self.content.query else self.BANNER
         items = banner.strip().split(' ')
 
         distance = (n_cols - sum(len(t) for t in items) - 1) / (len(items) - 1)
@@ -452,7 +459,6 @@ class Page(object):
         """
         Loop through submissions and fill up the content page.
         """
-
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(n_rows - self._row - 1, n_cols, self._row, 0)
         window.erase()
@@ -525,7 +531,9 @@ class Page(object):
         self._row += win_n_rows
 
     def _draw_footer(self):
-
+        """
+        Draw the key binds help bar at the bottom of the screen
+        """
         n_rows, n_cols = self.term.stdscr.getmaxyx()
         window = self.term.stdscr.derwin(1, n_cols, self._row, 0)
         window.erase()
@@ -548,7 +556,6 @@ class Page(object):
             self.term.flash()
 
     def _prompt_period(self, order):
-
         choices = {
             '\n': order,
             '1': '{0}-hour'.format(order),

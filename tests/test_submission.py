@@ -186,6 +186,10 @@ def test_submission_order(submission_page):
     submission_page.controller.trigger('5')
     assert submission_page.content.order == 'controversial'
 
+    # Shouldn't be able to sort the submission page by gilded
+    submission_page.controller.trigger('6')
+    assert submission_page.content.order == 'controversial'
+
 
 def test_submission_move_top_bottom(submission_page):
 

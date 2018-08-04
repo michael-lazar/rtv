@@ -96,6 +96,7 @@ class Config(object):  # pylint: disable=R0903
                  'friends':             'prefs/friends/',
                  'gild_thing':          'api/v1/gold/gild/{fullname}/',
                  'gild_user':           'api/v1/gold/give/{username}/',
+                 'gilded':              'gilded/',
                  'help':                'help/',
                  'hide':                'api/hide/',
                  'ignore_reports':      'api/ignore_reports/',
@@ -841,7 +842,7 @@ class UnauthenticatedReddit(BaseReddit):
 
         :param domain: The domain to generate a submission listing for.
         :param sort: When provided must be one of 'hot', 'new', 'rising',
-            'controversial, or 'top'. Defaults to 'hot'.
+            'controversial, 'gilded', or 'top'. Defaults to 'hot'.
         :param period: When sort is either 'controversial', or 'top' the period
             can be either None (for account default), 'all', 'year', 'month',
             'week', 'day', or 'hour'.
@@ -851,7 +852,8 @@ class UnauthenticatedReddit(BaseReddit):
 
         """
         # Verify arguments
-        if sort not in ('controversial', 'hot', 'new', 'rising', 'top'):
+        if sort not in ('controversial', 'hot', 'new', 'rising', 'top',
+                        'gilded'):
             raise TypeError('Invalid sort parameter.')
         if period not in (None, 'all', 'day', 'hour', 'month', 'week', 'year'):
             raise TypeError('Invalid period parameter.')
@@ -1171,6 +1173,19 @@ class UnauthenticatedReddit(BaseReddit):
 
         """
         return self.get_content(self.config['top'], *args, **kwargs)
+
+    @decorators.restrict_access(scope='read')
+    def get_gilded(self, *args, **kwargs):
+        """Return a get_content generator for gilded submissions.
+
+        Corresponds to the submissions provided by
+        ``https://www.reddit.com/gilded/`` for the session.
+
+        The additional parameters are passed directly into
+        :meth:`.get_content`. Note: the `url` parameter cannot be altered.
+
+        """
+        return self.get_content(self.config['gilded'], *args, **kwargs)
 
     # There exists a `modtraffic` scope, but it is unused.
     @decorators.restrict_access(scope='modconfig')
