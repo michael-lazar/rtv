@@ -4,7 +4,6 @@
 !.gitignore
 !.gitattributes
 !.coveragerc
-!CONTROLS.rst
 *~
 *.pyc
 *.log

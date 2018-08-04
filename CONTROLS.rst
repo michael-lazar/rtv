@@ -56,6 +56,7 @@ The ``/`` prompt accepts subreddits in the following formats
 * ``/r/python``
 * ``/r/python/new``
 * ``/r/python/controversial-year``
+# ``/r/python/gilded``
 * ``/r/python+linux`` supports multireddits
 * ``/r/front`` will redirect to the front page
 * ``/u/me`` will display your submissions

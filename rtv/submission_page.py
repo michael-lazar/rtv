@@ -17,6 +17,7 @@ class SubmissionController(PageController):
 
 class SubmissionPage(Page):
 
+    BANNER = docs.BANNER_SUBMISSION
     FOOTER = docs.FOOTER_SUBMISSION
 
     def __init__(self, reddit, term, config, oauth, url=None, submission=None):
@@ -47,10 +48,6 @@ class SubmissionPage(Page):
     @SubmissionController.register(Command('SORT_RISING'))
     def sort_content_rising(self):
         self.refresh_content(order='rising')
-
-    @SubmissionController.register(Command('SORT_GILDED'))
-    def sort_content_gilded(self):
-        self.refresh_content(order='gilded')
 
     @SubmissionController.register(Command('SORT_NEW'))
     def sort_content_new(self):

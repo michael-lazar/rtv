@@ -90,8 +90,12 @@ https://github.com/michael-lazar/rtv
   - /domain/python.org           (search by domain)
 """
 
-BANNER = """
+BANNER_SUBREDDIT = """
 [1]hot [2]top [3]rising [4]new [5]controversial [6]gilded
+"""
+
+BANNER_SUBMISSION = """
+[1]hot [2]top [3]rising [4]new [5]controversial
 """
 
 BANNER_SEARCH = """

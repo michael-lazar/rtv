@@ -19,6 +19,7 @@ class SubredditController(PageController):
 
 class SubredditPage(Page):
 
+    BANNER = docs.BANNER_SUBREDDIT
     FOOTER = docs.FOOTER_SUBREDDIT
 
     def __init__(self, reddit, term, config, oauth, name):
@@ -66,7 +67,6 @@ class SubredditPage(Page):
         else:
             self.refresh_content(order='hot')
 
-
     @SubredditController.register(Command('SORT_TOP'))
     def sort_content_top(self):
         order = self._prompt_period('top')
@@ -86,17 +86,6 @@ class SubredditPage(Page):
         else:
             self.refresh_content(order='rising')
 
-    @SubredditController.register(Command('SORT_GILDED'))
-    def sort_content_gilded(self):
-        if self.content.query:
-            order = self._prompt_period('comments')
-            if order is None:
-                self.term.show_notification('Invalid option')
-            else:
-                self.refresh_content(order=order)
-        else:
-            self.refresh_content(order='gilded')
-
     @SubredditController.register(Command('SORT_NEW'))
     def sort_content_new(self):
         self.refresh_content(order='new')
@@ -111,6 +100,13 @@ class SubredditPage(Page):
                 self.term.show_notification('Invalid option')
             else:
                 self.refresh_content(order=order)
+
+    @SubredditController.register(Command('SORT_GILDED'))
+    def sort_content_gilded(self):
+        if self.content.query:
+            self.term.flash()
+        else:
+            self.refresh_content(order='gilded')
 
     @SubredditController.register(Command('SUBREDDIT_SEARCH'))
     def search_subreddit(self, name=None):

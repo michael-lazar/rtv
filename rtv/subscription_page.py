@@ -13,6 +13,7 @@ class SubscriptionController(PageController):
 
 class SubscriptionPage(Page):
 
+    BANNER = None
     FOOTER = docs.FOOTER_SUBSCRIPTION
 
     def __init__(self, reddit, term, config, oauth, content_type='subreddit'):
