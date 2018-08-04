@@ -842,7 +842,7 @@ class UnauthenticatedReddit(BaseReddit):
 
         :param domain: The domain to generate a submission listing for.
         :param sort: When provided must be one of 'hot', 'new', 'rising',
-            'controversial', 'gilded', or 'top'. Defaults to 'hot'.
+            'controversial, 'gilded', or 'top'. Defaults to 'hot'.
         :param period: When sort is either 'controversial', or 'top' the period
             can be either None (for account default), 'all', 'year', 'month',
             'week', 'day', or 'hour'.
@@ -852,7 +852,8 @@ class UnauthenticatedReddit(BaseReddit):
 
         """
         # Verify arguments
-        if sort not in ('controversial', 'hot', 'new', 'rising', 'top', 'gilded'):
+        if sort not in ('controversial', 'hot', 'new', 'rising', 'top',
+                        'gilded'):
             raise TypeError('Invalid sort parameter.')
         if period not in (None, 'all', 'day', 'hour', 'month', 'week', 'year'):
             raise TypeError('Invalid period parameter.')
@@ -1185,7 +1186,6 @@ class UnauthenticatedReddit(BaseReddit):
 
         """
         return self.get_content(self.config['gilded'], *args, **kwargs)
-
 
     # There exists a `modtraffic` scope, but it is unused.
     @decorators.restrict_access(scope='modconfig')

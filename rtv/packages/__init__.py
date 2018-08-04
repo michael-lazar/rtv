@@ -10,7 +10,7 @@ from __future__ import absolute_import
 
 import sys
 
-__praw_hash__ = '1e82eb0f8690a2acbdc15d030130dc50507eb4ba'
+__praw_hash__ = '1656ec224e574eed9cda4efcb497825d54b4d926'
 __praw_bundled__ = True
 
 
