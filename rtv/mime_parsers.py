@@ -84,6 +84,7 @@ class VideoTagMIMEParser(BaseMIMEParser):
 
         # TODO: Handle pages with multiple videos
         video = soup.find('video')
+        source = None
         if video:
             source = video.find('source', attr={'res': 'HD'})
             source = source or video.find('source', attr={'type': 'video/mp4'})
@@ -370,13 +371,6 @@ class TwitchMIMEParser(BaseMIMEParser):
         return url, None
 
 
-class OddshotMIMEParser(OpenGraphMIMEParser):
-    """
-    Oddshot uses the Open Graph protocol
-    """
-    pattern = re.compile(r'https?://oddshot\.tv/s(hot)?/[^.]+$')
-
-
 class VidmeMIMEParser(BaseMIMEParser):
     """
     Vidme provides a json api.
@@ -461,13 +455,6 @@ class GiphyMIMEParser(OpenGraphMIMEParser):
     pattern = re.compile(r'https?://(www\.)?giphy\.com/gifs/.+$')
 
 
-class ImgtcMIMEParser(OpenGraphMIMEParser):
-    """
-    imgtc.com uses the Open Graph protocol
-    """
-    pattern = re.compile(r'https?://(www\.)?imgtc\.com/w/.+$')
-
-
 class ImgflipMIMEParser(OpenGraphMIMEParser):
     """
     imgflip.com uses the Open Graph protocol
@@ -540,7 +527,6 @@ class WorldStarHipHopMIMEParser(BaseMIMEParser):
 parsers = [
     StreamjaMIMEParser,
     ClippitUserMIMEParser,
-    OddshotMIMEParser,
     StreamableMIMEParser,
     VidmeMIMEParser,
     InstagramMIMEParser,
@@ -555,7 +541,6 @@ parsers = [
     FlickrMIMEParser,
     GifsMIMEParser,
     GiphyMIMEParser,
-    ImgtcMIMEParser,
     ImgflipMIMEParser,
     LivememeMIMEParser,
     MakeamemeMIMEParser,

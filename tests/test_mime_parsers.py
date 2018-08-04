@@ -63,7 +63,7 @@ URLS = OrderedDict([
         'video/mp4')),
     ('streamable_video', (
         'https://streamable.com/vkc0y',
-        re.compile('https://(.*)\.streamablevideo\.com/video/mp4/(.*)\.mp4(.*)'),
+        re.compile('https://(.*)\.streamable\.com/video/mp4/(.*)\.mp4(.*)'),
         'video/mp4')),
     ('vidme_video', pytest.param(
         'https://vid.me/rHlb',
@@ -90,10 +90,6 @@ URLS = OrderedDict([
         'https://clips.twitch.tv/avaail/ExpensiveFishBCouch',
         'https://clips-media-assets.twitch.tv/22467338656-index-0000000111.mp4',
         'video/mp4')),
-    ('oddshot', (
-        'https://oddshot.tv/s/5wN6Sy',
-        'https://oddshot.akamaized.net/m/render-captures/source/Unknown-YjBkNTcwZWFlZGJhMGYyNQ.mp4',
-        'video/mp4')),
     ('clippituser', (
         'https://www.clippituser.tv/c/edqqld',
         'https://clips.clippit.tv/edqqld/720.mp4',
@@ -105,10 +101,6 @@ URLS = OrderedDict([
     ('giphy', (
         'https://giphy.com/gifs/cameron-dallas-OpesLQSjwdGj6',
         'https://media.giphy.com/media/OpesLQSjwdGj6/giphy.mp4',
-        'video/mp4')),
-    ('imgtc', (
-        'https://imgtc.com/w/Sa2whPE',
-        'https://imgtc.b-cdn.net/uploads/ZHI3OopOhKJ.mp4',
         'video/mp4')),
     ('imgflip', (
         'https://imgflip.com/i/1dtdbv',
@@ -132,7 +124,7 @@ URLS = OrderedDict([
         'video/mp4')),
     ('worldstar_2', (
         'http://www.worldstarhiphop.com/videos/video.php?v=wshhJ6bVdAv0iMrNGFZG',
-        'http://www.youtube.com/embed/Bze53qwHS8o?autoplay=1',
+        'https://www.youtube.com/embed/Bze53qwHS8o?rel=0&autoplay=1',
         'video/x-youtube')),
     ('vimeo', (
         'https://vimeo.com/247872788',
