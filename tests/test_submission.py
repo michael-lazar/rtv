@@ -301,6 +301,32 @@ def test_submission_vote(submission_page, refresh_token):
         assert data['likes'] is None
 
 
+def test_submission_vote_archived(submission_page, refresh_token, terminal):
+
+    # Log in
+    submission_page.config.refresh_token = refresh_token
+    submission_page.oauth.authorize()
+
+    # Load an archived submission
+    archived_url = 'https://www.reddit.com/r/IAmA/comments/z1c9z/'
+    submission_page.refresh_content(name=archived_url)
+
+    with mock.patch.object(terminal, 'show_notification') as show_notification:
+        data = submission_page.get_selected_item()
+
+        # Upvote the submission
+        show_notification.reset_mock()
+        submission_page.controller.trigger('a')
+        show_notification.assert_called_with('Voting disabled for archived post', style='Error')
+        assert data['likes'] is None
+
+        # Downvote the submission
+        show_notification.reset_mock()
+        submission_page.controller.trigger('z')
+        show_notification.assert_called_with('Voting disabled for archived post', style='Error')
+        assert data['likes'] is None
+
+
 def test_submission_save(submission_page, refresh_token):
 
     # Log in

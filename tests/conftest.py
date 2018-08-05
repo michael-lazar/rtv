@@ -119,7 +119,7 @@ def vcr(request):
     return vcr
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def refresh_token(request):
     if request.config.option.record_mode == 'none':
         return 'mock_refresh_token'
