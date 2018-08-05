@@ -60,18 +60,68 @@ _logger = logging.getLogger(__name__)
 def main():
     """Main entry point"""
 
-    # Squelch SSL warnings
+    config, user_agent = initialize()
+    if not config:
+        return
+
+    try:
+        with curses_session() as stdscr:
+            term = Terminal(stdscr, config)
+            run(config, user_agent, term)
+    except ConfigError as e:
+        _logger.exception(e)
+        print(e)
+    except Exception as e:
+        _logger.exception(e)
+        raise
+    except KeyboardInterrupt:
+        pass
+    finally:
+        # Try to save the browsing history
+        config.save_history()
+        # Ensure sockets are closed to prevent a ResourceWarning
+        if 'reddit' in locals():
+            reddit.handler.http.close()
+
+
+def initialize():
+    squelch_SSL_warnings()
+    set_terminal_title()
+
+    config = get_config()
+    if handle_special_arguments(config):
+        return False
+    config.load_history()
+    config.load_refresh_token()
+    if config['clear_auth']:
+        config.delete_refresh_token()
+
+    set_up_logging(config)
+    ensure_utf8_or_fall_back_to_ascii(config)
+    _logger.info('RTV module path: %s', os.path.abspath(__file__))
+    check_praw_version()
+    update_webbrowser_module_default_behavoir()
+
+    user_agent = docs.AGENT.format(version=__version__)
+
+    return config, user_agent
+
+
+def squelch_SSL_warnings():
     logging.captureWarnings(True)
     if six.PY3:
         # These ones get triggered even when capturing warnings is turned on
         warnings.simplefilter('ignore', ResourceWarning)  # pylint:disable=E0602
 
-    # Set the terminal title
+
+def set_terminal_title():
     if os.getenv('DISPLAY'):
         title = 'rtv {0}'.format(__version__)
         sys.stdout.write('\x1b]2;{0}\x07'.format(title))
         sys.stdout.flush()
 
+
+def get_config():
     args = Config.get_args()
     fargs, bindings = Config.get_file(args.get('config'))
 
@@ -84,25 +134,23 @@ def main():
     if bindings:
         config.keymap.set_bindings(bindings)
 
+    return config
+
+
+def handle_special_arguments(config):
     if config['copy_config']:
         copy_default_config()
-        return
+        return True
     if config['copy_mailcap']:
         copy_default_mailcap()
-        return
-
+        return True
     if config['list_themes']:
         Theme.print_themes()
-        return
+        return True
+    return False
 
-    # Load the browsing history from previous sessions
-    config.load_history()
 
-    # Load any previously saved auth session token
-    config.load_refresh_token()
-    if config['clear_auth']:
-        config.delete_refresh_token()
-
+def set_up_logging(config):
     if config['log']:
         # Log request headers to the file (print hack only works on python 3.x)
         # from http import client
@@ -136,7 +184,8 @@ def main():
         # Add an empty handler so the logger doesn't complain
         logging.root.addHandler(logging.NullHandler())
 
-    # Make sure the locale is UTF-8 for unicode support
+
+def ensure_utf8_or_fall_back_to_ascii(config):
     default_locale = locale.setlocale(locale.LC_ALL, '')
     try:
         encoding = locale.getlocale()[1] or locale.getdefaultlocale()[1]
@@ -155,9 +204,8 @@ def main():
         warnings.warn(text)
         config['ascii'] = True
 
-    _logger.info('RTV module path: %s', os.path.abspath(__file__))
 
-    # Check the praw version
+def check_praw_version():
     if packages.__praw_bundled__:
         _logger.info('Using packaged PRAW distribution, '
                      'commit %s', packages.__praw_hash__)
@@ -165,91 +213,90 @@ def main():
         _logger.info('Packaged PRAW not found, falling back to system '
                      'installed version %s', praw.__version__)
 
-    # Update the webbrowser module's default behavior
+
+def update_webbrowser_module_default_behavoir():
     patch_webbrowser()
     if webbrowser_import_warning:
         _logger.warning('webbrowser module was unexpectedly imported before'
                         '$BROWSER could be overwritten')
 
-    # Construct the reddit user agent
-    user_agent = docs.AGENT.format(version=__version__)
 
-    try:
-        with curses_session() as stdscr:
+def run(config, user_agent, term):
+    set_terminal_theme(term, config)
+    reddit = get_reddit(term, user_agent)
+    oauth = authorize_if_possible(reddit, term, config)
 
-            term = Terminal(stdscr, config)
+    page = get_subreddit_page(config, term, reddit, oauth)
+    if page is None:
+        return
 
-            if config['monochrome'] or config['theme'] == 'monochrome':
-                _logger.info('Using monochrome theme')
-                theme = Theme(use_color=False)
-            elif config['theme'] and config['theme'] != 'default':
-                _logger.info('Loading theme: %s', config['theme'])
-                theme = Theme.from_name(config['theme'])
-            else:
-                # Set to None to let the terminal figure out which theme
-                # to use depending on if colors are supported or not
-                theme = None
-            term.set_theme(theme)
+    open_submission_link_if_supplied(config, reddit, page)
 
-            with term.loader('Initializing', catch_exception=False):
-                reddit = praw.Reddit(user_agent=user_agent,
-                                     decode_html_entities=False,
-                                     disable_update_check=True,
-                                     timeout=10,  # 10 second request timeout
-                                     handler=RequestHeaderRateLimiter())
+    page.loop()
 
-            # Dial the request cache up from 30 seconds to 5 minutes
-            # I'm trying this out to make navigation back and forth
-            # between pages quicker, it may still need to be fine tuned.
-            reddit.config.api_request_delay = 300
 
-            # Authorize on launch if the refresh token is present
-            oauth = OAuthHelper(reddit, term, config)
-            if config.refresh_token:
-                oauth.authorize()
+def set_terminal_theme(term, config):
+    if config['monochrome'] or config['theme'] == 'monochrome':
+        _logger.info('Using monochrome theme')
+        theme = Theme(use_color=False)
+    elif config['theme'] and config['theme'] != 'default':
+        _logger.info('Loading theme: %s', config['theme'])
+        theme = Theme.from_name(config['theme'])
+    else:
+        # Set to None to let the terminal figure out which theme to use
+        # depending on if colors are supported or not
+        theme = None
+    term.set_theme(theme)
 
-            page = None
-            name = config['subreddit']
-            with term.loader('Loading subreddit'):
-                try:
-                    page = SubredditPage(reddit, term, config, oauth, name)
-                except Exception as e:
-                    # If we can't load the subreddit that was requested, try
-                    # to load the front page instead so at least the
-                    # application still launches.
-                    _logger.exception(e)
-                    page = SubredditPage(reddit, term, config, oauth, 'front')
-                    raise SubredditError('Unable to load {0}'.format(name))
-            if page is None:
-                return
 
-            # Open the supplied submission link before opening the subreddit
-            if config['link']:
-                # Expand shortened urls like https://redd.it/
-                # Praw won't accept the shortened versions, add the reddit
-                # headers to avoid a 429 response from reddit.com
-                url = requests.head(config['link'], headers=reddit.http.headers,
-                                    allow_redirects=True).url
+def get_reddit(term, user_agent):
+    with term.loader('Initializing', catch_exception=False):
+        reddit = praw.Reddit(user_agent=user_agent,
+                             decode_html_entities=False,
+                             disable_update_check=True,
+                             timeout=10,  # 10 second request timeout
+                             handler=RequestHeaderRateLimiter())
 
-                page.open_submission(url=url)
+    # Dial the request cache up from 30 seconds to 5 minutes
+    # I'm trying this out to make navigation back and forth between pages
+    # quicker, it may still need to be fine tuned.
+    reddit.config.api_request_delay = 300
 
-            # Launch the subreddit page
-            page.loop()
+    return reddit
 
-    except ConfigError as e:
-        _logger.exception(e)
-        print(e)
-    except Exception as e:
-        _logger.exception(e)
-        raise
-    except KeyboardInterrupt:
-        pass
-    finally:
-        # Try to save the browsing history
-        config.save_history()
-        # Ensure sockets are closed to prevent a ResourceWarning
-        if 'reddit' in locals():
-            reddit.handler.http.close()
+
+def authorize_if_possible(reddit, term, config):
+    oauth = OAuthHelper(reddit, term, config)
+    if config.refresh_token:
+        oauth.authorize()
+    return oauth
+
+
+def get_subreddit_page(config, term, reddit, oauth):
+    page = None
+    name = config['subreddit']
+    with term.loader('Loading subreddit'):
+        try:
+            page = SubredditPage(reddit, term, config, oauth, name)
+        except Exception as e:
+            # If we can't load the subreddit that was requested, try to load
+            # the front page instead so at least the application still
+            # launches.
+            _logger.exception(e)
+            page = SubredditPage(reddit, term, config, oauth, 'front')
+            raise SubredditError('Unable to load {0}'.format(name))
+    return page
+
+
+def open_submission_link_if_supplied(config, reddit, page):
+    if config['link']:
+        # Expand shortened urls like https://redd.it/
+        # Praw won't accept the shortened versions, add the reddit headers to
+        # avoid a 429 response from reddit.com
+        url = requests.head(config['link'], headers=reddit.http.headers,
+                            allow_redirects=True).url
+
+        page.open_submission(url=url)
 
 
 sys.exit(main())
