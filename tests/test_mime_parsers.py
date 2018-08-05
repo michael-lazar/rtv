@@ -161,7 +161,7 @@ def test_imgur_fallback(reddit):
     """
 
     ImgurApiMIMEParser.CLIENT_ID = ''
-    for key in ['imgur_1', 'imgur_2', 'imgur_album']:
+    for key in ['imgur_1', 'imgur_2']:
         url, modified_url, mime_type = URLS[key]
 
         assert ImgurApiMIMEParser.pattern.match(url)
@@ -170,8 +170,16 @@ def test_imgur_fallback(reddit):
         # appears to incorrectly return as a JPG type from the scraper
         assert parsed_type is not None
 
+    # The fallback scraper for albums no longer exists, but it should
+    # return the original URL instead of raising an error
+    url, modified_url, mime_type = URLS['imgur_album']
+    assert ImgurApiMIMEParser.pattern.match(url)
+    parsed_url, parsed_type = ImgurApiMIMEParser.get_mimetype(url)
+    assert parsed_type is None
+    assert parsed_url == url
+
     ImgurApiMIMEParser.CLIENT_ID = 'invalid_api_key'
-    for key in ['imgur_1', 'imgur_2', 'imgur_album']:
+    for key in ['imgur_1', 'imgur_2']:
         url, modified_url, mime_type = URLS[key]
 
         assert ImgurApiMIMEParser.pattern.match(url)

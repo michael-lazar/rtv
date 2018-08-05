@@ -272,7 +272,9 @@ class ImgurApiMIMEParser(BaseMIMEParser):
         Attempt to use one of the scrapers if the API doesn't work
         """
         if domain == 'album':
-            return ImgurScrapeAlbumMIMEParser.get_mimetype(url)
+            # The old Imgur album scraper has stopped working and I haven't
+            # put in the effort to figure out why
+            return url, None
         else:
             return ImgurScrapeMIMEParser.get_mimetype(url)
 
@@ -303,40 +305,6 @@ class ImgurScrapeMIMEParser(BaseMIMEParser):
             if GifvMIMEParser.pattern.match(url):
                 return GifvMIMEParser.get_mimetype(url)
         return BaseMIMEParser.get_mimetype(url)
-
-
-class ImgurScrapeAlbumMIMEParser(BaseMIMEParser):
-    """
-    Imgur albums can contain several images, which need to be scraped from the
-    landing page. Assumes the following html structure:
-
-        <div class="post-image">
-            <a href="//i.imgur.com/L3Lfp1O.jpg" class="zoom">
-                <img class="post-image-placeholder"
-                     src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
-                <img class="js-post-image-thumb"
-                     src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
-            </a>
-        </div>
-    """
-    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/a(lbum)?/[^.]+$')
-
-    @staticmethod
-    def get_mimetype(url):
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
-
-        urls = []
-        for div in soup.find_all('div', class_='post-image'):
-            img = div.find('img')
-            src = img.get('src') if img else None
-            if src:
-                urls.append('http:{0}'.format(src))
-
-        if urls:
-            return " ".join(urls), 'image/x-imgur-album'
-
-        return url, None
 
 
 class InstagramMIMEParser(OpenGraphMIMEParser):
@@ -524,7 +492,6 @@ parsers = [
     YoutubeMIMEParser,
     VimeoMIMEParser,
     LiveleakMIMEParser,
-    TwitchMIMEParser,
     FlickrMIMEParser,
     GifsMIMEParser,
     GiphyMIMEParser,
