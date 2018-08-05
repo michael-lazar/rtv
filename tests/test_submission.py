@@ -263,7 +263,8 @@ def test_submission_vote(submission_page, refresh_token):
             mock.patch('rtv.packages.praw.objects.Submission.downvote') as downvote,     \
             mock.patch('rtv.packages.praw.objects.Submission.clear_vote') as clear_vote:
 
-        data = submission_page.content.get(submission_page.nav.absolute_index)
+        data = submission_page.get_selected_item()
+        data['object'].archived = False
 
         # Upvote
         submission_page.controller.trigger('a')
@@ -298,6 +299,32 @@ def test_submission_vote(submission_page, refresh_token):
         # Downvote - exception
         downvote.side_effect = KeyboardInterrupt
         submission_page.controller.trigger('a')
+        assert data['likes'] is None
+
+
+def test_submission_vote_archived(submission_page, refresh_token, terminal):
+
+    # Log in
+    submission_page.config.refresh_token = refresh_token
+    submission_page.oauth.authorize()
+
+    # Load an archived submission
+    archived_url = 'https://www.reddit.com/r/IAmA/comments/z1c9z/'
+    submission_page.refresh_content(name=archived_url)
+
+    with mock.patch.object(terminal, 'show_notification') as show_notification:
+        data = submission_page.get_selected_item()
+
+        # Upvote the submission
+        show_notification.reset_mock()
+        submission_page.controller.trigger('a')
+        show_notification.assert_called_with('Voting disabled for archived post', style='Error')
+        assert data['likes'] is None
+
+        # Downvote the submission
+        show_notification.reset_mock()
+        submission_page.controller.trigger('z')
+        show_notification.assert_called_with('Voting disabled for archived post', style='Error')
         assert data['likes'] is None
 
 

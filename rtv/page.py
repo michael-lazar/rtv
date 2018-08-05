@@ -163,6 +163,8 @@ class Page(object):
         data = self.get_selected_item()
         if 'likes' not in data:
             self.term.flash()
+        elif getattr(data['object'], 'archived'):
+            self.term.show_notification("Voting disabled for archived post", style='Error')
         elif data['likes']:
             with self.term.loader('Clearing vote'):
                 data['object'].clear_vote()
@@ -180,6 +182,8 @@ class Page(object):
         data = self.get_selected_item()
         if 'likes' not in data:
             self.term.flash()
+        elif getattr(data['object'], 'archived'):
+            self.term.show_notification("Voting disabled for archived post", style='Error')
         elif data['likes'] or data['likes'] is None:
             with self.term.loader('Voting'):
                 data['object'].downvote()
