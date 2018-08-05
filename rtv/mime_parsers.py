@@ -186,11 +186,12 @@ class RedditVideoMIMEParser(BaseMIMEParser):
         page = requests.get(request_url)
         soup = BeautifulSoup(page.content, 'html.parser')
         if not soup.find('representation', attrs={'mimetype': 'audio/mp4'}):
-            reps = soup.find_all('representation',
-                                 attrs={'mimetype': 'video/mp4'})
-            rep = sorted(reps, reverse=True,
-                         key=lambda t: int(t.get('bandwidth')))[0]
-            return url + '/' + rep.find('baseurl').text, 'video/mp4'
+            reps = soup.find_all('representation', attrs={'mimetype': 'video/mp4'})
+            reps = sorted(reps, reverse=True, key=lambda t: int(t.get('bandwidth')))
+            if reps:
+                url_suffix = reps[0].find('baseurl')
+                if url_suffix:
+                    return url + '/' + url_suffix.text, 'video/mp4'
 
         return request_url, 'video/x-youtube'
 
@@ -363,10 +364,11 @@ class TwitchMIMEParser(BaseMIMEParser):
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
         tag = soup.find('meta', attrs={'name': 'twitter:image'})
-        thumbnail = tag.get('content')
-        suffix = '-preview.jpg'
-        if thumbnail.endswith(suffix):
-            return thumbnail.replace(suffix, '.mp4'), 'video/mp4'
+        if tag:
+            thumbnail = tag.get('content')
+            suffix = '-preview.jpg'
+            if thumbnail and thumbnail.endswith(suffix):
+                return thumbnail.replace(suffix, '.mp4'), 'video/mp4'
 
         return url, None
 

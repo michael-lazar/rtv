@@ -79,8 +79,8 @@ URLS = OrderedDict([
         re.compile('www\.youtube\.com/embed/D4GrlOMlOBY'),
         'video/x-youtube')),
     ('reddit_gif', (
-        'https://v.redd.it/wkm9zol8c6fz',
-        'https://v.redd.it/wkm9zol8c6fz/DASH_600_K',
+        'https://v.redd.it/1j6sbv2npvd11',
+        'https://v.redd.it/1j6sbv2npvd11/DASH_2_4_M',
         'video/mp4')),
     ('reddit_video', (
         'https://v.redd.it/zv89llsvexdz',
