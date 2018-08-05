@@ -84,6 +84,7 @@ class VideoTagMIMEParser(BaseMIMEParser):
 
         # TODO: Handle pages with multiple videos
         video = soup.find('video')
+        source = None
         if video:
             source = video.find('source', attr={'res': 'HD'})
             source = source or video.find('source', attr={'type': 'video/mp4'})
@@ -185,11 +186,12 @@ class RedditVideoMIMEParser(BaseMIMEParser):
         page = requests.get(request_url)
         soup = BeautifulSoup(page.content, 'html.parser')
         if not soup.find('representation', attrs={'mimetype': 'audio/mp4'}):
-            reps = soup.find_all('representation',
-                                 attrs={'mimetype': 'video/mp4'})
-            rep = sorted(reps, reverse=True,
-                         key=lambda t: int(t.get('bandwidth')))[0]
-            return url + '/' + rep.find('baseurl').text, 'video/mp4'
+            reps = soup.find_all('representation', attrs={'mimetype': 'video/mp4'})
+            reps = sorted(reps, reverse=True, key=lambda t: int(t.get('bandwidth')))
+            if reps:
+                url_suffix = reps[0].find('baseurl')
+                if url_suffix:
+                    return url + '/' + url_suffix.text, 'video/mp4'
 
         return request_url, 'video/x-youtube'
 
@@ -270,7 +272,9 @@ class ImgurApiMIMEParser(BaseMIMEParser):
         Attempt to use one of the scrapers if the API doesn't work
         """
         if domain == 'album':
-            return ImgurScrapeAlbumMIMEParser.get_mimetype(url)
+            # The old Imgur album scraper has stopped working and I haven't
+            # put in the effort to figure out why
+            return url, None
         else:
             return ImgurScrapeMIMEParser.get_mimetype(url)
 
@@ -303,40 +307,6 @@ class ImgurScrapeMIMEParser(BaseMIMEParser):
         return BaseMIMEParser.get_mimetype(url)
 
 
-class ImgurScrapeAlbumMIMEParser(BaseMIMEParser):
-    """
-    Imgur albums can contain several images, which need to be scraped from the
-    landing page. Assumes the following html structure:
-
-        <div class="post-image">
-            <a href="//i.imgur.com/L3Lfp1O.jpg" class="zoom">
-                <img class="post-image-placeholder"
-                     src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
-                <img class="js-post-image-thumb"
-                     src="//i.imgur.com/L3Lfp1Og.jpg" alt="Close up">
-            </a>
-        </div>
-    """
-    pattern = re.compile(r'https?://(w+\.)?(m\.)?imgur\.com/a(lbum)?/[^.]+$')
-
-    @staticmethod
-    def get_mimetype(url):
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
-
-        urls = []
-        for div in soup.find_all('div', class_='post-image'):
-            img = div.find('img')
-            src = img.get('src') if img else None
-            if src:
-                urls.append('http:{0}'.format(src))
-
-        if urls:
-            return " ".join(urls), 'image/x-imgur-album'
-
-        return url, None
-
-
 class InstagramMIMEParser(OpenGraphMIMEParser):
     """
     Instagram uses the Open Graph protocol
@@ -349,49 +319,6 @@ class StreamableMIMEParser(OpenGraphMIMEParser):
     Streamable uses the Open Graph protocol
     """
     pattern = re.compile(r'https?://(www\.)?streamable\.com/[^.]+$')
-
-
-class TwitchMIMEParser(BaseMIMEParser):
-    """
-    Non-streaming videos hosted by twitch.tv
-    """
-    pattern = re.compile(r'https?://clips\.?twitch\.tv/[^.]+$')
-
-    @staticmethod
-    def get_mimetype(url):
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
-        tag = soup.find('meta', attrs={'name': 'twitter:image'})
-        thumbnail = tag.get('content')
-        suffix = '-preview.jpg'
-        if thumbnail.endswith(suffix):
-            return thumbnail.replace(suffix, '.mp4'), 'video/mp4'
-
-        return url, None
-
-
-class OddshotMIMEParser(OpenGraphMIMEParser):
-    """
-    Oddshot uses the Open Graph protocol
-    """
-    pattern = re.compile(r'https?://oddshot\.tv/s(hot)?/[^.]+$')
-
-
-class VidmeMIMEParser(BaseMIMEParser):
-    """
-    Vidme provides a json api.
-
-    https://doc.vid.me
-    """
-    pattern = re.compile(r'https?://(www\.)?vid\.me/[^.]+$')
-
-    @staticmethod
-    def get_mimetype(url):
-        resp = requests.get('https://api.vid.me/videoByUrl?url=' + url)
-        if resp.status_code == 200 and resp.json()['status']:
-            return resp.json()['video']['complete_url'], 'video/mp4'
-
-        return url, None
 
 
 class LiveleakMIMEParser(BaseMIMEParser):
@@ -442,9 +369,14 @@ class ClippitUserMIMEParser(BaseMIMEParser):
     def get_mimetype(url):
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
-        tag = soup.find(id='jwplayer-container')
-        quality = ['data-{}-file'.format(_) for _ in ['hd', 'sd']]
-        return tag.get(quality[0]), 'video/mp4'
+        tag = soup.find(id='player-container')
+        if tag:
+            quality = ['data-{}-file'.format(_) for _ in ['hd', 'sd']]
+            new_url = tag.get(quality[0])
+            if new_url:
+                return new_url, 'video/mp4'
+
+        return url, None
 
 
 class GifsMIMEParser(OpenGraphMIMEParser):
@@ -459,13 +391,6 @@ class GiphyMIMEParser(OpenGraphMIMEParser):
     Giphy.com uses the Open Graph protocol
     """
     pattern = re.compile(r'https?://(www\.)?giphy\.com/gifs/.+$')
-
-
-class ImgtcMIMEParser(OpenGraphMIMEParser):
-    """
-    imgtc.com uses the Open Graph protocol
-    """
-    pattern = re.compile(r'https?://(www\.)?imgtc\.com/w/.+$')
 
 
 class ImgflipMIMEParser(OpenGraphMIMEParser):
@@ -540,9 +465,7 @@ class WorldStarHipHopMIMEParser(BaseMIMEParser):
 parsers = [
     StreamjaMIMEParser,
     ClippitUserMIMEParser,
-    OddshotMIMEParser,
     StreamableMIMEParser,
-    VidmeMIMEParser,
     InstagramMIMEParser,
     GfycatMIMEParser,
     ImgurApiMIMEParser,
@@ -551,11 +474,9 @@ parsers = [
     YoutubeMIMEParser,
     VimeoMIMEParser,
     LiveleakMIMEParser,
-    TwitchMIMEParser,
     FlickrMIMEParser,
     GifsMIMEParser,
     GiphyMIMEParser,
-    ImgtcMIMEParser,
     ImgflipMIMEParser,
     LivememeMIMEParser,
     MakeamemeMIMEParser,

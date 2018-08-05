@@ -6,24 +6,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Authorization: ['**********']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.11.0]
     method: GET
     uri: https://api.imgur.com/3/gallery/yW0kbMi
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA0VRQXKDMAz8CqMzk5A0bQh/6LmHpsM4RgGlxmYsORna6d8rSGhvluRd7a6+oTFi
-        oPoGaqCC8a34PL0S5CAkDrXzOmYuWOMydGglBk+WM5YQMesMZyazRlb6v0G2kQah4KHyybl8Ykah
-        Xlk2u5dDsdsWh1KJx2Hipd60eFxfBmwVbbzWgirhbBxjDjdqpINqW263OXRIbSdabTb7HJi+lKB8
-        2ewPuxyuhDeGavecw8n45oF7KvdlsX8qdB4EF0Fncw2RpvqxxfP59lew+pvVQ0+ucSN5wYgs5GeF
-        1obkpU7RLXRLa0ru3iGuzb8H8nUfWOorReP+uppazYr7/yemVQfvH8rY1Pd4ivk97wKYmVrjHMYR
-        KolpwoSB7LJ2LmYZinPkPxXViQxcHdfHNa2ob1Nc2dAf148Dry7DZEpbPaqD2YeeSc+TBtXyrDxN
-        uHl9avxD0CimjHXMVi8/PQ93t+6U+oeRH50ma5F5EcliJE0cRfHzC9ed7HdpAgAA
+        H4sIAAAAAAAAA0VSQXKDMAz8CqMzk0BKm8Afeu6h6TCOUUCtsRlbToZ2+vfKJDQ3S9audtf+gU6x
+        guYHqIMG5rfi6/RKkAMTG5TO65wZp5XJ0KBm7yzpkAV2HrNBhUxlWvFG5jsM2tPE5Cw0NhqTJ2Zk
+        GoWlrF7qotoV9UGI5ynx0qh6PG4/J+wFrazUjCLhrEzAHK7U8QDN7rDb5TAg9QNLVZb7HAJ9C8Hh
+        pdzXVQ4XwmuQq6cyh5Oy3R1Y1nWxr6oyTTjGVdJZXZynVN/32HC+/hdBHC76YSTTmZkso8fAZBeN
+        WrtouY3erHRrK2V361Bo1cMF2XZ0gdsLeWX+u5JbGwT3mGPVi4f3D2Hs2ltAxXJedgEsTL0yBv0M
+        DfuYMG4iva5dikWG4AzZL0ENzFNojtvjljY09tFvtBuP2/sTbz6nZEpaI4qDxYfEdnhktPbSC8RJ
+        9D0Ld+euNsWdw+QkHjlWAgla/kM61rcEzCmOd3O/chu1xhBW4YEVx8RRFL9/Sk8pNn8CAAA=
     headers:
       Accept-Ranges: [bytes]
+      Access-Control-Allow-Credentials: ['true']
       Access-Control-Allow-Headers: ['Authorization, Content-Type, Accept, X-Mashape-Authorization,
           IMGURPLATFORM, IMGURUIDJAFO, sessionCount, IMGURMWBETA, IMGURMWBETAOPTIN,
-          X-expSNKPK128']
+          X-expSNKPK127']
+      Access-Control-Allow-Origin: ['*']
       Access-Control-Expose-Headers: ['X-RateLimit-ClientLimit, X-RateLimit-ClientRemaining,
           X-RateLimit-UserLimit, X-RateLimit-UserRemaining, X-RateLimit-UserReset']
       Age: ['0']
@@ -31,24 +33,22 @@ interactions:
           public']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
-      Content-Length: ['390']
+      Content-Length: ['395']
       Content-Type: [application/json]
-      Date: ['Thu, 14 Sep 2017 04:40:12 GMT']
-      ETag: [W/"94803bdd7421784ee8255f6ed6c4d7c1a52dd719"]
-      Fastly-Debug-Digest: [a2793844ca4503867a65d6f254f258f0ee7f945487a64ad7c417e4b80e273f38]
+      Date: ['Sun, 05 Aug 2018 02:49:44 GMT']
+      ETag: [W/"665db31200efb9f3807c5ebc3f4bdae94c888f5e"]
       Server: [cat factory 1.0]
       Vary: [Accept-Encoding]
-      X-Cache: ['MISS, HIT']
-      X-Cache-Hits: ['0, 1']
+      X-Cache: ['MISS, MISS']
+      X-Cache-Hits: ['0, 0']
       X-Frame-Options: [DENY]
       X-RateLimit-ClientLimit: ['12500']
-      X-RateLimit-ClientRemaining: ['12488']
+      X-RateLimit-ClientRemaining: ['12386']
       X-RateLimit-UserLimit: ['500']
-      X-RateLimit-UserRemaining: ['497']
-      X-RateLimit-UserReset: ['1505286334']
-      X-Served-By: ['cache-iad2146-IAD, cache-mdw17350-MDW']
-      X-Timer: ['S1505364013.500532,VS0,VE58']
-      access-control-allow-methods: ['GET, PUT, POST, DELETE, OPTIONS']
-      access-control-allow-origin: ['*']
+      X-RateLimit-UserRemaining: ['499']
+      X-RateLimit-UserReset: ['1533440984']
+      X-Served-By: ['cache-iad2123-IAD, cache-sea1041-SEA']
+      X-Timer: ['S1533437384.800580,VS0,VE323']
+      access-control-allow-methods: ['GET, PUT, POST, PATCH, DELETE, OPTIONS']
     status: {code: 200, message: OK}
 version: 1

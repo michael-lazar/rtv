@@ -63,13 +63,8 @@ URLS = OrderedDict([
         'video/mp4')),
     ('streamable_video', (
         'https://streamable.com/vkc0y',
-        re.compile('https://(.*)\.streamablevideo\.com/video/mp4/(.*)\.mp4(.*)'),
+        re.compile('https://(.*)\.streamable\.com/video/mp4/(.*)\.mp4(.*)'),
         'video/mp4')),
-    ('vidme_video', pytest.param(
-        'https://vid.me/rHlb',
-        re.compile('https://(.*)\.cloudfront\.net/videos/15694926/52450725.mp4(.*)'),
-        'video/mp4',
-        marks=pytest.mark.xfail(reason="vidme API appears to have changed format"))),
     ('liveleak_video_1', (
         'https://www.liveleak.com/view?i=08b_1499296574',
         re.compile('https://cdn\.liveleak\.com/(.*)\.mp4(.*)'),
@@ -79,21 +74,13 @@ URLS = OrderedDict([
         re.compile('www\.youtube\.com/embed/D4GrlOMlOBY'),
         'video/x-youtube')),
     ('reddit_gif', (
-        'https://v.redd.it/wkm9zol8c6fz',
-        'https://v.redd.it/wkm9zol8c6fz/DASH_600_K',
+        'https://v.redd.it/1j6sbv2npvd11',
+        'https://v.redd.it/1j6sbv2npvd11/DASH_2_4_M',
         'video/mp4')),
     ('reddit_video', (
         'https://v.redd.it/zv89llsvexdz',
         'https://v.redd.it/zv89llsvexdz/DASHPlaylist.mpd',
         'video/x-youtube')),
-    ('twitch_clip', (
-        'https://clips.twitch.tv/avaail/ExpensiveFishBCouch',
-        'https://clips-media-assets.twitch.tv/22467338656-index-0000000111.mp4',
-        'video/mp4')),
-    ('oddshot', (
-        'https://oddshot.tv/s/5wN6Sy',
-        'https://oddshot.akamaized.net/m/render-captures/source/Unknown-YjBkNTcwZWFlZGJhMGYyNQ.mp4',
-        'video/mp4')),
     ('clippituser', (
         'https://www.clippituser.tv/c/edqqld',
         'https://clips.clippit.tv/edqqld/720.mp4',
@@ -105,10 +92,6 @@ URLS = OrderedDict([
     ('giphy', (
         'https://giphy.com/gifs/cameron-dallas-OpesLQSjwdGj6',
         'https://media.giphy.com/media/OpesLQSjwdGj6/giphy.mp4',
-        'video/mp4')),
-    ('imgtc', (
-        'https://imgtc.com/w/Sa2whPE',
-        'https://imgtc.b-cdn.net/uploads/ZHI3OopOhKJ.mp4',
         'video/mp4')),
     ('imgflip', (
         'https://imgflip.com/i/1dtdbv',
@@ -132,15 +115,15 @@ URLS = OrderedDict([
         'video/mp4')),
     ('worldstar_2', (
         'http://www.worldstarhiphop.com/videos/video.php?v=wshhJ6bVdAv0iMrNGFZG',
-        'http://www.youtube.com/embed/Bze53qwHS8o?autoplay=1',
+        'https://www.youtube.com/embed/Bze53qwHS8o?rel=0&autoplay=1',
         'video/x-youtube')),
     ('vimeo', (
         'https://vimeo.com/247872788',
         'https://vimeo.com/247872788',
         'video/x-youtube')),
     ('streamja', (
-        'https://streamja.com/6WMb',
-        'https://cdnja.r.worldssl.net/mp4/6w/6WMb.mp4',
+        'https://streamja.com/qLaQ',
+        'https://cdnja.r.worldssl.net/mp4/ql/qLaQ.mp4',
         'video/mp4')),
 ])
 
@@ -173,7 +156,7 @@ def test_imgur_fallback(reddit):
     """
 
     ImgurApiMIMEParser.CLIENT_ID = ''
-    for key in ['imgur_1', 'imgur_2', 'imgur_album']:
+    for key in ['imgur_1', 'imgur_2']:
         url, modified_url, mime_type = URLS[key]
 
         assert ImgurApiMIMEParser.pattern.match(url)
@@ -182,8 +165,16 @@ def test_imgur_fallback(reddit):
         # appears to incorrectly return as a JPG type from the scraper
         assert parsed_type is not None
 
+    # The fallback scraper for albums no longer exists, but it should
+    # return the original URL instead of raising an error
+    url, modified_url, mime_type = URLS['imgur_album']
+    assert ImgurApiMIMEParser.pattern.match(url)
+    parsed_url, parsed_type = ImgurApiMIMEParser.get_mimetype(url)
+    assert parsed_type is None
+    assert parsed_url == url
+
     ImgurApiMIMEParser.CLIENT_ID = 'invalid_api_key'
-    for key in ['imgur_1', 'imgur_2', 'imgur_album']:
+    for key in ['imgur_1', 'imgur_2']:
         url, modified_url, mime_type = URLS[key]
 
         assert ImgurApiMIMEParser.pattern.match(url)

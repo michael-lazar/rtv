@@ -5,36 +5,38 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.11.0]
     method: GET
-    uri: https://v.redd.it/wkm9zol8c6fz/DASHPlaylist.mpd
+    uri: https://v.redd.it/1j6sbv2npvd11/DASHPlaylist.mpd
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA4VSXY+bMBB8z6+w/E4whKYJCjnllKt6aquikGsfTz68gCVskG3SXH99F8ippDmp
-        vAD7MTM7u5u7s6rJCYyVjU5oMGeUgM4bIXWZ0KfjJ29FiXVcC143GhL6CpbebWebb+meKBCSpwYs
-        aMcdAuw7M7wTmh6DaB4uoowSJfV9VxRgjlLBkJl/YAwTrWkKWYNNaGd0rFooY8FtFV/isbRNUXiN
-        9gQoFBCHLAgoca8totieMKcE1esbAJtX2IGBS892RvDZpGBkI4h4R+RYMVTtBG/HaTJwxEKpcLpd
-        LUvdfyTUmQ7Qku7l/6nMcePsT+mqbJeiuROageoA7cQ88oJD/pLCVQldspCtF5TgIiDH+fgpD+aR
-        iFiABIXhCg7coQ0LXFcFsqyQPYzwR4qE/njcP3z3gt55BcfBrpMU0PiqjYZlGjfRRC6Uffu1vkHj
-        PbfwdPi63e+yz89Lxp6/bPy32G11Ng7eFxCpBZwPXJfIv1p/9AIWIv3f6MOZ52+m3UINcI9aOslr
-        +Xs0yIxgzFutl9R/h96f8P/jtX9t9mTh/tXGL7fij8eCh+7jpW9nfwDvbQVhKAMAAA==
+        H4sIAAAAAAAAA72UUW/aMBDH3/kUlt9D4sTQBhEqKjqt2qohQrdH5MaXxBJxIscwuk+/S0IlWJkY
+        FVpekpx997/7/6Qb3+2KNdmCqVWpI8r6HiWgk1IqnUX0efnJuaWktkJLsS41RPQVano36Y2f5jNS
+        gFRibqAGbYXFArONad8RnS/ZoO8FPKakUPp+k6ZglqqA9qQ/8Dw8qEyZqjXUEd0YPSoqyEZS1Plo
+        Hx+pukxTp9SOhAIbGPkeY5TY1wqr1I1gQgl2r98VqJMcMzCwz5n0CD7jORhVSiJPNNndaG9Npai6
+        aWKwpIaswOmma5Xp5iOi1mwALdm8nD+KrTC2/qFsHk/naO6BTCu1gOrAPPKCQ/5U0uYR9bk/vBly
+        SpAEJDig2CaszyX3WEpJakQBC2HRhwB55aCyHOX5Lf4oGdHvj7OHbw5rrC9g2fq1VRJKt6h4S9PY
+        g6bIXrNJP26wbfJe1PC8+DqZTePPK3/FV09j9y32/nbcTd5cIEpL2C2EzlA/ZNwJw4AeBB92Inkz
+        7X2lttqjVlaJtfrVGWS6Wp4TsoC6J9TdA/k/vHaPzf5nEsz3fR7enCIBfyURDI9I+BeSaNLPkWDI
+        4oMkBkiCX40E/18khixEEpeB8PkRiOBCEE36ORBDz1t9+RiIAEH4VwPhXw3E2D1agvv16Xb7E3e/
+        i8t/0vsNuQGTlzsGAAA=
     headers:
       Accept-Ranges: [bytes]
-      Age: ['0']
+      Age: ['134649']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
-      Content-Length: ['448']
+      Content-Length: ['527']
       Content-Type: [application/dash+xml]
-      Date: ['Thu, 14 Sep 2017 04:40:17 GMT']
-      ETag: ['"981cd6c498c30ab3c4f1c743be7e6f60"']
-      Last-Modified: ['Fri, 11 Aug 2017 21:10:49 GMT']
+      Date: ['Sun, 05 Aug 2018 02:49:49 GMT']
+      ETag: ['"6b05a834d953d68f41097cc72865e698"']
+      Last-Modified: ['Fri, 03 Aug 2018 13:25:11 GMT']
       Server: [snooserv]
       Vary: ['Accept-Encoding,Origin']
       Via: [1.1 varnish]
-      X-Cache: [MISS]
-      X-Cache-Hits: ['0']
-      X-Served-By: [cache-ord1720-ORD]
-      X-Timer: ['S1505364018.720304,VS0,VE85']
+      X-Cache: [HIT]
+      X-Cache-Hits: ['7']
+      X-Served-By: [cache-ord1731-ORD]
+      X-Timer: ['S1533437389.444456,VS0,VE0']
     status: {code: 200, message: OK}
 version: 1
