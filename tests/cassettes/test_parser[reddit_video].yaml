@@ -5,7 +5,7 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.11.0]
     method: GET
     uri: https://v.redd.it/zv89llsvexdz/DASHPlaylist.mpd
   response:
@@ -25,12 +25,12 @@ interactions:
         9wMdXhAmV78BYdjQZV8IAAA=
     headers:
       Accept-Ranges: [bytes]
-      Age: ['2943']
+      Age: ['312134']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
       Content-Length: ['644']
       Content-Type: [application/dash+xml]
-      Date: ['Thu, 14 Sep 2017 04:40:17 GMT']
+      Date: ['Sun, 05 Aug 2018 02:49:49 GMT']
       ETag: ['"c8a71f31b45dbcdb30f8c03bc08e444b"']
       Last-Modified: ['Sat, 05 Aug 2017 14:05:39 GMT']
       Server: [snooserv]
@@ -38,7 +38,7 @@ interactions:
       Via: [1.1 varnish]
       X-Cache: [HIT]
       X-Cache-Hits: ['1']
-      X-Served-By: [cache-ord1727-ORD]
-      X-Timer: ['S1505364018.960938,VS0,VE0']
+      X-Served-By: [cache-ord1730-ORD]
+      X-Timer: ['S1533437390.599096,VS0,VE1']
     status: {code: 200, message: OK}
 version: 1

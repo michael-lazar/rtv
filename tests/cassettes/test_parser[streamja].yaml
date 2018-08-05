@@ -123,15 +123,15 @@ interactions:
         tbmKaU7g5qPjbrcn9j5LYve4ywksZtVECQ4dTuDgBAh//MrxZ/si6El1eXHC/uL2v/4/AAAA//8D
         APTiH5SIOwAA
     headers:
-      CF-RAY: [444f0cfb4b7f7e39-DTW]
+      CF-RAY: [4455f406e99b7e15-DTW]
       Connection: [keep-alive]
       Content-Encoding: [gzip]
       Content-Type: [text/html; charset=UTF-8]
-      Date: ['Sat, 04 Aug 2018 06:43:37 GMT']
+      Date: ['Sun, 05 Aug 2018 02:49:55 GMT']
       Expect-CT: ['max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"']
       Server: [cloudflare]
-      Set-Cookie: ['__cfduid=d048baa0a70aa5c52d58247648b0c1e4f1533365016; expires=Sun,
-          04-Aug-19 06:43:36 GMT; path=/; domain=.streamja.com; HttpOnly']
+      Set-Cookie: ['__cfduid=d3ad272d11b17de732f0380eb171a00b61533437395; expires=Mon,
+          05-Aug-19 02:49:55 GMT; path=/; domain=.streamja.com; HttpOnly']
       Strict-Transport-Security: [max-age=15768000]
       Vary: [Accept-Encoding]
     status: {code: 200, message: OK}

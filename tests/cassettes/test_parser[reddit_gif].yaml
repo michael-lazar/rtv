@@ -23,20 +23,20 @@ interactions:
         i8t/0vsNuQGTlzsGAAA=
     headers:
       Accept-Ranges: [bytes]
-      Age: ['133328']
+      Age: ['134649']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
       Content-Length: ['527']
       Content-Type: [application/dash+xml]
-      Date: ['Sun, 05 Aug 2018 02:27:47 GMT']
+      Date: ['Sun, 05 Aug 2018 02:49:49 GMT']
       ETag: ['"6b05a834d953d68f41097cc72865e698"']
       Last-Modified: ['Fri, 03 Aug 2018 13:25:11 GMT']
       Server: [snooserv]
       Vary: ['Accept-Encoding,Origin']
       Via: [1.1 varnish]
       X-Cache: [HIT]
-      X-Cache-Hits: ['34']
-      X-Served-By: [cache-ord1722-ORD]
-      X-Timer: ['S1533436068.928608,VS0,VE0']
+      X-Cache-Hits: ['7']
+      X-Served-By: [cache-ord1731-ORD]
+      X-Timer: ['S1533437389.444456,VS0,VE0']
     status: {code: 200, message: OK}
 version: 1

@@ -5,26 +5,26 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.15.1]
+      User-Agent: [python-requests/2.11.0]
     method: HEAD
     uri: https://i.reddituploads.com/a065472e47a4405da159189ee48bff46?fit=max&h=1536&w=1536&s=5639918a0c696b9bb3ec694dc3cf59ac
   response:
     body: {string: ''}
     headers:
       Accept-Ranges: [bytes]
-      Age: ['9446']
-      Cache-Control: ['public,max-age=1800']
+      Age: ['417315']
+      Cache-Control: ['public,max-age=31536000']
       Connection: [keep-alive]
       Content-Length: ['154399']
       Content-Type: [image/jpeg]
-      Date: ['Thu, 14 Sep 2017 04:40:11 GMT']
-      Last-Modified: ['Wed, 13 Sep 2017 20:49:03 GMT']
+      Date: ['Sun, 05 Aug 2018 02:49:43 GMT']
+      Last-Modified: ['Tue, 31 Jul 2018 6:54:28 GMT']
       Server: [imgix-fe]
       Via: [1.1 varnish]
-      X-Cache: ['HIT, MISS']
-      X-Cache-Hits: ['0']
+      X-Cache: ['HIT, HIT']
+      X-Cache-Hits: ['1']
       X-Content-Type-Options: [nosniff]
-      X-Served-By: ['cache-lax8644-LAX, cache-ord1727-ORD']
-      X-Timer: ['S1505364012.740220,VS0,VE136']
+      X-Served-By: ['cache-lax8644-LAX, cache-mdw17380-MDW']
+      X-Timer: ['S1533437383.388357,VS0,VE3']
     status: {code: 200, message: OK}
 version: 1
