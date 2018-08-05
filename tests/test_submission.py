@@ -263,7 +263,8 @@ def test_submission_vote(submission_page, refresh_token):
             mock.patch('rtv.packages.praw.objects.Submission.downvote') as downvote,     \
             mock.patch('rtv.packages.praw.objects.Submission.clear_vote') as clear_vote:
 
-        data = submission_page.content.get(submission_page.nav.absolute_index)
+        data = submission_page.get_selected_item()
+        data['object'].archived = False
 
         # Upvote
         submission_page.controller.trigger('a')
