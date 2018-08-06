@@ -192,7 +192,7 @@ class SubmissionPage(Page):
 
         # Construct the text that will be displayed in the editor file.
         # The post body will be commented out and added for reference
-        lines = ['#  |' + line for line in body.split('\n')]
+        lines = ['  |' + line for line in body.split('\n')]
         content = '\n'.join(lines)
         comment_info = docs.COMMENT_FILE.format(
             author=data['author'],

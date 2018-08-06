@@ -10,7 +10,8 @@ import six
 import pytest
 
 from rtv.theme import Theme
-from rtv.docs import HELP, COMMENT_EDIT_FILE
+from rtv.docs import (HELP, COMMENT_FILE, COMMENT_EDIT_FILE, TOKEN,
+                      SUBMISSION_FILE, SUBMISSION_EDIT_FILE)
 from rtv.exceptions import TemporaryFileError, BrowserError
 
 try:
@@ -289,21 +290,21 @@ def test_open_editor(terminal, use_ascii):
 
     terminal.config['ascii'] = use_ascii
 
-    comment = COMMENT_EDIT_FILE.format(content='#| This is a comment! ❤')
+    comment = COMMENT_EDIT_FILE.format(id=1, content='Comment 1 ❤')
     data = {'filename': None}
 
     def side_effect(args):
         data['filename'] = args[1]
         with codecs.open(data['filename'], 'r+', 'utf-8') as fp:
             assert fp.read() == comment
-            fp.write('This is an amended comment! ❤')
+            fp.write('Comment 2 ❤')
         return mock.Mock()
 
     with mock.patch('subprocess.Popen', autospec=True) as Popen:
         Popen.side_effect = side_effect
 
         with terminal.open_editor(comment) as reply_text:
-            assert reply_text == 'This is an amended comment! ❤'
+            assert reply_text == 'Comment 1 ❤\nComment 2 ❤'
             assert os.path.isfile(data['filename'])
             assert curses.endwin.called
             assert curses.doupdate.called
@@ -670,3 +671,31 @@ def test_set_theme_no_colors(terminal, stdscr):
 
         terminal.set_theme(Theme(use_color=True))
         assert not terminal.theme.use_color
+
+
+def test_strip_instructions(terminal):
+
+    # These templates only contain instructions, so they should be empty
+    assert terminal.strip_instructions(SUBMISSION_FILE) == ''
+    assert terminal.strip_instructions(COMMENT_FILE) == ''
+
+    # These templates should strip everything but the {content} tag,
+    # which will be replaced with the submission/content to be edited
+    assert terminal.strip_instructions(SUBMISSION_EDIT_FILE) == '{content}'
+    assert terminal.strip_instructions(COMMENT_EDIT_FILE) == '{content}'
+
+    # Comments without the INSTRUCTIONS marker shouldn't be stripped
+    text = '<!-- A normal HTML comment -->'
+    assert terminal.strip_instructions(text) == text
+
+    # Hashes shouldn't be stripped anymore
+    text = '# This is no longer interpreted as a comment!'
+    assert terminal.strip_instructions(text) == text
+
+    # Nested HTML comment tags shouldn't be shown
+    text = '<!--{0} <!-- A nested HTML comment --> {0}-->'.format(TOKEN)
+    assert terminal.strip_instructions(text) == ''
+
+    # Another edge case
+    text = '<!--{0} instructions {0}--><!-- An HTML comment -->'.format(TOKEN)
+    assert terminal.strip_instructions(text) == '<!-- An HTML comment -->'

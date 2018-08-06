@@ -114,37 +114,42 @@ FOOTER_SUBSCRIPTION = """
 [?]Help [q]Quit [h]Return [l]Select
 """
 
-COMMENT_FILE = """
-# Please enter a comment. Lines starting with '#' will be ignored,
-# and an empty message aborts the comment.
-#
-# Replying to {author}'s {type}
-{content}
-"""
+TOKEN = "INSTRUCTIONS"
 
-COMMENT_EDIT_FILE = """{content}
-# Please enter a comment. Lines starting with '#' will be ignored,
-# and an empty message aborts the comment.
-#
-# Editing your comment
-"""
+COMMENT_FILE = """<!--{token}
+Replying to {{author}}'s {{type}}:
+{{content}}
 
-SUBMISSION_FILE = """
-# Please enter your submission. Lines starting with '#' will be ignored,
-# and an empty message aborts the submission.
-#
-# The first line will be interpreted as the title
-# The following lines will be interpreted as the content
-#
-# Posting to {name}
-"""
+Enter your reply below this instruction block,
+an empty message will abort the comment.
+{token}-->
+""".format(token=TOKEN)
 
-SUBMISSION_EDIT_FILE = """{content}
-# Please enter your submission. Lines starting with '#' will be ignored,
-# and an empty message aborts the submission.
-#
-# Editing {name}
-"""
+COMMENT_EDIT_FILE = """<!--{token}
+Editing comment #{{id}}.
+The comment is shown below, update it and save the file.
+{token}-->
+
+{{content}}
+""".format(token=TOKEN)
+
+SUBMISSION_FILE = """<!--{token}
+Submitting a selfpost to {{name}}.
+
+Enter your submission below this instruction block:
+- The first line will be interpreted as the title
+- The following lines will be interpreted as the body
+- An empty message will abort the submission
+{token}-->
+""".format(token=TOKEN)
+
+SUBMISSION_EDIT_FILE = """<!--{token}
+Editing submission #{{id}}.
+The submission is shown below, update it and save the file.
+{token}-->
+
+{{content}}
+""".format(token=TOKEN)
 
 OAUTH_ACCESS_DENIED = """\
         <h1 style="color: red">Access Denied</h1><hr>
