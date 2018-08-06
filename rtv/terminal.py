@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import os
+import re
 import sys
 import time
 import shlex
@@ -21,6 +22,7 @@ import six
 from kitchen.text.display import textual_width_chop
 
 from . import exceptions, mime_parsers, content
+from .docs import TOKEN
 from .theme import Theme, ThemeList
 from .objects import LoadScreen
 
@@ -594,10 +596,11 @@ class Terminal(object):
         """
         Open a file for editing using the system's default editor.
 
-        After the file has been altered, the text will be read back and lines
-        starting with '#' will be stripped. If an error occurs inside of the
-        context manager, the file will be preserved. Otherwise, the file will
-        be deleted when the context manager closes.
+        After the file has been altered, the text will be read back and the
+        HTML comment tag <!--INSRUCTIONS --> will be stripped. If an error
+        occurs inside of the context manager, the file will be preserved so
+        users can recover their data. Otherwise, the file will be deleted when
+        the context manager closes.
 
         Params:
             data (str): If provided, text will be written to the file before
@@ -634,8 +637,8 @@ class Terminal(object):
             self.show_notification('Could not open file with %s' % editor)
 
         with codecs.open(filepath, 'r', 'utf-8') as fp:
-            text = ''.join(line for line in fp if not line.startswith('#'))
-            text = text.rstrip()
+            text = fp.read()
+            text = self.strip_instructions(text)
 
         try:
             yield text
@@ -828,6 +831,19 @@ class Terminal(object):
 
         out = '\n'.join(stack)
         return out
+
+    @staticmethod
+    def strip_instructions(text):
+        """
+        Remove instructional HTML comment tags inserted by RTV.
+
+        We used to use # to annotate comments, but it conflicted with the
+        header tag for markdown, which some people use to format their posts.
+        """
+        # Pattern can span multiple lines, allows dot to match newline chars
+        flags = re.MULTILINE | re.DOTALL
+        pattern = '<!--{token}(.*?){token}-->'.format(token=TOKEN)
+        return re.sub(pattern, '', text, flags=flags).strip()
 
     def clear_screen(self):
         """

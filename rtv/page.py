@@ -264,19 +264,19 @@ class Page(object):
             return
 
         if data['type'] == 'Submission':
-            subreddit = self.reddit.get_subreddit(self.content.name)
             content = data['text']
             info = docs.SUBMISSION_EDIT_FILE.format(
-                content=content, name=subreddit)
+                content=content, id=data['object'].id)
         elif data['type'] == 'Comment':
             content = data['body']
-            info = docs.COMMENT_EDIT_FILE.format(content=content)
+            info = docs.COMMENT_EDIT_FILE.format(
+                content=content, id=data['object'].id)
         else:
             self.term.flash()
             return
 
         with self.term.open_editor(info) as text:
-            if text == content:
+            if not text or text == content:
                 self.term.show_notification('Canceled')
                 return
 
