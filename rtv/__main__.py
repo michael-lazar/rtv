@@ -60,9 +60,11 @@ _logger = logging.getLogger(__name__)
 def main():
     """Main entry point"""
 
-    config, user_agent = initialize()
+    config = initialize()
     if not config:
         return
+
+    user_agent = docs.AGENT.format(version=__version__)
 
     try:
         with curses_session() as stdscr:
@@ -104,9 +106,7 @@ def initialize():
     check_praw_version()
     update_webbrowser_module_default_behavoir()
 
-    user_agent = docs.AGENT.format(version=__version__)
-
-    return config, user_agent
+    return config
 
 
 def squelch_SSL_warnings():
