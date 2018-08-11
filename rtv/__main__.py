@@ -67,7 +67,9 @@ def main():
     try:
         with curses_session() as stdscr:
             term = Terminal(stdscr, config)
-            run(config, user_agent, term)
+            set_terminal_theme(term, config)
+            reddit = get_reddit(term, user_agent)
+            run(config, user_agent, term, reddit)
     except ConfigError as e:
         _logger.exception(e)
         print(e)
@@ -221,9 +223,7 @@ def update_webbrowser_module_default_behavoir():
                         '$BROWSER could be overwritten')
 
 
-def run(config, user_agent, term):
-    set_terminal_theme(term, config)
-    reddit = get_reddit(term, user_agent)
+def run(config, user_agent, term, reddit):
     oauth = authorize_if_possible(reddit, term, config)
 
     page = get_subreddit_page(config, term, reddit, oauth)
