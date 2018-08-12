@@ -1,17 +1,21 @@
 language: python
-dist: trusty
-python:
-  - 2.7
-  - 3.4
-  - 3.5
-  - 3.6
-  - 3.7
-  - nightly
 matrix:
+  fast_finish: true
   allow_failures:
     - python: nightly
+  include:
+    - python: 2.7
+      dist: trusty
+    - python: 3.4
+      dist: trusty
+    - python: 3.5
+      dist: trusty
+    - python: 3.6
+      dist: trusty
     - python: 3.7
-  fast_finish: true
+      dist: xenial
+      sudo: true
+
 before_install:
   - pip install --upgrade pip   
 install:
