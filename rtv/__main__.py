@@ -85,15 +85,11 @@ def main():
         config.keymap.set_bindings(bindings)
 
     if config['copy_config']:
-        copy_default_config()
-        return
+        return copy_default_config()
     if config['copy_mailcap']:
-        copy_default_mailcap()
-        return
-
+        return copy_default_mailcap()
     if config['list_themes']:
-        Theme.print_themes()
-        return
+        return Theme.print_themes()
 
     # Load the browsing history from previous sessions
     config.load_history()
@@ -121,6 +117,7 @@ def main():
         env = [
             ('$DISPLAY', os.getenv('DISPLAY')),
             ('$TERM', os.getenv('TERM')),
+            ('$LANG', os.getenv('LANG')),
             ('$XDG_CONFIG_HOME', os.getenv('XDG_CONFIG_HOME')),
             ('$XDG_DATA_HOME', os.getenv('$XDG_DATA_HOME')),
             ('$RTV_EDITOR', os.getenv('RTV_EDITOR')),
