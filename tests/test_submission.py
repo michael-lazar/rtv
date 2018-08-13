@@ -67,7 +67,7 @@ def test_submission_page_construct(reddit, terminal, config, oauth):
 
     # Footer
     text = ('[?]Help [q]Quit [h]Return [space]Fold/Expand [o]Open [c]Comment '
-            '[a/z]Vote'.encode('utf-8'))
+            '[a/z]Vote [r]Refresh'.encode('utf-8'))
     window.addstr.assert_any_call(0, 0, text)
 
     # Submission
