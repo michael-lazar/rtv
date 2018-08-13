@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.24.0: http://github.com/michael-lazar/rtv/releases/tag/v1.24.0
 .. _1.23.0: http://github.com/michael-lazar/rtv/releases/tag/v1.23.0
 .. _1.22.1: http://github.com/michael-lazar/rtv/releases/tag/v1.22.1
 .. _1.22.0: http://github.com/michael-lazar/rtv/releases/tag/v1.22.0
@@ -35,6 +36,29 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.24.0_ (2018-08-12)
+--------------------
+
+Features
+
+* Python 3.7 is now officially supported.
+* Lines that start with the hash symbol (#) are no longer ignored when
+  composing posts in your editor. This allows # to be used with Reddit's
+  markdown parser to denote headers.
+* Added a new *dark colorblind* theme.
+* Added support for the ``$RTV_PAGER`` environment variable, which can be
+  used to set a unique PAGER for rtv.
+* Added the ability to sort submissions by **guilded**.
+
+Bugfixes
+
+* Fixed a crash when setting the ``$BROWSER`` with python 3.7.
+* Improved the error message when attempting to vote on an archived post.
+* Cleaned up several outdated MIME parsers. Removed the vidme, twitch,
+  oddshot, and imgtc parsers. Fixed the liveleak and reddit video parsers.
+
 
 --------------------
 1.23.0_ (2018-06-24)

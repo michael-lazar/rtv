@@ -11,6 +11,7 @@ Thanks to the following people for their contributions to this project.
 * `Yusuke Sakamoto <https://github.com/yskmt>`_
 * `Johnathan Jenkins <https://github.com/shaggytwodope>`_
 * `tyjak <https://github.com/tyjak>`_
+* `Edridge D'Souza <https://github.com/edridgedsouza>`_
 * `alxk <https://github.com/serain>`_
 * `Josue Ortega <https://github.com/noahfx>`_
 * `mekhami <https://github.com/mekhami>`_
@@ -18,7 +19,7 @@ Thanks to the following people for their contributions to this project.
 * `obosob <https://github.com/obosob>`_
 * `Toby Hughes <https://github.com/tobywhughes>`_
 * `Noah Morrison <https://github.com/noahmorrison>`_
-* `mardiqwop <https://github.com/mardiqwop>`_
+* `Mardigon Toler <https://github.com/mardiqwop>`_
 * `5225225 <https://github.com/5225225>`_
 * `Shawn Hind <https://github.com/shawnhind>`_
 * `Antoine Nguyen <https://github.com/anhtuann>`_
@@ -29,8 +30,7 @@ Thanks to the following people for their contributions to this project.
 * `Lorenz Leitner <https://github.com/LoLei>`_
 * `Reshef Elisha <https://github.com/ReshefElisha>`_
 * `Ryan Reno <https://github.com/rreno>`_
+* `Sam Tebbs <https://github.com/SamTebbs33>`_
 * `Justin Partain <https://github.com/jupart>`_
 * `afloofloo <https://github.com/afloofloo>`_
 * `Caleb Perkins <https://github.com/calebperkins>`_
-* `Charles Saracco <https://github.com/crsaracco>`_
-* `Corey McCandless <https://github.com/cmccandless>`_
