@@ -9,6 +9,7 @@ from collections import OrderedDict
 import pytest
 
 from rtv.submission_page import SubmissionPage
+from rtv.docs import FOOTER_SUBMISSION
 
 try:
     from unittest import mock
@@ -58,17 +59,12 @@ def test_submission_page_construct(reddit, terminal, config, oauth):
     window.addstr.assert_any_call(0, 0, title)
 
     # Banner
-    menu = ('[1]hot         '
-            '[2]top         '
-            '[3]rising         '
-            '[4]new         '
-            '[5]controversial').encode('utf-8')
-    window.addstr.assert_any_call(0, 0, menu)
+    menu = '[1]hot         [2]top         [3]rising         [4]new         [5]controversial'
+    window.addstr.assert_any_call(0, 0, menu.encode('utf-8'))
 
-    # Footer
-    text = ('[?]Help [q]Quit [h]Return [space]Fold/Expand [o]Open [c]Comment '
-            '[a/z]Vote [r]Refresh'.encode('utf-8'))
-    window.addstr.assert_any_call(0, 0, text)
+    # Footer - The text is longer than the default terminal width
+    text = FOOTER_SUBMISSION.strip()[:79]
+    window.addstr.assert_any_call(0, 0, text.encode('utf-8'))
 
     # Submission
     submission_data = page.content.get(-1)
