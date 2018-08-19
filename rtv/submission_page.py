@@ -147,14 +147,14 @@ class SubmissionPage(Page):
 
         data = self.get_selected_item()
         if data['type'] == 'Submission':
-            self.open_submission_or_permalink_or_mentioned_link(data)
+            self.prompt_and_open_link(data)
             self.config.history.add(data['url_full'])
         elif data['type'] == 'Comment' and data['permalink']:
-            self.open_submission_or_permalink_or_mentioned_link(data)
+            self.prompt_and_open_link(data)
         else:
             self.term.flash()
 
-    def open_submission_or_permalink_or_mentioned_link(self, data):
+    def prompt_and_open_link(self, data):
         links = [{'text': 'Permalink', 'href': data['permalink']}]
         if data['html']:
             links += self.get_links_in_html(data['html'])
