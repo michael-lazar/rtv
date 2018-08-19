@@ -159,7 +159,7 @@ class SubmissionPage(Page):
         if data['html']:
             links += self.get_links_in_html(data['html'])
         if len(links) > 1:
-            self.prompt_user_and_open_selected_link(links)
+            self.term.prompt_user_and_open_selected_link(links)
         elif 'url_full' in data and data['url_full']:
             self.term.open_link(data['url_full'])
         else:
@@ -174,20 +174,6 @@ class SubmissionPage(Page):
                 link['href'] = 'https://www.reddit.com' + link['href']
             links.append(link)
         return links
-
-    def prompt_user_and_open_selected_link(self, links):
-        text = 'Open link:\n'
-        for i, link in enumerate(links[:9]):
-            capped_link_text = (link['text'] if len(link['text']) <= 20
-                                else link['text'][:19] + '…')
-            text += '[{}] [{}]({})\n'.format(
-                    i+1, capped_link_text, link['href'])
-        try:
-            choice = int(chr(self.term.show_notification(text)))
-        except ValueError:
-            return
-        if choice <= len(links):
-            self.term.open_link(links[choice - 1]['href'])
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
     def open_pager(self):

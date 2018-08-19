@@ -354,6 +354,20 @@ class Terminal(object):
 
         return ch
 
+    def prompt_user_and_open_selected_link(self, links):
+        text = 'Open link:\n'
+        for i, link in enumerate(links[:9]):
+            capped_link_text = (link['text'] if len(link['text']) <= 20
+                                else link['text'][:19] + '…')
+            text += '[{}] [{}]({})\n'.format(
+                    i+1, capped_link_text, link['href'])
+        try:
+            choice = int(chr(self.show_notification(text)))
+        except ValueError:
+            return
+        if choice <= len(links):
+            self.open_link(links[choice - 1]['href'])
+
     def open_link(self, url):
         """
         Open a media link using the definitions from the user's mailcap file.
