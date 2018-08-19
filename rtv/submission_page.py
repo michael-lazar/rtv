@@ -155,16 +155,15 @@ class SubmissionPage(Page):
             self.term.flash()
 
     def open_submission_or_permalink_or_mentioned_link(self, data):
-        links_in_data = []
+        links = [{'text': 'Permalink', 'href': data['permalink']}]
         if data['html']:
-            links_in_data = self.get_links_in_html(data['html'])
-
-        if links_in_data:
-            self.prompt_user_and_open_selected_link(data, links_in_data)
+            links += self.get_links_in_html(data['html'])
+        if len(links) > 1:
+            self.prompt_user_and_open_selected_link(links)
         elif 'url_full' in data and data['url_full']:
             self.term.open_link(data['url_full'])
         else:
-            self.term.open_browser(data['permalink'])
+            self.term.open_link(data['permalink'])
 
     def get_links_in_html(self, html):
         links = []
@@ -176,19 +175,19 @@ class SubmissionPage(Page):
             links.append(link)
         return links
 
-    def prompt_user_and_open_selected_link(self, data, links):
+    def prompt_user_and_open_selected_link(self, links):
         text = 'Open link:\n'
-        text += ('[1] Permalink to this %s\n' % (data['type'].lower(),))
-        for i, link in enumerate(links[:8]):
-            text += '[%s] [%s](%s)\n' % (i + 2, link['text'], link['href'])
+        for i, link in enumerate(links[:9]):
+            capped_link_text = (link['text'] if len(link['text']) <= 20
+                                else link['text'][:19] + '…')
+            text += '[{}] [{}]({})\n'.format(
+                    i+1, capped_link_text, link['href'])
         try:
             choice = int(chr(self.term.show_notification(text)))
         except ValueError:
             return
-        if choice == 1:
-            self.term.open_browser(data['permalink'])
-        elif choice - 2 < len(links):
-            self.term.open_link(links[choice - 2]['href'])
+        if choice <= len(links):
+            self.term.open_link(links[choice - 1]['href'])
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
     def open_pager(self):
