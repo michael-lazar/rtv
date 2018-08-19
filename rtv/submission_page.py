@@ -156,10 +156,8 @@ class SubmissionPage(Page):
 
     def open_submission_or_permalink_or_mentioned_link(self, data):
         links_in_data = []
-        if 'body_html' in data and data['body_html']:
-            links_in_data = self.get_links_in_html(data['body_html'])
-        elif 'text_html' in data and data['text_html']:
-            links_in_data = self.get_links_in_html(data['text_html'])
+        if data['html']:
+            links_in_data = self.get_links_in_html(data['html'])
 
         if links_in_data:
             self.prompt_user_and_open_selected_link(data, links_in_data)
