@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from bs4 import BeautifulSoup
 import re
 import time
 
@@ -138,17 +139,58 @@ class SubmissionPage(Page):
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):
         """
-        Open the selected item with the web browser
+        Open the selected link
+
+        Prompt user to choose which link to open if additional links
+        are mentioned at the item.
         """
 
         data = self.get_selected_item()
         if data['type'] == 'Submission':
-            self.term.open_link(data['url_full'])
+            self.open_submission_or_permalink_or_mentioned_link(data)
             self.config.history.add(data['url_full'])
         elif data['type'] == 'Comment' and data['permalink']:
-            self.term.open_browser(data['permalink'])
+            self.open_submission_or_permalink_or_mentioned_link(data)
         else:
             self.term.flash()
+
+    def open_submission_or_permalink_or_mentioned_link(self, data):
+        links_in_data = []
+        if 'body_html' in data and data['body_html']:
+            links_in_data = self.get_links_in_html(data['body_html'])
+        elif 'text_html' in data and data['text_html']:
+            links_in_data = self.get_links_in_html(data['text_html'])
+
+        if links_in_data:
+            self.prompt_user_and_open_selected_link(data, links_in_data)
+        elif 'url_full' in data and data['url_full']:
+            self.term.open_link(data['url_full'])
+        else:
+            self.term.open_browser(data['permalink'])
+
+    def get_links_in_html(self, html):
+        links = []
+        soup = BeautifulSoup(html)
+        for link in soup.findAll('a'):
+            link = {'text': link.text, 'href': link.get('href')}
+            if link['href'].startswith('/'):
+                link['href'] = 'https://www.reddit.com' + link['href']
+            links.append(link)
+        return links
+
+    def prompt_user_and_open_selected_link(self, data, links):
+        text = 'Open link:\n'
+        text += ('[1] Permalink to this %s\n' % (data['type'].lower(),))
+        for i, link in enumerate(links[:8]):
+            text += '[%s] [%s](%s)\n' % (i + 2, link['text'], link['href'])
+        try:
+            choice = int(chr(self.term.show_notification(text)))
+        except ValueError:
+            return
+        if choice == 1:
+            self.term.open_browser(data['permalink'])
+        elif choice - 2 < len(links):
+            self.term.open_link(links[choice - 2]['href'])
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
     def open_pager(self):
