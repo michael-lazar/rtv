@@ -354,7 +354,7 @@ class Terminal(object):
 
         return ch
 
-    def prompt_user_and_open_selected_link(self, links):
+    def prompt_user_to_select_link(self, links):
         link_pages = self.get_link_pages(links)
         for link_page in link_pages:
             text = self.get_link_page_text(link_page)
@@ -364,13 +364,12 @@ class Terminal(object):
             try:
                 choice = int(chr(self.show_notification(text)))
             except ValueError:
-                return
+                return None
             if link_page is not link_pages[-1] and choice == 9:
                 continue
             elif choice == 0 or choice > len(link_page):
-                return
-            self.open_link(link_page[choice - 1]['href'])
-            return
+                return None
+            return link_page[choice - 1]['href']
 
     def get_link_pages(self, links):
         link_pages = []

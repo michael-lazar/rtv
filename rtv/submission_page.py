@@ -147,8 +147,9 @@ class SubmissionPage(Page):
 
         data = self.get_selected_item()
         if data['type'] == 'Submission':
-            self.prompt_and_open_link(data)
-            self.config.history.add(data['url_full'])
+            opened_link = self.prompt_and_open_link(data)
+            if opened_link is not None:
+                self.config.history.add(opened_link)
         elif data['type'] == 'Comment' and data['permalink']:
             self.prompt_and_open_link(data)
         else:
@@ -159,11 +160,14 @@ class SubmissionPage(Page):
         if data['html']:
             links += self.get_links_in_html(data['html'])
         if len(links) > 1:
-            self.term.prompt_user_and_open_selected_link(links)
+            link = self.term.prompt_user_to_select_link(links)
         elif 'url_full' in data and data['url_full']:
-            self.term.open_link(data['url_full'])
+            link = data['url_full']
         else:
-            self.term.open_link(data['permalink'])
+            link = data['permalink']
+        if link is not None:
+            self.term.open_link(link)
+        return link
 
     def get_links_in_html(self, html):
         links = []
