@@ -443,12 +443,14 @@ class SubredditContent(Content):
     """
 
     def __init__(self, name, submissions, loader, order=None,
-                 max_title_rows=4, query=None, filter_nsfw=False):
+                 max_title_rows=4, max_text_rows=6, query=None,
+                 filter_nsfw=False):
 
         self.name = name
         self.order = order
         self.query = query
         self.max_title_rows = max_title_rows
+        self.max_text_rows = max_text_rows
         self.filter_nsfw = filter_nsfw
         self._loader = loader
         self._submissions = submissions
@@ -704,7 +706,14 @@ class SubredditContent(Content):
         if len(data['split_title']) > self.max_title_rows:
             data['split_title'] = data['split_title'][:self.max_title_rows-1]
             data['split_title'].append('(Not enough space to display)')
-        data['n_rows'] = len(data['split_title']) + 3
+        data['split_text'] = self.wrap_text(data['text'], width=n_cols)
+        data['split_text'] = [_ for _ in data['split_text'] if _]
+        if self.max_text_rows <= 0:
+            data['split_text'] = []
+        elif len(data['split_text']) > self.max_text_rows:
+            data['split_text'] = data['split_text'][:self.max_text_rows-1]
+            data['split_text'].append('(Not enough space to display)')
+        data['n_rows'] = len(data['split_title'] + data['split_text']) + 3
         data['h_offset'] = 0
 
         return data
