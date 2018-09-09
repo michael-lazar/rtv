@@ -403,6 +403,8 @@ class SubredditPage(Page):
                 self.term.add_space(win)
                 self.term.add_line(win, '{flair}'.format(**data), attr=attr)
 
+            self._draw_user_tag(win, data)
+
         attr = self.term.attr('CursorBlock')
         for y in range(n_rows):
             self.term.addch(win, y, 0, str(' '), attr)

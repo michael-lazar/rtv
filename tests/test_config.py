@@ -251,3 +251,30 @@ def test_config_history():
         config.delete_history()
         assert len(config.history) == 0
         assert not os.path.exists(fp.name)
+
+
+def test_config_resbackup():
+    "Ensure that the resbackup data can be loaded and saved"
+
+    # Should still be able to load if the file doesn't exist
+    config = Config(resbackup_file='/fake_path/fake_file')
+    config.load_res()
+    assert len(config.res_data) == 0
+
+    with NamedTemporaryFile(delete=False) as fp:
+        config = Config(resbackup_file=fp.name, history_size=3)
+
+        config.res_data['tag.#testuser'] = {'color': 'red',
+                                            'ignored': False,
+                                            'link': 'https://reddit.com',
+                                            'text': 'very funny person',
+                                            'votesDown': 2,
+                                            'votesUp': 15}
+        assert len(config.res_data) == 1
+
+        # should save last modified time
+        config.save_res()
+        config.load_res()
+        assert len(config.res_data) == 2
+        assert 'tag.#testuser' in config.res_data
+        assert 'backup.lastModified.file' in config.res_data
