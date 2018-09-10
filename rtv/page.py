@@ -391,7 +391,12 @@ class Page(object):
         sub_name = sub_name.replace('/r/front', 'Front Page')
 
         parts = sub_name.split('/')
-        if parts[1] == 'u':
+        if len(parts) == 1:
+            pass
+        elif '/m/' in sub_name:
+            _, _, user, _, multi = parts
+            sub_name = '{} curated by {}'.format(multi, user)
+        elif parts[1] == 'u':
             noun = 'My' if parts[2] == 'me' else parts[2] + "'s"
             user_room = {3: 'overview', 4: parts[-1]}[len(parts)].capitalize()
             sub_name = "{} {}".format(noun, user_room)
