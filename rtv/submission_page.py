@@ -4,9 +4,12 @@ from __future__ import unicode_literals
 import re
 import time
 
+import six
+
 from . import docs
 from .content import SubmissionContent, SubredditContent
 from .page import Page, PageController, logged_in
+from .packages import praw
 from .objects import Navigator, Command
 from .exceptions import TemporaryFileError
 
@@ -284,6 +287,39 @@ class SubmissionPage(Page):
             self.term.flash()
 
         self.clear_input_queue()
+
+    @SubmissionController.register(Command('PROMPT_ACTION'))
+    def prompt_action(self):
+        choices = {
+                'f': 'friend',
+                'v': 'view_user',
+                 }
+        data = self.get_selected_item()
+        message = docs.SUBMISSION_ACTION_MENU.format(**data).strip().splitlines()
+        ch = self.term.show_notification(message)
+        ch = six.unichr(ch)
+        action = choices.get(ch)
+        if action == 'friend':
+            obj = getattr(data['object'], 'author')
+            if isinstance(obj, praw.objects.Redditor):
+                obj.friend(_unfriend=obj.refresh().is_friend)
+                msg = '{1} is {0}your friend'.format(
+                        'no longer ' if obj.is_friend else '', obj.name)
+                        # logic inverted to avoid addtional refresh
+                self.term.show_notification(msg)
+                self.reload_page()
+        elif action == 'view_user':
+            name = data.get('author')
+            if name and name != '[deleted]':
+                name = '/u/' + str(name)
+                with self.term.loader('Loading page'):
+                    content = SubredditContent.from_name(
+                        self.reddit, name, self.term.loader)
+                if not self.term.loader.exception:
+                    self.selected_subreddit = content
+                    self.active = False
+        else:
+            self.term.show_notification('Invalid option')
 
     def _draw_item(self, win, data, inverted):
 

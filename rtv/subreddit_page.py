@@ -4,8 +4,11 @@ from __future__ import unicode_literals
 import re
 import time
 
+import six
+
 from . import docs
 from .content import SubredditContent
+from .packages import praw
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Command
 from .submission_page import SubmissionPage
@@ -314,6 +317,48 @@ class SubredditPage(Page):
             with self.term.loader('Hiding'):
                 data['object'].hide()
                 data['hidden'] = True
+
+    @SubredditController.register(Command('PROMPT_ACTION'))
+    def prompt_action(self):
+        choices = {
+                'o': 'open_permalink',
+                's': 'subscribe',
+                'f': 'friend',
+                'v': 'view_user',
+                'V': 'view_subreddit',
+                 }
+        data = self.get_selected_item()
+        message = docs.SUBREDDIT_ACTION_MENU.format(**data).strip().splitlines()
+        ch = self.term.show_notification(message)
+        ch = six.unichr(ch)
+        action = choices.get(ch)
+        if action == 'subscribe':
+            obj = data['object'].subreddit
+            self.reddit.subscribe(obj, obj.refresh().user_is_subscriber)
+            msg = 'You are {}subscribed to {}'.format(
+                    'no longer ' if obj.user_is_subscriber else '', obj.display_name)
+                    # logic inverted to avoid addtional refresh
+            self.term.show_notification(msg)
+            self.reload_page()
+        elif action == 'friend':
+            obj = getattr(data['object'], 'author')
+            if isinstance(obj, praw.objects.Redditor):
+                obj.friend(_unfriend=obj.refresh().is_friend)
+                msg = '{1} is {0}your friend'.format(
+                        'no longer ' if obj.is_friend else '', obj.name)
+                        # logic inverted to avoid addtional refresh
+                self.term.show_notification(msg)
+                self.reload_page()
+        elif action == 'view_user':
+            name = data.get('author')
+            if name and name != '[deleted]':
+                self.refresh_content(name='/u/' + str(name))
+        elif action == 'view_subreddit':
+            self.refresh_content(name='/r/' + str(data['object'].subreddit))
+        elif action == 'open_permalink':
+            self.term.open_link(data['permalink'])
+        else:
+            self.term.show_notification('Invalid option')
 
     def _draw_item(self, win, data, inverted):
 

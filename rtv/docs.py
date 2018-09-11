@@ -184,3 +184,23 @@ Links from:
   [5] Past year
   [6] All time
 """
+
+SUBREDDIT_ACTION_MENU = """
+Available actions:
+  [o] open permalink in browser
+  [s] (un)subscribe from {subreddit}
+  [f] (un)friend {author}
+  [v] view {author} user page
+  [V] view {subreddit}
+"""
+
+SUBSCRIPTION_ACTION_MENU = """
+Available actions:
+  [d] delete {name}
+"""
+
+SUBMISSION_ACTION_MENU = """
+Available actions:
+  [f] (un)friend {author}
+  [v] view {author} user page
+"""
