@@ -173,7 +173,6 @@ class Content(object):
             data['level'] = None
             data['title'] = '[Comment] {0}'.format(comment.link_title)
             data['body'] = comment.body
-            #data['body'] = str(list(comment.__dict__.keys())[20:])
             data['comments'] = None
             data['url_full'] = comment._fast_permalink
             data['url'] = comment._fast_permalink
@@ -711,11 +710,6 @@ class SubredditContent(Content):
             data['split_text'] = [_ for _ in data['split_text'] if _]
         else:
             data['split_text'] = []
-        #if self.max_text_rows <= 0:
-        #    data['split_text'] = []
-        #elif len(data['split_text']) > self.max_text_rows:
-        #    data['split_text'] = data['split_text'][:self.max_text_rows-1]
-        #    data['split_text'].append('(Not enough space to display)')
         data['n_rows'] = len(data['split_title'] + data['split_text']) + 3
         data['h_offset'] = 0
 
