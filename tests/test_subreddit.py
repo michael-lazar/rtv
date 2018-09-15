@@ -422,17 +422,26 @@ def test_subreddit_open_multireddits(subreddit_page, refresh_token):
         assert loop.called
 
 
-def test_subreddit_saved(subreddit_page, refresh_token):
+def test_subreddit_private_user_pages(subreddit_page, refresh_token):
 
     # Log in
     subreddit_page.config.refresh_token = refresh_token
     subreddit_page.oauth.authorize()
 
-    subreddit_page.refresh_content(name='/u/saved')
+    subreddit_page.refresh_content(name='/u/me/saved')
+    subreddit_page.draw()
+
+    subreddit_page.refresh_content(name='/u/me/hidden')
+    subreddit_page.draw()
+
+    subreddit_page.refresh_content(name='/u/me/upvoted')
+    subreddit_page.draw()
+
+    subreddit_page.refresh_content(name='/u/me/downvoted')
     subreddit_page.draw()
 
 
-def test_subreddit_user_overview(subreddit_page, refresh_token):
+def test_subreddit_user_pages(subreddit_page, refresh_token):
 
     # Log in
     subreddit_page.config.refresh_token = refresh_token
@@ -441,8 +450,20 @@ def test_subreddit_user_overview(subreddit_page, refresh_token):
     # Pick a user that has a lot of recent comments, so we can make sure that
     # SavedComment objects have all of the properties necessary to be drawn
     # on the submission page.
+
+    # Should default to the overview page
     subreddit_page.refresh_content(name='/u/spez')
     subreddit_page.draw()
+
+    subreddit_page.refresh_content(name='/u/spez/overview')
+    subreddit_page.draw()
+
+    subreddit_page.refresh_content(name='/u/spez/submitted')
+    subreddit_page.draw()
+
+    subreddit_page.refresh_content(name='/u/spez/comments')
+    subreddit_page.draw()
+
 
 
 def test_subreddit_draw_header(subreddit_page, refresh_token, terminal):
@@ -465,23 +486,36 @@ def test_subreddit_draw_header(subreddit_page, refresh_token, terminal):
     # /u/me alias should be renamed in the header
     subreddit_page.refresh_content(name='/u/me')
     subreddit_page.draw()
-    text = 'My Submissions'.encode('utf-8')
+    text = 'My Overview'.encode('utf-8')
     terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
 
     subreddit_page.refresh_content(name='/u/me/new')
     subreddit_page.draw()
-    text = 'My Submissions'.encode('utf-8')
+    text = 'My Overview'.encode('utf-8')
     terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
 
     # /u/saved alias should be renamed in the header
-    subreddit_page.refresh_content(name='/u/saved')
+    subreddit_page.refresh_content(name='/u/me/saved')
     subreddit_page.draw()
-    text = 'My Saved Submissions'.encode('utf-8')
+    text = 'My Saved'.encode('utf-8')
     terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
 
-    subreddit_page.refresh_content(name='/u/saved/new')
+    # /u/upvoted alias should be renamed in the header
+    subreddit_page.refresh_content(name='/u/me/upvoted')
     subreddit_page.draw()
-    text = 'My Saved Submissions'.encode('utf-8')
+    text = 'My Upvoted'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    # /u/downvoted alias should be renamed in the header
+    subreddit_page.refresh_content(name='/u/me/downvoted')
+    subreddit_page.draw()
+    text = 'My Downvoted'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
+
+    # /u/hidden alias should be renamed in the header
+    subreddit_page.refresh_content(name='/u/me/hidden')
+    subreddit_page.draw()
+    text = 'My Hidden'.encode('utf-8')
     terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
 
 
