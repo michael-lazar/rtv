@@ -103,7 +103,7 @@ def draw_screen(stdscr, reddit, config, theme, oauth):
     # Tweak the data in order to demonstrate the full range of settings
     data = page.content.get(-1)
     data['object'].link_flair_text = 'flair'
-    data['object'].guilded = 1
+    data['object'].gilded = 1
     data['object'].over_18 = True
     data['object'].saved = True
     data.update(page.content.strip_praw_submission(data['object']))
@@ -117,7 +117,7 @@ def draw_screen(stdscr, reddit, config, theme, oauth):
     data['object'].saved = True
     data['object'].likes = False
     data['object'].score_hidden = True
-    data['object'].guilded = 1
+    data['object'].gilded = 1
     data.update(page.content.strip_praw_comment(data['object']))
     data = page.content.get(2)
     data['object'].author.name = 'kafoozalum'

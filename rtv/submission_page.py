@@ -345,7 +345,9 @@ class SubmissionPage(Page):
             if data['gold']:
                 attr = self.term.attr('Gold')
                 self.term.add_space(win)
-                self.term.add_line(win, self.term.guilded, attr=attr)
+                count = 'x{}'.format(data['gold']) if data['gold'] > 1 else ''
+                text = self.term.guilded + count
+                self.term.add_line(win, text, attr=attr)
 
             if data['stickied']:
                 attr = self.term.attr('Stickied')
@@ -446,7 +448,9 @@ class SubmissionPage(Page):
         if data['gold']:
             attr = self.term.attr('Gold')
             self.term.add_space(win)
-            self.term.add_line(win, self.term.guilded, attr=attr)
+            count = 'x{}'.format(data['gold']) if data['gold'] > 1 else ''
+            text = self.term.guilded + count
+            self.term.add_line(win, text, attr=attr)
 
         if data['nsfw']:
             attr = self.term.attr('NSFW')

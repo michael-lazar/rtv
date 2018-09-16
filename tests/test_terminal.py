@@ -25,7 +25,7 @@ def test_terminal_properties(terminal, config):
     assert isinstance(terminal.up_arrow, six.text_type)
     assert isinstance(terminal.down_arrow, six.text_type)
     assert isinstance(terminal.neutral_arrow, six.text_type)
-    assert isinstance(terminal.guilded, six.text_type)
+    assert isinstance(terminal.gilded, six.text_type)
 
     terminal._display = None
     with mock.patch('rtv.terminal.sys') as sys, \
