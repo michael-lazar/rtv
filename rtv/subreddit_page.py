@@ -383,7 +383,7 @@ class SubredditPage(Page):
                 attr = self.term.attr('Gold')
                 self.term.add_space(win)
                 count = 'x{}'.format(data['gold']) if data['gold'] > 1 else ''
-                text = self.term.guilded + count
+                text = self.term.gilded + count
                 self.term.add_line(win, text, attr=attr)
 
             if data['nsfw']:
