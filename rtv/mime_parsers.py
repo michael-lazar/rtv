@@ -98,7 +98,7 @@ class VideoTagMIMEParser(BaseMIMEParser):
 class GfycatMIMEParser(BaseMIMEParser):
     """
     Gfycat provides a primitive json api to generate image links. URLs can be
-    downloaded as either gif, webm, or mjpg. Webm was selected because it's
+    downloaded as either gif, mp4, webm, or mjpg. Mp4 was selected because it's
     fast and works with VLC.
 
         https://gfycat.com/api
@@ -113,8 +113,8 @@ class GfycatMIMEParser(BaseMIMEParser):
         parts = url.replace('gifs/detail/', '').split('/')
         api_url = '/'.join(parts[:-1] + ['cajax', 'get'] + parts[-1:])
         resp = requests.get(api_url)
-        image_url = resp.json()['gfyItem']['webmUrl']
-        return image_url, 'video/webm'
+        image_url = resp.json()['gfyItem']['mp4mUrl']
+        return image_url, 'video/mp4'
 
 
 class YoutubeMIMEParser(BaseMIMEParser):
