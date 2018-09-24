@@ -82,7 +82,7 @@ class Terminal(object):
         return 'o' if self.config['ascii'] else '•'
 
     @property
-    def guilded(self):
+    def gilded(self):
         return '*' if self.config['ascii'] else '✪'
 
     @property

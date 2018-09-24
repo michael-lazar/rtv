@@ -40,14 +40,14 @@ def test_submission_page_construct(reddit, terminal, config, oauth):
 
     # Set some special flags to make sure that we can draw them
     submission_data = page.content.get(-1)
-    submission_data['gold'] = True
+    submission_data['gold'] = 1
     submission_data['stickied'] = True
     submission_data['saved'] = True
     submission_data['flair'] = 'flair'
 
     # Set some special flags to make sure that we can draw them
     comment_data = page.content.get(0)
-    comment_data['gold'] = True
+    comment_data['gold'] = 3
     comment_data['stickied'] = True
     comment_data['saved'] = True
     comment_data['flair'] = 'flair'

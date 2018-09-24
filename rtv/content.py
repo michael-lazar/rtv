@@ -155,7 +155,7 @@ class Content(object):
             data['is_author'] = (name == sub_name)
             data['flair'] = flair
             data['likes'] = comment.likes
-            data['gold'] = comment.gilded > 0
+            data['gold'] = comment.gilded
             data['permalink'] = permalink
             data['stickied'] = stickied
             data['hidden'] = False
@@ -185,7 +185,7 @@ class Content(object):
             data['created'] = cls.humanize_timestamp(comment.created_utc)
             data['saved'] = comment.saved
             data['stickied'] = stickied
-            data['gold'] = comment.gilded > 0
+            data['gold'] = comment.gilded
             data['author'] = author
             data['flair'] = flair
             data['hidden'] = False
@@ -227,7 +227,7 @@ class Content(object):
         data['flair'] = '[{0}]'.format(flair.strip(' []')) if flair else ''
         data['url_full'] = sub.url
         data['likes'] = sub.likes
-        data['gold'] = sub.gilded > 0
+        data['gold'] = sub.gilded
         data['nsfw'] = sub.over_18
         data['stickied'] = sub.stickied
         data['hidden'] = sub.hidden
