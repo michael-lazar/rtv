@@ -113,7 +113,7 @@ class GfycatMIMEParser(BaseMIMEParser):
         parts = url.replace('gifs/detail/', '').split('/')
         api_url = '/'.join(parts[:-1] + ['cajax', 'get'] + parts[-1:])
         resp = requests.get(api_url)
-        image_url = resp.json()['gfyItem']['mp4mUrl']
+        image_url = resp.json()['gfyItem']['mp4Url']
         return image_url, 'video/mp4'
 
 
