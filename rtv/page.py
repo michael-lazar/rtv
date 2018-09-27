@@ -263,12 +263,11 @@ class Page(object):
             self.term.flash()
             return
 
+        content = data.get('body')
         if data['type'] == 'Submission':
-            content = data['text']
             info = docs.SUBMISSION_EDIT_FILE.format(
                 content=content, id=data['object'].id)
         elif data['type'] == 'Comment':
-            content = data['body']
             info = docs.COMMENT_EDIT_FILE.format(
                 content=content, id=data['object'].id)
         else:

@@ -341,7 +341,13 @@ class SubredditPage(Page):
         if row in valid_rows:
             self.term.add_line(win, '{url}'.format(**data), row, 1, attr)
 
-        row = n_title + offset + 1
+        n_text = len(data['split_text'])
+        attr = self.term.attr('SubmissionText')
+        for row, text in enumerate(data['split_text'], start=n_title+offset+1):
+            if row in valid_rows:
+                self.term.add_line(win, text, row, 1, attr)
+
+        row = n_title + n_text + offset + 1
         if row in valid_rows:
 
             attr = self.term.attr('Score')
@@ -391,7 +397,7 @@ class SubredditPage(Page):
                 self.term.add_space(win)
                 self.term.add_line(win, 'NSFW', attr=attr)
 
-        row = n_title + offset + 2
+        row = n_title + n_text + offset + 2
         if row in valid_rows:
             attr = self.term.attr('SubmissionAuthor')
             self.term.add_line(win, '{author}'.format(**data), row, 1, attr)

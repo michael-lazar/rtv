@@ -171,7 +171,8 @@ class Content(object):
 
             data['type'] = 'SavedComment'
             data['level'] = None
-            data['title'] = '[Comment] {0}'.format(comment.body)
+            data['title'] = '[Comment] {0}'.format(comment.link_title)
+            data['body'] = comment.body
             data['comments'] = None
             data['url_full'] = comment._fast_permalink
             data['url'] = comment._fast_permalink
@@ -216,7 +217,7 @@ class Content(object):
         data['object'] = sub
         data['type'] = 'Submission'
         data['title'] = sub.title
-        data['text'] = sub.selftext
+        data['body'] = sub.selftext
         data['created'] = cls.humanize_timestamp(sub.created_utc)
         data['created_long'] = cls.humanize_timestamp(sub.created_utc, True)
         data['comments'] = '{0} comments'.format(sub.num_comments)
@@ -367,7 +368,7 @@ class SubmissionContent(Content):
         elif index == -1:
             data = self._submission_data
             data['split_title'] = self.wrap_text(data['title'], width=n_cols-2)
-            data['split_text'] = self.wrap_text(data['text'], width=n_cols-2)
+            data['split_text'] = self.wrap_text(data['body'], width=n_cols-2)
             data['n_rows'] = len(data['split_title'] + data['split_text']) + 5
             data['h_offset'] = 0
 
@@ -443,12 +444,12 @@ class SubredditContent(Content):
     """
 
     def __init__(self, name, submissions, loader, order=None,
-                 max_title_rows=4, query=None, filter_nsfw=False):
+                 selftext_preview=True, query=None, filter_nsfw=False):
 
         self.name = name
         self.order = order
         self.query = query
-        self.max_title_rows = max_title_rows
+        self.selftext_preview = selftext_preview
         self.filter_nsfw = filter_nsfw
         self._loader = loader
         self._submissions = submissions
@@ -467,7 +468,8 @@ class SubredditContent(Content):
             raise exceptions.NoSubmissionsError(full_name)
 
     @classmethod
-    def from_name(cls, reddit, name, loader, order=None, query=None):
+    def from_name(cls, reddit, name, loader, order=None, query=None,
+                  selftext_preview=False):
         """
         Params:
             reddit (praw.Reddit): Instance of the reddit api.
@@ -643,8 +645,10 @@ class SubredditContent(Content):
         filter_nsfw = (reddit.user and reddit.user.over_18 is False)
 
         # We made it!
+        selftext_preview = True if resource_root == 'u' else selftext_preview
         return cls(display_name, submissions, loader, order=display_order,
-                   query=query, filter_nsfw=filter_nsfw)
+                   query=query, filter_nsfw=filter_nsfw,
+                   selftext_preview=selftext_preview)
 
     @property
     def range(self):
@@ -701,10 +705,12 @@ class SubredditContent(Content):
         # Modifies the original dict, faster than copying
         data = self._submission_data[index]
         data['split_title'] = self.wrap_text(data['title'], width=n_cols)
-        if len(data['split_title']) > self.max_title_rows:
-            data['split_title'] = data['split_title'][:self.max_title_rows-1]
-            data['split_title'].append('(Not enough space to display)')
-        data['n_rows'] = len(data['split_title']) + 3
+        if self.selftext_preview:
+            data['split_text'] = self.wrap_text(data['body'], width=n_cols)
+            data['split_text'] = [_ for _ in data['split_text'] if _]
+        else:
+            data['split_text'] = []
+        data['n_rows'] = len(data['split_title'] + data['split_text']) + 3
         data['h_offset'] = 0
 
         return data

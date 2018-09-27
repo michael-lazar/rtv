@@ -159,10 +159,7 @@ class SubmissionPage(Page):
         n_rows, n_cols = self.term.stdscr.getmaxyx()
 
         data = self.get_selected_item()
-        if data['type'] == 'Submission':
-            text = '\n\n'.join((data['permalink'], data['text']))
-            self.term.open_pager(text, wrap=n_cols)
-        elif data['type'] == 'Comment':
+        if data['type'] in ['Submission', 'Comment']:
             text = '\n\n'.join((data['permalink'], data['body']))
             self.term.open_pager(text, wrap=n_cols)
         else:
@@ -181,7 +178,7 @@ class SubmissionPage(Page):
 
         data = self.get_selected_item()
         if data['type'] == 'Submission':
-            body = data['text']
+            body = data['body']
             reply = data['object'].add_comment
         elif data['type'] == 'Comment':
             body = data['body']
@@ -233,7 +230,7 @@ class SubmissionPage(Page):
         """
 
         data = self.get_selected_item()
-        comment = data.get('body') or data.get('text') or data.get('url_full')
+        comment = data.get('body') or data.get('url_full')
         if comment:
             self.term.open_urlview(comment)
         else:
