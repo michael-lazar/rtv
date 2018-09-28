@@ -353,7 +353,8 @@ class SubredditPage(Page):
             self.term.add_space(win)
 
             attr = self.term.attr('Created')
-            self.term.add_line(win, '{created}'.format(**data), attr=attr)
+            self.term.add_line(win, '{created}{edited}'.format(**data),
+                               attr=attr)
 
             if data['comments'] is not None:
                 attr = self.term.attr('Separator')

@@ -160,6 +160,7 @@ class Content(object):
             data['stickied'] = stickied
             data['hidden'] = False
             data['saved'] = comment.saved
+            data['edited'] = '*' if comment.edited else ''
         else:
             # Saved comments don't have a nested level and are missing a couple
             # of fields like ``submission``. As a result, we can only load a
@@ -189,6 +190,7 @@ class Content(object):
             data['author'] = author
             data['flair'] = flair
             data['hidden'] = False
+            data['edited'] = '*' if comment.edited else ''
 
         return data
 
@@ -234,6 +236,7 @@ class Content(object):
         data['xpost_subreddit'] = None
         data['index'] = None  # This is filled in later by the method caller
         data['saved'] = sub.saved
+        data['edited'] = '*' if sub.edited else ''
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:
             data['url'] = 'self.{0}'.format(data['subreddit'])

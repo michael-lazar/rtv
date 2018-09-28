@@ -340,7 +340,8 @@ class SubmissionPage(Page):
 
             attr = self.term.attr('Created')
             self.term.add_space(win)
-            self.term.add_line(win, '{created}'.format(**data), attr=attr)
+            self.term.add_line(win, '{created}{edited}'.format(**data),
+                               attr=attr)
 
             if data['gold']:
                 attr = self.term.attr('Gold')
@@ -411,7 +412,8 @@ class SubmissionPage(Page):
 
         attr = self.term.attr('Created')
         self.term.add_space(win)
-        self.term.add_line(win, '{created_long}'.format(**data), attr=attr)
+        self.term.add_line(win, '{created_long}{edited}'.format(**data),
+                           attr=attr)
 
         row = len(data['split_title']) + 2
         if data['url_full'] in self.config.history:
