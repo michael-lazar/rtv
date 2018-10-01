@@ -137,7 +137,7 @@ class OAuthHelper(object):
             if '.compact' not in self.reddit.config.API_PATHS['authorize']:
                 self.reddit.config.API_PATHS['authorize'] += '.compact'
 
-    def authorize(self):
+    def authorize(self, autologin=False):
 
         self.params.update(state=None, code=None, error=None)
 
@@ -163,6 +163,14 @@ class OAuthHelper(object):
                     raise InvalidRefreshToken(
                         '       Invalid user credentials!\n'
                         'The cached refresh token has been removed')
+
+                else:
+                    if not autologin:
+                        # Only show the welcome message if explicitly logging
+                        # in, not when RTV first launches.
+                        message = 'Welcome {}!'.format(self.reddit.user.name)
+                        self.term.show_notification(message)
+
             return
 
         state = uuid.uuid4().hex
