@@ -202,7 +202,7 @@ def main():
 
             # Authorize on launch if the refresh token is present
             oauth = OAuthHelper(reddit, term, config)
-            if config.refresh_token:
+            if config['autologin'] and config.refresh_token:
                 oauth.authorize()
 
             page = None
