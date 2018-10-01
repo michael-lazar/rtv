@@ -148,6 +148,7 @@ class Content(object):
             data['type'] = 'Comment'
             data['level'] = comment.nested_level
             data['body'] = comment.body
+            data['html'] = comment.body_html
             data['created'] = cls.humanize_timestamp(comment.created_utc)
             data['score'] = '{0} pts'.format(
                 '-' if comment.score_hidden else comment.score)
@@ -217,6 +218,7 @@ class Content(object):
         data['type'] = 'Submission'
         data['title'] = sub.title
         data['text'] = sub.selftext
+        data['html'] = sub.selftext_html
         data['created'] = cls.humanize_timestamp(sub.created_utc)
         data['created_long'] = cls.humanize_timestamp(sub.created_utc, True)
         data['comments'] = '{0} comments'.format(sub.num_comments)

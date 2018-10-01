@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from bs4 import BeautifulSoup
 import re
 import time
 
@@ -138,17 +139,45 @@ class SubmissionPage(Page):
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):
         """
-        Open the selected item with the web browser
+        Open the selected link
+
+        Prompt user to choose which link to open if additional links
+        are mentioned at the item.
         """
 
         data = self.get_selected_item()
         if data['type'] == 'Submission':
-            self.term.open_link(data['url_full'])
-            self.config.history.add(data['url_full'])
+            opened_link = self.prompt_and_open_link(data)
+            if opened_link is not None:
+                self.config.history.add(opened_link)
         elif data['type'] == 'Comment' and data['permalink']:
-            self.term.open_browser(data['permalink'])
+            self.prompt_and_open_link(data)
         else:
             self.term.flash()
+
+    def prompt_and_open_link(self, data):
+        links = [{'text': 'Permalink', 'href': data['permalink']}]
+        if data['html']:
+            links += self.get_links_in_html(data['html'])
+        if len(links) > 1:
+            link = self.term.prompt_user_to_select_link(links)
+        elif 'url_full' in data and data['url_full']:
+            link = data['url_full']
+        else:
+            link = data['permalink']
+        if link is not None:
+            self.term.open_link(link)
+        return link
+
+    def get_links_in_html(self, html):
+        links = []
+        soup = BeautifulSoup(html)
+        for link in soup.findAll('a'):
+            link = {'text': link.text, 'href': link.get('href')}
+            if link['href'].startswith('/'):
+                link['href'] = 'https://www.reddit.com' + link['href']
+            links.append(link)
+        return links
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
     def open_pager(self):

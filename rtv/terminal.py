@@ -354,6 +354,46 @@ class Terminal(object):
 
         return ch
 
+    def prompt_user_to_select_link(self, links):
+        link_pages = self.get_link_pages(links)
+        for link_page in link_pages:
+            text = self.get_link_page_text(link_page)
+            if link_page is not link_pages[-1]:
+                text += '[9] next page...'
+
+            try:
+                choice = int(chr(self.show_notification(text)))
+            except ValueError:
+                return None
+            if link_page is not link_pages[-1] and choice == 9:
+                continue
+            elif choice == 0 or choice > len(link_page):
+                return None
+            return link_page[choice - 1]['href']
+
+    def get_link_pages(self, links):
+        link_pages = []
+        i = 0
+        while i < len(links):
+            link_page = []
+            while i < len(links) and len(link_page) < 8:
+                link_page.append(links[i])
+                i += 1
+            if i == len(links) - 1:
+                link_page.append(links[i])
+                i += 1
+            link_pages.append(link_page)
+        return link_pages
+
+    def get_link_page_text(self, link_page):
+        text = 'Open link:\n'
+        for i, link in enumerate(link_page):
+            capped_link_text = (link['text'] if len(link['text']) <= 20
+                                else link['text'][:19] + '…')
+            text += '[{}] [{}]({})\n'.format(
+                    i + 1, capped_link_text, link['href'])
+        return text
+
     def open_link(self, url):
         """
         Open a media link using the definitions from the user's mailcap file.
