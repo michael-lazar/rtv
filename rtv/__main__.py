@@ -203,7 +203,7 @@ def main():
             # Authorize on launch if the refresh token is present
             oauth = OAuthHelper(reddit, term, config)
             if config['autologin'] and config.refresh_token:
-                oauth.authorize()
+                oauth.authorize(autologin=True)
 
             page = None
             name = config['subreddit']

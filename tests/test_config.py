@@ -14,7 +14,7 @@ except ImportError:
 
 
 def test_copy_default_config():
-    "Make sure the default config file was included in the package"
+    """Make sure the default config file was included in the package"""
 
     with NamedTemporaryFile(suffix='.cfg') as fp:
         with mock.patch('rtv.config.six.moves.input', return_value='y'):
@@ -26,7 +26,7 @@ def test_copy_default_config():
 
 
 def test_copy_default_config_cancel():
-    "Pressing ``n`` should cancel the copy"
+    """Pressing ``n`` should cancel the copy"""
 
     with NamedTemporaryFile(suffix='.cfg') as fp:
         with mock.patch('rtv.config.six.moves.input', return_value='n'):
@@ -35,7 +35,7 @@ def test_copy_default_config_cancel():
 
 
 def test_copy_config_interrupt():
-    "Pressing ``Ctrl-C`` should cancel the copy"
+    """Pressing ``Ctrl-C`` should cancel the copy"""
 
     with NamedTemporaryFile(suffix='.cfg') as fp:
         with mock.patch('rtv.config.six.moves.input') as func:
@@ -45,7 +45,7 @@ def test_copy_config_interrupt():
 
 
 def test_copy_default_mailcap():
-    "Make sure the example mailcap file was included in the package"
+    """Make sure the example mailcap file was included in the package"""
 
     with NamedTemporaryFile() as fp:
         with mock.patch('rtv.config.six.moves.input', return_value='y'):
@@ -57,7 +57,7 @@ def test_copy_default_mailcap():
 
 
 def test_config_interface():
-    "Test setting and removing values"
+    """Test setting and removing values"""
 
     config = Config(ascii=True)
     assert config['ascii'] is True
@@ -77,7 +77,7 @@ def test_config_interface():
 
 
 def test_config_get_args():
-    "Ensure that command line arguments are parsed properly"
+    """Ensure that command line arguments are parsed properly"""
 
     args = ['rtv',
             'https://reddit.com/permalink •',
@@ -92,7 +92,8 @@ def test_config_get_args():
             '--enable-media',
             '--theme', 'molokai',
             '--list-themes',
-            '--no-flash']
+            '--no-flash',
+            '--no-autologin']
 
     with mock.patch('sys.argv', ['rtv']):
         config_dict = Config.get_args()
@@ -117,6 +118,7 @@ def test_config_get_args():
         assert config['theme'] == 'molokai'
         assert config['list_themes'] is True
         assert config['flash'] is False
+        assert config['autologin'] is False
 
 
 def test_config_link_deprecated():
@@ -137,7 +139,7 @@ def test_config_link_deprecated():
 
 
 def test_config_from_file():
-    "Ensure that config file arguments are parsed properly"
+    """Ensure that config file arguments are parsed properly"""
 
     args = {
         'ascii': True,
@@ -151,11 +153,14 @@ def test_config_from_file():
         'max_comment_cols': 150,
         'hide_username': True,
         'theme': 'molokai',
-        'flash': True}
+        'flash': True,
+        'autologin': True
+    }
 
     bindings = {
         'REFRESH': 'r, <KEY_F5>',
-        'UPVOTE': ''}
+        'UPVOTE': ''
+    }
 
     with NamedTemporaryFile(suffix='.cfg') as fp:
 
@@ -186,7 +191,7 @@ def test_config_from_file():
 
 
 def test_config_refresh_token():
-    "Ensure that the refresh token can be loaded, saved, and removed"
+    """Ensure that the refresh token can be loaded, saved, and removed"""
 
     with NamedTemporaryFile(delete=False) as fp:
         config = Config(token_file=fp.name)
@@ -201,6 +206,7 @@ def test_config_refresh_token():
         assert config.refresh_token == 'secret_value'
 
         # Discard the token and delete the file
+        config.delete_refresh_token()
         config.delete_refresh_token()
         assert config.refresh_token is None
         assert not os.path.exists(fp.name)
@@ -225,7 +231,7 @@ def test_config_refresh_token():
 
 
 def test_config_history():
-    "Ensure that the history can be loaded and saved"
+    """Ensure that the history can be loaded and saved"""
 
     # Should still be able to load if the file doesn't exist
     config = Config(history_file='/fake_path/fake_file')

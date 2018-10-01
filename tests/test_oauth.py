@@ -89,7 +89,7 @@ def test_oauth_authorize_invalid_token(oauth):
 def test_oauth_authorize_with_refresh_token(oauth, refresh_token):
 
     oauth.config.refresh_token = refresh_token
-    oauth.authorize()
+    oauth.authorize(autologin=True)
     assert oauth.server is None
 
     # We should be able to handle an oauth failure
@@ -101,6 +101,18 @@ def test_oauth_authorize_with_refresh_token(oauth, refresh_token):
     assert isinstance(oauth.term.loader.exception, InvalidRefreshToken)
     assert oauth.server is None
     assert oauth.config.refresh_token is None
+
+
+def test_oauth_authorize_without_autologin(oauth, terminal, refresh_token):
+
+    # The welcome message should be displayed when autologin is set to
+    # false, even if we're using an existing refresh token and not performing
+    # the whole login procedure.
+    oauth.config.refresh_token = refresh_token
+    oauth.authorize(autologin=False)
+
+    text = 'Welcome civilization_phaze_3!'.encode('utf-8')
+    terminal.stdscr.subwin.addstr.assert_any_call(1, 1, text)
 
 
 def test_oauth_clear_data(oauth):
