@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from bs4 import BeautifulSoup
 import re
 import time
 
@@ -139,12 +138,11 @@ class SubmissionPage(Page):
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):
         """
-        Open the selected link
+        Open the link contained in the selected item.
 
-        Prompt user to choose which link to open if additional links
-        are mentioned at the item.
+        If there is more than one link contained in the item, prompt the user
+        to choose which link to open.
         """
-
         data = self.get_selected_item()
         if data['type'] == 'Submission':
             opened_link = self.prompt_and_open_link(data)
@@ -156,28 +154,24 @@ class SubmissionPage(Page):
             self.term.flash()
 
     def prompt_and_open_link(self, data):
-        links = [{'text': 'Permalink', 'href': data['permalink']}]
-        if data['html']:
-            links += self.get_links_in_html(data['html'])
-        if len(links) > 1:
-            link = self.term.prompt_user_to_select_link(links)
-        elif 'url_full' in data and data['url_full']:
+        url_full = data.get('url_full')
+        if url_full and url_full != data['permalink']:
+            # The item is a link-only submission that won't contain text
             link = data['url_full']
         else:
-            link = data['permalink']
+            extracted_links = self.content.extract_links(data['html'])
+            if not extracted_links:
+                # Only one selection to choose from, so just pick it
+                link = data['permalink']
+            else:
+                # Let the user decide which link to open
+                links = [{'text': 'Permalink', 'href': data['permalink']}]
+                links += extracted_links
+                link = self.term.prompt_user_to_select_link(links)
+
         if link is not None:
             self.term.open_link(link)
         return link
-
-    def get_links_in_html(self, html):
-        links = []
-        soup = BeautifulSoup(html)
-        for link in soup.findAll('a'):
-            link = {'text': link.text, 'href': link.get('href')}
-            if link['href'].startswith('/'):
-                link['href'] = 'https://www.reddit.com' + link['href']
-            links.append(link)
-        return links
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
     def open_pager(self):

@@ -617,3 +617,17 @@ def test_content_rate_limit(reddit, oauth, refresh_token):
     # Even though the headers were returned, the rate limiting should
     # still not be triggering a delay for the next request
     assert reddit.handler.next_request_timestamp is None
+
+
+def test_content_extract_links():
+
+    # Should handle relative & absolute links, should ignore empty links.
+    html = """
+    <a href='/'>Home Page</a>
+    <a href='https://www.github.com'>Github</a>
+    <a>Blank</a>
+    """
+    assert Content.extract_links(html) == [
+        {'href': 'https://www.reddit.com/', 'text': 'Home Page'},
+        {'href': 'https://www.github.com', 'text': 'Github'}
+    ]

@@ -8,6 +8,7 @@ from datetime import datetime
 from timeit import default_timer as timer
 
 import six
+from bs4 import BeautifulSoup
 from kitchen.text.display import wrap
 
 from . import exceptions
@@ -316,6 +317,22 @@ class Content(object):
             lines = wrap(paragraph, width=width) or ['']
             out.extend(lines)
         return out
+
+    @staticmethod
+    def extract_links(html):
+        """
+        Extract a list of hyperlinks from an HTMl document.
+        """
+        links = []
+        soup = BeautifulSoup(html, 'html.parser')
+        for link in soup.findAll('a'):
+            href = link.get('href')
+            if not href:
+                continue
+            if href.startswith('/'):
+                href = 'https://www.reddit.com' + href
+            links.append({'text': link.text, 'href': href})
+        return links
 
 
 class SubmissionContent(Content):

@@ -5,6 +5,7 @@ import re
 import os
 import curses
 import codecs
+from textwrap import dedent
 
 import six
 import pytest
@@ -187,7 +188,7 @@ def test_terminal_add_line(terminal, stdscr, use_ascii):
 
 
 @pytest.mark.parametrize('use_ascii', [True, False])
-def test_show_notification(terminal, stdscr, use_ascii):
+def test_terminal_show_notification(terminal, stdscr, use_ascii):
 
     terminal.config['ascii'] = use_ascii
 
@@ -216,7 +217,7 @@ def test_show_notification(terminal, stdscr, use_ascii):
 
 
 @pytest.mark.parametrize('use_ascii', [True, False])
-def test_text_input(terminal, stdscr, use_ascii):
+def test_terminal_text_input(terminal, stdscr, use_ascii):
 
     terminal.config['ascii'] = use_ascii
     stdscr.nlines = 1
@@ -237,7 +238,7 @@ def test_text_input(terminal, stdscr, use_ascii):
 
 
 @pytest.mark.parametrize('use_ascii', [True, False])
-def test_prompt_input(terminal, stdscr, use_ascii):
+def test_terminal_prompt_input(terminal, stdscr, use_ascii):
 
     terminal.config['ascii'] = use_ascii
     window = stdscr.derwin()
@@ -259,7 +260,7 @@ def test_prompt_input(terminal, stdscr, use_ascii):
     assert terminal.prompt_input('hi', key=True) is None
 
 
-def test_prompt_y_or_n(terminal, stdscr):
+def test_terminal_prompt_y_or_n(terminal, stdscr):
 
     stdscr.getch.side_effect = [ord('y'), ord('N'), terminal.ESCAPE, ord('a')]
     text = 'hi'.encode('ascii')
@@ -286,7 +287,7 @@ def test_prompt_y_or_n(terminal, stdscr):
 
 
 @pytest.mark.parametrize('use_ascii', [True, False])
-def test_open_editor(terminal, use_ascii):
+def test_terminal_open_editor(terminal, use_ascii):
 
     terminal.config['ascii'] = use_ascii
 
@@ -311,7 +312,7 @@ def test_open_editor(terminal, use_ascii):
         assert not os.path.isfile(data['filename'])
 
 
-def test_open_editor_error(terminal):
+def test_terminal_open_editor_error(terminal):
 
     with mock.patch('subprocess.Popen', autospec=True) as Popen, \
             mock.patch.object(terminal, 'show_notification'):
@@ -356,7 +357,7 @@ def test_open_editor_error(terminal):
         os.remove(data['filename'])
 
 
-def test_open_link_mailcap(terminal):
+def test_terminal_open_link_mailcap(terminal):
 
     url = 'http://www.test.com'
 
@@ -389,7 +390,7 @@ def test_open_link_mailcap(terminal):
         terminal.open_browser.reset_mock()
 
 
-def test_open_link_subprocess(terminal):
+def test_terminal_open_link_subprocess(terminal):
 
     url = 'http://www.test.com'
     terminal.config['enable_media'] = True
@@ -471,7 +472,7 @@ def test_open_link_subprocess(terminal):
         assert get_error()
 
 
-def test_open_browser_display(terminal):
+def test_terminal_open_browser_display(terminal):
 
     terminal._display = True
     with mock.patch('webbrowser.open_new_tab', autospec=True) as open_new_tab:
@@ -486,7 +487,7 @@ def test_open_browser_display(terminal):
     assert not curses.doupdate.called
 
 
-def test_open_browser_display_no_response(terminal):
+def test_terminal_open_browser_display_no_response(terminal):
 
     terminal._display = True
     with mock.patch('rtv.terminal.Process', autospec=True) as Process:
@@ -495,7 +496,7 @@ def test_open_browser_display_no_response(terminal):
     assert isinstance(terminal.loader.exception, BrowserError)
 
 
-def test_open_browser_no_display(terminal):
+def test_terminal_open_browser_no_display(terminal):
 
     terminal._display = False
     with mock.patch('webbrowser.open_new_tab', autospec=True) as open_new_tab:
@@ -507,7 +508,7 @@ def test_open_browser_no_display(terminal):
     assert curses.doupdate.called
 
 
-def test_open_pager(terminal, stdscr):
+def test_terminal_open_pager(terminal, stdscr):
 
     data = "Hello World!  ❤"
 
@@ -530,7 +531,7 @@ def test_open_pager(terminal, stdscr):
         assert stdscr.addstr.called_with(0, 0, message)
 
 
-def test_open_urlview(terminal, stdscr):
+def test_terminal_open_urlview(terminal, stdscr):
 
     data = "Hello World!  ❤"
 
@@ -557,7 +558,7 @@ def test_open_urlview(terminal, stdscr):
         assert stdscr.addstr.called_with(0, 0, message)
 
 
-def test_strip_textpad(terminal):
+def test_terminal_strip_textpad(terminal):
 
     assert terminal.strip_textpad(None) is None
     assert terminal.strip_textpad('  foo  ') == '  foo'
@@ -567,7 +568,7 @@ def test_strip_textpad(terminal):
         'alpha bravocharlie delta\n  echo\n\nfoxtrot')
 
 
-def test_add_space(terminal, stdscr):
+def test_terminal_add_space(terminal, stdscr):
 
     stdscr.x, stdscr.y = 10, 20
     terminal.add_space(stdscr)
@@ -581,7 +582,7 @@ def test_add_space(terminal, stdscr):
     assert not stdscr.addstr.called
 
 
-def test_attr(terminal):
+def test_terminal_attr(terminal):
 
     assert terminal.attr('CursorBlock') == 0
     assert terminal.attr('@CursorBlock') == curses.A_REVERSE
@@ -592,7 +593,7 @@ def test_attr(terminal):
         assert terminal.attr('NeutralVote') == curses.A_BOLD
 
 
-def test_check_theme(terminal):
+def test_terminal_check_theme(terminal):
 
     monochrome = Theme(use_color=False)
     default = Theme()
@@ -625,7 +626,7 @@ def test_check_theme(terminal):
     assert not terminal.check_theme(color256)
 
 
-def test_set_theme(terminal, stdscr):
+def test_terminal_set_theme(terminal, stdscr):
 
     # Default with color enabled
     stdscr.reset_mock()
@@ -660,7 +661,7 @@ def test_set_theme(terminal, stdscr):
     assert terminal.theme.display_string == 'molokai (preset)'
 
 
-def test_set_theme_no_colors(terminal, stdscr):
+def test_terminal_set_theme_no_colors(terminal, stdscr):
 
     # Monochrome should be forced if the terminal doesn't support color
     with mock.patch('curses.has_colors') as has_colors:
@@ -673,7 +674,7 @@ def test_set_theme_no_colors(terminal, stdscr):
         assert not terminal.theme.use_color
 
 
-def test_strip_instructions(terminal):
+def test_terminal_strip_instructions(terminal):
 
     # These templates only contain instructions, so they should be empty
     assert terminal.strip_instructions(SUBMISSION_FILE) == ''
@@ -699,3 +700,69 @@ def test_strip_instructions(terminal):
     # Another edge case
     text = '<!--{0} instructions {0}--><!-- An HTML comment -->'.format(TOKEN)
     assert terminal.strip_instructions(text) == '<!-- An HTML comment -->'
+
+
+def test_terminal_get_link_pages(terminal):
+
+    # When there are no links passed in, there should be no pages generated
+    assert terminal.get_link_pages([]) == []
+
+    # A single link should generate a single page
+    assert terminal.get_link_pages([1]) == [[1]]
+
+    # Up to 9 links should fit on a single page
+    link_pages = terminal.get_link_pages([1, 2, 3, 4, 5, 6, 7, 8, 9])
+    assert link_pages == [[1, 2, 3, 4, 5, 6, 7, 8, 9]]
+
+    # When the 10th link is added, the 9th link should now wrap to a new page
+    link_pages = terminal.get_link_pages([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    assert link_pages == [[1, 2, 3, 4, 5, 6, 7, 8], [9, 10]]
+
+
+def test_terminal_get_link_page_text(terminal):
+
+    link_page = [
+        {'href': 'https://www.reddit.com', 'text': 'Reddit Homepage'},
+        {'href': 'https://www.duckduckgo.com', 'text': 'Search Engine'},
+        {
+            'href': 'https://github.com/michael-lazar/rtv',
+            'text': 'This project\'s homepage'
+        }
+    ]
+
+    text = terminal.get_link_page_text(link_page)
+    assert text == dedent("""\
+    [1] [Reddit Homepage](https://www.reddit.com)
+    [2] [Search Engine](https://www.duckduckgo.com)
+    [3] [This project's home…](https://github.com/michael-lazar/rtv)
+    """)
+
+
+def test_terminal_prompt_user_to_select_link(terminal, stdscr):
+
+    # Select the 2nd link on the 2nd page
+    links = [
+        {'href': 'www.website-1.com', 'text': 'Website 1'},
+        {'href': 'www.website-2.com', 'text': 'Website 2'},
+        {'href': 'www.website-3.com', 'text': 'Website 3'},
+        {'href': 'www.website-4.com', 'text': 'Website 4'},
+        {'href': 'www.website-5.com', 'text': 'Website 5'},
+        {'href': 'www.website-6.com', 'text': 'Website 6'},
+        {'href': 'www.website-7.com', 'text': 'Website 7'},
+        {'href': 'www.website-8.com', 'text': 'Website 8'},
+        {'href': 'www.website-9.com', 'text': 'Website 9'},
+        {'href': 'www.website-10.com', 'text': 'Website 10'},
+        {'href': 'www.website-11.com', 'text': 'Website 11'},
+        {'href': 'www.website-12.com', 'text': 'Website 12'},
+    ]
+    stdscr.getch.side_effect = [ord('9'), ord('2')]
+    href = terminal.prompt_user_to_select_link(links)
+    assert href == 'www.website-10.com'
+
+    # Select a link that doesn't exist
+    links = [
+        {'href': 'www.website-1.com', 'text': 'Website 1'},
+        {'href': 'www.website-2.com', 'text': 'Website 2'},
+    ]
+    stdscr.getch.side_effect = [ord('3')]
+    assert terminal.prompt_user_to_select_link(links) is None
