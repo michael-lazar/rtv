@@ -412,7 +412,7 @@ class SubmissionPage(Page):
 
         attr = self.term.attr('Created')
         self.term.add_space(win)
-        self.term.add_line(win, '{created_long}{edited}'.format(**data),
+        self.term.add_line(win, '{created_long}{edited_long}'.format(**data),
                            attr=attr)
 
         row = len(data['split_title']) + 2
