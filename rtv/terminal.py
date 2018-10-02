@@ -407,9 +407,6 @@ class Terminal(object):
             while i < len(links) and len(link_page) < 10:
                 link_page.append(links[i])
                 i += 1
-            if i == len(links) - 1:
-                link_page.append(links[i])
-                i += 1
             link_pages.append(link_page)
         return link_pages
 
