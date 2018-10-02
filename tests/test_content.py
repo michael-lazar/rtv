@@ -48,6 +48,9 @@ SUBREDDIT_PROMPTS = OrderedDict([
     ('user-1', ('/u/spez', '/u/spez', None)),
     ('user-new', ('/u/spez/new', '/u/spez', 'new')),
     ('user-top-all', ('/u/spez/top-all', '/u/spez', 'top-all')),
+    ('user-overview', ('/u/spez/overview', '/u/spez/overview', None)),
+    ('user-submitted', ('/u/spez/submitted', '/u/spez/submitted', None)),
+    ('user-comments', ('/u/spez/comments', '/u/spez/comments', None)),
     ('multi-0', ('/user/multi-mod/m/art', '/u/multi-mod/m/art', None)),
     ('multi-1', ('/u/multi-mod/m/art', '/u/multi-mod/m/art', None)),
     ('multi-top', ('/u/multi-mod/m/art/top', '/u/multi-mod/m/art', 'top')),
@@ -63,7 +66,10 @@ SUBREDDIT_AUTH_PROMPTS = OrderedDict([
     ('me-1', ('/u/me', '/u/me', None)),
     ('me-top', ('/u/me/top', '/u/me', 'top')),
     ('me-top-all', ('/u/me/top-all', '/u/me', 'top-all')),
-    ('user-saved', ('/u/saved', '/u/saved', None)),
+    ('user-saved', ('/u/me/saved', '/u/me/saved', None)),
+    ('user-upvoted', ('/u/me/upvoted', '/u/me/upvoted', None)),
+    ('user-downvoted', ('/u/me/downvoted', '/u/me/downvoted', None)),
+    ('user-hidden', ('/u/me/hidden', '/u/me/hidden', None)),
     ('me-multi', ('/u/me/m/redditpets/top-all', '/u/{username}/m/redditpets', 'top-all')),
 ])
 
@@ -484,7 +490,6 @@ def test_content_subreddit_me(reddit, oauth, refresh_token, terminal):
                           exceptions.NoSubmissionsError)
         assert terminal.loader.exception.name == '/u/me'
 
-
 def test_content_subreddit_nsfw_filter(reddit, oauth, refresh_token, terminal):
 
     # NSFW subreddits should load if not logged in
@@ -553,14 +558,14 @@ def test_content_subreddit_saved(reddit, oauth, refresh_token, terminal):
 
     # Not logged in
     with terminal.loader():
-        SubredditContent.from_name(reddit, '/u/saved', terminal.loader)
+        SubredditContent.from_name(reddit, '/u/me/saved', terminal.loader)
     assert isinstance(terminal.loader.exception, exceptions.AccountError)
 
     # Logged in
     oauth.config.refresh_token = refresh_token
     oauth.authorize()
     with terminal.loader():
-        SubredditContent.from_name(reddit, '/u/saved', terminal.loader)
+        SubredditContent.from_name(reddit, '/u/me/saved', terminal.loader)
 
 
 def test_content_subscription_empty(reddit, terminal):

@@ -1,0 +1,209 @@
+interactions:
+- request:
+    body: grant_type=refresh_token&redirect_uri=http%3A%2F%2F127.0.0.1%3A65000%2F&refresh_token=**********
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: ['**********']
+      Connection: [keep-alive]
+      Content-Length: ['122']
+      Content-Type: [application/x-www-form-urlencoded]
+      User-Agent: [rtv test suite PRAW/3.6.1 Python/3.6.1 b'Linux-4.4.154-1-MANJARO-x86_64-with-arch-Manjaro-Linux']
+    method: POST
+    uri: https://api.reddit.com/api/v1/access_token/
+  response:
+    body: {string: '{"access_token": "17277884-IHlIfUgUK5-Oh0igoa4nK29qiRc", "token_type":
+        "bearer", "expires_in": 3600, "scope": "edit history identity mysubreddits
+        privatemessages read report save submit subscribe vote"}'}
+    headers:
+      Accept-Ranges: [bytes]
+      Connection: [keep-alive]
+      Content-Length: ['202']
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sun, 16 Sep 2018 18:51:00 GMT']
+      Server: [snooserv]
+      Set-Cookie: [edgebucket=vn1YtQfV25NPfEAAS3; Domain=reddit.com; Max-Age=63071999;
+          Path=/;  secure]
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
+      Via: [1.1 varnish]
+      X-Cache: [MISS]
+      X-Cache-Hits: ['0']
+      X-Moose: [majestic]
+      X-Served-By: [cache-yyz8322-YYZ]
+      X-Timer: ['S1537123860.494398,VS0,VE65']
+      cache-control: ['max-age=0, must-revalidate']
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: ['**********']
+      Connection: [keep-alive]
+      User-Agent: [rtv test suite PRAW/3.6.1 Python/3.6.1 b'Linux-4.4.154-1-MANJARO-x86_64-with-arch-Manjaro-Linux']
+    method: GET
+    uri: https://oauth.reddit.com/api/v1/me.json
+  response:
+    body:
+      string: !!binary |
+        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
+        NkzPxY78SXq/Wc19+xuXOYeX+RYAAA==
+    headers:
+      Accept-Ranges: [bytes]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Length: ['1960']
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sun, 16 Sep 2018 18:51:00 GMT']
+      Server: [snooserv]
+      Set-Cookie: [edgebucket=SdcuPzNkyqpe9MnuGI; Domain=reddit.com; Max-Age=63071999;
+          Path=/;  secure]
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
+      Vary: [accept-encoding]
+      Via: [1.1 varnish]
+      X-Cache: [MISS]
+      X-Cache-Hits: ['0']
+      X-Moose: [majestic]
+      X-Served-By: [cache-yyz8321-YYZ]
+      X-Timer: ['S1537123861.829796,VS0,VE94']
+      cache-control: ['private, s-maxage=0, max-age=0, must-revalidate, max-age=0,
+          must-revalidate']
+      expires: ['-1']
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-ratelimit-remaining: ['595.0']
+      x-ratelimit-reset: ['540']
+      x-ratelimit-used: ['5']
+      x-robots-tag: ['noindex, nofollow']
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: ['**********']
+      Connection: [keep-alive]
+      Cookie: [edgebucket=SdcuPzNkyqpe9MnuGI]
+      User-Agent: [rtv test suite PRAW/3.6.1 Python/3.6.1 b'Linux-4.4.154-1-MANJARO-x86_64-with-arch-Manjaro-Linux']
+    method: GET
+    uri: https://oauth.reddit.com/user/br0bi/hidden.json?sort=new&t=all&limit=1024
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      Accept-Ranges: [bytes]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Length: ['2952']
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sun, 16 Sep 2018 18:51:01 GMT']
+      Server: [snooserv]
+      Strict-Transport-Security: [max-age=15552000; includeSubDomains; preload]
+      Vary: [accept-encoding]
+      Via: [1.1 varnish]
+      X-Cache: [MISS]
+      X-Cache-Hits: ['0']
+      X-Moose: [majestic]
+      X-Served-By: [cache-yyz8321-YYZ]
+      X-Timer: ['S1537123861.279995,VS0,VE287']
+      cache-control: ['private, s-maxage=0, max-age=0, must-revalidate, max-age=0,
+          must-revalidate']
+      expires: ['-1']
+      x-content-type-options: [nosniff]
+      x-frame-options: [SAMEORIGIN]
+      x-ratelimit-remaining: ['594.0']
+      x-ratelimit-reset: ['539']
+      x-ratelimit-used: ['6']
+      x-ua-compatible: [IE=edge]
+      x-xss-protection: [1; mode=block]
+    status: {code: 200, message: OK}
+version: 1

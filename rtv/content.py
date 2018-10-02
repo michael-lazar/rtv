@@ -531,9 +531,18 @@ class SubredditContent(Content):
         elif resource_root.startswith('user/'):
             resource_root = 'u' + resource_root[4:]
 
-        # There should at most two parts left, the resource and the order
+        # The parts left should be in one of the following two forms:
+        # [resource, order]
+        # [resource, user_room, order]
+        user_rooms = ['overview', 'submitted', 'comments']
+        private_user_rooms = ['upvoted', 'downvoted', 'hidden', 'saved']
+        user_room = None
         if len(parts) == 1:
             resource, resource_order = parts[0], None
+        elif resource_root == 'u' and len(parts) in [2, 3] \
+                and parts[1] in user_rooms + private_user_rooms:
+            resource, user_room = parts[:2]
+            resource_order = parts[2] if len(parts) == 3 else None
         elif len(parts) == 2:
             resource, resource_order = parts
         else:
@@ -550,6 +559,8 @@ class SubredditContent(Content):
 
         display_order = order
         display_name = '/'.join(['', resource_root, resource])
+        if user_room and resource_root == 'u':
+            display_name += '/' + user_room
 
         # Split the order from the period E.g. controversial-all, top-hour
         if order and '-' in order:
@@ -622,22 +633,21 @@ class SubredditContent(Content):
             if not reddit.is_oauth_session():
                 raise exceptions.AccountError('Not logged in')
             else:
+                user_room = user_room or 'overview'
                 order = order or 'new'
-                submissions = reddit.user.get_overview(sort=order, limit=None)
-
-        elif resource_root == 'u' and resource == 'saved':
-            if not reddit.is_oauth_session():
-                raise exceptions.AccountError('Not logged in')
-            else:
-                order = order or 'new'
-                submissions = reddit.user.get_saved(sort=order, limit=None)
+                period = period or 'all'
+                submissions = getattr(reddit.user, 'get_%s' % user_room
+                                      )(sort=order, time=period, limit=None)
 
         elif resource_root == 'u':
+            user_room = user_room or 'overview'
+            if not user_room in user_rooms:
+                raise InvalidSubreddit('Unavailable Resourse')
             order = order or 'new'
             period = period or 'all'
             redditor = reddit.get_redditor(resource)
-            submissions = redditor.get_overview(
-                sort=order, time=period, limit=None)
+            submissions = getattr(redditor, 'get_%s' % user_room
+                                  )(sort=order, time=period, limit=None)
 
         elif resource == 'front':
             if order in (None, 'hot'):
