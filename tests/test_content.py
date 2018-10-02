@@ -66,10 +66,10 @@ SUBREDDIT_AUTH_PROMPTS = OrderedDict([
     ('me-1', ('/u/me', '/u/me', None)),
     ('me-top', ('/u/me/top', '/u/me', 'top')),
     ('me-top-all', ('/u/me/top-all', '/u/me', 'top-all')),
-    ('user-saved', ('/u/me/saved', '/u/me/saved', None)),
-    ('user-upvoted', ('/u/me/upvoted', '/u/me/upvoted', None)),
-    ('user-downvoted', ('/u/me/downvoted', '/u/me/downvoted', None)),
-    ('user-hidden', ('/u/me/hidden', '/u/me/hidden', None)),
+    ('me-saved', ('/u/me/saved', '/u/me/saved', None)),
+    ('me-upvoted', ('/u/me/upvoted', '/u/me/upvoted', None)),
+    ('me-downvoted', ('/u/me/downvoted', '/u/me/downvoted', None)),
+    ('me-hidden', ('/u/me/hidden', '/u/me/hidden', None)),
     ('me-multi', ('/u/me/m/redditpets/top-all', '/u/{username}/m/redditpets', 'top-all')),
 ])
 

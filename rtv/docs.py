@@ -87,7 +87,7 @@ https://github.com/michael-lazar/rtv
   - /u/me/{saved,hidden}         (your saved or hidden posts)
   - /u/me/{upvoted,downvoted}    (your voted posts)
   - /u/spez                      (a user's submissions overview)
-  - /u/spez{submitted,comments}  (a user's posts or comments)
+  - /u/spez/{submitted,comments} (a user's posts or comments)
   - /u/multi-mod/m/android       (curated multireddit)
   - /domain/python.org           (search by domain)
 """

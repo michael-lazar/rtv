@@ -529,21 +529,41 @@ class SubredditContent(Content):
         if resource_root == 'user':
             resource_root = 'u'
         elif resource_root.startswith('user/'):
+            # Special check for multi-reddit resource roots
+            # E.g.
+            #     before: resource_root = "user/civilization_phaze_3/m"
+            #     After:  resource_root = "u/civilization_phaze_3/m"
             resource_root = 'u' + resource_root[4:]
 
-        # The parts left should be in one of the following two forms:
-        # [resource, order]
-        # [resource, user_room, order]
+        # The parts left should be in one of the following forms:
+        #    [resource]
+        #    [resource, order]
+        #    [resource, user_room, order]
+
         user_rooms = ['overview', 'submitted', 'comments']
         private_user_rooms = ['upvoted', 'downvoted', 'hidden', 'saved']
         user_room = None
+
         if len(parts) == 1:
+            # E.g. /r/python
+            #    parts = ["python"]
+            #    resource = "python"
+            #    resource_order = None
             resource, resource_order = parts[0], None
         elif resource_root == 'u' and len(parts) in [2, 3] \
                 and parts[1] in user_rooms + private_user_rooms:
+            # E.g. /u/spez/submitted/top ->
+            #    parts = ["spez", "submitted", "top"]
+            #    resource = "spez"
+            #    user_room = "submitted"
+            #    resource_order = "top"
             resource, user_room = parts[:2]
             resource_order = parts[2] if len(parts) == 3 else None
         elif len(parts) == 2:
+            # E.g. /r/python/top
+            #    parts = ["python", "top"]
+            #    resource = "python
+            #    resource_order = "top"
             resource, resource_order = parts
         else:
             raise InvalidSubreddit('`{}` is an invalid format'.format(name))
@@ -636,18 +656,20 @@ class SubredditContent(Content):
                 user_room = user_room or 'overview'
                 order = order or 'new'
                 period = period or 'all'
-                submissions = getattr(reddit.user, 'get_%s' % user_room
-                                      )(sort=order, time=period, limit=None)
+                method = getattr(reddit.user, 'get_%s' % user_room)
+                submissions = method(sort=order, time=period, limit=None)
 
         elif resource_root == 'u':
             user_room = user_room or 'overview'
-            if not user_room in user_rooms:
-                raise InvalidSubreddit('Unavailable Resourse')
+            if user_room not in user_rooms:
+                # Tried to access a private room like "u/me/hidden" for a
+                # different redditor
+                raise InvalidSubreddit('Unavailable Resource')
             order = order or 'new'
             period = period or 'all'
             redditor = reddit.get_redditor(resource)
-            submissions = getattr(redditor, 'get_%s' % user_room
-                                  )(sort=order, time=period, limit=None)
+            method = getattr(redditor, 'get_%s' % user_room)
+            submissions = method(sort=order, time=period, limit=None)
 
         elif resource == 'front':
             if order in (None, 'hot'):

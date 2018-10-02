@@ -440,6 +440,15 @@ def test_subreddit_private_user_pages(subreddit_page, refresh_token):
     subreddit_page.refresh_content(name='/u/me/downvoted')
     subreddit_page.draw()
 
+    subreddit_page.refresh_content(name='/u/me/overview')
+    subreddit_page.draw()
+
+    subreddit_page.refresh_content(name='/u/me/submitted')
+    subreddit_page.draw()
+
+    subreddit_page.refresh_content(name='/u/me/comments')
+    subreddit_page.draw()
+
 
 def test_subreddit_user_pages(subreddit_page, refresh_token):
 
@@ -463,7 +472,6 @@ def test_subreddit_user_pages(subreddit_page, refresh_token):
 
     subreddit_page.refresh_content(name='/u/spez/comments')
     subreddit_page.draw()
-
 
 
 def test_subreddit_draw_header(subreddit_page, refresh_token, terminal):
@@ -497,25 +505,25 @@ def test_subreddit_draw_header(subreddit_page, refresh_token, terminal):
     # /u/saved alias should be renamed in the header
     subreddit_page.refresh_content(name='/u/me/saved')
     subreddit_page.draw()
-    text = 'My Saved'.encode('utf-8')
+    text = 'My Saved Content'.encode('utf-8')
     terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
 
     # /u/upvoted alias should be renamed in the header
     subreddit_page.refresh_content(name='/u/me/upvoted')
     subreddit_page.draw()
-    text = 'My Upvoted'.encode('utf-8')
+    text = 'My Upvoted Content'.encode('utf-8')
     terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
 
     # /u/downvoted alias should be renamed in the header
     subreddit_page.refresh_content(name='/u/me/downvoted')
     subreddit_page.draw()
-    text = 'My Downvoted'.encode('utf-8')
+    text = 'My Downvoted Content'.encode('utf-8')
     terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
 
     # /u/hidden alias should be renamed in the header
     subreddit_page.refresh_content(name='/u/me/hidden')
     subreddit_page.draw()
-    text = 'My Hidden'.encode('utf-8')
+    text = 'My Hidden Content'.encode('utf-8')
     terminal.stdscr.subwin.addstr.assert_any_call(0, 0, text)
 
 
