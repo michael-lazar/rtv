@@ -389,8 +389,26 @@ class Page(object):
 
         sub_name = self.content.name
         sub_name = sub_name.replace('/r/front', 'Front Page')
-        sub_name = sub_name.replace('/u/me', 'My Submissions')
-        sub_name = sub_name.replace('/u/saved', 'My Saved Submissions')
+
+        parts = sub_name.split('/')
+        if len(parts) == 1:
+            pass
+        elif '/m/' in sub_name:
+            _, _, user, _, multi = parts
+            sub_name = '{} Curated by {}'.format(multi, user)
+        elif parts[1] == 'u':
+            noun = 'My' if parts[2] == 'me' else parts[2] + "'s"
+            user_room = parts[3] if len(parts) == 4 else 'overview'
+            title_lookup = {
+                'overview': 'Overview',
+                'submitted': 'Submissions',
+                'comments': 'Comments',
+                'saved': 'Saved Content',
+                'hidden': 'Hidden Content',
+                'upvoted': 'Upvoted Content',
+                'downvoted': 'Downvoted Content'
+            }
+            sub_name = "{} {}".format(noun, title_lookup[user_room])
 
         query = self.content.query
         if query:
