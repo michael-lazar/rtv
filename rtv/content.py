@@ -160,7 +160,11 @@ class Content(object):
             data['stickied'] = stickied
             data['hidden'] = False
             data['saved'] = comment.saved
-            data['edited'] = '*' if comment.edited else ''
+            if comment.edited:
+                data['edited'] = '(edit {})'.format(
+                        cls.humanize_timestamp(comment.edited))
+            else:
+                data['edited'] = ''
         else:
             # Saved comments don't have a nested level and are missing a couple
             # of fields like ``submission``. As a result, we can only load a
@@ -190,7 +194,11 @@ class Content(object):
             data['author'] = author
             data['flair'] = flair
             data['hidden'] = False
-            data['edited'] = '*' if comment.edited else ''
+            if comment.edited:
+                data['edited'] = '(edit {})'.format(
+                        cls.humanize_timestamp(comment.edited))
+            else:
+                data['edited'] = ''
 
         return data
 
@@ -236,7 +244,14 @@ class Content(object):
         data['xpost_subreddit'] = None
         data['index'] = None  # This is filled in later by the method caller
         data['saved'] = sub.saved
-        data['edited'] = '*' if sub.edited else ''
+        if sub.edited:
+            data['edited'] = '(edit {})'.format(
+                    cls.humanize_timestamp(sub.edited))
+            data['edited_long'] = '(edit {})'.format(
+                    cls.humanize_timestamp(sub.edited, True))
+        else:
+            data['edited'] = ''
+            data['edited_long'] = ''
 
         if sub.url.split('/r/')[-1] == sub.permalink.split('/r/')[-1]:
             data['url'] = 'self.{0}'.format(data['subreddit'])
