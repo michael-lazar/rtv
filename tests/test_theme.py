@@ -25,7 +25,8 @@ INVALID_ELEMENTS = OrderedDict([
     ('invalid_attr', 'Upvote = blue blue bold+invalid\n'),
     ('invalid_hex', 'Upvote = #fffff blue\n'),
     ('invalid_hex2', 'Upvote = #gggggg blue\n'),
-    ('out_of_range', 'Upvote = ansi_256 blue\n')
+    ('out_of_range', 'Upvote = ansi_256 blue\n'),
+    ('something_invalid', 'non_existing_key_without_value\n')
 ])
 
 
