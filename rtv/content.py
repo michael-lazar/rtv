@@ -219,7 +219,7 @@ class Content(object):
         data['type'] = 'Submission'
         data['title'] = sub.title
         data['text'] = sub.selftext
-        data['html'] = sub.selftext_html
+        data['html'] = sub.selftext_html or ''
         data['created'] = cls.humanize_timestamp(sub.created_utc)
         data['created_long'] = cls.humanize_timestamp(sub.created_utc, True)
         data['comments'] = '{0} comments'.format(sub.num_comments)
@@ -321,7 +321,7 @@ class Content(object):
     @staticmethod
     def extract_links(html):
         """
-        Extract a list of hyperlinks from an HTMl document.
+        Extract a list of hyperlinks from an HTML document.
         """
         links = []
         soup = BeautifulSoup(html, 'html.parser')
