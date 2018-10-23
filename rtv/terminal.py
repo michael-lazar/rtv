@@ -361,39 +361,50 @@ class Terminal(object):
         Return the link that was selected, or ``None`` if no link was selected.
         """
         link_pages = self.get_link_pages(links)
-        for n, link_page in enumerate(link_pages, start=1):
+        n = 0
+        while n in range(len(link_pages)):
+            link_page = link_pages[n]
             text = 'Select a link to open (page {} of {}):\n\n'
-            text = text.format(n, len(link_pages))
+            text = text.format(n+1, len(link_pages))
             text += self.get_link_page_text(link_page)
             if link_page is not link_pages[-1]:
-                text += '[9] next page...'
+                text += '[j] next page...'
+            if link_page is not link_pages[0]:
+                if link_page is not link_pages[-1]:
+                    text += '\n'
+                text += '[k] ...previous page'
 
             try:
-                choice = int(chr(self.show_notification(text)))
+                choice = chr(self.show_notification(text))
+                try:
+                    choice = int(choice)
+                except ValueError:
+                    pass
             except ValueError:
                 return None
-            if link_page is not link_pages[-1] and choice == 9:
+            if choice == 'j':
+                if link_page is not link_pages[-1]:
+                    n += 1
                 continue
-            elif choice == 0 or choice > len(link_page):
+            elif choice == 'k':
+                if link_page is not link_pages[0]:
+                    n -= 1
+                continue
+            elif choice not in range(len(link_page)):
                 return None
-            return link_page[choice - 1]['href']
+            return link_page[choice]['href']
 
     @staticmethod
     def get_link_pages(links):
         """
         Given a list of links, separate them into pages that can be displayed
-        to the user and navigated using the 1-9 number keys. The last page
-        can contain up to 9 links, and all other pages can contain up to 8
-        links.
+        to the user and navigated using the 1-9 and 0 number keys.
         """
         link_pages = []
         i = 0
         while i < len(links):
             link_page = []
-            while i < len(links) and len(link_page) < 8:
-                link_page.append(links[i])
-                i += 1
-            if i == len(links) - 1:
+            while i < len(links) and len(link_page) < 10:
                 link_page.append(links[i])
                 i += 1
             link_pages.append(link_page)
@@ -408,7 +419,7 @@ class Terminal(object):
         for i, link in enumerate(link_page):
             capped_link_text = (link['text'] if len(link['text']) <= 20
                                 else link['text'][:19] + '…')
-            text += '[{}] [{}]({})\n'.format(i + 1, capped_link_text, link['href'])
+            text += '[{}] [{}]({})\n'.format(i, capped_link_text, link['href'])
         return text
 
     def open_link(self, url):

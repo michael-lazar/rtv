@@ -710,13 +710,13 @@ def test_terminal_get_link_pages(terminal):
     # A single link should generate a single page
     assert terminal.get_link_pages([1]) == [[1]]
 
-    # Up to 9 links should fit on a single page
-    link_pages = terminal.get_link_pages([1, 2, 3, 4, 5, 6, 7, 8, 9])
-    assert link_pages == [[1, 2, 3, 4, 5, 6, 7, 8, 9]]
+    # Up to 10 links should fit on a single page
+    link_pages = terminal.get_link_pages([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    assert link_pages == [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]
 
-    # When the 10th link is added, the 9th link should now wrap to a new page
-    link_pages = terminal.get_link_pages([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-    assert link_pages == [[1, 2, 3, 4, 5, 6, 7, 8], [9, 10]]
+    # When the 11th link is added a new page is created
+    link_pages = terminal.get_link_pages([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    assert link_pages == [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [10]]
 
 
 def test_terminal_get_link_page_text(terminal):
@@ -732,9 +732,9 @@ def test_terminal_get_link_page_text(terminal):
 
     text = terminal.get_link_page_text(link_page)
     assert text == dedent("""\
-    [1] [Reddit Homepage](https://www.reddit.com)
-    [2] [Search Engine](https://www.duckduckgo.com)
-    [3] [This project's home…](https://github.com/michael-lazar/rtv)
+    [0] [Reddit Homepage](https://www.reddit.com)
+    [1] [Search Engine](https://www.duckduckgo.com)
+    [2] [This project's home…](https://github.com/michael-lazar/rtv)
     """)
 
 
@@ -742,6 +742,7 @@ def test_terminal_prompt_user_to_select_link(terminal, stdscr):
 
     # Select the 2nd link on the 2nd page
     links = [
+        {'href': 'www.website-0.com', 'text': 'Website 0'},
         {'href': 'www.website-1.com', 'text': 'Website 1'},
         {'href': 'www.website-2.com', 'text': 'Website 2'},
         {'href': 'www.website-3.com', 'text': 'Website 3'},
@@ -755,12 +756,13 @@ def test_terminal_prompt_user_to_select_link(terminal, stdscr):
         {'href': 'www.website-11.com', 'text': 'Website 11'},
         {'href': 'www.website-12.com', 'text': 'Website 12'},
     ]
-    stdscr.getch.side_effect = [ord('9'), ord('2')]
+    stdscr.getch.side_effect = [ord('j'), ord('2')]
     href = terminal.prompt_user_to_select_link(links)
-    assert href == 'www.website-10.com'
+    assert href == 'www.website-12.com'
 
     # Select a link that doesn't exist
     links = [
+        {'href': 'www.website-0.com', 'text': 'Website 0'},
         {'href': 'www.website-1.com', 'text': 'Website 1'},
         {'href': 'www.website-2.com', 'text': 'Website 2'},
     ]
