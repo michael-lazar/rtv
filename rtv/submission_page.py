@@ -143,35 +143,18 @@ class SubmissionPage(Page):
         If there is more than one link contained in the item, prompt the user
         to choose which link to open.
         """
-        data = self.get_selected_item()
-        if data['type'] == 'Submission':
-            opened_link = self.prompt_and_open_link(data)
-            if opened_link is not None:
-                self.config.history.add(opened_link)
-        elif data['type'] == 'Comment' and data['permalink']:
-            self.prompt_and_open_link(data)
+        link = self.prompt_and_select_link()
+        if link:
+            data = self.get_selected_item()
+            if data['type'] == 'Submission':
+                self.config.history.add(link)
+                self.term.open_link(link)
+            elif data['type'] == 'Comment' and data['permalink']:
+                self.term.open_link(link)
+            else:
+                self.term.flash()
         else:
             self.term.flash()
-
-    def prompt_and_open_link(self, data):
-        url_full = data.get('url_full')
-        if url_full and url_full != data['permalink']:
-            # The item is a link-only submission that won't contain text
-            link = data['url_full']
-        else:
-            extracted_links = self.content.extract_links(data['html'])
-            if not extracted_links:
-                # Only one selection to choose from, so just pick it
-                link = data['permalink']
-            else:
-                # Let the user decide which link to open
-                links = [{'text': 'Permalink', 'href': data['permalink']}]
-                links += extracted_links
-                link = self.term.prompt_user_to_select_link(links)
-
-        if link is not None:
-            self.term.open_link(link)
-        return link
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_PAGER'))
     def open_pager(self):
