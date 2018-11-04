@@ -367,7 +367,7 @@ class Page(object):
                 'Failed to copy url: {0}'.format(e))
         else:
             self.term.show_notification(
-                'Copied link to clipboard', timeout=1)
+                ['Copied to clipboard:', url], timeout=1)
 
     def clear_input_queue(self):
         """
