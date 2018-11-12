@@ -269,6 +269,7 @@ class Config(object):
             'oauth_redirect_port': partial(config.getint, 'rtv'),
             'oauth_scope': lambda x: rtv[x].split(','),
             'max_comment_cols': partial(config.getint, 'rtv'),
+            'max_pager_cols': partial(config.getint, 'rtv'),
             'hide_username': partial(config.getboolean, 'rtv'),
             'flash': partial(config.getboolean, 'rtv')
         }
