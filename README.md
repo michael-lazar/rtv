@@ -73,7 +73,7 @@ See [Repology](https://repology.org/metapackage/rtv/packages) for an up-to-date 
 # macOS
 $ brew install rtv
 
-# Arch
+# Arch (use whichever AUR helper you prefer)
 $ pacaur -S rtv
 
 # Nix
