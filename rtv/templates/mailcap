@@ -44,7 +44,7 @@ video/*; mpv '%s' --autofit 640x480 --loop=inf; test=test -n "$DISPLAY"
 
 # View images directly in your terminal with iTerm2
 # curl -L https://iterm2.com/misc/install_shell_integration_and_utilities.sh | bash
-# image/*; curl -s %s | ~/.iterm2/imgcat && read -n 1; needsterminal
+# image/*; bash -c '[[ "%s" == http*  ]] && (curl -s %s | ~/.iterm2/imgcat) || ~/.iterm2/imgcat %s' && read -n 1; needsterminal
 
 # View true images in the terminal, supported by rxvt-unicode, xterm and st
 # Requires the w3m-img package
