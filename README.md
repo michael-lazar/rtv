@@ -196,7 +196,7 @@ Themes can be used to customize the look and feel of RTV
   </tr>
 </table>
 
-List installed themes with the ``--list-themes`` command, and select one with ``--theme``. You can also set the theme permenantly in your [rtv.cfg](rtv/templates/rtv.cfg) file. You can use the <kbd>F2</kbd> & <kbd>F3</kbd> keys inside of RTV to preview themes.
+You can list all installed themes with the ``--list-themes`` command, and select one with ``--theme``. You can save your choice permenantly in your [rtv.cfg](rtv/templates/rtv.cfg) file. You can use the <kbd>F2</kbd> & <kbd>F3</kbd> keys inside of RTV to preview all available themes.
 
 For instructions on writing and installing your own themes, see [THEMES.md](THEMES.md).
 
