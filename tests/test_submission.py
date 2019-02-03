@@ -582,3 +582,43 @@ def test_copy_to_clipboard_linux(submission_page, terminal, refresh_token):
         # Neither xclip or xsel installed, this is what happens on Travis CI
         text = b'Failed to copy url: External copy application not found'
         window.addstr.assert_called_with(1, 1, text)
+
+
+def test_submission_prompt_and_select_link(submission_page, terminal):
+
+    # A link submission should return the URL that it's pointing to
+    link = submission_page.prompt_and_select_link()
+    assert link == 'https://github.com/michael-lazar/rtv'
+
+    with mock.patch.object(submission_page, 'clear_input_queue'):
+        submission_page.controller.trigger('j')
+
+    # The first comment doesn't have any links in the comment body
+    link = submission_page.prompt_and_select_link()
+    data = submission_page.get_selected_item()
+    assert link == data['permalink']
+
+    with mock.patch.object(submission_page, 'clear_input_queue'):
+        submission_page.controller.trigger('j')
+
+    # The second comment has a link embedded in the comment body, and
+    # the user is prompted to select which link to open
+    with mock.patch.object(terminal, 'prompt_user_to_select_link') as prompt:
+        prompt.return_value = 'https://selected_link'
+
+        link = submission_page.prompt_and_select_link()
+        data = submission_page.get_selected_item()
+
+        assert link == prompt.return_value
+
+        embedded_url = 'http://peterdowns.com/posts/first-time-with-pypi.html'
+        assert prompt.call_args[0][0] == [
+            {'text': 'Permalink', 'href': data['permalink']},
+            {'text': 'Relevant tutorial', 'href': embedded_url}
+        ]
+
+    submission_page.controller.trigger(' ')
+
+    # The comment is now hidden so there are no links to select
+    link = submission_page.prompt_and_select_link()
+    assert link is None

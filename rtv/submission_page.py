@@ -143,16 +143,16 @@ class SubmissionPage(Page):
         If there is more than one link contained in the item, prompt the user
         to choose which link to open.
         """
-        link = self.prompt_and_select_link()
-        if link:
-            data = self.get_selected_item()
-            if data['type'] == 'Submission':
+        data = self.get_selected_item()
+        if data['type'] == 'Submission':
+            link = self.prompt_and_select_link()
+            if link:
                 self.config.history.add(link)
                 self.term.open_link(link)
-            elif data['type'] == 'Comment' and data['permalink']:
+        elif data['type'] == 'Comment':
+            link = self.prompt_and_select_link()
+            if link:
                 self.term.open_link(link)
-            else:
-                self.term.flash()
         else:
             self.term.flash()
 

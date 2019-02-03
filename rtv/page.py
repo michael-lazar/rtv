@@ -312,19 +312,29 @@ class Page(object):
         """
         data = self.get_selected_item()
         url_full = data.get('url_full')
-        if url_full and url_full != data['permalink']:
+        permalink = data.get('permalink')
+
+        if url_full and url_full != permalink:
             # The item is a link-only submission that won't contain text
-            link = data['url_full']
+            link = url_full
         else:
-            extracted_links = self.content.extract_links(data.get('html', ''))
-            if not extracted_links:
-                # Only one selection to choose from, so just pick it
-                link = data.get('permalink')
+            html = data.get('html')
+            if html:
+                extracted_links = self.content.extract_links(html)
+                if not extracted_links:
+                    # Only one selection to choose from, so just pick it
+                    link = permalink
+                else:
+                    # Let the user decide which link to open
+                    links = []
+                    if permalink:
+                        links += [{'text': 'Permalink', 'href': permalink}]
+                    links += extracted_links
+                    link = self.term.prompt_user_to_select_link(links)
             else:
-                # Let the user decide which link to open
-                links = [{'text': 'Permalink', 'href': data['permalink']}]
-                links += extracted_links
-                link = self.term.prompt_user_to_select_link(links)
+                # Some items like hidden comments don't have any HTML to parse
+                link = permalink
+
         return link
 
     @PageController.register(Command('COPY_PERMALINK'))
