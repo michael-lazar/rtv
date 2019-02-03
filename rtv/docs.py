@@ -67,7 +67,7 @@ https://github.com/michael-lazar/rtv
   SPACE : Hide a submission, or fold/expand the selected comment tree
   b     : Display urls with urlview
   y     : Copy submission permalink to clipboard
-  Y     : Copy submission link to clipboard
+  Y     : Copy submission or comment urls to clipboard
   F2    : Cycle to previous theme
   F3    : Cycle to next theme
 
