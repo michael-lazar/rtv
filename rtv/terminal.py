@@ -911,7 +911,8 @@ class Terminal(object):
         # Pattern can span multiple lines, allows dot to match newline chars
         flags = re.MULTILINE | re.DOTALL
         pattern = '<!--{token}(.*?){token}-->'.format(token=TOKEN)
-        return re.sub(pattern, '', text, flags=flags).strip()
+        text = re.sub(pattern, '', text, flags=flags)
+        return re.sub( '^[\s\n]*\n', '', text, flags=flags).rstrip()
 
     def clear_screen(self):
         """
