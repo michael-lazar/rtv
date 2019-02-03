@@ -418,8 +418,11 @@ class Page(object):
         # Set the terminal title
         if len(sub_name) > 50:
             title = sub_name.strip('/')
-            title = title.rsplit('/', 1)[1]
             title = title.replace('_', ' ')
+            try:
+                title = title.rsplit('/', 1)[1]
+            except IndexError:
+                pass
         else:
             title = sub_name
 
