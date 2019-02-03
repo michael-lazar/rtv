@@ -110,8 +110,8 @@ class GfycatMIMEParser(BaseMIMEParser):
 
     @staticmethod
     def get_mimetype(url):
-        parts = url.replace('gifs/detail/', '').split('/')
-        api_url = '/'.join(parts[:-1] + ['cajax', 'get'] + parts[-1:])
+        identifier = url.split('/')[-1]
+        api_url = 'https://api.gfycat.com/v1/gfycats/{}'.format(identifier)
         resp = requests.get(api_url)
         image_url = resp.json()['gfyItem']['mp4Url']
         return image_url, 'video/mp4'
