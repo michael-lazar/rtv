@@ -701,6 +701,14 @@ def test_terminal_strip_instructions(terminal):
     text = '<!--{0} instructions {0}--><!-- An HTML comment -->'.format(TOKEN)
     assert terminal.strip_instructions(text) == '<!-- An HTML comment -->'
 
+    # Whitespace at the start of the first line should be preserved
+    text = '    code\n    block\n'
+    assert terminal.strip_instructions(text) == '    code\n    block'
+
+    # But blank lines should be stripped
+    text = '\n    \n    code\n    block\n'
+    assert terminal.strip_instructions(text) == '    code\n    block'
+
 
 def test_terminal_get_link_pages(terminal):
 
