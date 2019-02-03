@@ -304,6 +304,39 @@ class Page(object):
             message = 'New Messages' if inbox > 0 else 'No New Messages'
             self.term.show_notification(message)
 
+    def prompt_and_select_link(self):
+        """
+        Prompt the user to select a link from a list to open.
+
+        Return the link that was selected, or ``None`` if no link was selected.
+        """
+        data = self.get_selected_item()
+        url_full = data.get('url_full')
+        permalink = data.get('permalink')
+
+        if url_full and url_full != permalink:
+            # The item is a link-only submission that won't contain text
+            link = url_full
+        else:
+            html = data.get('html')
+            if html:
+                extracted_links = self.content.extract_links(html)
+                if not extracted_links:
+                    # Only one selection to choose from, so just pick it
+                    link = permalink
+                else:
+                    # Let the user decide which link to open
+                    links = []
+                    if permalink:
+                        links += [{'text': 'Permalink', 'href': permalink}]
+                    links += extracted_links
+                    link = self.term.prompt_user_to_select_link(links)
+            else:
+                # Some items like hidden comments don't have any HTML to parse
+                link = permalink
+
+        return link
+
     @PageController.register(Command('COPY_PERMALINK'))
     def copy_permalink(self):
         """
@@ -329,11 +362,9 @@ class Page(object):
     @PageController.register(Command('COPY_URL'))
     def copy_url(self):
         """
-        Copies submission url to OS clipboard
+        Copies link to OS clipboard
         """
-
-        data = self.get_selected_item()
-        url = data.get('url_full')
+        url = self.prompt_and_select_link()
         if url is None:
             self.term.flash()
             return
@@ -346,7 +377,7 @@ class Page(object):
                 'Failed to copy url: {0}'.format(e))
         else:
             self.term.show_notification(
-                'Copied url to clipboard', timeout=1)
+                ['Copied to clipboard:', url], timeout=1)
 
     def clear_input_queue(self):
         """
