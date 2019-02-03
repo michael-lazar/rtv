@@ -151,10 +151,11 @@ def test_config_from_file():
         'subreddit': 'cfb',
         'enable_media': True,
         'max_comment_cols': 150,
+        'max_pager_cols': 120,
         'hide_username': True,
         'theme': 'molokai',
         'flash': True,
-        'autologin': True
+        'autologin': True,
     }
 
     bindings = {
