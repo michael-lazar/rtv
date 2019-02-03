@@ -181,6 +181,9 @@ class SubmissionPage(Page):
 
         n_rows, n_cols = self.term.stdscr.getmaxyx()
 
+        if self.config['max_pager_cols'] is not None:
+            n_cols = min(n_cols, self.config['max_pager_cols'])
+
         data = self.get_selected_item()
         if data['type'] == 'Submission':
             text = '\n\n'.join((data['permalink'], data['text']))
