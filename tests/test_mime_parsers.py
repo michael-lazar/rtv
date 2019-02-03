@@ -83,7 +83,7 @@ URLS = OrderedDict([
         'video/x-youtube')),
     ('clippituser', (
         'https://www.clippituser.tv/c/edqqld',
-        'https://clips.clippit.tv/edqqld/720.mp4',
+        'https://clips.clippit.tv/edqqld/360.mp4',
         'video/mp4')),
     ('gifs_com', (
         'https://gifs.com/gif/cat-jumps-into-lake-after-guy-sneezes-0VqvRL',
