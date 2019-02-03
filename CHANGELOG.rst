@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.25.0: http://github.com/michael-lazar/rtv/releases/tag/v1.25.0
 .. _1.24.0: http://github.com/michael-lazar/rtv/releases/tag/v1.24.0
 .. _1.23.0: http://github.com/michael-lazar/rtv/releases/tag/v1.23.0
 .. _1.22.1: http://github.com/michael-lazar/rtv/releases/tag/v1.22.1
@@ -36,6 +37,36 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.25.0_ (2019-02-03)
+--------------------
+
+Features
+
+* You can now open HTML links that are embedded inside of comments and
+  submissions by pressing the ``ENTER`` key and selecting a link from the list.
+  This also works when copying links to the clipboard using ``Y``.
+* Added the ``--no-autologin`` command line argument to disable automatically
+  logging in at startup.
+* Added the ``max_pager_cols`` configuration option to limit the text width
+  when sending text to the system ``PAGER``.
+* Additional filtering options have been added when viewing user pages.
+* The gilded flair now displays the number of times a submission has been
+  gilded.
+* Submissions/comments now display the time that they were most recently edited.
+
+Bugfixes
+
+* Fixed the MIME parser for gfycat, and gfycat videos are now downloaded as mp4.
+* Fixed formatting when composing posts with leading whitespace.
+* Fixed crash when attempting to display a long terminal title.
+
+Documentation
+
+* RTV has been moved to the Arch Community Repository and installation
+  instructions for Arch have been updated accordingly.
+
 
 --------------------
 1.24.0_ (2018-08-12)
