@@ -20,7 +20,7 @@ class SubredditController(PageController):
 class SubredditPage(Page):
 
     BANNER = docs.BANNER_SUBREDDIT
-    FOOTER = docs.FOOTER_SUBREDDIT
+    FOOTER = None
 
     def __init__(self, reddit, term, config, oauth, name):
         """
@@ -33,6 +33,10 @@ class SubredditPage(Page):
         self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.nav = Navigator(self.content.get)
         self.toggled_subreddit = None
+        if not self.reddit.is_oauth_session():
+            SubredditPage.FOOTER = docs.FOOTER_SUBREDDIT
+        else:
+            SubredditPage.FOOTER = docs.FOOTER_SUBREDDIT_LOGGED
 
     def refresh_content(self, order=None, name=None):
         """
