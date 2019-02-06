@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import six
+
 from . import docs
+from .packages import praw
 from .page import Page, PageController
 from .content import SubscriptionContent, SubredditContent
 from .objects import Navigator, Command
@@ -78,6 +81,38 @@ class SubscriptionPage(Page):
         """
 
         self.active = False
+
+    @SubscriptionController.register(Command('PROMPT_ACTION'))
+    def prompt_action(self):
+        choices = {
+                'd': 'subscribe',
+                 }
+        data = self.get_selected_item()
+        message = docs.SUBSCRIPTION_ACTION_MENU.format(**data).strip().splitlines()
+        ch = self.term.show_notification(message)
+        ch = six.unichr(ch)
+        action = choices.get(ch)
+        if action == 'subscribe':
+            obj = data['object']
+            if isinstance(obj, praw.objects.Submission):
+                obj = data['object'].subreddit
+            if isinstance(obj, praw.objects.Subreddit):
+                self.reddit.subscribe(obj, obj.refresh().user_is_subscriber)
+                msg = 'You are {}subscribed to {}'.format(
+                        'no longer ' if obj.user_is_subscriber else '', obj.display_name)
+                        # logic inverted to avoid addtional refresh
+                self.term.show_notification(msg)
+                self.reload_page()
+            elif isinstance(obj, praw.objects.Multireddit) and obj.can_edit:
+                msg = 'Do you really want to delete {}? (y/n): '.format(obj.display_name)
+                if self.term.prompt_y_or_n(msg):
+                    obj.delete()
+                    self.reload_page()
+        else:
+            self.term.show_notification('Invalid option')
+
+    def prompt_action(self):
+        self._prompt_action(['subscribe'], docs.SUBSCRIPTION_ACTION_MENU)
 
     def _draw_banner(self):
         # Subscriptions can't be sorted, so disable showing the order menu
