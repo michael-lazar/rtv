@@ -104,6 +104,10 @@ BANNER_SEARCH = """
 [1]relevance [2]top [3]comments [4]new
 """
 
+FOOTER_SUBREDDIT_LOGGED = """
+[?]Help [q]Quit [l]Comments [/]Prompt [u]Logout [o]Open [c]Post [a/z]Vote [r]Refresh
+"""
+
 FOOTER_SUBREDDIT = """
 [?]Help [q]Quit [l]Comments [/]Prompt [u]Login [o]Open [c]Post [a/z]Vote [r]Refresh
 """
