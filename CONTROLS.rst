@@ -41,7 +41,7 @@ Once you are logged in, your username will appear in the top-right corner of the
 Subreddit Mode
 --------------
 
-In addition to the basic commands, the following actions can be performed when you're viewing a **subreddit** .
+In addition to the basic commands, the following actions can be performed when you're viewing a subreddit .
 
 :``l`` or ``►``: Enter the selected submission
 :``o`` or ``ENTER``:  Open the submission link with your web browser
@@ -69,7 +69,7 @@ The ``/`` prompt accepts subreddits in the following formats
 Submission Mode
 ---------------
 
-In addition to the basic commands, the following actions can be performed when you're viewing a **submission**.
+In addition to the basic commands, the following actions can be performed when you're viewing a submission.
 
 :``h`` or ``◄``: Return to the subreddit
 :``l`` or ``►``: Open the selected comment in a new window
