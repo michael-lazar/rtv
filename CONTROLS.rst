@@ -26,7 +26,7 @@ Authenticated Commands
 
 Some actions require that you be logged in to your reddit account.
 You can log in by pressing ``u`` while inside of the program.
-Once you are logged in your username will appear in the top-right corner of the screen.
+Once you are logged in, your username will appear in the top-right corner of the screen.
 
 :``a``/``z``: Upvote/downvote
 :``c``: Compose a new post or comment
