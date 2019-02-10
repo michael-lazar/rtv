@@ -4,7 +4,6 @@
 
 <p align="center">
 RTV provides a text-based interface to view and interact with reddit.<br>
-It's compatible with most terminals on Linux and macOS.
 </p>
 
 <p align="center">
@@ -12,7 +11,7 @@ It's compatible with most terminals on Linux and macOS.
 </p>
 
 <p align="center">
-RTV is built in python using the curses library.
+RTV is compatible with most terminals on Linux and macOS.
 </p>
 
 ---
