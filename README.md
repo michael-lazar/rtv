@@ -4,7 +4,7 @@
 
 <p align="center">
 RTV provides a text-based interface to view and interact with reddit.<br>
-It's compatible with most terminal emulators on Linux and macOS.
+It's compatible with most terminals on Linux and macOS.
 </p>
 
 <p align="center">
