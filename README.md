@@ -29,9 +29,6 @@ RTV is compatible with most terminals on Linux and macOS.
   <a href="https://coveralls.io/github/michael-lazar/rtv?branch=master">
     <img alt="coveralls" src="https://coveralls.io/repos/michael-lazar/rtv/badge.svg?branch=master&service=github"/>
   </a>
-  <a href="https://gitter.im/michael-lazar/rtv">
-    <img alt="gitter" src="https://img.shields.io/gitter/room/michael-lazar/rtv.js.svg"/>
-  </a>
   <a href="https://saythanks.io/to/michael-lazar">
     <img alt="say-thanks" src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg"/>
   </a>
