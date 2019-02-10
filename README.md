@@ -82,6 +82,14 @@ $ nix-env -i rtv
 $ pkg install rtv
 ```
 
+### From source
+
+```bash
+$ git clone https://github.com/michael-lazar/rtv.git
+$ cd rtv
+$ python setup.py install
+```
+
 ## Usage
 
 To run the program, type:
