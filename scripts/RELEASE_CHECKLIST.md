@@ -4,7 +4,7 @@ Release Checklist
 1. Switch to the master branch and stash any uncommited changes.
 2. Bump the version number in [rtv/\_\_version\_\_.py](rtv/__version__.py).
 3. Update the release notes in the [CHANGELOG.rst](CHANGELOG.rst).
-4. Update the contributer list by running [``scripts/build_authors.py``](scripts/build_authors.py).
+4. Update the contributor list by running [``scripts/build_authors.py``](scripts/build_authors.py).
 5. Re-generate the manpage by running [``scripts/build_manpage.py``](scripts/build_manpage.py).
 6. Make sure the bundled packages are up-to-date by running [``scripts/update_packages.py``](scripts/update_packages.py).
 7. Commit all changes to the master branch.

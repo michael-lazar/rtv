@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.25.1: http://github.com/michael-lazar/rtv/releases/tag/v1.25.1
 .. _1.25.0: http://github.com/michael-lazar/rtv/releases/tag/v1.25.0
 .. _1.24.0: http://github.com/michael-lazar/rtv/releases/tag/v1.24.0
 .. _1.23.0: http://github.com/michael-lazar/rtv/releases/tag/v1.23.0
@@ -37,6 +38,16 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.25.1_ (2019-02-13)
+--------------------
+
+Bugfixes
+
+* Fixed a bug that was causing newlines to be stripped when posting comments
+  and submissions.
+
 
 --------------------
 1.25.0_ (2019-02-03)
