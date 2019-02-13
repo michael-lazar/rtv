@@ -912,7 +912,7 @@ class Terminal(object):
         flags = re.MULTILINE | re.DOTALL
         pattern = '<!--{token}(.*?){token}-->'.format(token=TOKEN)
         text = re.sub(pattern, '', text, flags=flags)
-        return re.sub( '^[\s\n]*\n', '', text, flags=flags).rstrip()
+        return re.sub('\A[\s\n]*\n', '', text, flags=flags).rstrip()
 
     def clear_screen(self):
         """
