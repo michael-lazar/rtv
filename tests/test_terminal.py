@@ -709,6 +709,10 @@ def test_terminal_strip_instructions(terminal):
     text = '\n    \n    code\n    block\n'
     assert terminal.strip_instructions(text) == '    code\n    block'
 
+    # However, blank lines in the middle of comment should not be stripped
+    text = 'paragraph 1\n\nparagraph 2\n'
+    assert terminal.strip_instructions(text) == 'paragraph 1\n\nparagraph 2'
+
 
 def test_terminal_get_link_pages(terminal):
 
