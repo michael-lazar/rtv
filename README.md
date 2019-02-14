@@ -87,6 +87,10 @@ $ cd rtv
 $ python setup.py install
 ```
 
+### Windows
+
+RTV is not supported on Windows.
+
 ## Usage
 
 To run the program, type:
