@@ -640,7 +640,7 @@ class Terminal(object):
 
         pager = os.getenv('RTV_PAGER')
         if pager is None:
-                pager = os.getenv('PAGER') or 'less'
+            pager = os.getenv('PAGER') or 'less'
         command = shlex.split(pager)
 
         if wrap:
@@ -912,7 +912,7 @@ class Terminal(object):
         flags = re.MULTILINE | re.DOTALL
         pattern = '<!--{token}(.*?){token}-->'.format(token=TOKEN)
         text = re.sub(pattern, '', text, flags=flags)
-        return re.sub('\A[\s\n]*\n', '', text, flags=flags).rstrip()
+        return re.sub(r'\A[\s\n]*\n', '', text, flags=flags).rstrip()
 
     def clear_screen(self):
         """
