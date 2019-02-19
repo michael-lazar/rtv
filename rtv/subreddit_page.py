@@ -60,14 +60,14 @@ class SubredditPage(Page):
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
-    @SubredditController.register(Command('SORT_HOT'))
+    @SubredditController.register(Command('SORT_1'))
     def sort_content_hot(self):
         if self.content.query:
             self.refresh_content(order='relevance')
         else:
             self.refresh_content(order='hot')
 
-    @SubredditController.register(Command('SORT_TOP'))
+    @SubredditController.register(Command('SORT_2'))
     def sort_content_top(self):
         order = self._prompt_period('top')
         if order is None:
@@ -75,7 +75,7 @@ class SubredditPage(Page):
         else:
             self.refresh_content(order=order)
 
-    @SubredditController.register(Command('SORT_RISING'))
+    @SubredditController.register(Command('SORT_3'))
     def sort_content_rising(self):
         if self.content.query:
             order = self._prompt_period('comments')
@@ -86,11 +86,11 @@ class SubredditPage(Page):
         else:
             self.refresh_content(order='rising')
 
-    @SubredditController.register(Command('SORT_NEW'))
+    @SubredditController.register(Command('SORT_4'))
     def sort_content_new(self):
         self.refresh_content(order='new')
 
-    @SubredditController.register(Command('SORT_CONTROVERSIAL'))
+    @SubredditController.register(Command('SORT_5'))
     def sort_content_controversial(self):
         if self.content.query:
             self.term.flash()
@@ -101,7 +101,7 @@ class SubredditPage(Page):
             else:
                 self.refresh_content(order=order)
 
-    @SubredditController.register(Command('SORT_GILDED'))
+    @SubredditController.register(Command('SORT_6'))
     def sort_content_gilded(self):
         if self.content.query:
             self.term.flash()

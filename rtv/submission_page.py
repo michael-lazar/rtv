@@ -37,23 +37,23 @@ class SubmissionPage(Page):
         self.nav = Navigator(self.content.get, page_index=-1)
         self.selected_subreddit = None
 
-    @SubmissionController.register(Command('SORT_HOT'))
+    @SubmissionController.register(Command('SORT_1'))
     def sort_content_hot(self):
         self.refresh_content(order='hot')
 
-    @SubmissionController.register(Command('SORT_TOP'))
+    @SubmissionController.register(Command('SORT_2'))
     def sort_content_top(self):
         self.refresh_content(order='top')
 
-    @SubmissionController.register(Command('SORT_RISING'))
+    @SubmissionController.register(Command('SORT_3'))
     def sort_content_rising(self):
         self.refresh_content(order='rising')
 
-    @SubmissionController.register(Command('SORT_NEW'))
+    @SubmissionController.register(Command('SORT_4'))
     def sort_content_new(self):
         self.refresh_content(order='new')
 
-    @SubmissionController.register(Command('SORT_CONTROVERSIAL'))
+    @SubmissionController.register(Command('SORT_5'))
     def sort_content_controversial(self):
         self.refresh_content(order='controversial')
 

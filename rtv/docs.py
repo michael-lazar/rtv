@@ -38,12 +38,13 @@ https://github.com/michael-lazar/rtv
   G     : Jump to the last post
   J     : Jump to the next sibling comment
   K     : Jump to the parent comment
-  1     : Sort by hot
-  2     : Sort by top
-  3     : Sort by rising
-  4     : Sort by new
-  5     : Sort by controversial
-  6     : Sort by gilded
+  1     : Sort by category 1
+  2     : Sort by category 2
+  3     : Sort by category 3
+  4     : Sort by category 4
+  5     : Sort by category 5
+  6     : Sort by category 6
+  7     : Sort by category 7
   p     : Return to the front page
   r     : Refresh page
   u     : Login or logout
