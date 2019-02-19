@@ -590,7 +590,7 @@ class Terminal(object):
                     # by RTV. It's also safer because it doesn't inject
                     # python code through the command line.
 
-                    # Surpress stdout/stderr from the browser, see
+                    # Suppress stdout/stderr from the browser, see
                     # https://stackoverflow.com/questions/2323080. We can't
                     # depend on replacing sys.stdout & sys.stderr because
                     # webbrowser uses Popen().
@@ -601,7 +601,10 @@ class Terminal(object):
                         os.dup2(null, 2)
                         webbrowser.open_new_tab(url)
                     finally:
-                        null.close()
+                        try:
+                            null.close()
+                        except AttributeError:
+                            pass
                         os.dup2(stdout, 1)
                         os.dup2(stderr, 2)
 
