@@ -599,6 +599,25 @@ class Page(object):
         self.term.add_line(window, text, 0, 0)
         self._row += 1
 
+    def _draw_user_tag(self, win, data):
+        user_tag = self.config.res_data.get(
+                'tag.{}'.format(data['author']).lower())
+        if not user_tag:
+            return
+
+        try:
+            attr = self.term.attr(user_tag['color'])
+        except KeyError:
+            attr = self.term.attr('none')
+
+        self.term.add_space(win)
+        self.term.add_line(win, '{text}'.format(**user_tag), attr=attr)
+
+        if 'votesUp' in user_tag and 'votesDown' in user_tag:
+            votesNet = '[%+1.f]' % (user_tag['votesUp'] - user_tag['votesDown'])
+            self.term.add_line(win, ' {}'.format(votesNet), attr=attr)
+
+
     def _move_cursor(self, direction):
         # Note: ACS_VLINE doesn't like changing the attribute, so disregard the
         # redraw flag and opt to always redraw

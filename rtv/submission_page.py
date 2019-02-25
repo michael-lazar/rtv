@@ -339,6 +339,8 @@ class SubmissionPage(Page):
                 self.term.add_space(win)
                 self.term.add_line(win, '{flair}'.format(**data), attr=attr)
 
+            self._draw_user_tag(win, data)
+
             arrow, attr = self.term.get_arrow(data['likes'])
             self.term.add_space(win)
             self.term.add_line(win, arrow, attr=attr)
@@ -414,6 +416,8 @@ class SubmissionPage(Page):
             attr = self.term.attr('SubmissionFlair')
             self.term.add_space(win)
             self.term.add_line(win, '{flair}'.format(**data), attr=attr)
+
+        self._draw_user_tag(win, data)
 
         attr = self.term.attr('SubmissionSubreddit')
         self.term.add_space(win)

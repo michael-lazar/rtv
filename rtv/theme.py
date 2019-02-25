@@ -111,6 +111,24 @@ class Theme(object):
             'Link':                  (curses.COLOR_BLUE,    None, curses.A_UNDERLINE),
             'LinkSeen':              (curses.COLOR_MAGENTA, None, curses.A_UNDERLINE),
             'UserFlair':             (curses.COLOR_YELLOW,  None, curses.A_BOLD)
+        },
+        # tagging
+        'tagging': {
+            'black':                 (curses.COLOR_BLACK,   None, curses.A_REVERSE),
+            'red':                   (curses.COLOR_RED,     None, curses.A_REVERSE),
+            'green':                 (curses.COLOR_GREEN,   None, curses.A_REVERSE),
+            'yellow':                (curses.COLOR_YELLOW,  None, curses.A_REVERSE),
+            'blue':                  (curses.COLOR_BLUE,    None, curses.A_REVERSE),
+            'magenta':               (curses.COLOR_MAGENTA, None, curses.A_REVERSE),
+            'cyan':                  (curses.COLOR_CYAN,    None, curses.A_REVERSE),
+            'silver':                (curses.COLOR_WHITE,   None, curses.A_REVERSE),
+            'none':                  (None,                 None, curses.A_REVERSE),
+            'gray':                  (8,                    None, curses.A_REVERSE),
+            'orange':                (9,                    None, curses.A_REVERSE),
+            'lime':                  (10,                   None, curses.A_REVERSE),
+            'cornflowerblue':        (12,                   None, curses.A_REVERSE),
+            'pink':                  (13,                   None, curses.A_REVERSE),
+            'white':                 (15,                   None, curses.A_REVERSE),
         }
     }
 
@@ -170,6 +188,9 @@ class Theme(object):
         # Create the "Selected" versions of elements, which are prefixed with
         # the @ symbol. For example, "@CommentText" represents how comment
         # text is formatted when it is highlighted by the cursor.
+        for key in self.DEFAULT_THEME['tagging']:
+            dest = '@{0}'.format(key)
+            self._set_fallback(elements, key, 'Selected', dest)
         for key in self.DEFAULT_THEME['normal']:
             dest = '@{0}'.format(key)
             self._set_fallback(elements, key, 'Selected', dest)
@@ -178,6 +199,8 @@ class Theme(object):
             self._set_fallback(elements, key, 'SelectedCursor', dest)
 
         # Fill in the ``None`` values for all of the elements with normal text
+        for key in self.DEFAULT_THEME['tagging']:
+            self._set_fallback(elements, key, 'Normal')
         for key in self.DEFAULT_THEME['normal']:
             self._set_fallback(elements, key, 'Normal')
         for key in self.DEFAULT_THEME['cursor']:

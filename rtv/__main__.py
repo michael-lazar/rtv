@@ -93,6 +93,9 @@ def main():
     # Load the browsing history from previous sessions
     config.load_history()
 
+    # Load the tagging from previous sessions
+    config.load_res()
+
     # Load any previously saved auth session token
     config.load_refresh_token()
     if config['clear_auth']:
@@ -243,6 +246,8 @@ def main():
     finally:
         # Try to save the browsing history
         config.save_history()
+        # Try to save the res data
+        # config.save_res()
         # Ensure sockets are closed to prevent a ResourceWarning
         if 'reddit' in locals():
             reddit.handler.http.close()

@@ -3,7 +3,9 @@ from __future__ import unicode_literals
 
 import os
 import codecs
+import json
 import shutil
+import time
 import argparse
 from functools import partial
 
@@ -26,6 +28,7 @@ MAILCAP = os.path.join(HOME, '.mailcap')
 TOKEN = os.path.join(XDG_DATA_HOME, 'rtv', 'refresh-token')
 HISTORY = os.path.join(XDG_DATA_HOME, 'rtv', 'history.log')
 THEMES = os.path.join(XDG_CONFIG_HOME, 'rtv', 'themes')
+RESBACKUP = os.path.join(XDG_CONFIG_HOME, 'rtv', 'resbackup')
 
 
 def build_parser():
@@ -154,10 +157,12 @@ class Config(object):
     This class manages the loading and saving of configs and other files.
     """
 
-    def __init__(self, history_file=HISTORY, token_file=TOKEN, **kwargs):
+    def __init__(self, history_file=HISTORY, token_file=TOKEN,
+                 resbackup_file=RESBACKUP, **kwargs):
 
         self.history_file = history_file
         self.token_file = token_file
+        self.resbackup_file = resbackup_file
         self.config = kwargs
 
         default, bindings = self.get_file(DEFAULT_CONFIG)
@@ -168,6 +173,7 @@ class Config(object):
         # so they are treated differently from the rest of the config options.
         self.refresh_token = None
         self.history = OrderedSet()
+        self.res_data = {}
 
     def __getitem__(self, item):
         if item in self.config:
@@ -217,6 +223,19 @@ class Config(object):
         if os.path.exists(self.history_file):
             os.remove(self.history_file)
         self.history = OrderedSet()
+
+    def load_res(self):
+        if os.path.exists(self.resbackup_file):
+            with codecs.open(self.resbackup_file, encoding='utf-8') as fp:
+                self.res_data = json.load(fp)['data']
+        else:
+            self.res_data = {}
+
+    def save_res(self):
+        self.res_data['backup.lastModified,file'] = int(time.time() * 1000)
+        self._ensure_filepath(self.resbackup_file)
+        with codecs.open(self.resbackup_file, 'w+', encoding='utf-8') as fp:
+            json.dump({'SCHEMA_VERSION': 2, 'data': self.res_data}, fp)
 
     @staticmethod
     def get_args():
