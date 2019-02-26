@@ -60,7 +60,7 @@ https://github.com/michael-lazar/rtv
   i     : Display new messages
   s     : Show subscribed subreddits
   S     : Show subscribed multireddits
-  w     : Save a submission/comment 
+  w     : Save a submission/comment
   l     : View comments, or open comment in pager
   h     : Return to subreddit
   o     : Open the submission or comment url
@@ -106,6 +106,10 @@ BANNER_SEARCH = """
 
 FOOTER_SUBREDDIT = """
 [?]Help [q]Quit [l]Comments [/]Prompt [u]Login [o]Open [c]Post [a/z]Vote [r]Refresh
+"""
+
+FOOTER_SUBREDDIT_LOGGED_IN = """
+[?]Help [q]Quit [l]Comments [/]Prompt [u]Logout [o]Open [c]Post [a/z]Vote [r]Refresh
 """
 
 FOOTER_SUBMISSION = """

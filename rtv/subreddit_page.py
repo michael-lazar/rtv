@@ -33,12 +33,14 @@ class SubredditPage(Page):
         self.content = SubredditContent.from_name(reddit, name, term.loader)
         self.nav = Navigator(self.content.get)
         self.toggled_subreddit = None
+        self.FOOTER = self.reload_footer()
 
     def refresh_content(self, order=None, name=None):
         """
         Re-download all submissions and reset the page index
         """
 
+        self.FOOTER = self.reload_footer()
         order = order or self.content.order
 
         # Preserve the query if staying on the current page
@@ -59,6 +61,12 @@ class SubredditPage(Page):
                 self.reddit, name, self.term.loader, order=order, query=query)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
+
+    def reload_footer(self):
+      if self.reddit.user is None:
+        return docs.FOOTER_SUBREDDIT
+      else:
+        return docs.FOOTER_SUBREDDIT_LOGGED_IN
 
     @SubredditController.register(Command('SORT_HOT'))
     def sort_content_hot(self):

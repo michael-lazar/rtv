@@ -227,6 +227,8 @@ class Page(object):
         else:
             self.oauth.authorize()
 
+        self.refresh_content()
+
     @PageController.register(Command('DELETE'))
     @logged_in
     def delete_item(self):
