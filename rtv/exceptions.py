@@ -39,6 +39,10 @@ class SubscriptionError(RTVError):
     "Content could not be fetched"
 
 
+class InboxError(RTVError):
+    "Content could not be fetched"
+
+
 class ProgramError(RTVError):
     "Problem executing an external program"
 

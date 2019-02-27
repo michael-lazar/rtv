@@ -602,8 +602,8 @@ class Terminal(object):
                         webbrowser.open_new_tab(url)
                     finally:
                         try:
-                            null.close()
-                        except AttributeError:
+                            os.close(null)
+                        except OSError:
                             pass
                         os.dup2(stdout, 1)
                         os.dup2(stderr, 2)

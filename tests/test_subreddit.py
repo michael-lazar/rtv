@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import curses
+from collections import OrderedDict
 
 import six
 import pytest
@@ -15,6 +16,15 @@ try:
     from unittest import mock
 except ImportError:
     import mock
+
+
+PROMPTS = OrderedDict([
+    ('prompt_1', 'comments/571dw3'),
+    ('prompt_2', '///comments/571dw3'),
+    ('prompt_3', '/comments/571dw3'),
+    ('prompt_4', '/r/pics/comments/571dw3/'),
+    ('prompt_5', 'https://www.reddit.com/r/pics/comments/571dw3/at_disneyland'),
+])
 
 
 def test_subreddit_page_construct(reddit, terminal, config, oauth):
@@ -155,29 +165,29 @@ def test_subreddit_prompt(subreddit_page, terminal):
     with mock.patch.object(terminal, 'prompt_input'):
         terminal.prompt_input.return_value = 'front/top'
         subreddit_page.controller.trigger('/')
-        assert subreddit_page.content.name == '/r/front'
-        assert subreddit_page.content.order == 'top'
-        assert not terminal.loader.exception
+
+        subreddit_page.handle_selected_page()
+        assert not subreddit_page.active
+        assert subreddit_page.selected_page
+        assert subreddit_page.selected_page.content.name == '/r/front'
+        assert subreddit_page.selected_page.content.order == 'top'
 
 
-def test_subreddit_prompt_submission(subreddit_page, terminal):
+@pytest.mark.parametrize('prompt', PROMPTS.values(), ids=list(PROMPTS))
+def test_subreddit_prompt_submission(subreddit_page, terminal, prompt):
 
-    prompts = [
-        'comments/571dw3',
-        '///comments/571dw3',
-        '/comments/571dw3',
-        '/r/pics/comments/571dw3/',
-        'https://www.reddit.com/r/pics/comments/571dw3/at_disneyland']
     url = 'https://www.reddit.com/comments/571dw3'
 
-    for text in prompts:
-        with mock.patch.object(subreddit_page, 'open_submission'), \
-                mock.patch.object(terminal, 'prompt_input'):
+    with mock.patch.object(subreddit_page, 'open_submission_page'), \
+            mock.patch.object(terminal, 'prompt_input'):
 
-            terminal.prompt_input.return_value = text
-            subreddit_page.controller.trigger('/')
-            subreddit_page.open_submission.assert_called_with(url)
-            assert not terminal.loader.exception
+        terminal.prompt_input.return_value = prompt
+        subreddit_page.open_submission_page.return_value = 'MockPage'
+        subreddit_page.controller.trigger('/')
+
+        subreddit_page.open_submission_page.assert_called_with(url)
+        assert not terminal.loader.exception
+        assert subreddit_page.selected_page == 'MockPage'
 
 
 def test_subreddit_prompt_submission_invalid(subreddit_page, terminal):
@@ -286,12 +296,12 @@ def test_subreddit_open(subreddit_page, terminal, config):
 
     # Open the selected submission
     data = subreddit_page.content.get(subreddit_page.nav.absolute_index)
-    with mock.patch('rtv.submission_page.SubmissionPage.loop') as loop, \
-            mock.patch.object(config.history, 'add'):
+    with mock.patch.object(config.history, 'add'):
         data['url_type'] = 'selfpost'
         subreddit_page.controller.trigger('l')
         assert not terminal.loader.exception
-        assert loop.called
+        assert subreddit_page.selected_page
+        assert subreddit_page.active
         config.history.add.assert_called_with(data['url_full'])
 
     # Open the selected link externally
@@ -374,13 +384,13 @@ def test_subreddit_post(subreddit_page, terminal, reddit, refresh_token):
     submission = reddit.get_submission(url)
     with mock.patch.object(terminal, 'open_editor'),  \
             mock.patch.object(reddit, 'submit'),      \
-            mock.patch('rtv.page.Page.loop') as loop, \
             mock.patch('time.sleep'):
         terminal.open_editor.return_value.__enter__.return_value = 'test\ncont'
         reddit.submit.return_value = submission
         subreddit_page.controller.trigger('c')
         assert reddit.submit.called
-        assert loop.called
+        assert subreddit_page.selected_page.content._submission == submission
+        assert subreddit_page.active
 
 
 def test_subreddit_open_subscriptions(subreddit_page, refresh_token):
@@ -390,8 +400,12 @@ def test_subreddit_open_subscriptions(subreddit_page, refresh_token):
     subreddit_page.oauth.authorize()
 
     # Open subscriptions
+    subreddit_page.controller.trigger('s')
+    assert subreddit_page.selected_page
+    assert subreddit_page.active
+
     with mock.patch('rtv.page.Page.loop') as loop:
-        subreddit_page.controller.trigger('s')
+        subreddit_page.handle_selected_page()
         assert loop.called
 
 
@@ -417,8 +431,12 @@ def test_subreddit_open_multireddits(subreddit_page, refresh_token):
     subreddit_page.oauth.authorize()
 
     # Open multireddits
+    subreddit_page.controller.trigger('S')
+    assert subreddit_page.selected_page
+    assert subreddit_page.active
+
     with mock.patch('rtv.page.Page.loop') as loop:
-        subreddit_page.controller.trigger('S')
+        subreddit_page.handle_selected_page()
         assert loop.called
 
 
@@ -528,13 +546,19 @@ def test_subreddit_draw_header(subreddit_page, refresh_token, terminal):
 
 
 def test_subreddit_frontpage_toggle(subreddit_page, terminal):
-
     with mock.patch.object(terminal, 'prompt_input'):
+
         terminal.prompt_input.return_value = 'aww'
         subreddit_page.controller.trigger('/')
-        assert subreddit_page.content.name == '/r/aww'
-        subreddit_page.controller.trigger('p')
-        assert subreddit_page.content.name == '/r/front'
+        subreddit_page.handle_selected_page()
+
+        new_page = subreddit_page.selected_page
+        assert new_page is not None
+        assert new_page.content.name == '/r/aww'
+
+        new_page.controller.trigger('p')
+        assert new_page.toggled_subreddit == '/r/aww'
+        assert new_page.content.name == '/r/front'
 
 
 def test_subreddit_hide_submission(subreddit_page, refresh_token):
@@ -567,3 +591,50 @@ def test_subreddit_hide_submission(subreddit_page, refresh_token):
     # Make sure that the status was actually updated on the server side
     data['object'].refresh()
     assert data['object'].hidden is False
+
+
+def test_subreddit_handle_selected_page(subreddit_page, subscription_page):
+
+    # Method should be a no-op if selected_page is unset
+    subreddit_page.active = True
+    subreddit_page.handle_selected_page()
+    assert subreddit_page.selected_page is None
+    assert subreddit_page.active
+
+    # Open the subscription page and select a subreddit from the list of
+    # subscriptions
+    with mock.patch.object(subscription_page, 'loop', return_value=subreddit_page):
+        subreddit_page.selected_page = subscription_page
+        subreddit_page.handle_selected_page()
+        assert subreddit_page.selected_page == subreddit_page
+        assert subreddit_page.active
+
+    # Now when handle_select_page() is called again, the current subreddit
+    # should be closed so the selected page can be opened
+    subreddit_page.handle_selected_page()
+    assert subreddit_page.selected_page == subreddit_page
+    assert not subreddit_page.active
+
+
+def test_subreddit_page_loop_pre_select(subreddit_page, submission_page):
+
+    # Set the selected_page before entering the loop(). This will cause the
+    # selected page to immediately open. If the selected page returns a
+    # different subreddit page (e.g. the user enters a subreddit into the
+    # prompt before they hit the `h` key), the initial loop should be closed
+    # immediately
+    subreddit_page.selected_page = submission_page
+    with mock.patch.object(submission_page, 'loop', return_value=subreddit_page):
+        selected_page = subreddit_page.loop()
+
+        assert not subreddit_page.active
+        assert selected_page == subreddit_page
+
+
+def test_subreddit_page_loop(subreddit_page, stdscr, terminal):
+
+    stdscr.getch.return_value = ord('/')
+
+    with mock.patch.object(terminal, 'prompt_input', return_value='all'):
+        new_page = subreddit_page.loop()
+        assert new_page.content.name == '/r/all'

@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 from . import docs
-from .page import Page, PageController
-from .content import SubscriptionContent, SubredditContent
+from .content import SubscriptionContent
+from .page import Page, PageController, logged_in
 from .objects import Navigator, Command
 
 
@@ -12,9 +12,10 @@ class SubscriptionController(PageController):
 
 
 class SubscriptionPage(Page):
-
     BANNER = None
     FOOTER = docs.FOOTER_SUBSCRIPTION
+
+    name = 'subscription'
 
     def __init__(self, reddit, term, config, oauth, content_type='subreddit'):
         super(SubscriptionPage, self).__init__(reddit, term, config, oauth)
@@ -24,13 +25,18 @@ class SubscriptionPage(Page):
             reddit, term.loader, content_type)
         self.nav = Navigator(self.content.get)
         self.content_type = content_type
-        self.selected_subreddit = None
+
+    def handle_selected_page(self):
+        """
+        Always close the current page when another page is selected.
+        """
+        if self.selected_page:
+            self.active = False
 
     def refresh_content(self, order=None, name=None):
         """
         Re-download all subscriptions and reset the page index
         """
-
         # reddit.get_my_subreddits() does not support sorting by order
         if order:
             self.term.flash()
@@ -42,41 +48,19 @@ class SubscriptionPage(Page):
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
-    @SubscriptionController.register(Command('PROMPT'))
-    def prompt_subreddit(self):
-        """
-        Open a prompt to navigate to a different subreddit
-        """
-
-        name = self.term.prompt_input('Enter page: /')
-        if name is not None:
-            with self.term.loader('Loading page'):
-                content = SubredditContent.from_name(
-                    self.reddit, name, self.term.loader)
-            if not self.term.loader.exception:
-                self.selected_subreddit = content
-                self.active = False
-
     @SubscriptionController.register(Command('SUBSCRIPTION_SELECT'))
     def select_subreddit(self):
         """
         Store the selected subreddit and return to the subreddit page
         """
-
         name = self.get_selected_item()['name']
-        with self.term.loader('Loading page'):
-            content = SubredditContent.from_name(
-                self.reddit, name, self.term.loader)
-        if not self.term.loader.exception:
-            self.selected_subreddit = content
-            self.active = False
+        self.selected_page = self.open_subreddit_page(name)
 
     @SubscriptionController.register(Command('SUBSCRIPTION_EXIT'))
     def close_subscriptions(self):
         """
         Close subscriptions and return to the subreddit page
         """
-
         self.active = False
 
     def _draw_banner(self):

@@ -55,20 +55,21 @@ https://github.com/michael-lazar/rtv
   Q     : Force quit
   a     : Upvote
   z     : Downvote
-  c     : Compose a new submission/comment
+  c     : Compose a new submission/comment/reply
+  C     : Compose a new private message
   e     : Edit a submission/comment
   d     : Delete a submission/comment
-  i     : Display new messages
+  i     : View inbox
   s     : Show subscribed subreddits
   S     : Show subscribed multireddits
-  w     : Save a submission/comment 
+  w     : Save submission/comment, or mark message as read
   l     : View comments, or open comment in pager
-  h     : Return to subreddit
-  o     : Open the submission or comment url
-  SPACE : Hide a submission, or fold/expand the selected comment tree
-  b     : Display urls with urlview
-  y     : Copy submission permalink to clipboard
-  Y     : Copy submission or comment urls to clipboard
+  h     : Return to the previous page
+  o     : Open the submission/comment URL
+  SPACE : Hide submission, or fold/expand the selected comment tree
+  b     : Send submission/comment URLs to a urlview program
+  y     : Copy submission permalink to the clipboard
+  Y     : Copy submission/comment URLs to the clipboard
   F2    : Cycle to previous theme
   F3    : Cycle to next theme
 
@@ -105,6 +106,10 @@ BANNER_SEARCH = """
 [1]relevance [2]top [3]comments [4]new
 """
 
+BANNER_INBOX = """
+[1]all [2]unread [3]messages [4]comments [5]posts [6]mentions [7]sent
+"""
+
 FOOTER_SUBREDDIT = """
 [?]Help [q]Quit [l]Comments [/]Prompt [u]Login [o]Open [c]Post [a/z]Vote [r]Refresh
 """
@@ -114,12 +119,16 @@ FOOTER_SUBMISSION = """
 """
 
 FOOTER_SUBSCRIPTION = """
-[?]Help [q]Quit [h]Return [l]Select
+[?]Help [q]Quit [h]Return [l]Select Subreddit [r]Refresh
+"""
+
+FOOTER_INBOX = """
+[?]Help [l]View Context [o]Open Submission [c]Reply [w]Mark Read [r]Refresh
 """
 
 TOKEN = "INSTRUCTIONS"
 
-COMMENT_FILE = """<!--{token}
+REPLY_FILE = """<!--{token}
 Replying to {{author}}'s {{type}}:
 {{content}}
 
@@ -152,6 +161,16 @@ The submission is shown below, update it and save the file.
 {token}-->
 
 {{content}}
+""".format(token=TOKEN)
+
+MESSAGE_FILE = """<!--{token}
+Compose a new private message
+
+Enter your message below this instruction block:
+- The first line should contain the recipient's reddit name
+- The second line should contain the message subject
+- Subsequent lines will be interpreted as the message body
+{token}-->
 """.format(token=TOKEN)
 
 OAUTH_ACCESS_DENIED = """\

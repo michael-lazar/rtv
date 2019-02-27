@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import re
-import time
-
 from . import docs
-from .content import SubmissionContent, SubredditContent
+from .content import SubmissionContent
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Command
-from .exceptions import TemporaryFileError
 
 
 class SubmissionController(PageController):
@@ -16,9 +12,10 @@ class SubmissionController(PageController):
 
 
 class SubmissionPage(Page):
-
     BANNER = docs.BANNER_SUBMISSION
     FOOTER = docs.FOOTER_SUBMISSION
+
+    name = 'submission'
 
     def __init__(self, reddit, term, config, oauth, url=None, submission=None):
         super(SubmissionPage, self).__init__(reddit, term, config, oauth)
@@ -33,9 +30,44 @@ class SubmissionPage(Page):
             self.content = SubmissionContent(
                 submission, term.loader,
                 max_comment_cols=config['max_comment_cols'])
+
         # Start at the submission post, which is indexed as -1
         self.nav = Navigator(self.content.get, page_index=-1)
-        self.selected_subreddit = None
+
+    def handle_selected_page(self):
+        """
+        Open the subscription page in a subwindow, but close the current page
+        if any other type of page is selected.
+        """
+        if not self.selected_page:
+            pass
+        elif self.selected_page.name == 'subscription':
+            # Launch page in a subwindow
+            self.selected_page = self.selected_page.loop()
+        elif self.selected_page.name in ('subreddit', 'submission', 'inbox'):
+            # Replace the current page
+            self.active = False
+        else:
+            raise RuntimeError(self.selected_page.name)
+
+    def refresh_content(self, order=None, name=None):
+        """
+        Re-download comments and reset the page index
+        """
+        order = order or self.content.order
+        url = name or self.content.name
+
+        # Hack to allow an order specified in the name by prompt_subreddit() to
+        # override the current default
+        if order == 'ignore':
+            order = None
+
+        with self.term.loader('Refreshing page'):
+            self.content = SubmissionContent.from_url(
+                self.reddit, url, self.term.loader, order=order,
+                max_comment_cols=self.config['max_comment_cols'])
+        if not self.term.loader.exception:
+            self.nav = Navigator(self.content.get, page_index=-1)
 
     @SubmissionController.register(Command('SORT_1'))
     def sort_content_hot(self):
@@ -62,7 +94,6 @@ class SubmissionPage(Page):
         """
         Toggle the selected comment tree between visible and hidden
         """
-
         current_index = self.nav.absolute_index
         self.content.toggle(current_index)
 
@@ -84,56 +115,7 @@ class SubmissionPage(Page):
         """
         Close the submission and return to the subreddit page
         """
-
         self.active = False
-
-    def refresh_content(self, order=None, name=None):
-        """
-        Re-download comments and reset the page index
-        """
-
-        order = order or self.content.order
-        url = name or self.content.name
-
-        # Hack to allow an order specified in the name by prompt_subreddit() to
-        # override the current default
-        if order == 'ignore':
-            order = None
-
-        with self.term.loader('Refreshing page'):
-            self.content = SubmissionContent.from_url(
-                self.reddit, url, self.term.loader, order=order,
-                max_comment_cols=self.config['max_comment_cols'])
-        if not self.term.loader.exception:
-            self.nav = Navigator(self.content.get, page_index=-1)
-
-    @SubmissionController.register(Command('PROMPT'))
-    def prompt_subreddit(self):
-        """
-        Open a prompt to navigate to a different subreddit
-        """
-
-        name = self.term.prompt_input('Enter page: /')
-        if name is not None:
-            # Check if opening a submission url or a subreddit url
-            # Example patterns for submissions:
-            #     comments/571dw3
-            #     /comments/571dw3
-            #     /r/pics/comments/571dw3/
-            #     https://www.reddit.com/r/pics/comments/571dw3/at_disneyland
-            submission_pattern = re.compile(r'(^|/)comments/(?P<id>.+?)($|/)')
-            match = submission_pattern.search(name)
-            if match:
-                url = 'https://www.reddit.com/comments/{0}'
-                self.refresh_content('ignore', url.format(match.group('id')))
-
-            else:
-                with self.term.loader('Loading page'):
-                    content = SubredditContent.from_name(
-                        self.reddit, name, self.term.loader)
-                if not self.term.loader.exception:
-                    self.selected_subreddit = content
-                    self.active = False
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):
@@ -161,7 +143,6 @@ class SubmissionPage(Page):
         """
         Open the selected item with the system's pager
         """
-
         n_rows, n_cols = self.term.stdscr.getmaxyx()
 
         if self.config['max_pager_cols'] is not None:
@@ -182,46 +163,8 @@ class SubmissionPage(Page):
     def add_comment(self):
         """
         Submit a reply to the selected item.
-
-        Selected item:
-            Submission - add a top level comment
-            Comment - add a comment reply
         """
-
-        data = self.get_selected_item()
-        if data['type'] == 'Submission':
-            body = data['text']
-            reply = data['object'].add_comment
-        elif data['type'] == 'Comment':
-            body = data['body']
-            reply = data['object'].reply
-        else:
-            self.term.flash()
-            return
-
-        # Construct the text that will be displayed in the editor file.
-        # The post body will be commented out and added for reference
-        lines = ['  |' + line for line in body.split('\n')]
-        content = '\n'.join(lines)
-        comment_info = docs.COMMENT_FILE.format(
-            author=data['author'],
-            type=data['type'].lower(),
-            content=content)
-
-        with self.term.open_editor(comment_info) as comment:
-            if not comment:
-                self.term.show_notification('Canceled')
-                return
-
-            with self.term.loader('Posting', delay=0):
-                reply(comment)
-                # Give reddit time to process the submission
-                time.sleep(2.0)
-
-            if self.term.loader.exception is None:
-                self.reload_page()
-            else:
-                raise TemporaryFileError()
+        self.reply()
 
     @SubmissionController.register(Command('DELETE'))
     @logged_in
@@ -229,7 +172,6 @@ class SubmissionPage(Page):
         """
         Delete the selected comment
         """
-
         if self.get_selected_item()['type'] == 'Comment':
             self.delete_item()
         else:
@@ -240,7 +182,6 @@ class SubmissionPage(Page):
         """
         Open the selected comment with the URL viewer
         """
-
         data = self.get_selected_item()
         comment = data.get('body') or data.get('text') or data.get('url_full')
         if comment:
@@ -254,7 +195,6 @@ class SubmissionPage(Page):
         Move the cursor up to the comment's parent. If the comment is
         top-level, jump to the previous top-level comment.
         """
-
         cursor = self.nav.absolute_index
         if cursor > 0:
             level = max(self.content.get(cursor)['level'], 1)
@@ -273,7 +213,6 @@ class SubmissionPage(Page):
         Jump to the next comment that's at the same level as the selected
         comment and shares the same parent.
         """
-
         cursor = self.nav.absolute_index
         if cursor >= 0:
             level = self.content.get(cursor)['level']
