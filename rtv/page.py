@@ -12,8 +12,8 @@ import six
 from kitchen.text.display import textual_width
 
 from . import docs
+from .clipboard import copy as clipboard_copy
 from .objects import Controller, Command
-from .clipboard import copy
 from .exceptions import TemporaryFileError, ProgramError
 from .__version__ import __version__
 
@@ -51,7 +51,6 @@ class Page(object):
         self.content = None
         self.nav = None
         self.controller = None
-        self.copy_to_clipboard = copy
 
         self.active = True
         self.selected_page = None
@@ -537,7 +536,7 @@ class Page(object):
             return
 
         try:
-            self.copy_to_clipboard(url)
+            clipboard_copy(url)
         except (ProgramError, OSError) as e:
             _logger.exception(e)
             self.term.show_notification(
