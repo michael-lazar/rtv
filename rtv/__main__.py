@@ -42,7 +42,8 @@ from .terminal import Terminal
 from .content import RequestHeaderRateLimiter
 from .objects import curses_session, patch_webbrowser
 from .subreddit_page import SubredditPage
-from .exceptions import ConfigError, SubredditError
+from .submission_page import SubmissionPage
+from .exceptions import ConfigError, SubredditError, SubmissionError
 from .__version__ import __version__
 
 _logger = logging.getLogger(__name__)
@@ -204,6 +205,27 @@ def main():
             if config['autologin'] and config.refresh_token:
                 oauth.authorize(autologin=True)
 
+            # Open the supplied submission link before opening the subreddit
+            if config['link']:
+                # Expand shortened urls like https://redd.it/
+                # Praw won't accept the shortened versions, add the reddit
+                # headers to avoid a 429 response from reddit.com
+                url = requests.head(
+                    config['link'],
+                    headers=reddit.http.headers,
+                    allow_redirects=True
+                ).url
+
+                page = None
+                with term.loader('Loading submission'):
+                    try:
+                        page = SubmissionPage(reddit, term, config, oauth, url)
+                    except Exception as e:
+                        _logger.exception(e)
+                        raise SubmissionError('Unable to load {0}'.format(url))
+                while page:
+                    page = page.loop()
+
             page = None
             name = config['subreddit']
             with term.loader('Loading subreddit'):
@@ -217,17 +239,6 @@ def main():
                     _logger.exception(e)
                     page = SubredditPage(reddit, term, config, oauth, 'popular')
                     raise SubredditError('Unable to load {0}'.format(name))
-            if page is None:
-                return
-
-            # Open the supplied submission link before opening the subreddit
-            if config['link']:
-                # Expand shortened urls like https://redd.it/
-                # Praw won't accept the shortened versions, add the reddit
-                # headers to avoid a 429 response from reddit.com
-                url = requests.head(config['link'], headers=reddit.http.headers,
-                                    allow_redirects=True).url
-                page.open_submission(url=url)
 
             # Launch the subreddit page
             while page:
