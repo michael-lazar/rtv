@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
 import os
 import sys
 import time
@@ -11,8 +12,8 @@ import six
 from kitchen.text.display import textual_width
 
 from . import docs
+from .clipboard import copy as clipboard_copy
 from .objects import Controller, Command
-from .clipboard import copy
 from .exceptions import TemporaryFileError, ProgramError
 from .__version__ import __version__
 
@@ -43,7 +44,6 @@ class Page(object):
     FOOTER = None
 
     def __init__(self, reddit, term, config, oauth):
-
         self.reddit = reddit
         self.term = term
         self.config = config
@@ -51,9 +51,9 @@ class Page(object):
         self.content = None
         self.nav = None
         self.controller = None
-        self.copy_to_clipboard = copy
 
         self.active = True
+        self.selected_page = None
         self._row = 0
         self._subwindows = None
 
@@ -64,6 +64,9 @@ class Page(object):
         raise NotImplementedError
 
     def get_selected_item(self):
+        """
+        Return the content dictionary that is currently selected by the cursor.
+        """
         return self.content.get(self.nav.absolute_index)
 
     def loop(self):
@@ -72,34 +75,91 @@ class Page(object):
             1. Re-draw the screen
             2. Wait for user to press a key (includes terminal resizing)
             3. Trigger the method registered to the input key
+            4. Check if there are any nested pages that need to be looped over
 
         The loop will run until self.active is set to False from within one of
         the methods.
         """
-
         self.active = True
+
+        # This needs to be called once before the main loop, in case a subpage
+        # was pre-selected before the loop started. This happens in __main__.py
+        # with ``page.open_submission(url=url)``
+        while self.selected_page and self.active:
+            self.handle_selected_page()
+
         while self.active:
             self.draw()
             ch = self.term.stdscr.getch()
             self.controller.trigger(ch)
 
+            while self.selected_page and self.active:
+                self.handle_selected_page()
+
+        return self.selected_page
+
+    def handle_selected_page(self):
+        """
+        Some commands will result in an action that causes a new page to open.
+        Examples include selecting a submission, viewing subscribed subreddits,
+        or opening the user's inbox. With these commands, the newly selected
+        page will be pre-loaded and stored in ``self.selected_page`` variable.
+        It's up to each page type to determine what to do when another page is
+        selected.
+
+          - It can start a nested page.loop(). This would allow the user to
+            return to their previous screen after exiting the sub-page. For
+            example, this is what happens when opening an individual submission
+            from within a subreddit page. When the submission is closed, the
+            user resumes the subreddit that they were previously viewing.
+
+          - It can close the current self.loop() and bubble the selected page up
+            one level in the loop stack. For example, this is what happens when
+            the user opens their subscriptions and selects a subreddit. The
+            subscription page loop is closed and the selected subreddit is
+            bubbled up to the root level loop.
+
+        Care should be taken to ensure the user can never enter an infinite
+        nested loop, as this could lead to memory leaks and recursion errors.
+
+            # Example of an unsafe nested loop
+            subreddit_page.loop()
+                -> submission_page.loop()
+                    -> subreddit_page.loop()
+                        -> submission_page.loop()
+                            ...
+
+        """
+        raise NotImplementedError
+
     @PageController.register(Command('REFRESH'))
     def reload_page(self):
+        """
+        Clear the PRAW cache to force the page the re-fetch content from reddit.
+        """
         self.reddit.handler.clear_cache()
         self.refresh_content()
 
     @PageController.register(Command('EXIT'))
     def exit(self):
+        """
+        Prompt and exit the application.
+        """
         if self.term.prompt_y_or_n('Do you really want to quit? (y/n): '):
             sys.exit()
 
     @PageController.register(Command('FORCE_EXIT'))
     def force_exit(self):
+        """
+        Immediately exit the application.
+        """
         sys.exit()
 
     @PageController.register(Command('PREVIOUS_THEME'))
     def previous_theme(self):
-
+        """
+        Cycle to preview the previous theme from the internal list of themes.
+        """
         theme = self.term.theme_list.previous(self.term.theme)
         while not self.term.check_theme(theme):
             theme = self.term.theme_list.previous(theme)
@@ -111,7 +171,9 @@ class Page(object):
 
     @PageController.register(Command('NEXT_THEME'))
     def next_theme(self):
-
+        """
+        Cycle to preview the next theme from the internal list of themes.
+        """
         theme = self.term.theme_list.next(self.term.theme)
         while not self.term.check_theme(theme):
             theme = self.term.theme_list.next(theme)
@@ -123,36 +185,57 @@ class Page(object):
 
     @PageController.register(Command('HELP'))
     def show_help(self):
+        """
+        Open the help documentation in the system pager.
+        """
         self.term.open_pager(docs.HELP.strip())
 
     @PageController.register(Command('MOVE_UP'))
     def move_cursor_up(self):
+        """
+        Move the cursor up one selection.
+        """
         self._move_cursor(-1)
         self.clear_input_queue()
 
     @PageController.register(Command('MOVE_DOWN'))
     def move_cursor_down(self):
+        """
+        Move the cursor down one selection.
+        """
         self._move_cursor(1)
         self.clear_input_queue()
 
     @PageController.register(Command('PAGE_UP'))
     def move_page_up(self):
+        """
+        Move the cursor up approximately the number of entries on the page.
+        """
         self._move_page(-1)
         self.clear_input_queue()
 
     @PageController.register(Command('PAGE_DOWN'))
     def move_page_down(self):
+        """
+        Move the cursor down approximately the number of entries on the page.
+        """
         self._move_page(1)
         self.clear_input_queue()
 
     @PageController.register(Command('PAGE_TOP'))
     def move_page_top(self):
+        """
+        Move the cursor to the first item on the page.
+        """
         self.nav.page_index = self.content.range[0]
         self.nav.cursor_index = 0
         self.nav.inverted = False
 
     @PageController.register(Command('PAGE_BOTTOM'))
     def move_page_bottom(self):
+        """
+        Move the cursor to the last item on the page.
+        """
         self.nav.page_index = self.content.range[1]
         self.nav.cursor_index = 0
         self.nav.inverted = True
@@ -160,6 +243,9 @@ class Page(object):
     @PageController.register(Command('UPVOTE'))
     @logged_in
     def upvote(self):
+        """
+        Upvote the currently selected item.
+        """
         data = self.get_selected_item()
         if 'likes' not in data:
             self.term.flash()
@@ -179,6 +265,9 @@ class Page(object):
     @PageController.register(Command('DOWNVOTE'))
     @logged_in
     def downvote(self):
+        """
+        Downvote the currently selected item.
+        """
         data = self.get_selected_item()
         if 'likes' not in data:
             self.term.flash()
@@ -198,6 +287,9 @@ class Page(object):
     @PageController.register(Command('SAVE'))
     @logged_in
     def save(self):
+        """
+        Mark the currently selected item as saved through the reddit API.
+        """
         data = self.get_selected_item()
         if 'saved' not in data:
             self.term.flash()
@@ -218,7 +310,6 @@ class Page(object):
         Prompt to log into the user's account, or log out of the current
         account.
         """
-
         if self.reddit.is_oauth_session():
             ch = self.term.show_notification('Log out? (y/n)')
             if ch in (ord('y'), ord('Y')):
@@ -227,13 +318,64 @@ class Page(object):
         else:
             self.oauth.authorize()
 
+    def reply(self):
+        """
+        Reply to the selected item. This is a utility method and should not
+        be bound to a key directly.
+
+        Item type:
+            Submission - add a top level comment
+            Comment - add a comment reply
+            Message - reply to a private message
+        """
+        data = self.get_selected_item()
+
+        if data['type'] == 'Submission':
+            body = data['text']
+            description = 'submission'
+            reply = data['object'].add_comment
+        elif data['type'] in ('Comment', 'InboxComment'):
+            body = data['body']
+            description = 'comment'
+            reply = data['object'].reply
+        elif data['type'] == 'Message':
+            body = data['body']
+            description = 'private message'
+            reply = data['object'].reply
+        else:
+            self.term.flash()
+            return
+
+        # Construct the text that will be displayed in the editor file.
+        # The post body will be commented out and added for reference
+        lines = ['  |' + line for line in body.split('\n')]
+        content = '\n'.join(lines)
+        comment_info = docs.REPLY_FILE.format(
+            author=data['author'],
+            type=description,
+            content=content)
+
+        with self.term.open_editor(comment_info) as comment:
+            if not comment:
+                self.term.show_notification('Canceled')
+                return
+
+            with self.term.loader('Posting {}'.format(description), delay=0):
+                reply(comment)
+                # Give reddit time to process the submission
+                time.sleep(2.0)
+
+            if self.term.loader.exception is None:
+                self.reload_page()
+            else:
+                raise TemporaryFileError()
+
     @PageController.register(Command('DELETE'))
     @logged_in
     def delete_item(self):
         """
         Delete a submission or comment.
         """
-
         data = self.get_selected_item()
         if data.get('author') != self.reddit.user.name:
             self.term.flash()
@@ -248,6 +390,7 @@ class Page(object):
             data['object'].delete()
             # Give reddit time to process the request
             time.sleep(2.0)
+
         if self.term.loader.exception is None:
             self.reload_page()
 
@@ -257,7 +400,6 @@ class Page(object):
         """
         Edit a submission or comment.
         """
-
         data = self.get_selected_item()
         if data.get('author') != self.reddit.user.name:
             self.term.flash()
@@ -289,20 +431,52 @@ class Page(object):
             else:
                 raise TemporaryFileError()
 
-    @PageController.register(Command('INBOX'))
+    @PageController.register(Command('PRIVATE_MESSAGE'))
     @logged_in
-    def get_inbox(self):
+    def send_private_message(self):
         """
-        Checks the inbox for unread messages and displays a notification.
+        Send a new private message to another user.
         """
+        message_info = docs.MESSAGE_FILE
+        with self.term.open_editor(message_info) as text:
+            if not text:
+                self.term.show_notification('Canceled')
+                return
 
-        with self.term.loader('Loading'):
-            messages = self.reddit.get_unread(limit=1)
-            inbox = len(list(messages))
+            parts = text.split('\n', 2)
+            if len(parts) == 1:
+                self.term.show_notification('Missing message subject')
+                return
+            elif len(parts) == 2:
+                self.term.show_notification('Missing message body')
+                return
 
-        if self.term.loader.exception is None:
-            message = 'New Messages' if inbox > 0 else 'No New Messages'
-            self.term.show_notification(message)
+            recipient, subject, message = parts
+            recipient = recipient.strip()
+            subject = subject.strip()
+            message = message.rstrip()
+
+            if not recipient:
+                self.term.show_notification('Missing recipient')
+                return
+            elif not subject:
+                self.term.show_notification('Missing message subject')
+                return
+            elif not message:
+                self.term.show_notification('Missing message body')
+                return
+
+            with self.term.loader('Sending message', delay=0):
+                self.reddit.send_message(
+                    recipient, subject, message, raise_captcha_exception=True)
+                # Give reddit time to process the message
+                time.sleep(2.0)
+
+            if self.term.loader.exception:
+                raise TemporaryFileError()
+            else:
+                self.term.show_notification('Message sent!')
+                self.selected_page = self.open_inbox_page('sent')
 
     def prompt_and_select_link(self):
         """
@@ -340,37 +514,29 @@ class Page(object):
     @PageController.register(Command('COPY_PERMALINK'))
     def copy_permalink(self):
         """
-        Copies submission permalink to OS clipboard
+        Copy the submission permalink to OS clipboard
         """
-
-        data = self.get_selected_item()
-        url = data.get('permalink')
-        if url is None:
-            self.term.flash()
-            return
-
-        try:
-            self.copy_to_clipboard(url)
-        except (ProgramError, OSError) as e:
-            _logger.exception(e)
-            self.term.show_notification(
-                'Failed to copy permalink: {0}'.format(e))
-        else:
-            self.term.show_notification(
-                'Copied permalink to clipboard', timeout=1)
+        url = self.get_selected_item().get('permalink')
+        self.copy_to_clipboard(url)
 
     @PageController.register(Command('COPY_URL'))
     def copy_url(self):
         """
-        Copies link to OS clipboard
+        Copy a link to OS clipboard
         """
         url = self.prompt_and_select_link()
+        self.copy_to_clipboard(url)
+
+    def copy_to_clipboard(self, url):
+        """
+        Attempt to copy the selected URL to the user's clipboard
+        """
         if url is None:
             self.term.flash()
             return
 
         try:
-            self.copy_to_clipboard(url)
+            clipboard_copy(url)
         except (ProgramError, OSError) as e:
             _logger.exception(e)
             self.term.show_notification(
@@ -379,11 +545,104 @@ class Page(object):
             self.term.show_notification(
                 ['Copied to clipboard:', url], timeout=1)
 
+    @PageController.register(Command('SUBSCRIPTIONS'))
+    @logged_in
+    def subscriptions(self):
+        """
+        View a list of the user's subscribed subreddits
+        """
+        self.selected_page = self.open_subscription_page('subreddit')
+
+    @PageController.register(Command('MULTIREDDITS'))
+    @logged_in
+    def multireddits(self):
+        """
+        View a list of the user's subscribed multireddits
+        """
+        self.selected_page = self.open_subscription_page('multireddit')
+
+    @PageController.register(Command('PROMPT'))
+    def prompt(self):
+        """
+        Open a prompt to navigate to a different subreddit or comment"
+        """
+        name = self.term.prompt_input('Enter page: /')
+        if name:
+            # Check if opening a submission url or a subreddit url
+            # Example patterns for submissions:
+            #     comments/571dw3
+            #     /comments/571dw3
+            #     /r/pics/comments/571dw3/
+            #     https://www.reddit.com/r/pics/comments/571dw3/at_disneyland
+            submission_pattern = re.compile(r'(^|/)comments/(?P<id>.+?)($|/)')
+
+            match = submission_pattern.search(name)
+            if match:
+                url = 'https://www.reddit.com/comments/{0}'.format(match.group('id'))
+                self.selected_page = self.open_submission_page(url)
+            else:
+                self.selected_page = self.open_subreddit_page(name)
+
+    @PageController.register(Command('INBOX'))
+    @logged_in
+    def inbox(self):
+        """
+        View the user's inbox.
+        """
+        self.selected_page = self.open_inbox_page('all')
+
+    def open_inbox_page(self, content_type):
+        """
+        Open an instance of the inbox page for the logged in user.
+        """
+        from .inbox_page import InboxPage
+
+        with self.term.loader('Loading inbox'):
+            page = InboxPage(self.reddit, self.term, self.config, self.oauth,
+                             content_type=content_type)
+        if not self.term.loader.exception:
+            return page
+
+    def open_subscription_page(self, content_type):
+        """
+        Open an instance of the subscriptions page with the selected content.
+        """
+        from .subscription_page import SubscriptionPage
+
+        with self.term.loader('Loading {0}s'.format(content_type)):
+            page = SubscriptionPage(self.reddit, self.term, self.config,
+                                    self.oauth, content_type=content_type)
+        if not self.term.loader.exception:
+            return page
+
+    def open_submission_page(self, url=None, submission=None):
+        """
+        Open an instance of the submission page for the given submission URL.
+        """
+        from .submission_page import SubmissionPage
+
+        with self.term.loader('Loading submission'):
+            page = SubmissionPage(self.reddit, self.term, self.config,
+                                  self.oauth, url=url, submission=submission)
+        if not self.term.loader.exception:
+            return page
+
+    def open_subreddit_page(self, name):
+        """
+        Open an instance of the subreddit page for the given subreddit name.
+        """
+        from .subreddit_page import SubredditPage
+
+        with self.term.loader('Loading subreddit'):
+            page = SubredditPage(self.reddit, self.term, self.config,
+                                 self.oauth, name)
+        if not self.term.loader.exception:
+            return page
+
     def clear_input_queue(self):
         """
         Clear excessive input caused by the scroll wheel or holding down a key
         """
-
         with self.term.no_delay():
             while self.term.getch() != -1:
                 continue

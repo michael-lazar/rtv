@@ -40,6 +40,60 @@ RTV Changelog
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
 
 --------------------
+1.26.0_ (TBD)
+--------------------
+
+Features
+
+* Added a brand new inbox page for viewing private messages and comment replies.
+  The inbox is accessible with the ``i`` key. Supported actions include viewing
+  message chains and replying to messages, marking messages as read/unread, and
+  opening the context of a comment.
+* Added the ability to compose new private messages with the ``C`` key.
+* Updated and enhanced the help ``?`` page.
+
+Bugfixes
+
+* Fixed opening comments with the prompt ``/`` from the subscription window.
+* The subscription and multireddit ``s``/``S`` keys now work from all pages.
+* Relative time strings are now correctly pluralized.
+* Fixed unclosed file handler when opening the web browser.
+
+Configuration Changes
+
+* Renamed the following keybindings to better represent their usage:
+
+  * ``SORT_HOT`` -> ``SORT_1``
+  * ``SORT_TOP`` -> ``SORT_2``
+  * ``SORT_RISING`` -> ``SORT_3``
+  * ``SORT_NEW`` -> ``SORT_4``
+  * ``SORT_CONTROVERSIAL`` -> ``SORT_5``
+  * ``SORT_GILDED`` -> ``SORT_6``
+  * ``SUBREDDIT_OPEN_SUBSCRIPTIONS`` -> ``SUBSCRIPTIONS``
+  * ``SUBREDDIT_OPEN_MULTIREDDITS`` -> ``MULTIREDDITS``
+
+
+* Added new keybindings to support the inbox page:
+
+  * ``SORT_7``
+  * ``PRIVATE_MESSAGE``
+  * ``INBOX_VIEW_CONTEXT``
+  * ``INBOX_OPEN_SUBMISSION``
+  * ``INBOX_REPLY``
+  * ``INBOX_MARK_READ``
+  * ``INBOX_EXIT``
+
+* Added new theme elements to support the inbox page:
+
+  * <New>
+  * <Distinguished>
+  * <MessageSubject>
+  * <MessageLink>
+  * <MessageAuthor>
+  * <MessageSubreddit>
+  * <MessageText>
+
+--------------------
 1.25.1_ (2019-02-13)
 --------------------
 

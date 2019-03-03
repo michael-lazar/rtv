@@ -226,11 +226,11 @@ def main():
                 # headers to avoid a 429 response from reddit.com
                 url = requests.head(config['link'], headers=reddit.http.headers,
                                     allow_redirects=True).url
-
                 page.open_submission(url=url)
 
             # Launch the subreddit page
-            page.loop()
+            while page:
+                page = page.loop()
 
     except ConfigError as e:
         _logger.exception(e)

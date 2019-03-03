@@ -590,7 +590,7 @@ class Terminal(object):
                     # by RTV. It's also safer because it doesn't inject
                     # python code through the command line.
 
-                    # Surpress stdout/stderr from the browser, see
+                    # Suppress stdout/stderr from the browser, see
                     # https://stackoverflow.com/questions/2323080. We can't
                     # depend on replacing sys.stdout & sys.stderr because
                     # webbrowser uses Popen().
@@ -601,7 +601,10 @@ class Terminal(object):
                         os.dup2(null, 2)
                         webbrowser.open_new_tab(url)
                     finally:
-                        null.close()
+                        try:
+                            os.close(null)
+                        except OSError:
+                            pass
                         os.dup2(stdout, 1)
                         os.dup2(stderr, 2)
 
@@ -640,7 +643,7 @@ class Terminal(object):
 
         pager = os.getenv('RTV_PAGER')
         if pager is None:
-                pager = os.getenv('PAGER') or 'less'
+            pager = os.getenv('PAGER') or 'less'
         command = shlex.split(pager)
 
         if wrap:
@@ -912,7 +915,7 @@ class Terminal(object):
         flags = re.MULTILINE | re.DOTALL
         pattern = '<!--{token}(.*?){token}-->'.format(token=TOKEN)
         text = re.sub(pattern, '', text, flags=flags)
-        return re.sub('\A[\s\n]*\n', '', text, flags=flags).rstrip()
+        return re.sub(r'\A[\s\n]*\n', '', text, flags=flags).rstrip()
 
     def clear_screen(self):
         """

@@ -19,6 +19,7 @@ from rtv.terminal import Terminal
 from rtv.subreddit_page import SubredditPage
 from rtv.submission_page import SubmissionPage
 from rtv.subscription_page import SubscriptionPage
+from rtv.inbox_page import InboxPage
 
 try:
     from unittest import mock
@@ -124,7 +125,9 @@ def refresh_token(request):
     if request.config.option.record_mode == 'none':
         return 'mock_refresh_token'
     else:
-        return open(request.config.option.refresh_token).read()
+        token_file = request.config.option.refresh_token
+        with open(os.path.expanduser(token_file)) as fp:
+            return fp.read()
 
 
 @pytest.yield_fixture()
@@ -255,6 +258,19 @@ def subscription_page(reddit, terminal, config, oauth):
 
     with terminal.loader():
         page = SubscriptionPage(reddit, terminal, config, oauth, content_type)
+    assert terminal.loader.exception is None
+    page.draw()
+    return page
+
+
+@pytest.fixture()
+def inbox_page(reddit, terminal, config, oauth, refresh_token):
+    # The inbox page required logging in on an account with at least one message
+    config.refresh_token = refresh_token
+    oauth.authorize()
+
+    with terminal.loader():
+        page = InboxPage(reddit, terminal, config, oauth)
     assert terminal.loader.exception is None
     page.draw()
     return page

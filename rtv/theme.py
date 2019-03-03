@@ -110,7 +110,15 @@ class Theme(object):
             'Upvote':                (curses.COLOR_GREEN,   None, curses.A_BOLD),
             'Link':                  (curses.COLOR_BLUE,    None, curses.A_UNDERLINE),
             'LinkSeen':              (curses.COLOR_MAGENTA, None, curses.A_UNDERLINE),
-            'UserFlair':             (curses.COLOR_YELLOW,  None, curses.A_BOLD)
+            'UserFlair':             (curses.COLOR_YELLOW,  None, curses.A_BOLD),
+            'New':                   (curses.COLOR_RED,     None, curses.A_BOLD),
+            'Distinguished':         (curses.COLOR_RED,     None, curses.A_BOLD),
+            'MessageSubject':        (curses.COLOR_BLUE,    None, curses.A_BOLD),
+            'MessageLink':           (curses.COLOR_MAGENTA, None, curses.A_BOLD),
+            'MessageAuthor':         (curses.COLOR_GREEN,   None, curses.A_BOLD),
+            'MessageSubreddit':      (curses.COLOR_YELLOW,  None, None),
+            'MessageText':           (None,                 None, None),
+
         }
     }
 

@@ -118,7 +118,7 @@ Press <kbd>/</kbd> to open the navigation prompt, where you can type things like
 - ``/u/multi-mod/m/art``
 - ``/domain/github.com``
 
-See [CONTROLS](CONTROLS.rst) for the full list of commands.
+See [CONTROLS](CONTROLS.md) for the full list of commands.
 
 ## Settings
 

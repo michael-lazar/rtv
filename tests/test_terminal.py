@@ -11,8 +11,8 @@ import six
 import pytest
 
 from rtv.theme import Theme
-from rtv.docs import (HELP, COMMENT_FILE, COMMENT_EDIT_FILE, TOKEN,
-                      SUBMISSION_FILE, SUBMISSION_EDIT_FILE)
+from rtv.docs import (HELP, REPLY_FILE, COMMENT_EDIT_FILE, TOKEN,
+                      SUBMISSION_FILE, SUBMISSION_EDIT_FILE, MESSAGE_FILE)
 from rtv.exceptions import TemporaryFileError, BrowserError
 
 try:
@@ -678,7 +678,8 @@ def test_terminal_strip_instructions(terminal):
 
     # These templates only contain instructions, so they should be empty
     assert terminal.strip_instructions(SUBMISSION_FILE) == ''
-    assert terminal.strip_instructions(COMMENT_FILE) == ''
+    assert terminal.strip_instructions(REPLY_FILE) == ''
+    assert terminal.strip_instructions(MESSAGE_FILE) == ''
 
     # These templates should strip everything but the {content} tag,
     # which will be replaced with the submission/content to be edited

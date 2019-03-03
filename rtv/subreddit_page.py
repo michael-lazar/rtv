@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import re
 import time
 
 from . import docs
 from .content import SubredditContent
 from .page import Page, PageController, logged_in
 from .objects import Navigator, Command
-from .submission_page import SubmissionPage
-from .subscription_page import SubscriptionPage
 from .exceptions import TemporaryFileError
 
 
@@ -18,9 +15,10 @@ class SubredditController(PageController):
 
 
 class SubredditPage(Page):
-
     BANNER = docs.BANNER_SUBREDDIT
     FOOTER = docs.FOOTER_SUBREDDIT
+
+    name = 'subreddit'
 
     def __init__(self, reddit, term, config, oauth, name):
         """
@@ -34,11 +32,25 @@ class SubredditPage(Page):
         self.nav = Navigator(self.content.get)
         self.toggled_subreddit = None
 
+    def handle_selected_page(self):
+        """
+        Open all selected pages in subwindows except other subreddit pages.
+        """
+        if not self.selected_page:
+            pass
+        elif self.selected_page.name in ('subscription', 'submission', 'inbox'):
+            # Launch page in a subwindow
+            self.selected_page = self.selected_page.loop()
+        elif self.selected_page.name == 'subreddit':
+            # Replace the current page
+            self.active = False
+        else:
+            raise RuntimeError(self.selected_page.name)
+
     def refresh_content(self, order=None, name=None):
         """
         Re-download all submissions and reset the page index
         """
-
         order = order or self.content.order
 
         # Preserve the query if staying on the current page
@@ -60,14 +72,14 @@ class SubredditPage(Page):
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
 
-    @SubredditController.register(Command('SORT_HOT'))
+    @SubredditController.register(Command('SORT_1'))
     def sort_content_hot(self):
         if self.content.query:
             self.refresh_content(order='relevance')
         else:
             self.refresh_content(order='hot')
 
-    @SubredditController.register(Command('SORT_TOP'))
+    @SubredditController.register(Command('SORT_2'))
     def sort_content_top(self):
         order = self._prompt_period('top')
         if order is None:
@@ -75,7 +87,7 @@ class SubredditPage(Page):
         else:
             self.refresh_content(order=order)
 
-    @SubredditController.register(Command('SORT_RISING'))
+    @SubredditController.register(Command('SORT_3'))
     def sort_content_rising(self):
         if self.content.query:
             order = self._prompt_period('comments')
@@ -86,11 +98,11 @@ class SubredditPage(Page):
         else:
             self.refresh_content(order='rising')
 
-    @SubredditController.register(Command('SORT_NEW'))
+    @SubredditController.register(Command('SORT_4'))
     def sort_content_new(self):
         self.refresh_content(order='new')
 
-    @SubredditController.register(Command('SORT_CONTROVERSIAL'))
+    @SubredditController.register(Command('SORT_5'))
     def sort_content_controversial(self):
         if self.content.query:
             self.term.flash()
@@ -101,7 +113,7 @@ class SubredditPage(Page):
             else:
                 self.refresh_content(order=order)
 
-    @SubredditController.register(Command('SORT_GILDED'))
+    @SubredditController.register(Command('SORT_6'))
     def sort_content_gilded(self):
         if self.content.query:
             self.term.flash()
@@ -113,7 +125,6 @@ class SubredditPage(Page):
         """
         Open a prompt to search the given subreddit
         """
-
         name = name or self.content.name
 
         query = self.term.prompt_input('Search {0}: '.format(name))
@@ -125,29 +136,6 @@ class SubredditPage(Page):
                 self.reddit, name, self.term.loader, query=query)
         if not self.term.loader.exception:
             self.nav = Navigator(self.content.get)
-
-    @SubredditController.register(Command('PROMPT'))
-    def prompt_subreddit(self):
-        """
-        Open a prompt to navigate to a different subreddit"
-        """
-
-        name = self.term.prompt_input('Enter page: /')
-        if name is not None:
-            # Check if opening a submission url or a subreddit url
-            # Example patterns for submissions:
-            #     comments/571dw3
-            #     /comments/571dw3
-            #     /r/pics/comments/571dw3/
-            #     https://www.reddit.com/r/pics/comments/571dw3/at_disneyland
-            submission_pattern = re.compile(r'(^|/)comments/(?P<id>.+?)($|/)')
-
-            match = submission_pattern.search(name)
-            if match:
-                submission_url = 'https://www.reddit.com/comments/{0}'
-                self.open_submission(submission_url.format(match.group('id')))
-            else:
-                self.refresh_content(order='ignore', name=name)
 
     @SubredditController.register(Command('SUBREDDIT_FRONTPAGE'))
     def show_frontpage(self):
@@ -171,26 +159,13 @@ class SubredditPage(Page):
         """
         Select the current submission to view posts.
         """
-
-        data = {}
         if url is None:
             data = self.get_selected_item()
             url = data['permalink']
+            if data.get('url_type') == 'selfpost':
+                self.config.history.add(data['url_full'])
 
-        with self.term.loader('Loading submission'):
-            page = SubmissionPage(
-                self.reddit, self.term, self.config, self.oauth, url=url)
-        if self.term.loader.exception:
-            return
-
-        page.loop()
-
-        if data.get('url_type') == 'selfpost':
-            self.config.history.add(data['url_full'])
-
-        if page.selected_subreddit is not None:
-            self.content = page.selected_subreddit
-            self.nav = Navigator(self.content.get)
+        self.selected_page = self.open_submission_page(url)
 
     @SubredditController.register(Command('SUBREDDIT_OPEN_IN_BROWSER'))
     def open_link(self):
@@ -214,9 +189,8 @@ class SubredditPage(Page):
     @logged_in
     def post_submission(self):
         """
-        Post a new submission to the given subreddit
+        Post a new submission to the given subreddit.
         """
-
         # Check that the subreddit can be submitted to
         name = self.content.name
         if '+' in name or name in ('/r/all', '/r/front', '/r/me', '/u/saved'):
@@ -242,63 +216,8 @@ class SubredditPage(Page):
                 raise TemporaryFileError()
 
         if not self.term.loader.exception:
-            # Open the newly created post
-            with self.term.loader('Loading submission'):
-                page = SubmissionPage(
-                    self.reddit, self.term, self.config, self.oauth,
-                    submission=submission)
-            if self.term.loader.exception:
-                return
-
-            page.loop()
-
-            if page.selected_subreddit is not None:
-                self.content = page.selected_subreddit
-                self.nav = Navigator(self.content.get)
-            else:
-                self.reload_page()
-
-    @SubredditController.register(Command('SUBREDDIT_OPEN_SUBSCRIPTIONS'))
-    @logged_in
-    def open_subscriptions(self):
-        """
-        Open user subscriptions page
-        """
-
-        with self.term.loader('Loading subscriptions'):
-            page = SubscriptionPage(self.reddit, self.term, self.config,
-                                    self.oauth, content_type='subreddit')
-        if self.term.loader.exception:
-            return
-
-        page.loop()
-
-        # When the user has chosen a subreddit in the subscriptions list,
-        # refresh content with the selected subreddit
-        if page.selected_subreddit is not None:
-            self.content = page.selected_subreddit
-            self.nav = Navigator(self.content.get)
-
-    @SubredditController.register(Command('SUBREDDIT_OPEN_MULTIREDDITS'))
-    @logged_in
-    def open_multireddit_subscriptions(self):
-        """
-        Open user multireddit subscriptions page
-        """
-
-        with self.term.loader('Loading multireddits'):
-            page = SubscriptionPage(self.reddit, self.term, self.config,
-                                    self.oauth, content_type='multireddit')
-        if self.term.loader.exception:
-            return
-
-        page.loop()
-
-        # When the user has chosen a subreddit in the subscriptions list,
-        # refresh content with the selected subreddit
-        if page.selected_subreddit is not None:
-            self.content = page.selected_subreddit
-            self.nav = Navigator(self.content.get)
+            # Open the newly created submission
+            self.selected_page = self.open_submission_page(submission=submission)
 
     @SubredditController.register(Command('SUBREDDIT_HIDE'))
     @logged_in
@@ -314,7 +233,7 @@ class SubredditPage(Page):
             with self.term.loader('Hiding'):
                 data['object'].hide()
                 data['hidden'] = True
-
+    
     def _draw_item(self, win, data, inverted):
 
         n_rows, n_cols = win.getmaxyx()
@@ -353,8 +272,7 @@ class SubredditPage(Page):
             self.term.add_space(win)
 
             attr = self.term.attr('Created')
-            self.term.add_line(win, '{created}{edited}'.format(**data),
-                               attr=attr)
+            self.term.add_line(win, '{created}{edited}'.format(**data), attr=attr)
 
             if data['comments'] is not None:
                 attr = self.term.attr('Separator')

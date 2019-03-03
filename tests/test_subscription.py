@@ -56,14 +56,15 @@ def test_subscription_page_construct(reddit, terminal, config, oauth,
 
 def test_subscription_refresh(subscription_page):
 
-    # Refresh content - invalid order
-    subscription_page.refresh_content(order='top')
-    assert curses.flash.called
-    curses.flash.reset_mock()
+    with mock.patch('rtv.terminal.Terminal.flash') as flash:
+        # Refresh content - invalid order
+        subscription_page.refresh_content(order='top')
+        assert flash.called
+        flash.reset_mock()
 
-    # Refresh content
-    subscription_page.controller.trigger('r')
-    assert not curses.flash.called
+        # Refresh content
+        subscription_page.controller.trigger('r')
+        assert not flash.called
 
 
 def test_subscription_prompt(subscription_page, terminal):
@@ -72,19 +73,23 @@ def test_subscription_prompt(subscription_page, terminal):
     with mock.patch.object(terminal, 'prompt_input'):
         # Valid input
         subscription_page.active = True
-        subscription_page.selected_subreddit = None
+        subscription_page.selected_page = None
         terminal.prompt_input.return_value = 'front/top'
         subscription_page.controller.trigger('/')
+
+        subscription_page.handle_selected_page()
         assert not subscription_page.active
-        assert subscription_page.selected_subreddit
+        assert subscription_page.selected_page
 
         # Invalid input
         subscription_page.active = True
-        subscription_page.selected_subreddit = None
+        subscription_page.selected_page = None
         terminal.prompt_input.return_value = 'front/pot'
         subscription_page.controller.trigger('/')
+
+        subscription_page.handle_selected_page()
         assert subscription_page.active
-        assert not subscription_page.selected_subreddit
+        assert not subscription_page.selected_page
 
 
 def test_subscription_move(subscription_page):
@@ -126,18 +131,18 @@ def test_subscription_select(subscription_page):
 
     # Select a subreddit
     subscription_page.controller.trigger(curses.KEY_ENTER)
-    assert subscription_page.selected_subreddit is not None
-    assert subscription_page.active is False
+    subscription_page.handle_selected_page()
+
+    assert subscription_page.selected_page
+    assert not subscription_page.active
 
 
 def test_subscription_close(subscription_page):
 
     # Close the subscriptions page
-    subscription_page.selected_subreddit = None
-    subscription_page.active = None
     subscription_page.controller.trigger('h')
-    assert subscription_page.selected_subreddit is None
-    assert subscription_page.active is False
+    assert not subscription_page.selected_page
+    assert not subscription_page.active
 
 
 def test_subscription_page_invalid(subscription_page, oauth, refresh_token):

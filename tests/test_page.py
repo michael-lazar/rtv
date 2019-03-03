@@ -83,6 +83,7 @@ def test_page_unauthenticated(reddit, terminal, config, oauth):
             'd',  # Delete
             'e',  # Edit
             'i',  # Get inbox
+            'C',  # Private message
         ]
         for ch in logged_in_methods:
             page.controller.trigger(ch)
@@ -100,15 +101,6 @@ def test_page_authenticated(reddit, terminal, config, oauth, refresh_token):
     # Login
     page.controller.trigger('u')
     assert reddit.is_oauth_session()
-
-    # Get inbox - Call the real method
-    page.controller.trigger('i')
-
-    # Get inbox - Simulate no new messages
-    reddit.get_unread = mock.Mock(return_value=[])
-    page.controller.trigger('i')
-    message = 'No New Messages'.encode('utf-8')
-    terminal.stdscr.subwin.addstr.assert_called_with(1, 1, message)
 
     # Logout
     terminal.stdscr.getch.return_value = ord('y')
@@ -150,4 +142,3 @@ def test_page_cycle_theme(reddit, terminal, config, oauth):
         curses.has_colors.return_value = False
         page.controller.trigger(curses.KEY_F2)
         assert page.term.theme.required_colors == 0
-

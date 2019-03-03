@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import sys
 import curses
-import subprocess
 from collections import OrderedDict
 
 import pytest
@@ -140,19 +138,23 @@ def test_submission_prompt(submission_page, terminal):
     with mock.patch.object(terminal, 'prompt_input'):
         # Valid input
         submission_page.active = True
-        submission_page.selected_subreddit = None
+        submission_page.selected_page = None
         terminal.prompt_input.return_value = 'front/top'
         submission_page.controller.trigger('/')
+
+        submission_page.handle_selected_page()
         assert not submission_page.active
-        assert submission_page.selected_subreddit
+        assert submission_page.selected_page
 
         # Invalid input
         submission_page.active = True
-        submission_page.selected_subreddit = None
+        submission_page.selected_page = None
         terminal.prompt_input.return_value = 'front/pot'
         submission_page.controller.trigger('/')
+
+        submission_page.handle_selected_page()
         assert submission_page.active
-        assert not submission_page.selected_subreddit
+        assert not submission_page.selected_page
 
 
 @pytest.mark.parametrize('prompt', PROMPTS.values(), ids=list(PROMPTS))
@@ -164,9 +166,14 @@ def test_submission_prompt_submission(submission_page, terminal, prompt):
         submission_page.content.order = 'top'
         submission_page.controller.trigger('/')
         assert not terminal.loader.exception
-        data = submission_page.content.get(-1)
+
+        submission_page.handle_selected_page()
+        assert not submission_page.active
+        assert submission_page.selected_page
+
+        assert submission_page.selected_page.content.order is None
+        data = submission_page.selected_page.content.get(-1)
         assert data['object'].id == '571dw3'
-        assert submission_page.content.order is None
 
 
 def test_submission_order(submission_page):
