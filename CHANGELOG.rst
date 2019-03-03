@@ -50,6 +50,7 @@ Features
   message chains and replying to messages, marking messages as read/unread, and
   opening the context of a comment.
 * Added the ability to compose new private messages with the ``C`` key.
+* Updated and enhanced the help ``?`` page.
 
 Bugfixes
 
@@ -60,7 +61,7 @@ Bugfixes
 
 Configuration Changes
 
-* Renamed the following keybindings to be more generic:
+* Renamed the following keybindings to better represent their usage:
 
   * ``SORT_HOT`` -> ``SORT_1``
   * ``SORT_TOP`` -> ``SORT_2``

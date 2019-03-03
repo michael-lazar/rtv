@@ -26,13 +26,13 @@ The <kbd>/</kbd> key opens a text prompt at the bottom of the screen. You can us
 this to type in the name of the subreddit that you want to open. The following text
 formats are recognized:
 
-- ``python`` - Open a subreddit, shorthand
+- ``/python`` - Open a subreddit, shorthand
 - ``/r/python`` - Open a subreddit
 - ``/r/python/new`` - Open a subreddit, sorted by category
-- ``/r/python/controversial-year`` - Open a subreddit, sorted by category and time period
+- ``/r/python/controversial-year`` - Open a subreddit, sorted by category and time
 - ``/r/python+linux+commandline`` - Open multiple subreddits merged together
-- ``/r/python/comments/30rwj2`` - Open the comments page for a submission
-- ``/comments/30rwj2`` - Open the comments page for a submission, shorthand
+- ``/comments/30rwj2`` - Open a submission, shorthand
+- ``/r/python/comments/30rwj2`` - Open a submission
 - ``/r/front`` - Open your front page
 - ``/u/me`` - View your submissions
 - ``/u/me/saved`` - View your saved content
@@ -48,8 +48,8 @@ formats are recognized:
 ## Authenticated Commands
 
 Some actions require that you be logged in to your reddit account. You can login
-by pressing <kbd>u</kbd> while inside of the program. Once you are logged in,
-your username will appear in the top-right corner of the screen.
+by pressing the <kbd>u</kbd> key. Once you are logged in, your username will
+appear in the top-right corner of the screen.
 
 - <kbd>a</kbd> - Upvote
 - <kbd>z</kbd> - Downvote
@@ -65,36 +65,36 @@ your username will appear in the top-right corner of the screen.
 
 # Subreddit Mode
 
-The following actions can only be performed when you're viewing a subreddit:
+The following actions can be performed when viewing a subreddit:
 
 - <kbd>l</kbd> or <kbd>►</kbd> - View the comments for the selected submission (see [submission mode](#submission-mode))
 - <kbd>o</kbd> or <kbd>ENTER</kbd> - Open the selected submission link using your web browser or ``.mailcap`` config
 - <kbd>SPACE</kbd> - Mark the selected submission as *hidden*
 - <kbd>p</kbd> - Toggle between the currently viewed subreddit and ``/r/front``
-- <kbd>f</kbd> - Open a prompt to search the current subreddit for a given text string
+- <kbd>f</kbd> - Open a prompt to search the current subreddit for a text string
 
 # Submission Mode
 
-The following actions can be performed when you're viewing a submission:
+The following actions can be performed when viewing a submission:
 
 - <kbd>h</kbd> or <kbd>◄</kbd> - Close the submission and return to the previous page
-- <kbd>l</kbd> or <kbd>►</kbd> - View the selected comment using the system's ``$PAGER``
+- <kbd>l</kbd> or <kbd>►</kbd> - View the selected comment using the system's pager
 - <kbd>o</kbd> or <kbd>ENTER</kbd> - Open a link in the comment using your web browser or ``.mailcap`` config
 - <kbd>SPACE</kbd> - Fold or expand the selected comment and its children
-- <kbd>b</kbd> - Send the comment text to the system's ``$URLVIEWER`` application
-- <kbd>J</kbd> - Move the cursor down the the next comment at the same indentation level
+- <kbd>b</kbd> - Send the comment text to the system's urlviewer application
+- <kbd>J</kbd> - Move the cursor down the the next comment at the same indentation
 - <kbd>K</kbd> - Move the cursor up to the parent comment
 
 # Subscription Mode
 
-The following actions can be performed when you're viewing your subscriptions or multireddits:
+The following actions can be performed when viewing your subscriptions or multireddits:
 
-- <kbd>h</kbd> or <kbd>◄</kbd> - Close the subscriptions and return to the previous page
+- <kbd>h</kbd> or <kbd>◄</kbd> - Close your subscriptions and return to the previous page
 - <kbd>l</kbd> or <kbd>►</kbd> - Open the selected subreddit or multireddit
 
 # Inbox Mode
 
-The following actions can be performed when you're viewing your inbox:
+The following actions can be performed when viewing your inbox:
 
 - <kbd>h</kbd> or <kbd>◄</kbd> - Close your inbox and return to the previous page
 - <kbd>l</kbd> or <kbd>►</kbd> - View the context of the selected comment

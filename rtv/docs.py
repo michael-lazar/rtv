@@ -29,69 +29,90 @@ Reddit Terminal Viewer
 https://github.com/michael-lazar/rtv
 ====================================
 
-[Commands]
-  j     : Move the cursor down
-  k     : Move the cursor up
-  n     : Move down one page
-  m     : Move up one page
-  gg    : Jump to the first post
-  G     : Jump to the last post
-  J     : Jump to the next sibling comment
-  K     : Jump to the parent comment
-  1     : Sort by category 1
-  2     : Sort by category 2
-  3     : Sort by category 3
-  4     : Sort by category 4
-  5     : Sort by category 5
-  6     : Sort by category 6
-  7     : Sort by category 7
-  p     : Return to the front page
-  r     : Refresh page
-  u     : Login or logout
-  /     : Open the subreddit prompt
-  f     : Open the search prompt
-  ?     : Show the help screen
+[Basic Commands]
+  j     : Move the cursor up
+  k     : Move the cursor down
+  l     : View the currently selected item
+  h     : Return to the previous view
+  m     : Move the cursor up one page
+  n     : Move the cursor down one page
+  gg    : Jump to the top of the page
+  G     : Jump to the bottom of the page
+  1-7   : Sort submissions by category
+  r     : Refresh the content on the current page
+  u     : Login to your reddit account
   q     : Quit
   Q     : Force quit
+  y     : Copy submission permalink to clipboard
+  Y     : Copy submission link to clipboard
+  F2    : Cycle to the previous color theme
+  F3    : Cycle to the next color theme
+  ?     : Show the help screen
+  /     : Open a prompt to select a subreddit
+
+[Authenticated Commands]
   a     : Upvote
   z     : Downvote
-  c     : Compose a new submission/comment/reply
+  c     : Compose a new submission or comment
   C     : Compose a new private message
-  e     : Edit a submission/comment
-  d     : Delete a submission/comment
-  i     : View inbox
-  s     : Show subscribed subreddits
-  S     : Show subscribed multireddits
-  w     : Save submission/comment, or mark message as read
-  l     : View comments, or open comment in pager
-  h     : Return to the previous page
-  o     : Open the submission/comment URL
-  SPACE : Hide submission, or fold/expand the selected comment tree
-  b     : Send submission/comment URLs to a urlview program
-  y     : Copy submission permalink to the clipboard
-  Y     : Copy submission/comment URLs to the clipboard
-  F2    : Cycle to previous theme
-  F3    : Cycle to next theme
+  e     : Edit the selected submission or comment
+  d     : Delete the selected submission or comment
+  i     : View your inbox (see Inbox Mode)
+  s     : View your subscribed subreddits (see Subscription Mode)
+  S     : View your subscribed multireddits (see Subscription Mode)
+  u     : Logout of your reddit account
+  w     : Save the selected submission or comment
+
+[Subreddit Mode]
+  l     : View the comments for the selected submission (see Submission Mode)
+  o     : Open the selected submission link using your web browser
+  SPACE : Mark the selected submission as hidden
+  p     : Toggle between the currently viewed subreddit and /r/front
+  f     : Open a prompt to search the current subreddit for a text string
+
+[Submission Mode]
+  h     : Close the submission and return to the previous page
+  l     : View the selected comment using the system's pager
+  o     : Open a link in the comment using your web browser
+  SPACE : Fold or expand the selected comment and its children
+  b     : Send the comment text to the system's urlviewer application
+  J     : Move the cursor down the the next comment at the same indentation
+  K     : Move the cursor up to the parent comment
+
+[Subscription Mode]
+  h     : Close your subscriptions and return to the previous page
+  l     : Open the selected subreddit or multireddit
+
+[Inbox Mode]
+  h     : Close your inbox and return to the previous page
+  l     : View the context of the selected comment
+  o     : Open the submission of the selected comment
+  c     : Reply to the selected comment or message
+  w     : Mark the selected comment or message as seen
 
 [Prompt]
-  The `/` prompt accepts subreddits in the following formats
+  The / key opens a text prompt at the bottom of the screen. You can use this
+  to type in the name of the subreddit that you want to open. The following
+  text formats are recognized:
 
-  - python
-  - /r/python
-  - /r/python/new                (sort)
-  - /r/python/controversial-year (sort and order)
-  - /r/python/gilded             (gilded within subreddit)
-  - /r/python+linux              (multireddit)
-  - /r/python/comments/30rwj2    (submission comments)
-  - /comments/30rwj2             (submission comments shorthand)
-  - /r/front                     (front page)
-  - /u/me                        (your submissions overview)
-  - /u/me/{saved,hidden}         (your saved or hidden posts)
-  - /u/me/{upvoted,downvoted}    (your voted posts)
-  - /u/spez                      (a user's submissions overview)
-  - /u/spez/{submitted,comments} (a user's posts or comments)
-  - /u/multi-mod/m/android       (curated multireddit)
-  - /domain/python.org           (search by domain)
+  /python                      - Open a subreddit, shorthand
+  /r/python                    - Open a subreddit
+  /r/python/new                - Open a subreddit, sorted by category
+  /r/python/controversial-year - Open a subreddit, sorted by category and time
+  /r/python+linux+commandline  - Open multiple subreddits merged together
+  /comments/30rwj2             - Open a submission, shorthand
+  /r/python/comments/30rwj2    - Open a submission
+  /r/front                     - Open your front page
+  /u/me                        - View your submissions
+  /u/me/saved                  - View your saved content
+  /u/me/hidden                 - View your hidden content
+  /u/me/upvoted                - View your upvoted content
+  /u/me/downvoted              - View your downvoted content
+  /u/spez                      - View a user's submissions and comments
+  /u/spez/submitted            - View a user's submissions
+  /u/spez/comments             - View a user's comments
+  /u/multi-mod/m/android       - Open a user's curated multireddit
+  /domain/python.org           - Search for links for the given domain
 """
 
 BANNER_SUBREDDIT = """
