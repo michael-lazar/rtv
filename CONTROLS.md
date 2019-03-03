@@ -22,8 +22,8 @@
 - <kbd>?</kbd> - Show the help screen
 - <kbd>/</kbd> - Open a prompt to select a subreddit
 
-The <kbd>/</kbd> key opens a text prompt at the bottom of the screen. You can then
-type in the name of the subreddit that you would like to open. The following
+The <kbd>/</kbd> key opens a text prompt at the bottom of the screen. You can use
+this to type the name of the subreddit that you want to open. The following text
 formats are recognized:
 
 - ``python`` - Open a subreddit, shorthand
