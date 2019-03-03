@@ -19,8 +19,7 @@ try:
 except ImportError:
     if sys.platform == 'win32':
         sys.exit('Fatal Error: This program is not compatible with Windows '
-                 'Operating Systems.\nPlease try installing on either Linux '
-                 'or Mac OS')
+                 'Operating Systems.')
     else:
         sys.exit('Fatal Error: Your python distribution appears to be missing '
                  '_curses.so.\nWas it compiled without support for curses?')
