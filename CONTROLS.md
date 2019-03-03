@@ -80,10 +80,10 @@ The following actions can be performed when you're viewing a submission:
 - <kbd>h</kbd> or <kbd>◄</kbd> - Close the submission and return to the previous page
 - <kbd>l</kbd> or <kbd>►</kbd> - View the selected comment using the system's ``$PAGER``
 - <kbd>o</kbd> or <kbd>ENTER</kbd> - Open a link in the comment using your web browser or ``.mailcap`` config
-- <kbd>SPACE</kbd> - Hide the selected comment tree, or show the comment tree if it is hidden
+- <kbd>SPACE</kbd> - Fold or expand the selected comment and its children
 - <kbd>b</kbd> - Send the comment text to the system's ``$URLVIEWER`` application
-- <kbd>J</kbd> - Move the cursor down the the next comment that is at the same level as the current selection
-- <kbd>K</kbd> - Move the cursor up to the parent comment of the current selection
+- <kbd>J</kbd> - Move the cursor down the the next comment at the same indentation level
+- <kbd>K</kbd> - Move the cursor up to the parent comment
 
 # Subscription Mode
 
@@ -97,7 +97,7 @@ The following actions can be performed when you're viewing your subscriptions or
 The following actions can be performed when you're viewing your inbox:
 
 - <kbd>h</kbd> or <kbd>◄</kbd> - Close your inbox and return to the previous page
-- <kbd>l</kbd> or <kbd>►</kbd> - Open the context for the selected comment reply
-- <kbd>o</kbd> or <kbd>Enter</kbd> - Open the submission for the selected comment reply
-- <kbd>c</kbd> - Reply to the selected comment or private message
-- <kbd>w</kbd> - Mark that you have read the selected message
+- <kbd>l</kbd> or <kbd>►</kbd> - View the context of the selected comment
+- <kbd>o</kbd> or <kbd>Enter</kbd> - Open the submission of the selected comment
+- <kbd>c</kbd> - Reply to the selected comment or message
+- <kbd>w</kbd> - Mark the selected comment or message as seen
