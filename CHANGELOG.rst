@@ -51,6 +51,8 @@ Features
   opening the context of a comment.
 * Added the ability to compose new private messages with the ``C`` key.
 * Updated and enhanced the help ``?`` page.
+* Opening a link from the command line is now faster at startup because the default
+  subreddit is no longer pre-loaded.
 
 Bugfixes
 
