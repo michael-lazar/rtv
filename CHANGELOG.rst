@@ -57,6 +57,7 @@ Bugfixes
 * Fixed opening comments with the prompt ``/`` from the subscription window.
 * The subscription and multireddit ``s``/``S`` keys now work from all pages.
 * Relative time strings are now correctly pluralized.
+* Fixed the application not starting if the user has an empty front page.
 * Fixed unclosed file handler when opening the web browser.
 
 Configuration Changes
