@@ -22,8 +22,8 @@
 - <kbd>?</kbd> - Show the help screen
 - <kbd>/</kbd> - Open a prompt to select a subreddit
 
-The <kbd>/</kbd> key opens a command prompt at the bottom of the screen that
-can be used to navigate to specific subreddits or other pages. The following
+The <kbd>/</kbd> key opens a command prompt at the bottom of the screen. This
+can be used to open to specific subreddits or other special pages. The following
 formats are recognized:
 
 - ``python`` - Open a subreddit, shorthand
