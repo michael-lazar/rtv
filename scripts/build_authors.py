@@ -15,7 +15,7 @@ import requests
 _filepath = os.path.dirname(os.path.relpath(__file__))
 
 FILENAME = os.path.abspath(os.path.join(_filepath, '..', 'AUTHORS.rst'))
-URL = "https://api.github.com/repos/michael-lazar/rtv/contributors"
+URL = "https://api.github.com/repos/michael-lazar/rtv/contributors?per_page=1000"
 HEADER = """\
 ================
 RTV Contributors
@@ -44,7 +44,7 @@ def main():
         resp = requests.get(contributor['url'])
         user = resp.json()
 
-        name = user.get('name') or user['login']
+        name = user.get('name') or contributor['login']
         url = user['html_url']
         lines.append('* `{} <{}>`_'.format(name, url))
 
