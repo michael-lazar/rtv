@@ -211,10 +211,11 @@ def main():
                     page = SubredditPage(reddit, term, config, oauth, name)
                 except Exception as e:
                     # If we can't load the subreddit that was requested, try
-                    # to load the front page instead so at least the
-                    # application still launches.
+                    # to load the "popular" page instead so at least the
+                    # application still launches. This used to use the user's
+                    # front page, but some users have an empty front page.
                     _logger.exception(e)
-                    page = SubredditPage(reddit, term, config, oauth, 'front')
+                    page = SubredditPage(reddit, term, config, oauth, 'popular')
                     raise SubredditError('Unable to load {0}'.format(name))
             if page is None:
                 return
