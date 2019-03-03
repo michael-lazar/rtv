@@ -28,8 +28,8 @@ formats are recognized:
 
 - ``python`` - Open a subreddit, shorthand
 - ``/r/python`` - Open a subreddit
-- ``/r/python/new`` - Open a subreddit, sort by category
-- ``/r/python/controversial-year`` - Open a subreddit, sort by category and time period
+- ``/r/python/new`` - Open a subreddit, sorted by category
+- ``/r/python/controversial-year`` - Open a subreddit, sorted by category and time period
 - ``/r/python+linux+commandline`` - Open multiple subreddits merged together
 - ``/r/python/comments/30rwj2`` - Open the comments page for a submission
 - ``/comments/30rwj2`` - Open the comments page for a submission, shorthand
