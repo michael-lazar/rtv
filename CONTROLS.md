@@ -63,7 +63,7 @@ appear in the top-right corner of the screen.
 - <kbd>u</kbd> - Logout of your reddit account
 - <kbd>w</kbd> - Save the selected submission or comment
 
-# Subreddit Mode
+## Subreddit Mode
 
 The following actions can be performed when viewing a subreddit:
 
@@ -73,7 +73,7 @@ The following actions can be performed when viewing a subreddit:
 - <kbd>p</kbd> - Toggle between the currently viewed subreddit and ``/r/front``
 - <kbd>f</kbd> - Open a prompt to search the current subreddit for a text string
 
-# Submission Mode
+## Submission Mode
 
 The following actions can be performed when viewing a submission:
 
@@ -85,14 +85,14 @@ The following actions can be performed when viewing a submission:
 - <kbd>J</kbd> - Move the cursor down the the next comment at the same indentation
 - <kbd>K</kbd> - Move the cursor up to the parent comment
 
-# Subscription Mode
+## Subscription Mode
 
 The following actions can be performed when viewing your subscriptions or multireddits:
 
 - <kbd>h</kbd> or <kbd>◄</kbd> - Close your subscriptions and return to the previous page
 - <kbd>l</kbd> or <kbd>►</kbd> - Open the selected subreddit or multireddit
 
-# Inbox Mode
+## Inbox Mode
 
 The following actions can be performed when viewing your inbox:
 
