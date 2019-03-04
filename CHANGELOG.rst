@@ -51,6 +51,7 @@ Features
   opening the context of a comment.
 * Added the ability to compose new private messages with the ``C`` key.
 * Updated and enhanced the help ``?`` page.
+* Added a new ``--debug-info`` command to display system information.
 
 Bugfixes
 
@@ -59,6 +60,8 @@ Bugfixes
 * Relative time strings are now correctly pluralized.
 * Fixed the application not starting if the user has an empty front page.
 * Fixed unclosed file handler when opening the web browser.
+* Useful system and issue reporting information is now included with
+  traceback messages.
 
 Configuration Changes
 
