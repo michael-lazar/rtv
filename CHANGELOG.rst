@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.26.0: http://github.com/michael-lazar/rtv/releases/tag/v1.26.0
 .. _1.25.1: http://github.com/michael-lazar/rtv/releases/tag/v1.25.1
 .. _1.25.0: http://github.com/michael-lazar/rtv/releases/tag/v1.25.0
 .. _1.24.0: http://github.com/michael-lazar/rtv/releases/tag/v1.24.0
@@ -40,7 +41,7 @@ RTV Changelog
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
 
 --------------------
-1.26.0_ (TBD)
+1.26.0_ (2019-03-03)
 --------------------
 
 Features
@@ -50,20 +51,19 @@ Features
   message chains and replying to messages, marking messages as read/unread, and
   opening the context of a comment.
 * Added the ability to compose new private messages with the ``C`` key.
-* Updated and enhanced the help ``?`` page.
-* Opening a link from the command line is now faster at startup because the default
-  subreddit is no longer pre-loaded.
-* Added a new ``--debug-info`` command to display system information.
+* Updated the inline help ``?`` document to contain a more comprehensive list
+  of commands.
+* Opening a link from the command line is now faster at startup because the
+  default subreddit will not be loaded beforehand.
+* Added a new ``--debug-info`` command to display useful system information.
 
 Bugfixes
 
 * Fixed opening comments with the prompt ``/`` from the subscription window.
 * The subscription and multireddit ``s``/``S`` keys now work from all pages.
 * Relative time strings are now correctly pluralized.
+* Fixed an unclosed file handler when opening the web browser.
 * Fixed the application not starting if the user has an empty front page.
-* Fixed unclosed file handler when opening the web browser.
-* Useful system and issue reporting information is now included with
-  traceback messages.
 
 Configuration Changes
 

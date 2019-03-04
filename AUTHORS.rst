@@ -34,3 +34,29 @@ Thanks to the following people for their contributions to this project.
 * `Ryan Reno <https://github.com/rreno>`_
 * `Sam Tebbs <https://github.com/SamTebbs33>`_
 * `Justin Partain <https://github.com/jupart>`_
+* `afloofloo <https://github.com/afloofloo>`_
+* `0xflotus <https://github.com/0xflotus>`_
+* `Caleb Perkins <https://github.com/calebperkins>`_
+* `Charles Saracco <https://github.com/crsaracco>`_
+* `Corey McCandless <https://github.com/cmccandless>`_
+* `Crestwave <https://github.com/Crestwave>`_
+* `Danilo G. Baio <https://github.com/dbaio>`_
+* `Donovan Glover <https://github.com/GloverDonovan>`_
+* `Fabio Alessandro Locati <https://github.com/Fale>`_
+* `Gabriel Le Breton <https://github.com/GabLeRoux>`_
+* `Hans Roman <https://github.com/snahor>`_
+* `micronn <https://github.com/micronn>`_
+* `Ivan Klishch <https://github.com/klivan>`_
+* `Joe MacDonald <https://github.com/joeythesaint>`_
+* `Marc Abramowitz <https://github.com/msabramo>`_
+* `Matt <https://github.com/mehandes>`_
+* `Matthew Smith <https://github.com/msmith491>`_
+* `Michael Kwon <https://github.com/mskwon>`_
+* `Michael Wei <https://github.com/no2chem>`_
+* `Ram-Z <https://github.com/Ram-Z>`_
+* `Vivek Anand <https://github.com/vivekanand1101>`_
+* `Wieland Hoffmann <https://github.com/mineo>`_
+* `Adam Talsma <https://github.com/a-tal>`_
+* `geheimnisse <https://github.com/geheimnisse>`_
+* `Alexander Terry <https://github.com/mralext20>`_
+* `peterpans01 <https://github.com/peterpans01>`_
