@@ -84,6 +84,9 @@ def build_parser():
     parser.add_argument(
         '--no-flash', dest='flash', action='store_const', const=False,
         help='Disable screen flashing')
+    parser.add_argument(
+        '--debug-info', dest='debug_info', action='store_const', const=True,
+        help='Show system and environment information and exit')
     return parser
 
 

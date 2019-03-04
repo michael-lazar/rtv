@@ -112,23 +112,6 @@ def main():
             level=logging.DEBUG,
             filename=config['log'],
             format='%(asctime)s:%(levelname)s:%(filename)s:%(lineno)d:%(message)s')
-        _logger.info('Starting new session, RTV v%s', __version__)
-        _logger.info('%s, %s', sys.executable, sys.version)
-        env = [
-            ('$DISPLAY', os.getenv('DISPLAY')),
-            ('$TERM', os.getenv('TERM')),
-            ('$LANG', os.getenv('LANG')),
-            ('$XDG_CONFIG_HOME', os.getenv('XDG_CONFIG_HOME')),
-            ('$XDG_DATA_HOME', os.getenv('$XDG_DATA_HOME')),
-            ('$RTV_EDITOR', os.getenv('RTV_EDITOR')),
-            ('$RTV_URLVIEWER', os.getenv('RTV_URLVIEWER')),
-            ('$RTV_BROWSER', RTV_BROWSER),
-            ('$BROWSER', BROWSER),
-            ('$RTV_PAGER', os.getenv('RTV_PAGER')),
-            ('$PAGER', os.getenv('PAGER')),
-            ('$VISUAL', os.getenv('VISUAL')),
-            ('$EDITOR', os.getenv('EDITOR'))]
-        _logger.info('Environment: %s', env)
     else:
         # Add an empty handler so the logger doesn't complain
         logging.root.addHandler(logging.NullHandler())
@@ -152,15 +135,10 @@ def main():
         warnings.warn(text)
         config['ascii'] = True
 
-    _logger.info('RTV module path: %s', os.path.abspath(__file__))
-
-    # Check the praw version
     if packages.__praw_bundled__:
-        _logger.info('Using packaged PRAW distribution, '
-                     'commit %s', packages.__praw_hash__)
+        praw_info = 'packaged, commit {}'.format(packages.__praw_hash__[:12])
     else:
-        _logger.info('Packaged PRAW not found, falling back to system '
-                     'installed version %s', praw.__version__)
+        praw_info = 'system installed v{}'.format(praw.__version__)
 
     # Update the webbrowser module's default behavior
     patch_webbrowser()
@@ -170,6 +148,38 @@ def main():
 
     # Construct the reddit user agent
     user_agent = docs.AGENT.format(version=__version__)
+
+    debug_info = [
+        'rtv version: rtv {}'.format(__version__),
+        'rtv module path: {}'.format(os.path.abspath(__file__)),
+        'python version: {}'.format(sys.version.replace('\n', ' ')),
+        'python executable: {}'.format(sys.executable),
+        'praw version: {}'.format(praw_info),
+        'locale, encoding: {}, {}'.format(default_locale, encoding),
+        'Environment Variables']
+    for name, value in [
+        ('BROWSER', BROWSER),
+        ('DISPLAY', os.getenv('DISPLAY')),
+        ('EDITOR', os.getenv('EDITOR')),
+        ('LANG', os.getenv('LANG')),
+        ('PAGER', os.getenv('PAGER')),
+        ('RTV_BROWSER', RTV_BROWSER),
+        ('RTV_EDITOR', os.getenv('RTV_EDITOR')),
+        ('RTV_PAGER', os.getenv('RTV_PAGER')),
+        ('RTV_URLVIEWER', os.getenv('RTV_URLVIEWER')),
+        ('TERM', os.getenv('TERM')),
+        ('VISUAL', os.getenv('VISUAL')),
+        ('XDG_CONFIG_HOME', os.getenv('XDG_CONFIG_HOME')),
+        ('XDG_DATA_HOME', os.getenv('XDG_DATA_HOME')),
+    ]:
+        debug_info.append('  {:<16}: {}'.format(name, value or ''))
+    debug_info.append('')
+    debug_text = '\n'.join(debug_info)
+
+    _logger.info(debug_text)
+    if config['debug_info']:
+        print(debug_text)
+        return
 
     try:
         with curses_session() as stdscr:
@@ -249,7 +259,14 @@ def main():
         print(e)
     except Exception as e:
         _logger.exception(e)
-        raise
+        import traceback
+        exit_message = '\n'.join([
+            debug_text,
+            traceback.format_exc(),
+            'rtv has crashed. Please report this traceback at:',
+            'https://github.com/michael-lazar/rtv/issues\n'])
+        sys.stderr.write(exit_message)
+        return 1  # General error exception code
     except KeyboardInterrupt:
         pass
     finally:
