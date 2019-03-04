@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **Describe the bug**
-Provide a clear description of what the bug is and how to reproduce it.
+A clear description of what the bug is and how to reproduce it.
 
 **Describe your environment**
 - If a stack trace was displayed on the command line, paste the entire output here.
