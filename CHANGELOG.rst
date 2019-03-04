@@ -53,6 +53,7 @@ Features
 * Updated and enhanced the help ``?`` page.
 * Opening a link from the command line is now faster at startup because the default
   subreddit is no longer pre-loaded.
+* Added a new ``--debug-info`` command to display system information.
 
 Bugfixes
 
@@ -61,6 +62,8 @@ Bugfixes
 * Relative time strings are now correctly pluralized.
 * Fixed the application not starting if the user has an empty front page.
 * Fixed unclosed file handler when opening the web browser.
+* Useful system and issue reporting information is now included with
+  traceback messages.
 
 Configuration Changes
 
