@@ -51,7 +51,7 @@ RTV is compatible with most terminals on Linux and macOS.
 <img alt="title image" src="resources/demo.gif"/>
 </p>
 
-You can now *telnet* or *ssh* to try out a lite version of RTV directly in your terminal without needing to install it:
+You can use *telnet* or *ssh* to try out a lite version of RTV directly in your terminal, without needing to install it:
 
 - ``$ telnet redditbox.us``
 - ``$ ssh redditbox.us``
