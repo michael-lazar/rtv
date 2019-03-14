@@ -51,6 +51,13 @@ RTV is compatible with most terminals on Linux and macOS.
 <img alt="title image" src="resources/demo.gif"/>
 </p>
 
+You can now use *telnet* or *ssh* to try out a lite version of RTV directly in your terminal without needing to install it:
+
+- ``$ telnet redditbox.us``
+- ``$ ssh redditbox.us``
+
+*[redditbox.us](https://redditbox.us/) is an independent project by Alex Jarmoszuk*
+
 ## Installation
 
 ### PyPI package
