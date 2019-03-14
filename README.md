@@ -70,7 +70,7 @@ $ pip install rtv
 
 ### Native packages
 
-See [Repology](https://repology.org/metapackage/rtv/packages) for an up-to-date list of supported packages:
+See [Repology](https://repology.org/metapackage/rtv/packages) for an up-to-date list of supported distro packages:
 
 ```bash
 # macOS
