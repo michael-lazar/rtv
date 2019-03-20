@@ -26,6 +26,9 @@ RTV is compatible with most terminals on Linux and macOS.
   <a href="https://travis-ci.org/michael-lazar/rtv">
     <img alt="travis-ci" src="https://travis-ci.org/michael-lazar/rtv.svg?branch=master"/>
   </a>
+  <a href="https://repology.org/project/rtv/versions">
+    <img src="https://repology.org/badge/tiny-repos/rtv.svg" alt="Packaging status">
+  </a>
   <a href="https://coveralls.io/github/michael-lazar/rtv?branch=master">
     <img alt="coveralls" src="https://coveralls.io/repos/michael-lazar/rtv/badge.svg?branch=master&service=github"/>
   </a>
