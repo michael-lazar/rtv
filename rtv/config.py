@@ -274,7 +274,8 @@ class Config(object):
             'max_comment_cols': partial(config.getint, 'rtv'),
             'max_pager_cols': partial(config.getint, 'rtv'),
             'hide_username': partial(config.getboolean, 'rtv'),
-            'flash': partial(config.getboolean, 'rtv')
+            'flash': partial(config.getboolean, 'rtv'),
+            'show_footer': partial(config.getboolean, 'rtv')
         }
 
         for key, func in params.items():

@@ -661,7 +661,8 @@ class Page(object):
         self._draw_header()
         self._draw_banner()
         self._draw_content()
-        self._draw_footer()
+        if self.config['show_footer']:
+            self._draw_footer()
         self.term.clear_screen()
         self.term.stdscr.refresh()
 
@@ -775,7 +776,7 @@ class Page(object):
         Loop through submissions and fill up the content page.
         """
         n_rows, n_cols = self.term.stdscr.getmaxyx()
-        window = self.term.stdscr.derwin(n_rows - self._row - 1, n_cols, self._row, 0)
+        window = self.term.stdscr.derwin(n_rows - self._row - (1 if self.config['show_footer'] else 0), n_cols, self._row, 0)
         window.erase()
         win_n_rows, win_n_cols = window.getmaxyx()
 
