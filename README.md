@@ -20,9 +20,6 @@ RTV is compatible with most terminals on Linux and macOS.
   <a href="https://pypi.python.org/pypi/rtv/">
     <img alt="pypi" src="https://img.shields.io/pypi/v/rtv.svg?label=version"/>
   </a>
-  <a href="https://pypi.python.org/pypi/rtv/">
-    <img alt="python" src="https://img.shields.io/badge/python-2.7%2C%203.4+-blue.svg"/>
-  </a>
   <a href="https://travis-ci.org/michael-lazar/rtv">
     <img alt="travis-ci" src="https://travis-ci.org/michael-lazar/rtv.svg?branch=master"/>
   </a>
