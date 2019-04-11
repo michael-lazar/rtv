@@ -91,7 +91,7 @@ $ python setup.py install
 
 ### Windows
 
-RTV is not supported on Windows.
+RTV is not supported on Windows, due to a lack of resources and interest. Sorry!
 
 ## Usage
 
