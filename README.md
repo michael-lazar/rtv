@@ -74,6 +74,9 @@ $ pacman -S rtv
 # Nix
 $ nix-env -i rtv
 
+# Debian
+$ apt install rtv
+
 # FreeBSD
 $ pkg install rtv
 ```
