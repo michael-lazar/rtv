@@ -105,7 +105,7 @@ Move the cursor using either the arrow keys or *Vim* style movement:
 - Press <kbd>▲</kbd> and <kbd>▼</kbd> to scroll through submissions
 - Press <kbd>▶</kbd> to view the selected submission and <kbd>◀</kbd> to return
 - Press <kbd>space-bar</kbd> to expand/collapse comments
-- Press <kbd>u</kbd> to login
+- Press <kbd>u</kbd> to login (this requires a web browser for [OAuth](https://github.com/reddit-archive/reddit/wiki/oauth2))
 - Press <kbd>?</kbd> to open the help screen
 
 Press <kbd>/</kbd> to open the navigation prompt, where you can type things like:
