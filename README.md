@@ -8,8 +8,6 @@ RTV provides a text-based interface to view and interact with reddit.<br>
 <img alt="title image" src="resources/title_image.png"/>
 </p>
 
----
-
 <p align="center">
   <a href="https://pypi.python.org/pypi/rtv/">
     <img alt="pypi" src="https://img.shields.io/pypi/v/rtv.svg?label=version"/>
@@ -28,7 +26,7 @@ RTV provides a text-based interface to view and interact with reddit.<br>
   </a>
 </p>
 
----
+## Table of Contents
 
 * [Demo](#demo)  
 * [Installation](#installation)  
