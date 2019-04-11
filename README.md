@@ -8,10 +8,6 @@ RTV provides a text-based interface to view and interact with reddit.<br>
 <img alt="title image" src="resources/title_image.png"/>
 </p>
 
-<p align="center">
-RTV is compatible with most terminals on Linux and macOS.
-</p>
-
 ---
 
 <p align="center">
