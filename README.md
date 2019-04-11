@@ -1,7 +1,7 @@
 <h1 align="center">Reddit Terminal Viewer</h1>
 
 <p align="center">
-RTV provides a text-based interface (TUI) to view and interact with Reddit.<br>
+RTV provides a text-based interface (TUI) to view and interact with Reddit from your terminal.<br>
 </p>
 
 <p align="center">
