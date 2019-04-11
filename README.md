@@ -1,6 +1,4 @@
-<h1 align="center">
-<img alt="Reddit Terminal Viewer" src="resources/logo.png"/>
-</h1>
+<h1 align="center">Reddit Terminal Viewer</h1>
 
 <p align="center">
 RTV provides a text-based interface to view and interact with reddit.<br>
