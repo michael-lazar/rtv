@@ -261,6 +261,7 @@ class Config(object):
         if config.has_section('rtv'):
             rtv = dict(config.items('rtv'))
 
+        # convert non-string params to their typed representation
         params = {
             'ascii': partial(config.getboolean, 'rtv'),
             'monochrome': partial(config.getboolean, 'rtv'),
@@ -274,7 +275,8 @@ class Config(object):
             'max_comment_cols': partial(config.getint, 'rtv'),
             'max_pager_cols': partial(config.getint, 'rtv'),
             'hide_username': partial(config.getboolean, 'rtv'),
-            'flash': partial(config.getboolean, 'rtv')
+            'flash': partial(config.getboolean, 'rtv'),
+            'force_new_browser_window': partial(config.getboolean, 'rtv')
         }
 
         for key, func in params.items():
