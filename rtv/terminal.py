@@ -632,7 +632,10 @@ class Terminal(object):
                         pass
         else:
             with self.suspend():
-                webbrowser.open_new_tab(url)
+                if self.config['force_new_browser_window']:
+                    webbrowser.open_new(url)
+                else:
+                    webbrowser.open_new_tab(url)
 
     def open_pager(self, data, wrap=None):
         """
