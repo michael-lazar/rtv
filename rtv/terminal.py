@@ -599,7 +599,10 @@ class Terminal(object):
                     try:
                         os.dup2(null, 1)
                         os.dup2(null, 2)
-                        webbrowser.open_new_tab(url)
+                        if self.config['force_new_browser_window']:
+                            webbrowser.open_new(url)
+                        else:
+                            webbrowser.open_new_tab(url)
                     finally:
                         try:
                             os.close(null)
@@ -629,7 +632,10 @@ class Terminal(object):
                         pass
         else:
             with self.suspend():
-                webbrowser.open_new_tab(url)
+                if self.config['force_new_browser_window']:
+                    webbrowser.open_new(url)
+                else:
+                    webbrowser.open_new_tab(url)
 
     def open_pager(self, data, wrap=None):
         """
