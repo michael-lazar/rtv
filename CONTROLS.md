@@ -2,8 +2,8 @@
 
 ## Basic Commands
 
-- <kbd>j</kbd> or <kbd>▲</kbd> - Move the cursor up
-- <kbd>k</kbd> or <kbd>▼</kbd> - Move the cursor down
+- <kbd>j</kbd> or <kbd>▲</kbd> - Move the cursor down
+- <kbd>k</kbd> or <kbd>▼</kbd> - Move the cursor up
 - <kbd>l</kbd> or <kbd>►</kbd> - View the currently selected item
 - <kbd>h</kbd> or <kbd>◄</kbd> - Return to the previous view
 - <kbd>m</kbd> or <kbd>PgUp</kbd> - Move the cursor up one page

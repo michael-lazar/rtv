@@ -30,8 +30,8 @@ https://github.com/michael-lazar/rtv
 ====================================
 
 [Basic Commands]
-  j     : Move the cursor up
-  k     : Move the cursor down
+  j     : Move the cursor down
+  k     : Move the cursor up
   l     : View the currently selected item
   h     : Return to the previous view
   m     : Move the cursor up one page
