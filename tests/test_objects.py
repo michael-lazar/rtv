@@ -590,6 +590,36 @@ def test_objects_navigator_move_page():
     assert valid
     assert redraw
 
+def test_objects_navigator_focus_up():
+
+    def valid_page_cb(index):
+        if index < 0 or index > 9:
+            raise IndexError()
+
+    nav = Navigator(valid_page_cb, cursor_index=3)
+
+    # Move the currently selected item to the top
+    redraw = nav.focus_up()
+    assert nav.page_index == 3
+    assert nav.cursor_index == 0
+    assert not nav.inverted
+    assert redraw
+
+    # Move up and move the currently selected item to the top
+    nav.move(-1, 2)
+    redraw = nav.focus_up()
+    assert nav.page_index == 2
+    assert nav.cursor_index == 0
+    assert not nav.inverted
+    assert not redraw
+
+    # Move down and move the currently selected item to the top
+    nav.move(1, 3)
+    redraw = nav.focus_up()
+    assert nav.page_index == 3
+    assert nav.cursor_index == 0
+    assert not nav.inverted
+    assert redraw
 
 def test_objects_navigator_flip():
 

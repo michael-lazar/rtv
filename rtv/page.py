@@ -240,6 +240,13 @@ class Page(object):
         self.nav.cursor_index = 0
         self.nav.inverted = True
 
+    @PageController.register(Command('FOCUS_UP'))
+    def focus_up(self):
+        """
+        Move the currently selected item to the top of the page.
+        """
+        self.nav.focus_up()
+
     @PageController.register(Command('UPVOTE'))
     @logged_in
     def upvote(self):
