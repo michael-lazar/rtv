@@ -26,13 +26,6 @@ class SubscriptionPage(Page):
         self.nav = Navigator(self.content.get)
         self.content_type = content_type
 
-    def handle_selected_page(self):
-        """
-        Always close the current page when another page is selected.
-        """
-        if self.selected_page:
-            self.active = False
-
     def refresh_content(self, order=None, name=None):
         """
         Re-download all subscriptions and reset the page index
@@ -54,14 +47,7 @@ class SubscriptionPage(Page):
         Store the selected subreddit and return to the subreddit page
         """
         name = self.get_selected_item()['name']
-        self.selected_page = self.open_subreddit_page(name)
-
-    @SubscriptionController.register(Command('SUBSCRIPTION_EXIT'))
-    def close_subscriptions(self):
-        """
-        Close subscriptions and return to the subreddit page
-        """
-        self.active = False
+        self.open_subreddit_page(name)
 
     def _draw_banner(self):
         # Subscriptions can't be sorted, so disable showing the order menu

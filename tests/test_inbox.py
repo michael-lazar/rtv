@@ -7,6 +7,7 @@ from rtv.packages.praw.errors import InvalidUser
 from rtv import exceptions
 from rtv.docs import FOOTER_INBOX
 from rtv.inbox_page import InboxPage
+from rtv.page import PageStack
 from rtv.submission_page import SubmissionPage
 
 try:
@@ -144,46 +145,45 @@ def test_inbox_mark_seen(inbox_page, terminal):
         assert data['is_new'] is True
 
 
-def test_inbox_close(inbox_page, terminal):
-
-    inbox_page.active = None
-    inbox_page.controller.trigger('h')
-    assert inbox_page.active is False
-
-
 def test_inbox_view_context(inbox_page, terminal):
 
     # Should be able to view the context of a comment
+    PageStack.init(inbox_page)
+    initial_stack_size = PageStack.size()
     inbox_page.controller.trigger('4')
     inbox_page.controller.trigger('l')
-    assert inbox_page.active
-    assert inbox_page.selected_page
-    assert isinstance(inbox_page.selected_page, SubmissionPage)
+    assert(PageStack.size() == initial_stack_size + 1)
+    assert isinstance(PageStack.current_page(), SubmissionPage)
 
-    inbox_page.selected_page = None
+    # Close the submission page
+    inbox_page.controller.trigger('h')
 
     # Should not be able to view the context of a private message
+    initial_stack_size = PageStack.size()
     inbox_page.controller.trigger('3')
     inbox_page.controller.trigger('l')
-    assert inbox_page.active
-    assert inbox_page.selected_page is None
+    assert PageStack.size() == initial_stack_size
+    assert PageStack.current_page() is inbox_page
     assert terminal.loader.exception is None
 
 
 def test_inbox_open_submission(inbox_page, terminal):
 
     # Should be able to open the submission that a comment was for
+    PageStack.init(inbox_page)
+    initial_stack_size = PageStack.size()
     inbox_page.controller.trigger('4')
     inbox_page.controller.trigger('o')
-    assert inbox_page.active
-    assert inbox_page.selected_page
-    assert isinstance(inbox_page.selected_page, SubmissionPage)
+    assert(PageStack.size() == initial_stack_size + 1)
+    assert isinstance(PageStack.current_page(), SubmissionPage)
 
-    inbox_page.selected_page = None
+    # Close the submission page:
+    inbox_page.controller.trigger('h')
 
     # Should not be able to open the submission for a private message
+    initial_stack_size = PageStack.size()
     inbox_page.controller.trigger('3')
     inbox_page.controller.trigger('o')
-    assert inbox_page.active
-    assert inbox_page.selected_page is None
+    assert PageStack.size() == initial_stack_size
+    assert PageStack.current_page() is inbox_page
     assert terminal.loader.exception is None

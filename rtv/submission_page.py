@@ -34,22 +34,6 @@ class SubmissionPage(Page):
         # Start at the submission post, which is indexed as -1
         self.nav = Navigator(self.content.get, page_index=-1)
 
-    def handle_selected_page(self):
-        """
-        Open the subscription page in a subwindow, but close the current page
-        if any other type of page is selected.
-        """
-        if not self.selected_page:
-            pass
-        elif self.selected_page.name == 'subscription':
-            # Launch page in a subwindow
-            self.selected_page = self.selected_page.loop()
-        elif self.selected_page.name in ('subreddit', 'submission', 'inbox'):
-            # Replace the current page
-            self.active = False
-        else:
-            raise RuntimeError(self.selected_page.name)
-
     def refresh_content(self, order=None, name=None):
         """
         Re-download comments and reset the page index
@@ -109,13 +93,6 @@ class SubmissionPage(Page):
                 n_rows, _ = window.getmaxyx()
                 self.nav.flip(len(self._subwindows) - 1)
                 self.nav.top_item_height = n_rows
-
-    @SubmissionController.register(Command('SUBMISSION_EXIT'))
-    def exit_submission(self):
-        """
-        Close the submission and return to the subreddit page
-        """
-        self.active = False
 
     @SubmissionController.register(Command('SUBMISSION_OPEN_IN_BROWSER'))
     def open_link(self):

@@ -5,7 +5,7 @@ import curses
 
 import pytest
 
-from rtv.page import Page, PageController, logged_in
+from rtv.page import Page, PageController, PageStack, logged_in
 
 try:
     from unittest import mock
@@ -45,14 +45,6 @@ def test_page_unauthenticated(reddit, terminal, config, oauth):
             mock.patch.object(page, 'content'),      \
             mock.patch.object(page, 'nav'),          \
             mock.patch.object(page, 'draw'):
-
-        # Loop
-        def func(_):
-            page.active = False
-        with mock.patch.object(page, 'controller'):
-            page.controller.trigger = mock.MagicMock(side_effect=func)
-            page.loop()
-        assert page.draw.called
 
         # Quit, confirm
         terminal.stdscr.getch.return_value = ord('y')
@@ -142,3 +134,60 @@ def test_page_cycle_theme(reddit, terminal, config, oauth):
         curses.has_colors.return_value = False
         page.controller.trigger(curses.KEY_F2)
         assert page.term.theme.required_colors == 0
+
+
+def test_page_stack(reddit, terminal, config, oauth):
+    ps = PageStack(max_size=3)
+    PageStack.init()
+
+    assert PageStack.size() == 0
+
+    # Fill the page stack:
+    for _ in range(3):
+        PageStack.add(Page(reddit, terminal, config, oauth))
+        ps._stay_within_max_size()
+
+    assert PageStack.size() == 3
+
+    # Create a new page and add it to the already filled stack:
+    cpage = Page(reddit, terminal, config, oauth)
+    PageStack.add(cpage)
+    ps._stay_within_max_size()
+
+    assert PageStack.size() == 3
+    assert PageStack.current_page() is cpage
+
+    # Remove the currently active page 'cpage' from the stack:
+    PageStack.pop()
+    ps._stay_within_max_size()
+
+    assert PageStack.size() == 2
+    assert PageStack.current_page() is not cpage
+
+
+def test_page_back_button(reddit, terminal, config, oauth):
+    ps = PageStack(max_size=3)
+    PageStack.init()
+
+    # Add two pages to the page stack:
+    page1 = Page(reddit, terminal, config, oauth)
+    page1.controller = PageController(page1, keymap=config.keymap)
+    page2 = Page(reddit, terminal, config, oauth)
+    page2.controller = PageController(page2, keymap=config.keymap)
+
+    for page in (page1, page2):
+        PageStack.add(page)
+        ps._stay_within_max_size()
+
+    assert PageStack.size() == 2
+    assert PageStack.current_page() is page2
+
+    # Apply the back button:
+    PageStack.current_page().controller.trigger('h')
+    assert PageStack.size() == 1
+    assert PageStack.current_page() is page1
+
+    # Apply the back button again (page1 is the only page in the page stack):
+    PageStack.current_page().controller.trigger('h')
+    assert PageStack.size() == 1
+    assert PageStack.current_page() is page1

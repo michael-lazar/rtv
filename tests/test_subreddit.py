@@ -8,6 +8,8 @@ import six
 import pytest
 
 from rtv import __version__
+from rtv.page import PageStack
+from rtv.subscription_page import SubscriptionPage
 from rtv.subreddit_page import SubredditPage
 from rtv.packages.praw.errors import NotFound, HTTPException
 from requests.exceptions import ReadTimeout
@@ -163,14 +165,14 @@ def test_subreddit_prompt(subreddit_page, terminal):
 
     # Prompt for a different subreddit
     with mock.patch.object(terminal, 'prompt_input'):
+        PageStack.init(subreddit_page)
+        initial_stack_size = PageStack.size()
         terminal.prompt_input.return_value = 'front/top'
         subreddit_page.controller.trigger('/')
 
-        subreddit_page.handle_selected_page()
-        assert not subreddit_page.active
-        assert subreddit_page.selected_page
-        assert subreddit_page.selected_page.content.name == '/r/front'
-        assert subreddit_page.selected_page.content.order == 'top'
+        assert(PageStack.size() == initial_stack_size + 1)
+        assert PageStack.current_page().content.name == '/r/front'
+        assert PageStack.current_page().content.order == 'top'
 
 
 @pytest.mark.parametrize('prompt', PROMPTS.values(), ids=list(PROMPTS))
@@ -293,15 +295,16 @@ def test_subreddit_order_search(subreddit_page, terminal):
 
 
 def test_subreddit_open(subreddit_page, terminal, config):
+    PageStack.init(subreddit_page)
 
     # Open the selected submission
     data = subreddit_page.content.get(subreddit_page.nav.absolute_index)
     with mock.patch.object(config.history, 'add'):
+        initial_stack_size = PageStack.size()
         data['url_type'] = 'selfpost'
         subreddit_page.controller.trigger('l')
         assert not terminal.loader.exception
-        assert subreddit_page.selected_page
-        assert subreddit_page.active
+        assert(PageStack.size() == initial_stack_size + 1)
         config.history.add.assert_called_with(data['url_full'])
 
     # Open the selected link externally
@@ -360,6 +363,7 @@ def test_subreddit_unauthenticated(subreddit_page, terminal):
 
 
 def test_subreddit_post(subreddit_page, terminal, reddit, refresh_token):
+    PageStack.init(subreddit_page)
 
     # Log in
     subreddit_page.config.refresh_token = refresh_token
@@ -389,11 +393,11 @@ def test_subreddit_post(subreddit_page, terminal, reddit, refresh_token):
         reddit.submit.return_value = submission
         subreddit_page.controller.trigger('c')
         assert reddit.submit.called
-        assert subreddit_page.selected_page.content._submission == submission
-        assert subreddit_page.active
+        assert PageStack.current_page().content._submission == submission
 
 
 def test_subreddit_open_subscriptions(subreddit_page, refresh_token):
+    PageStack.init(subreddit_page)
 
     # Log in
     subreddit_page.config.refresh_token = refresh_token
@@ -401,12 +405,7 @@ def test_subreddit_open_subscriptions(subreddit_page, refresh_token):
 
     # Open subscriptions
     subreddit_page.controller.trigger('s')
-    assert subreddit_page.selected_page
-    assert subreddit_page.active
-
-    with mock.patch('rtv.page.Page.loop') as loop:
-        subreddit_page.handle_selected_page()
-        assert loop.called
+    assert isinstance(PageStack.current_page(), SubscriptionPage)
 
 
 def test_subreddit_get_inbox_timeout(subreddit_page, refresh_token, terminal, vcr):
@@ -425,6 +424,7 @@ def test_subreddit_get_inbox_timeout(subreddit_page, refresh_token, terminal, vc
 
 
 def test_subreddit_open_multireddits(subreddit_page, refresh_token):
+    PageStack.init(subreddit_page)
 
     # Log in
     subreddit_page.config.refresh_token = refresh_token
@@ -432,12 +432,7 @@ def test_subreddit_open_multireddits(subreddit_page, refresh_token):
 
     # Open multireddits
     subreddit_page.controller.trigger('S')
-    assert subreddit_page.selected_page
-    assert subreddit_page.active
-
-    with mock.patch('rtv.page.Page.loop') as loop:
-        subreddit_page.handle_selected_page()
-        assert loop.called
+    assert isinstance(PageStack.current_page(), SubscriptionPage)
 
 
 def test_subreddit_private_user_pages(subreddit_page, refresh_token):
@@ -546,13 +541,13 @@ def test_subreddit_draw_header(subreddit_page, refresh_token, terminal):
 
 
 def test_subreddit_frontpage_toggle(subreddit_page, terminal):
+    PageStack.init(subreddit_page)
     with mock.patch.object(terminal, 'prompt_input'):
 
         terminal.prompt_input.return_value = 'aww'
         subreddit_page.controller.trigger('/')
-        subreddit_page.handle_selected_page()
 
-        new_page = subreddit_page.selected_page
+        new_page = PageStack.current_page()
         assert new_page is not None
         assert new_page.content.name == '/r/aww'
 
@@ -591,50 +586,3 @@ def test_subreddit_hide_submission(subreddit_page, refresh_token):
     # Make sure that the status was actually updated on the server side
     data['object'].refresh()
     assert data['object'].hidden is False
-
-
-def test_subreddit_handle_selected_page(subreddit_page, subscription_page):
-
-    # Method should be a no-op if selected_page is unset
-    subreddit_page.active = True
-    subreddit_page.handle_selected_page()
-    assert subreddit_page.selected_page is None
-    assert subreddit_page.active
-
-    # Open the subscription page and select a subreddit from the list of
-    # subscriptions
-    with mock.patch.object(subscription_page, 'loop', return_value=subreddit_page):
-        subreddit_page.selected_page = subscription_page
-        subreddit_page.handle_selected_page()
-        assert subreddit_page.selected_page == subreddit_page
-        assert subreddit_page.active
-
-    # Now when handle_select_page() is called again, the current subreddit
-    # should be closed so the selected page can be opened
-    subreddit_page.handle_selected_page()
-    assert subreddit_page.selected_page == subreddit_page
-    assert not subreddit_page.active
-
-
-def test_subreddit_page_loop_pre_select(subreddit_page, submission_page):
-
-    # Set the selected_page before entering the loop(). This will cause the
-    # selected page to immediately open. If the selected page returns a
-    # different subreddit page (e.g. the user enters a subreddit into the
-    # prompt before they hit the `h` key), the initial loop should be closed
-    # immediately
-    subreddit_page.selected_page = submission_page
-    with mock.patch.object(submission_page, 'loop', return_value=subreddit_page):
-        selected_page = subreddit_page.loop()
-
-        assert not subreddit_page.active
-        assert selected_page == subreddit_page
-
-
-def test_subreddit_page_loop(subreddit_page, stdscr, terminal):
-
-    stdscr.getch.return_value = ord('/')
-
-    with mock.patch.object(terminal, 'prompt_input', return_value='all'):
-        new_page = subreddit_page.loop()
-        assert new_page.content.name == '/r/all'
