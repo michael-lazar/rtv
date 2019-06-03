@@ -5,6 +5,10 @@ A text-based interface (TUI) to view and interact with Reddit from your terminal
 </p>
 
 <p align="center">
+  <strong>This project is no longer being maintained, see <a href="https://github.com/michael-lazar/rtv/issues/696">here</a>.</strong><br>
+</p>
+
+<p align="center">
 <img alt="title image" src="resources/title_image.png"/>
 </p>
 
