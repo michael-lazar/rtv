@@ -2,6 +2,7 @@
 RTV Changelog
 =============
 
+.. _1.27.0: http://github.com/michael-lazar/rtv/releases/tag/v1.27.0
 .. _1.26.0: http://github.com/michael-lazar/rtv/releases/tag/v1.26.0
 .. _1.25.1: http://github.com/michael-lazar/rtv/releases/tag/v1.25.1
 .. _1.25.0: http://github.com/michael-lazar/rtv/releases/tag/v1.25.0
@@ -39,6 +40,24 @@ RTV Changelog
 .. _1.2.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2.2
 .. _1.2.1: http://github.com/michael-lazar/rtv/releases/tag/v1.2.1
 .. _1.2: http://github.com/michael-lazar/rtv/releases/tag/v1.2
+
+--------------------
+1.27.0_ (2019-06-02)
+--------------------
+
+This is the final release of RTV. See here for more information:
+
+https://github.com/michael-lazar/rtv/issues/696
+
+Features
+
+* Added a configuration option to toggle whether to open web browser links in a
+  new tab or a new window.
+
+Documentation
+
+* Improved the mailcap example for the ``feh`` command.
+* Fixed the the descriptions for the ``j`` & ``k`` keys (they were swapped).
 
 --------------------
 1.26.0_ (2019-03-03)

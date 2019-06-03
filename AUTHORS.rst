@@ -12,7 +12,6 @@ Thanks to the following people for their contributions to this project.
 * `Johnathan Jenkins <https://github.com/shaggytwodope>`_
 * `tyjak <https://github.com/tyjak>`_
 * `Edridge D'Souza <https://github.com/edridgedsouza>`_
-* `alxk <https://github.com/serain>`_
 * `Josue Ortega <https://github.com/noahfx>`_
 * `mekhami <https://github.com/mekhami>`_
 * `Nemanja Nedeljković <https://github.com/nemanjan00>`_
@@ -25,11 +24,12 @@ Thanks to the following people for their contributions to this project.
 * `Shawn Hind <https://github.com/shawnhind>`_
 * `Antoine Nguyen <https://github.com/anhtuann>`_
 * `JuanPablo <https://github.com/juanpabloaj>`_
+* `Pablo Arias <https://github.com/pabloariasal>`_
 * `Robert Greener <https://github.com/ragreener1>`_
 * `mac1202 <https://github.com/mac1202>`_
-* `nagracks <https://github.com/nagracks>`_
-* `Gustavo Zambonin <https://github.com/zambonin>`_
+* `Iqbal Singh <https://github.com/nagracks>`_
 * `Lorenz Leitner <https://github.com/LoLei>`_
+* `Markus Pettersson <https://github.com/MarkusPettersson98>`_
 * `Reshef Elisha <https://github.com/ReshefElisha>`_
 * `Ryan Reno <https://github.com/rreno>`_
 * `Sam Tebbs <https://github.com/SamTebbs33>`_
