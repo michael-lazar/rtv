@@ -5,7 +5,11 @@ A text-based interface (TUI) to view and interact with Reddit from your terminal
 </p>
 
 <p align="center">
-  <strong>This project is no longer being maintained, see <a href="https://github.com/michael-lazar/rtv/issues/696">here</a>.</strong><br>
+  <strong>This project is no longer maintained, see <a href="https://github.com/michael-lazar/rtv/issues/696">here</a> for more details.</strong><br>
+</p>
+
+<p align="center">
+  <strong>Looking for an active fork? Check out the <a href="https://gitlab.com/ajak/tuir">TUIR</a> package.</strong><br>
 </p>
 
 <p align="center">
