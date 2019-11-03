@@ -9,10 +9,6 @@ A text-based interface (TUI) to view and interact with Reddit from your terminal
 </p>
 
 <p align="center">
-  <strong>Looking for an active fork? Check out the <a href="https://gitlab.com/ajak/tuir">TUIR</a> package.</strong><br>
-</p>
-
-<p align="center">
 <img alt="title image" src="resources/title_image.png"/>
 </p>
 
