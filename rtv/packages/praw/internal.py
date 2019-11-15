@@ -52,7 +52,7 @@ def _get_redditor_listing(subpath=''):
         """Return a get_content generator for some RedditContentObject type.
 
         :param sort: Specify the sort order of the results if applicable
-            (one of ``'hot'``, ``'new'``, ``'top'``, ``'controversial'``).
+            (one of ``'best'``, ``'hot'``, ``'new'``, ``'top'``, ``'controversial'``).
         :param time: Specify the time-period to return submissions if
             applicable (one of ``'hour'``, ``'day'``, ``'week'``,
             ``'month'``, ``'year'``, ``'all'``).

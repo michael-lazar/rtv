@@ -116,11 +116,11 @@ https://github.com/michael-lazar/rtv
 """
 
 BANNER_SUBREDDIT = """
-[1]hot [2]top [3]rising [4]new [5]controversial [6]gilded
+[1]best [2]hot [3]top [4]rising [5]new [6]controversial [7]gilded
 """
 
 BANNER_SUBMISSION = """
-[1]hot [2]top [3]rising [4]new [5]controversial
+[1]best [2]hot [3]top [4]rising [5]new [6]controversial
 """
 
 BANNER_SEARCH = """

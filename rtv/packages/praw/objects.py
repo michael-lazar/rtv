@@ -1576,7 +1576,8 @@ class Subreddit(Messageable, Refreshable):
 
     # Generic listing selectors
     get_controversial = _get_sorter('controversial')
-    get_hot = _get_sorter('')
+    get_best = _get_sorter('')
+    get_hot = _get_sorter('hot')
     get_new = _get_sorter('new')
     get_top = _get_sorter('top')
     get_gilded = _get_sorter('gilded')
@@ -1670,7 +1671,8 @@ class Multireddit(Refreshable):
 
     # Generic listing selectors
     get_controversial = _get_sorter('controversial')
-    get_hot = _get_sorter('')
+    get_best = _get_sorter('')
+    get_hot = _get_sorter('hot')
     get_new = _get_sorter('new')
     get_top = _get_sorter('top')
 
