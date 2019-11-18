@@ -1,7 +1,7 @@
 **THIS PROJECT IS NO LONGER MAINTAINED**
 
 - [RTV Development is Shutting Down](https://github.com/michael-lazar/rtv/issues/696)
-- [Alternative Projects](ALTERNATIVES.md)
+- [List of Alternative Projects](ALTERNATIVES.md)
 
 <h1 align="center">Reddit Terminal Viewer (RTV)</h1>
 
