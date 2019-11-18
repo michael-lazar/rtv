@@ -1,11 +1,12 @@
+**THIS PROJECT IS NO LONGER MAINTAINED**
+
+- [RTV Development is Shutting Down](https://github.com/michael-lazar/rtv/issues/696)
+- [Alternative Projects](ALTERNATIVES.md)
+
 <h1 align="center">Reddit Terminal Viewer (RTV)</h1>
 
 <p align="center">
 A text-based interface (TUI) to view and interact with Reddit from your terminal.<br>
-</p>
-
-<p align="center">
-  <strong>This project is no longer maintained, see <a href="https://github.com/michael-lazar/rtv/issues/696">here</a> for more details.</strong><br>
 </p>
 
 <p align="center">
