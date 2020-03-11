@@ -13,24 +13,6 @@ A text-based interface (TUI) to view and interact with Reddit from your terminal
 <img alt="title image" src="resources/title_image.png"/>
 </p>
 
-<p align="center">
-  <a href="https://pypi.python.org/pypi/rtv/">
-    <img alt="pypi" src="https://img.shields.io/pypi/v/rtv.svg?label=version"/>
-  </a>
-  <a href="https://travis-ci.org/michael-lazar/rtv">
-    <img alt="travis-ci" src="https://travis-ci.org/michael-lazar/rtv.svg?branch=master"/>
-  </a>
-  <a href="https://repology.org/project/rtv/versions">
-    <img src="https://repology.org/badge/tiny-repos/rtv.svg" alt="Packaging status">
-  </a>
-  <a href="https://coveralls.io/github/michael-lazar/rtv?branch=master">
-    <img alt="coveralls" src="https://coveralls.io/repos/michael-lazar/rtv/badge.svg?branch=master&service=github"/>
-  </a>
-  <a href="https://saythanks.io/to/michael-lazar">
-    <img alt="say-thanks" src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg"/>
-  </a>
-</p>
-
 ## Table of Contents
 
 * [Demo](#demo)  
