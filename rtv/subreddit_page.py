@@ -77,18 +77,22 @@ class SubredditPage(Page):
         if self.content.query:
             self.refresh_content(order='relevance')
         else:
-            self.refresh_content(order='hot')
+            self.refresh_content(order='best')
 
     @SubredditController.register(Command('SORT_2'))
-    def sort_content_top(self):
-        order = self._prompt_period('top')
-        if order is None:
-            self.term.show_notification('Invalid option')
+    def sort_content_hot(self):
+        if self.content.query:
+            order = self._prompt_period('top')
+            if order is None:
+                self.term.show_notification('Invalid option')
+            else:
+                self.refresh_content(order=order)
         else:
-            self.refresh_content(order=order)
+            self.refresh_content(order='hot')
+
 
     @SubredditController.register(Command('SORT_3'))
-    def sort_content_rising(self):
+    def sort_content_top(self):
         if self.content.query:
             order = self._prompt_period('comments')
             if order is None:
@@ -96,13 +100,24 @@ class SubredditPage(Page):
             else:
                 self.refresh_content(order=order)
         else:
-            self.refresh_content(order='rising')
+            order = self._prompt_period('top')
+            if order is None:
+                self.term.show_notification('Invalid option')
+            else:
+                self.refresh_content(order=order)
 
     @SubredditController.register(Command('SORT_4'))
+    def sort_content_rising(self):
+        if self.content.query:
+            self.refresh_content(order='new')
+        else:
+            self.refresh_content(order='rising')
+
+    @SubredditController.register(Command('SORT_5'))
     def sort_content_new(self):
         self.refresh_content(order='new')
 
-    @SubredditController.register(Command('SORT_5'))
+    @SubredditController.register(Command('SORT_6'))
     def sort_content_controversial(self):
         if self.content.query:
             self.term.flash()
@@ -113,7 +128,7 @@ class SubredditPage(Page):
             else:
                 self.refresh_content(order=order)
 
-    @SubredditController.register(Command('SORT_6'))
+    @SubredditController.register(Command('SORT_7'))
     def sort_content_gilded(self):
         if self.content.query:
             self.term.flash()

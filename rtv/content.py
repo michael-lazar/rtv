@@ -695,7 +695,7 @@ class SubredditContent(Content):
             orders = ['relevance', 'top', 'comments', 'new', None]
             period_allowed = ['top', 'comments']
         else:
-            orders = ['hot', 'top', 'rising', 'new', 'controversial', 'gilded', None]
+            orders = ['best', 'hot', 'top', 'rising', 'new', 'controversial', 'gilded', None]
             period_allowed = ['top', 'controversial']
 
         if order not in orders:
@@ -715,7 +715,7 @@ class SubredditContent(Content):
         elif order:
             method_alias = 'get_{0}'.format(order)
         else:
-            method_alias = 'get_hot'
+            method_alias = 'get_best'
 
         # Here's where we start to build the submission generators
         if query:
@@ -774,7 +774,7 @@ class SubredditContent(Content):
             submissions = method(sort=order, time=period, limit=None)
 
         elif resource == 'front':
-            if order in (None, 'hot'):
+            if order in (None, 'best'):
                 submissions = reddit.get_front_page(limit=None)
             elif period:
                 # For the front page, praw makes you send the period as `t`
