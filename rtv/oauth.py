@@ -127,9 +127,15 @@ class OAuthHelper(object):
         # unless we know that the server needs to be used.
         self.server = None
 
+        # Reddit changed their behavior at some point, and the "Installed App"
+        # flow now expects an empty client secret instead of a dummy string.
+        client_secret = self.config['oauth_client_secret']
+        if client_secret == "praw_gapfill":
+            client_secret = ""
+
         self.reddit.set_oauth_app_info(
             self.config['oauth_client_id'],
-            self.config['oauth_client_secret'],
+            client_secret,
             self.config['oauth_redirect_uri'])
 
         # Reddit's mobile website works better on terminal browsers
