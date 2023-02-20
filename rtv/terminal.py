@@ -14,6 +14,7 @@ import webbrowser
 import subprocess
 import curses.ascii
 from curses import textpad
+import multiprocessing
 from multiprocessing import Process
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
@@ -41,6 +42,9 @@ except ImportError:
 
 
 _logger = logging.getLogger(__name__)
+
+# https://stackoverflow.com/a/72830812
+multiprocessing.set_start_method("fork")
 
 
 class Terminal(object):
