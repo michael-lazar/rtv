@@ -284,6 +284,30 @@ class Page(object):
             if not self.term.loader.exception:
                 data['likes'] = None
 
+    @PageController.register(Command('OPEN_SUBREDDIT'))
+    def open_subreddit(self):
+        """
+        Open the subreddit associated with the currently selected item.
+        """
+        data = self.get_selected_item()
+        if 'subreddit' in data:
+            subreddit = data['subreddit']
+            self.selected_page = self.open_subreddit_page(subreddit)
+        else:
+            self.term.flash()
+
+    @PageController.register(Command('OPEN_USERPAGE'))
+    def open_userpage(self):
+        """
+        Open the authors user page for the currently selected item.
+        """
+        data = self.get_selected_item()
+        if 'author' in data:
+            author = data['author']
+            self.selected_page = self.open_subreddit_page('u/' + author)
+        else:
+            self.term.flash()
+
     @PageController.register(Command('SAVE'))
     @logged_in
     def save(self):

@@ -69,6 +69,8 @@ https://github.com/michael-lazar/rtv
   SPACE : Mark the selected submission as hidden
   p     : Toggle between the currently viewed subreddit and /r/front
   f     : Open a prompt to search the current subreddit for a text string
+  v     : Open the subreddit for the selected submission
+  V     : Open the authors user page for the selected submission
 
 [Submission Mode]
   h     : Close the submission and return to the previous page
@@ -78,6 +80,7 @@ https://github.com/michael-lazar/rtv
   b     : Send the comment text to the system's urlviewer application
   J     : Move the cursor down the the next comment at the same indentation
   K     : Move the cursor up to the parent comment
+  V     : Open the authors user page for the selected comment
 
 [Subscription Mode]
   h     : Close your subscriptions and return to the previous page
