@@ -25,22 +25,6 @@ class InboxPage(Page):
         self.nav = Navigator(self.content.get)
         self.content_type = content_type
 
-    def handle_selected_page(self):
-        """
-        Open the subscription and submission pages subwindows, but close the
-        current page if any other type of page is selected.
-        """
-        if not self.selected_page:
-            pass
-        if self.selected_page.name in ('subscription', 'submission'):
-            # Launch page in a subwindow
-            self.selected_page = self.selected_page.loop()
-        elif self.selected_page.name in ('subreddit', 'inbox'):
-            # Replace the current page
-            self.active = False
-        else:
-            raise RuntimeError(self.selected_page.name)
-
     @logged_in
     def refresh_content(self, order=None, name=None):
         """
@@ -108,13 +92,6 @@ class InboxPage(Page):
         """
         self.reply()
 
-    @InboxController.register(Command('INBOX_EXIT'))
-    def close_inbox(self):
-        """
-        Close inbox and return to the previous page.
-        """
-        self.active = False
-
     @InboxController.register(Command('INBOX_VIEW_CONTEXT'))
     @logged_in
     def view_context(self):
@@ -123,7 +100,7 @@ class InboxPage(Page):
         """
         url = self.get_selected_item().get('context')
         if url:
-            self.selected_page = self.open_submission_page(url)
+            self.open_submission_page(url)
 
     @InboxController.register(Command('INBOX_OPEN_SUBMISSION'))
     @logged_in
@@ -133,7 +110,7 @@ class InboxPage(Page):
         """
         url = self.get_selected_item().get('submission_permalink')
         if url:
-            self.selected_page = self.open_submission_page(url)
+            self.open_submission_page(url)
 
     def _draw_item(self, win, data, inverted):
 

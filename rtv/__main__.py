@@ -41,6 +41,7 @@ from .oauth import OAuthHelper
 from .terminal import Terminal
 from .content import RequestHeaderRateLimiter
 from .objects import curses_session, patch_webbrowser
+from .page import PageStack
 from .subreddit_page import SubredditPage
 from .submission_page import SubmissionPage
 from .exceptions import ConfigError, SubredditError, SubmissionError
@@ -233,8 +234,9 @@ def main():
                     except Exception as e:
                         _logger.exception(e)
                         raise SubmissionError('Unable to load {0}'.format(url))
-                while page:
-                    page = page.loop()
+                PageStack.add(page)
+                ps = PageStack()
+                ps.run()
 
             page = None
             name = config['subreddit']
@@ -251,8 +253,9 @@ def main():
                     raise SubredditError('Unable to load {0}'.format(name))
 
             # Launch the subreddit page
-            while page:
-                page = page.loop()
+            PageStack.add(page)
+            ps = PageStack()
+            ps.run()
 
     except ConfigError as e:
         _logger.exception(e)

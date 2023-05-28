@@ -5,6 +5,8 @@ import curses
 
 import pytest
 
+from rtv.page import PageStack
+from rtv.subreddit_page import SubredditPage
 from rtv.subscription_page import SubscriptionPage
 
 try:
@@ -68,28 +70,22 @@ def test_subscription_refresh(subscription_page):
 
 
 def test_subscription_prompt(subscription_page, terminal):
+    PageStack.init(subscription_page)
 
     # Prompt for a different subreddit
     with mock.patch.object(terminal, 'prompt_input'):
         # Valid input
-        subscription_page.active = True
-        subscription_page.selected_page = None
         terminal.prompt_input.return_value = 'front/top'
         subscription_page.controller.trigger('/')
 
-        subscription_page.handle_selected_page()
-        assert not subscription_page.active
-        assert subscription_page.selected_page
+        assert PageStack.size() == 2
+        assert isinstance(PageStack.current_page(), SubredditPage)
 
         # Invalid input
-        subscription_page.active = True
-        subscription_page.selected_page = None
         terminal.prompt_input.return_value = 'front/pot'
         subscription_page.controller.trigger('/')
 
-        subscription_page.handle_selected_page()
-        assert subscription_page.active
-        assert not subscription_page.selected_page
+        assert PageStack.size() == 2
 
 
 def test_subscription_move(subscription_page):
@@ -128,21 +124,13 @@ def test_subscription_move(subscription_page):
 
 
 def test_subscription_select(subscription_page):
+    PageStack.init(subscription_page)
 
     # Select a subreddit
     subscription_page.controller.trigger(curses.KEY_ENTER)
-    subscription_page.handle_selected_page()
 
-    assert subscription_page.selected_page
-    assert not subscription_page.active
-
-
-def test_subscription_close(subscription_page):
-
-    # Close the subscriptions page
-    subscription_page.controller.trigger('h')
-    assert not subscription_page.selected_page
-    assert not subscription_page.active
+    assert PageStack.size() == 2
+    assert isinstance(PageStack.current_page(), SubredditPage)
 
 
 def test_subscription_page_invalid(subscription_page, oauth, refresh_token):

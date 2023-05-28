@@ -38,6 +38,51 @@ class PageController(Controller):
     character_map = {}
 
 
+class PageStack(object):
+    stack = []
+
+    def __init__(self, max_size=20):
+        self.max_size = max_size
+
+    @staticmethod
+    def add(page):
+        PageStack.stack.append(page)
+
+    @staticmethod
+    def init(page=None):
+        if page:
+            PageStack.stack = [page]
+        else:
+            PageStack.stack = []
+
+    @staticmethod
+    def pop():
+        return PageStack.stack.pop()
+
+    @staticmethod
+    def size():
+        return len(PageStack.stack)
+
+    @staticmethod
+    def current_page():
+        return PageStack.stack[-1]
+
+    def run(self):
+        """
+        Runs the PageStack. It takes the most recently added page and calls
+        the calls the pages' wait method to draw the page and wait for
+        user input.
+        """
+        while PageStack.stack:
+            self._stay_within_max_size()
+            page = PageStack.current_page()
+            page.wait()
+
+    def _stay_within_max_size(self):
+        if len(PageStack.stack) > self.max_size:
+            PageStack.stack = PageStack.stack[1:]
+
+
 class Page(object):
 
     BANNER = None
@@ -52,8 +97,6 @@ class Page(object):
         self.nav = None
         self.controller = None
 
-        self.active = True
-        self.selected_page = None
         self._row = 0
         self._subwindows = None
 
@@ -69,68 +112,13 @@ class Page(object):
         """
         return self.content.get(self.nav.absolute_index)
 
-    def loop(self):
+    def wait(self):
         """
-        Main control loop runs the following steps:
-            1. Re-draw the screen
-            2. Wait for user to press a key (includes terminal resizing)
-            3. Trigger the method registered to the input key
-            4. Check if there are any nested pages that need to be looped over
-
-        The loop will run until self.active is set to False from within one of
-        the methods.
+        Draw the page and wait for user input.
         """
-        self.active = True
-
-        # This needs to be called once before the main loop, in case a subpage
-        # was pre-selected before the loop started. This happens in __main__.py
-        # with ``page.open_submission(url=url)``
-        while self.selected_page and self.active:
-            self.handle_selected_page()
-
-        while self.active:
-            self.draw()
-            ch = self.term.stdscr.getch()
-            self.controller.trigger(ch)
-
-            while self.selected_page and self.active:
-                self.handle_selected_page()
-
-        return self.selected_page
-
-    def handle_selected_page(self):
-        """
-        Some commands will result in an action that causes a new page to open.
-        Examples include selecting a submission, viewing subscribed subreddits,
-        or opening the user's inbox. With these commands, the newly selected
-        page will be pre-loaded and stored in ``self.selected_page`` variable.
-        It's up to each page type to determine what to do when another page is
-        selected.
-
-          - It can start a nested page.loop(). This would allow the user to
-            return to their previous screen after exiting the sub-page. For
-            example, this is what happens when opening an individual submission
-            from within a subreddit page. When the submission is closed, the
-            user resumes the subreddit that they were previously viewing.
-
-          - It can close the current self.loop() and bubble the selected page up
-            one level in the loop stack. For example, this is what happens when
-            the user opens their subscriptions and selects a subreddit. The
-            subscription page loop is closed and the selected subreddit is
-            bubbled up to the root level loop.
-
-        Care should be taken to ensure the user can never enter an infinite
-        nested loop, as this could lead to memory leaks and recursion errors.
-
-            # Example of an unsafe nested loop
-            subreddit_page.loop()
-                -> submission_page.loop()
-                    -> subreddit_page.loop()
-                        -> submission_page.loop()
-                            ...
-
-        """
-        raise NotImplementedError
+        self.draw()
+        ch = self.term.stdscr.getch()
+        self.controller.trigger(ch)
 
     @PageController.register(Command('REFRESH'))
     def reload_page(self):
@@ -239,6 +227,13 @@ class Page(object):
         self.nav.page_index = self.content.range[1]
         self.nav.cursor_index = 0
         self.nav.inverted = True
+
+    @PageController.register(Command('RETURN'))
+    def page_return(self):
+        if PageStack.size() == 1:
+            self.term.flash()
+        else:
+            PageStack.pop()
 
     @PageController.register(Command('UPVOTE'))
     @logged_in
@@ -476,7 +471,7 @@ class Page(object):
                 raise TemporaryFileError()
             else:
                 self.term.show_notification('Message sent!')
-                self.selected_page = self.open_inbox_page('sent')
+                self.open_inbox_page('sent')
 
     def prompt_and_select_link(self):
         """
@@ -551,7 +546,7 @@ class Page(object):
         """
         View a list of the user's subscribed subreddits
         """
-        self.selected_page = self.open_subscription_page('subreddit')
+        self.open_subscription_page('subreddit')
 
     @PageController.register(Command('MULTIREDDITS'))
     @logged_in
@@ -559,7 +554,7 @@ class Page(object):
         """
         View a list of the user's subscribed multireddits
         """
-        self.selected_page = self.open_subscription_page('multireddit')
+        self.open_subscription_page('multireddit')
 
     @PageController.register(Command('PROMPT'))
     def prompt(self):
@@ -589,7 +584,7 @@ class Page(object):
         """
         View the user's inbox.
         """
-        self.selected_page = self.open_inbox_page('all')
+        self.open_inbox_page('all')
 
     def open_inbox_page(self, content_type):
         """
@@ -601,6 +596,7 @@ class Page(object):
             page = InboxPage(self.reddit, self.term, self.config, self.oauth,
                              content_type=content_type)
         if not self.term.loader.exception:
+            PageStack.add(page)
             return page
 
     def open_subscription_page(self, content_type):
@@ -613,6 +609,7 @@ class Page(object):
             page = SubscriptionPage(self.reddit, self.term, self.config,
                                     self.oauth, content_type=content_type)
         if not self.term.loader.exception:
+            PageStack.add(page)
             return page
 
     def open_submission_page(self, url=None, submission=None):
@@ -625,6 +622,7 @@ class Page(object):
             page = SubmissionPage(self.reddit, self.term, self.config,
                                   self.oauth, url=url, submission=submission)
         if not self.term.loader.exception:
+            PageStack.add(page)
             return page
 
     def open_subreddit_page(self, name):
@@ -637,6 +635,7 @@ class Page(object):
             page = SubredditPage(self.reddit, self.term, self.config,
                                  self.oauth, name)
         if not self.term.loader.exception:
+            PageStack.add(page)
             return page
 
     def clear_input_queue(self):

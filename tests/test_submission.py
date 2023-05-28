@@ -6,6 +6,7 @@ from collections import OrderedDict
 
 import pytest
 
+from rtv.page import PageStack
 from rtv.submission_page import SubmissionPage
 from rtv.docs import FOOTER_SUBMISSION
 
@@ -99,14 +100,6 @@ def test_submission_refresh(submission_page):
     submission_page.refresh_content()
 
 
-def test_submission_exit(submission_page):
-
-    # Exiting should set active to false
-    submission_page.active = True
-    submission_page.controller.trigger('h')
-    assert not submission_page.active
-
-
 def test_submission_unauthenticated(submission_page, terminal):
 
     # Unauthenticated commands
@@ -137,24 +130,18 @@ def test_submission_prompt(submission_page, terminal):
     # Prompt for a different subreddit
     with mock.patch.object(terminal, 'prompt_input'):
         # Valid input
-        submission_page.active = True
-        submission_page.selected_page = None
+        initial_stack_size = PageStack.size()
         terminal.prompt_input.return_value = 'front/top'
         submission_page.controller.trigger('/')
 
-        submission_page.handle_selected_page()
-        assert not submission_page.active
-        assert submission_page.selected_page
+        stack_size_after_first_prompt = PageStack.size()
+        assert(stack_size_after_first_prompt == initial_stack_size + 1)
 
         # Invalid input
-        submission_page.active = True
-        submission_page.selected_page = None
         terminal.prompt_input.return_value = 'front/pot'
         submission_page.controller.trigger('/')
 
-        submission_page.handle_selected_page()
-        assert submission_page.active
-        assert not submission_page.selected_page
+        assert(PageStack.size() == stack_size_after_first_prompt)
 
 
 @pytest.mark.parametrize('prompt', PROMPTS.values(), ids=list(PROMPTS))
@@ -162,17 +149,15 @@ def test_submission_prompt_submission(submission_page, terminal, prompt):
 
     # Navigate to a different submission from inside a submission
     with mock.patch.object(terminal, 'prompt_input'):
+        initial_stack_size = PageStack.size()
         terminal.prompt_input.return_value = prompt
         submission_page.content.order = 'top'
         submission_page.controller.trigger('/')
         assert not terminal.loader.exception
+        assert(PageStack.size() == initial_stack_size + 1)
 
-        submission_page.handle_selected_page()
-        assert not submission_page.active
-        assert submission_page.selected_page
-
-        assert submission_page.selected_page.content.order is None
-        data = submission_page.selected_page.content.get(-1)
+        assert PageStack.current_page().content.order is None
+        data = PageStack.current_page().content.get(-1)
         assert data['object'].id == '571dw3'
 
 
