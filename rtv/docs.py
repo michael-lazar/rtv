@@ -36,6 +36,7 @@ https://github.com/michael-lazar/rtv
   h     : Return to the previous view
   m     : Move the cursor up one page
   n     : Move the cursor down one page
+  -     : Move the currently selected item to the top
   gg    : Jump to the top of the page
   G     : Jump to the bottom of the page
   1-7   : Sort submissions by category

@@ -374,6 +374,23 @@ class Navigator(object):
 
         return self.page_index + (self.step * self.cursor_index)
 
+    def focus_up(self):
+        """
+        Move the currently selected item to the top of the page.
+
+        Returns:
+            redraw (bool): Indicates whether or not the screen needs to be
+                redrawn.
+        """
+        redraw = True
+        if self.cursor_index > 0 or self.inverted:
+            self.page_index += self.cursor_index
+            self.cursor_index = 0
+            self.inverted = False
+        else:
+            redraw = False
+        return redraw
+
     def move(self, direction, n_windows):
         """
         Move the cursor up or down by the given increment.
