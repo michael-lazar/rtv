@@ -47,6 +47,14 @@ RTV is available on [PyPI](https://pypi.python.org/pypi/rtv/) and can be install
 $ pip install rtv
 ```
 
+When receiving errors try installing the following additional packages:
+```bash
+# Find python-setuptools in your package manager, e.g on Debian:
+$ apt install python-setuptools
+# Install pip wheel package:
+$ pip install wheel
+```
+
 ### Native packages
 
 See [Repology](https://repology.org/metapackage/rtv/packages) for an up-to-date list of supported distro packages:
