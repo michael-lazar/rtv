@@ -62,6 +62,7 @@ class Config(object):  # pylint: disable=R0903
                  'approve':             'api/approve/',
                  'authorize':           'api/v1/authorize/',
                  'banned':              'r/{subreddit}/about/banned/',
+                 'best':                'best/',
                  'blocked':             'prefs/blocked/',
                  'by_id':               'by_id/',
                  'captcha':             'captcha/',
@@ -99,6 +100,7 @@ class Config(object):  # pylint: disable=R0903
                  'gilded':              'gilded/',
                  'help':                'help/',
                  'hide':                'api/hide/',
+                 'hot':                 'hot/',
                  'ignore_reports':      'api/ignore_reports/',
                  'inbox':               'message/inbox/',
                  'info':                'api/info/',
@@ -833,7 +835,7 @@ class UnauthenticatedReddit(BaseReddit):
         return self.get_content(self.config['controversial'], *args, **kwargs)
 
     @decorators.restrict_access(scope='read')
-    def get_domain_listing(self, domain, sort='hot', period=None, *args,
+    def get_domain_listing(self, domain, sort='best', period=None, *args,
                            **kwargs):
         """Return a get_content generator for submissions by domain.
 
@@ -841,8 +843,8 @@ class UnauthenticatedReddit(BaseReddit):
         ``https://www.reddit.com/domain/{domain}``.
 
         :param domain: The domain to generate a submission listing for.
-        :param sort: When provided must be one of 'hot', 'new', 'rising',
-            'controversial, 'gilded', or 'top'. Defaults to 'hot'.
+        :param sort: When provided must be one of 'best', 'hot', 'new', 'rising',
+            'controversial, 'gilded', or 'top'. Defaults to 'best'.
         :param period: When sort is either 'controversial', or 'top' the period
             can be either None (for account default), 'all', 'year', 'month',
             'week', 'day', or 'hour'.
@@ -852,7 +854,7 @@ class UnauthenticatedReddit(BaseReddit):
 
         """
         # Verify arguments
-        if sort not in ('controversial', 'hot', 'new', 'rising', 'top',
+        if sort not in ('best', 'controversial', 'hot', 'new', 'rising', 'top',
                         'gilded'):
             raise TypeError('Invalid sort parameter.')
         if period not in (None, 'all', 'day', 'hour', 'month', 'week', 'year'):
@@ -861,7 +863,7 @@ class UnauthenticatedReddit(BaseReddit):
             raise TypeError('Period cannot be set for that sort argument.')
 
         url = self.config['domain'].format(domain=domain)
-        if sort != 'hot':
+        if sort != 'best':
             url += sort
         if period:  # Set or overwrite params 't' parameter
             kwargs.setdefault('params', {})['t'] = period
@@ -984,6 +986,33 @@ class UnauthenticatedReddit(BaseReddit):
 
         """
         return self.get_content(self.config['new'], *args, **kwargs)
+
+    @decorators.restrict_access(scope='read')
+    def get_hot(self, *args, **kwargs):
+        """Return a get_content generator for hot submissions.
+
+        Corresponds to the submissions provided by
+        ``https://www.reddit.com/hot/`` for the session.
+
+        The additional parameters are passed directly into
+        :meth:`.get_content`. Note: the `url` parameter cannot be altered.
+
+        """
+        return self.get_content(self.config['hot'], *args, **kwargs)
+
+    @decorators.restrict_access(scope='read')
+    def get_best(self, *args, **kwargs):
+        """Return a get_content generator for hot submissions.
+
+        Corresponds to the submissions provided by
+        ``https://www.reddit.com/hot/`` for the session.
+
+        The additional parameters are passed directly into
+        :meth:`.get_content`. Note: the `url` parameter cannot be altered.
+
+        """
+        return self.get_content(self.config['best'], *args, **kwargs)
+
 
     def get_new_subreddits(self, *args, **kwargs):
         """Return a get_content generator for the newest subreddits.
